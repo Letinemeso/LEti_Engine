@@ -1,3 +1,5 @@
+#include "include/Debug.h"
+
 #include "OpenGL/GLEW/include/glew.h"
 #include "OpenGL/GLFW/include/glfw3.h"
 #include "OpenGL/GLM/mat4x4.hpp"
@@ -10,13 +12,13 @@
 
 int main()
 {
-	glfwInit();
+	ASSERT(!glfwInit());
 	GLFWwindow* wind = glfwCreateWindow(600, 600, "airstream", 0, 0);
 	glfwMakeContextCurrent(wind);
-	glewInit();
+	ASSERT(glewInit());
 
 	//shader stuff
-	const char* v_shader_source =
+	/*const char* v_shader_source =
 		"#version 330 core\n"
 		"layout (location = 0) in vec4 pos;\n"
 		"layout (location = 1) in vec4 in_color;\n"
@@ -54,10 +56,14 @@ int main()
 	glUseProgram(program);
 
 	int link_result = 0;
-	glGetProgramiv(program, GL_LINK_STATUS, &link_result);
+	glGetProgramiv(program, GL_LINK_STATUS, &link_result);*/
 
-	if (link_result == GL_FALSE)
-		std::cout << "no linkie for u\n\n";
+	LEti::shader.init_shader("resources\\vertex_shader.shader", "resources\\fragment_shader.shader");
+
+	ASSERT(!LEti::shader());
+
+	/*if (!LEti::shader())
+		std::cout << "no linkie for u\n\n";*/
 
 	//vertex arrays stuff
 	unsigned int vertex_array;
@@ -102,8 +108,8 @@ int main()
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 	
-	int location = glGetUniformLocation(program, "matrix");
-	if (location == -1) std::cout << "no uniform location for u :D\n\n";
+	//int location = glGetUniformLocation(program, "matrix");
+	//if (location == -1) std::cout << "no uniform location for u :D\n\n";
 
 	float delay_between_frames = 1.0f / 60.0f;
 
@@ -124,7 +130,8 @@ int main()
 		}
 
 		glBindVertexArray(vertex_array);
-		glUniformMatrix4fv(location, 1, false, &matrix[0][0]);
+		//glUniformMatrix4fv(location, 1, false, &matrix[0][0]);
+		ASSERT(!LEti::shader.set_uniform(matrix, "matrix"));
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		glfwPollEvents();
