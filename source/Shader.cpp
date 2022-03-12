@@ -9,7 +9,8 @@ void Shader::get_shader_source(const char* _path, char*& _result_buffer, unsigne
 	file.seekg(0, std::ios::end);
 	unsigned int size = file.tellg();
 
-	*_result_size = size;
+	if(_result_size != nullptr) *_result_size = size;
+
 	_result_buffer = new char[size + 1];
 	_result_buffer[size] = 0;
 
@@ -80,12 +81,12 @@ void Shader::init_shader(const char* _v_path, const char* _f_path)
 	get_shader_source(_v_path, buffer, &size);
 	glShaderSource(vertex_shader, 1, &buffer, 0);
 	glCompileShader(vertex_shader);
-	DEBUG_FUNC_1ARG(shader_debug, vertex_shader);
+	ASSERT(DEBUG_FUNC_1ARG(shader_debug, vertex_shader) == false);
 	delete buffer;
 	get_shader_source(_f_path, buffer, &size);
 	glShaderSource(fragment_shader, 1, &buffer, 0);
 	glCompileShader(fragment_shader);
-	DEBUG_FUNC_1ARG(shader_debug, vertex_shader);
+	ASSERT(DEBUG_FUNC_1ARG(shader_debug, fragment_shader) == false);
 	delete buffer;
 
 
@@ -101,7 +102,7 @@ void Shader::init_shader(const char* _v_path, const char* _f_path)
 
 
 
-bool Shader::operator()()
+bool Shader::operator()() const
 {
 	return valid;
 }

@@ -4,10 +4,13 @@
 #include "OpenGL/GLFW/include/glfw3.h"
 #include "OpenGL/GLM/mat4x4.hpp"
 
+#include "OpenGL/stb_image.h"
+
 #include "include/Shader.h"
 
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <chrono>
 
 int main()
@@ -59,11 +62,35 @@ int main()
 	glGetProgramiv(program, GL_LINK_STATUS, &link_result);*/
 
 	LEti::shader.init_shader("resources\\vertex_shader.shader", "resources\\fragment_shader.shader");
-
 	ASSERT(!LEti::shader());
 
-	/*if (!LEti::shader())
-		std::cout << "no linkie for u\n\n";*/
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//texture stuff
+	const char* texture_name = "plug.png";
+
+	std::ifstream test(texture_name, std::ios::in);
+	ASSERT(!test.is_open());
+	test.close();
+
+	stbi_set_flip_vertically_on_load(true);
+	int size_x, size_y;
+	unsigned char* texture_buffer = stbi_load("plug.png", &size_x, &size_y, nullptr, 4);
+
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size_x, size_y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_buffer);
+	glActiveTexture(GL_TEXTURE0);
+
+	int location = glGetUniformLocation(LEti::shader.get_program(), "input_texture");
+	ASSERT(location == -1);
+	glUniform1i(location, 0);
 
 	//vertex arrays stuff
 	unsigned int vertex_array;
@@ -76,9 +103,9 @@ int main()
 	//vertex buffer
 	float coords[12] =
 	{
-		0.5f, 0.5f, 0.0f, 1.0f,
-		-0.5f, 0.5f, 0.0f, 1.0f,
-		-0.5f, -0.5f, 0.0f, 1.0f
+		-0.5f, 0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, 0.0f, 1.0f,
+		0.5f,  0.5f,  0.0f, 1.0f,
 	};
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
@@ -87,19 +114,33 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
 
 	//color buffer
-	float colors[12] =
+	/*float colors[12] =
 	{
-		1.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f
+		0.6f, 0.0f, 1.0f, 1.0f,
+		0.6f, 0.0f, 1.0f, 1.0f,
+		0.6f, 0.0f, 1.0f, 1.0f
 	};
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12 + 1, colors, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);*/
+
+	//texture coordinates stuff
+	float texture_coords[6] =
+	{
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 1.0f
+	};
+
+	glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 + 1, texture_coords, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
 
 
+	//matrix stuff
 	glm::mat4x4 matrix
 	(
 		1.0f, 0.0f, 0.0f, 0.0f,
@@ -108,13 +149,10 @@ int main()
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 	
-	//int location = glGetUniformLocation(program, "matrix");
-	//if (location == -1) std::cout << "no uniform location for u :D\n\n";
-
 	float delay_between_frames = 1.0f / 60.0f;
 
 	float dt = 0.0f;
-	std::chrono::time_point<std::chrono::steady_clock> time_point_begin;	/* = std::chrono::steady_clock::now()*/
+	std::chrono::time_point<std::chrono::steady_clock> time_point_begin;
 	std::chrono::time_point<std::chrono::steady_clock> time_point_end;
 	while (!glfwWindowShouldClose(wind))
 	{
@@ -122,23 +160,36 @@ int main()
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
+
 		if (dt >= delay_between_frames)
 		{
 			//call update()
 
-			dt = 0.0f;
+			dt -= delay_between_frames;
 		}
 
+
 		glBindVertexArray(vertex_array);
-		//glUniformMatrix4fv(location, 1, false, &matrix[0][0]);
 		ASSERT(!LEti::shader.set_uniform(matrix, "matrix"));
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glActiveTexture(GL_TEXTURE0);
+		int location = glGetUniformLocation(LEti::shader.get_program(), "input_texture");
+		ASSERT(location == -1);
+		glUniform1i(location, 0);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		int error;
+		do
+		{
+			error = glGetError();
+			if (error != GL_NO_ERROR) std::cout << error << "\n";
+		} while (error != GL_NO_ERROR);
 
 		glfwPollEvents();
 		glfwSwapBuffers(wind);
 		time_point_end = std::chrono::steady_clock::now();
 
-		std::chrono::duration<float> a(time_point_end - time_point_begin);
+		std::chrono::duration<float, std::ratio<1>> a(time_point_end - time_point_begin);
 		dt += a.count();
 	}
 

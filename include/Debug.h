@@ -27,9 +27,7 @@
 			#undef ASSERT
 		#endif
 		#define ASSERT(condition) if(condition) { int a = 1; a /= 0; } 1 == 1
-
 	#else
-
 		#ifdef DEBUG_FUNC_NOARG
 			#undef DEBUG_FUNC_NOARG
 		#endif

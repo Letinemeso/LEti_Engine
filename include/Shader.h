@@ -37,10 +37,12 @@ namespace LEti {
 	public:
 		void init_shader(const char* _v_path, const char* f_path);
 
-		bool operator()();
+		bool operator()() const;
 
 		bool set_uniform(glm::mat4x4& _matrix, const char* _uniform_name);
 
+
+		unsigned int get_program() const { return program; }	//TODO: remove this 
 	};
 
 	static Shader shader;
