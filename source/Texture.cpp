@@ -1,21 +1,17 @@
 #include "../include/Texture.h"
 
+#include "../OpenGL/stb_image.h"
+
 using namespace LEti;
 
-Texture::Texture(const char* _path, float*& _tex_coords, unsigned int _tex_coords_count)
+Texture::Texture(const char* _path, float* _tex_coords, unsigned int _tex_coords_count)
 {
 	init(_path, _tex_coords, _tex_coords_count);
 }
 
-Texture::~Texture()
-{
-	delete[] tex_coords;
-	glDeleteTextures(1, &texture_object);
-}
 
 
-
-void Texture::init(const char* _path, float*& _tex_coords, unsigned int _tex_coords_count)
+void Texture::init(const char* _path, float* _tex_coords, unsigned int _tex_coords_count)
 {
 	set_picture(_path);
 	set_texture_coords(_tex_coords, _tex_coords_count);
@@ -43,6 +39,8 @@ void Texture::set_picture(const char* _path)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
+	stbi_image_free(buffer);
+
 	picture_valid = true;
 }
 
@@ -54,7 +52,7 @@ void Texture::set_texture_coords(float* _tex_coords, unsigned int _tex_coords_co
 	tex_coords = nullptr;
 	tex_coords_count = 0;
 
-	ASSERT(!_tex_coords);
+	ASSERT(_tex_coords == nullptr);
 
 	tex_coords_count = _tex_coords_count;
 	tex_coords = new float[tex_coords_count];
@@ -63,4 +61,18 @@ void Texture::set_texture_coords(float* _tex_coords, unsigned int _tex_coords_co
 		tex_coords[i] = _tex_coords[i];
 
 	tex_coords_valid = true;
+}
+
+//41920
+
+Texture::~Texture()
+{
+	delete[] tex_coords;
+	glDeleteTextures(1, &texture_object);
+}
+
+
+void Texture::use() const
+{
+	glBindTexture(GL_TEXTURE_2D, texture_object);
 }

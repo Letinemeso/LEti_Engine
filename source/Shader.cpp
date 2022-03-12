@@ -22,7 +22,7 @@ void Shader::get_shader_source(const char* _path, char*& _result_buffer, unsigne
 	file.close();
 }
 
-bool Shader::shader_debug(unsigned int _shader)
+void Shader::shader_debug(unsigned int _shader)
 {
 	int result = 0;
 	glGetShaderiv(_shader, GL_COMPILE_STATUS, &result);
@@ -34,12 +34,12 @@ bool Shader::shader_debug(unsigned int _shader)
 		glGetShaderInfoLog(_shader, 2048, &size, log);
 		std::cout << log << "\n";
 		valid = false;
-		return false;
+		
+		ASSERT(true);
 	}
-	return true;
 }
 
-bool Shader::program_debug(unsigned int _program)
+void Shader::program_debug(unsigned int _program)
 {
 	int result = 0;
 	glGetProgramiv(_program, GL_LINK_STATUS, &result);
@@ -51,9 +51,9 @@ bool Shader::program_debug(unsigned int _program)
 		glGetProgramInfoLog(_program, 2048, &size, log);
 		std::cout << log << "\n";
 		valid = false;
-		return false;
+		
+		ASSERT(true);
 	}
-	return true;
 }
 
 
@@ -90,12 +90,12 @@ void Shader::init_shader(const char* _v_path, const char* _f_path)
 	get_shader_source(_v_path, buffer, &size);
 	glShaderSource(vertex_shader, 1, &buffer, 0);
 	glCompileShader(vertex_shader);
-	ASSERT(DEBUG_FUNC_1ARG(shader_debug, vertex_shader) == false);
+	DEBUG_FUNC_1ARG(shader_debug, vertex_shader);
 	delete buffer;
 	get_shader_source(_f_path, buffer, &size);
 	glShaderSource(fragment_shader, 1, &buffer, 0);
 	glCompileShader(fragment_shader);
-	ASSERT(DEBUG_FUNC_1ARG(shader_debug, fragment_shader) == false);
+	DEBUG_FUNC_1ARG(shader_debug, fragment_shader);
 	delete buffer;
 
 
@@ -109,20 +109,39 @@ void Shader::init_shader(const char* _v_path, const char* _f_path)
 	initialized = true;
 }
 
-
-
-bool Shader::operator()() const
+void Shader::set_matrix_uniform_name(const char* _name)
 {
-	return valid;
+	matrix_uniform_name = _name;
+}
+
+void Shader::set_texture_uniform_name(const char* _name)
+{
+	texture_uniform_name = _name;
 }
 
 
 
-bool Shader::set_uniform(glm::mat4x4& _matrix, const char* _uniform_name)
+bool Shader::operator()() const
 {
-	int location = glGetUniformLocation(program, _uniform_name);
-	if (location == -1) return false;
+	return valid && initialized;
+}
+
+
+
+void Shader::set_matrix(glm::mat4x4& _matrix)
+{
+	int location = glGetUniformLocation(program, matrix_uniform_name.c_str());
+	ASSERT(location == -1);
 
 	glUniformMatrix4fv(location, 1, false, &_matrix[0][0]);
-	return true;
+}
+
+void Shader::set_texture(LEti::Texture& _texture)
+{
+	int location = glGetUniformLocation(program, texture_uniform_name.c_str());
+	ASSERT(location == -1);
+	
+	glUniform1i(location, 0);
+
+	_texture.use();
 }

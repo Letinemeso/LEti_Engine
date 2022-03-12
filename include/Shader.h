@@ -2,12 +2,14 @@
 #define __SHADER
 
 #include "../include/Debug.h"
+#include "../include/Texture.h"
 
 #include "../OpenGL/GLEW/include/glew.h"
 #include "../OpenGL/GLM/mat4x4.hpp"
 
 #include <iostream>
 #include <fstream>
+#include <string>
 
 
 namespace LEti {
@@ -23,9 +25,12 @@ namespace LEti {
 		unsigned int program = 0;
 
 	private:
+		std::string matrix_uniform_name, texture_uniform_name;
+
+	private:
 		void get_shader_source(const char* _path, char*& _buffer, unsigned int* _size);
-		bool shader_debug(unsigned int _shader);
-		bool program_debug(unsigned int _program);
+		void shader_debug(unsigned int _shader);
+		void program_debug(unsigned int _program);
 
 	public:
 		Shader();
@@ -38,11 +43,13 @@ namespace LEti {
 
 	public:
 		void init_shader(const char* _v_path, const char* f_path);
+		void set_matrix_uniform_name(const char* _name);
+		void set_texture_uniform_name(const char* _name);
 
 		bool operator()() const;
 
-		bool set_uniform(glm::mat4x4& _matrix, const char* _uniform_name);
-
+		void set_matrix(glm::mat4x4& _matrix);
+		void set_texture(LEti::Texture& _texture);
 
 		unsigned int get_program() const { return program; }	//TODO: remove this 
 	};

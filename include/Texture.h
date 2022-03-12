@@ -2,13 +2,16 @@
 #define __TEXTURE
 
 #include "../include/Debug.h"
-#include "../include/Shader.h"
+//#include "../include/Shader.h"
 
 #include "../OpenGL/GLEW/include/glew.h"
-#include "../OpenGL/stb_image.h"
+
+//#ifndef STB_IMAGE_INCLUDED
+//#define STB_IMAGE_INCLUDED
+//#include "../OpenGL/stb_image.h"
+//#endif
 
 #include <fstream>
-#include <list>
 
 namespace LEti {
 
@@ -24,17 +27,18 @@ namespace LEti {
 		unsigned int tex_coords_count = 0;
 
 	public:
-		Texture(const char* _path, float*& _tex_coords, unsigned int _tex_coords_count);
+		Texture(const char* _path, float* _tex_coords, unsigned int _tex_coords_count);
+
+		void init(const char* _path, float* _tex_coords, unsigned int _tex_coords_count);
+		void set_picture(const char* _path);
+		void set_texture_coords(float* _tex_coords, unsigned int _tex_coords_count);
 
 		~Texture();
 
 	public:
-		void init(const char* _path, float*& _tex_coords, unsigned int _tex_coords_count);
-		void set_picture(const char* _path);
-		void set_texture_coords(float* _tex_coords, unsigned int _tex_coords_count);
+		void use() const;
 
-
-		float* const get_tc()
+		const float* const get_tc()	//TODO: remove this
 		{
 			return tex_coords;
 		}

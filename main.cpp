@@ -4,9 +4,10 @@
 #include "OpenGL/GLFW/include/glfw3.h"
 #include "OpenGL/GLM/mat4x4.hpp"
 
-#include "OpenGL/stb_image.h"
+//#include "OpenGL/stb_image.h"
 
 #include "include/Shader.h"
+#include "include/Texture.h"
 
 #include <string>
 #include <iostream>
@@ -63,6 +64,8 @@ int main()
 
 	LEti::shader.init_shader("resources\\vertex_shader.shader", "resources\\fragment_shader.shader");
 	ASSERT(!LEti::shader());
+	LEti::shader.set_matrix_uniform_name("matrix");
+	LEti::shader.set_texture_uniform_name("input_texture");
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -88,54 +91,20 @@ int main()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
 
-	//color buffer
-	/*float colors[12] =
-	{
-		0.6f, 0.0f, 1.0f, 1.0f,
-		0.6f, 0.0f, 1.0f, 1.0f,
-		0.6f, 0.0f, 1.0f, 1.0f
-	};
-
-	glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12 + 1, colors, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);*/
-
-	//texture stuff
-	const char* texture_name = "plug.png";
-
-	std::ifstream test(texture_name, std::ios::in);
-	ASSERT(!test.is_open());
-	test.close();
-
-	stbi_set_flip_vertically_on_load(true);
-	int size_x, size_y;
-	unsigned char* texture_buffer = stbi_load("plug.png", &size_x, &size_y, nullptr, 4);
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size_x, size_y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_buffer);
-	glActiveTexture(GL_TEXTURE0);
-
-	int location = glGetUniformLocation(LEti::shader.get_program(), "input_texture");
-	ASSERT(location == -1);
-	glUniform1i(location, 0);
-
-	//texture coordinates stuff
 	float texture_coords[6] =
 	{
 		0.0f, 1.0f,
 		0.0f, 0.0f,
 		1.0f, 1.0f
 	};
+	//texture stuff
+	const char* texture_name = "plug.png";
+
+	LEti::Texture texture(texture_name, texture_coords, 6);
+
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 + 1, texture_coords, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 + 1, /*texture_coords*/texture.get_tc(), GL_STATIC_DRAW);
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
 
@@ -170,12 +139,15 @@ int main()
 
 
 		glBindVertexArray(vertex_array);
-		ASSERT(!LEti::shader.set_uniform(matrix, "matrix"));
-		glBindTexture(GL_TEXTURE_2D, texture);
+		LEti::shader.set_matrix(matrix);
+
+		/*glBindTexture(GL_TEXTURE_2D, texture);
 		glActiveTexture(GL_TEXTURE0);
 		int location = glGetUniformLocation(LEti::shader.get_program(), "input_texture");
 		ASSERT(location == -1);
-		glUniform1i(location, 0);
+		glUniform1i(location, 0);*/
+		LEti::shader.set_texture(texture);
+
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		int error;
