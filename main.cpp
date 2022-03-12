@@ -67,31 +67,6 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//texture stuff
-	const char* texture_name = "plug.png";
-
-	std::ifstream test(texture_name, std::ios::in);
-	ASSERT(!test.is_open());
-	test.close();
-
-	stbi_set_flip_vertically_on_load(true);
-	int size_x, size_y;
-	unsigned char* texture_buffer = stbi_load("plug.png", &size_x, &size_y, nullptr, 4);
-
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size_x, size_y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_buffer);
-	glActiveTexture(GL_TEXTURE0);
-
-	int location = glGetUniformLocation(LEti::shader.get_program(), "input_texture");
-	ASSERT(location == -1);
-	glUniform1i(location, 0);
-
 	//vertex arrays stuff
 	unsigned int vertex_array;
 	glGenVertexArrays(1, &vertex_array);
@@ -125,6 +100,31 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12 + 1, colors, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);*/
+
+	//texture stuff
+	const char* texture_name = "plug.png";
+
+	std::ifstream test(texture_name, std::ios::in);
+	ASSERT(!test.is_open());
+	test.close();
+
+	stbi_set_flip_vertically_on_load(true);
+	int size_x, size_y;
+	unsigned char* texture_buffer = stbi_load("plug.png", &size_x, &size_y, nullptr, 4);
+
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size_x, size_y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_buffer);
+	glActiveTexture(GL_TEXTURE0);
+
+	int location = glGetUniformLocation(LEti::shader.get_program(), "input_texture");
+	ASSERT(location == -1);
+	glUniform1i(location, 0);
 
 	//texture coordinates stuff
 	float texture_coords[6] =

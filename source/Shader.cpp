@@ -63,6 +63,15 @@ Shader::Shader()
 
 }
 
+Shader::~Shader()
+{
+	glDeleteProgram(program);
+	glDeleteShader(vertex_shader);
+	glDeleteShader(fragment_shader);
+}
+
+
+
 void Shader::init_shader(const char* _v_path, const char* _f_path)
 {
 	if (initialized) return;

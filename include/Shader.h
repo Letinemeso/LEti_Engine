@@ -34,6 +34,8 @@ namespace LEti {
 		Shader(const Shader&) = delete;
 		void operator=(const Shader&) = delete;
 
+		~Shader();
+
 	public:
 		void init_shader(const char* _v_path, const char* f_path);
 
