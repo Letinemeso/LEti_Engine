@@ -1,13 +1,13 @@
 #ifndef DEBUG_FILE
 #define DEBUG_FILE
 
-#ifdef DEBUG
-	#undef DEBUG
+#ifdef LETI_DEBUG 
+	#undef LETI_DEBUG 
 #endif
-#define DEBUG true
+#define LETI_DEBUG true
 
-#ifdef DEBUG
-	#if DEBUG == true
+#ifdef LETI_DEBUG 
+	#if LETI_DEBUG == true
 		#ifdef DEBUG_FUNC_NOARG
 			#undef DEBUG_FUNC_NOARG
 		#endif
@@ -27,7 +27,7 @@
 			#undef ASSERT
 		#endif
 		#define ASSERT(condition) if(condition) { int a = 1; a /= 0; } 1 == 1
-	#else
+	#else	//LETI_DEBUG == true
 		#ifdef DEBUG_FUNC_NOARG
 			#undef DEBUG_FUNC_NOARG
 		#endif
@@ -47,7 +47,7 @@
 			#undef ASSERT
 		#endif
 		#define ASSERT(condition)
-	#endif
-#endif
+	#endif	//LETI_DEBUG == true
+#endif	//LETI_DEBUG 
 
-#endif
+#endif	//DEBUG_FILE

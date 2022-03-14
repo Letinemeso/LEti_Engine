@@ -1,14 +1,13 @@
-#include "include/Debug.h"
+#include "Debug.h"
 
 #include "OpenGL/GLEW/include/glew.h"
 #include "OpenGL/GLFW/include/glfw3.h"
 #include "OpenGL/GLM/mat4x4.hpp"
 
-//#include "OpenGL/stb_image.h"
-
 #include "include/Shader.h"
 #include "include/Texture.h"
 #include "include/Object.h"
+#include "include/Vertices.h"
 
 #include <string>
 #include <iostream>
@@ -19,51 +18,11 @@
 
 int main()
 {
-	ASSERT(!glfwInit());
+	bool glfw_init_result = glfwInit();
 	GLFWwindow* wind = glfwCreateWindow(600, 600, "airstream", 0, 0);
 	glfwMakeContextCurrent(wind);
-	ASSERT(glewInit());
-
-	//shader stuff
-	/*const char* v_shader_source =
-		"#version 330 core\n"
-		"layout (location = 0) in vec4 pos;\n"
-		"layout (location = 1) in vec4 in_color;\n"
-		"uniform mat4 matrix;\n"
-		"out vec4 v_out_color;\n"
-		"void main()\n"
-		"{\n"
-		"	v_out_color = in_color;\n"
-		"	gl_Position = matrix * pos;\n"
-		"}";
-	const char* f_shader_source =
-		"#version 330 core\n"
-		"in vec4 v_out_color;\n"
-		"out vec4 result_color;\n"
-		"void main()\n"
-		"{\n"
-		"	result_color = v_out_color;\n"
-		"}";
-
-	unsigned int vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-	unsigned int fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	glShaderSource(vertex_shader, 1, &v_shader_source, 0);
-	glShaderSource(fragment_shader, 1, &f_shader_source, 0);
-
-	glCompileShader(vertex_shader);
-	glCompileShader(fragment_shader);
-
-	unsigned int program = glCreateProgram();
-
-	glAttachShader(program, vertex_shader);
-	glAttachShader(program, fragment_shader);
-
-	glLinkProgram(program);
-	glUseProgram(program);
-
-	int link_result = 0;
-	glGetProgramiv(program, GL_LINK_STATUS, &link_result);*/
+	bool glew_init_result = glewInit();	//returns false for some reason
+	//ASSERT(!glfw_init_result || !glew_init_result);
 
 	LEti::shader.init_shader("resources\\vertex_shader.shader", "resources\\fragment_shader.shader");
 	ASSERT(!LEti::shader());
@@ -77,23 +36,32 @@ int main()
 	unsigned int vertex_array;
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 
 	unsigned int buffer[2];
 	glGenBuffers(2, buffer);
 	
 	//vertex buffer
-	float coords[12] =
+	float coords[9] =
 	{
-		-0.5f, 0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, 0.0f, 1.0f,
-		0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, 0.5f,  0.0f,
+		-0.5f, -0.5f, 0.0f,
+		0.5f,  0.5f,  0.0f
 	};
 
+	LEti::Vertices vertices;
+	vertices.load(coords, 9);
+	for (unsigned int i = 0; i < 3; ++i)
+	{
+		for (unsigned int j=0; j<3; ++j)
+			std::cout << vertices[i][j] << "\t";
+		std::cout << "\n";
+	}
+
 	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12 + 1, coords, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 9 + 1, coords, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
 
 	float texture_coords[6] =
 	{
@@ -115,11 +83,11 @@ int main()
 
 	//ASS EXPERIMENT
 
-	float crds2[12] =
+	float crds2[9] =
 	{
-		0.0f, -1.0f, 0.0f, 1.0f,
-		1.0f, -1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f
+		0.0f, -1.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,
+		1.0f, 0.0f, 0.0f
 	};
 
 	unsigned int va2, buf2[2];
@@ -131,8 +99,8 @@ int main()
 	glGenBuffers(2, buf2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, buf2[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12 + 1, crds2, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 9 + 1, crds2, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
 
 	/*glBindBuffer(GL_ARRAY_BUFFER, buf2[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 + 1, texture.get_tc(), GL_STATIC_DRAW);

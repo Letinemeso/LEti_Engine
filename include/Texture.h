@@ -1,7 +1,7 @@
 #ifndef __TEXTURE
 #define __TEXTURE
 
-#include "../include/Debug.h"
+#include "../Debug.h"
 
 #include "../OpenGL/GLEW/include/glew.h"
 
