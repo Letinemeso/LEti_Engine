@@ -8,11 +8,14 @@
 
 #include "include/Shader.h"
 #include "include/Texture.h"
+#include "include/Object.h"
 
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <chrono>
+
+#include <thread>
 
 int main()
 {
@@ -89,6 +92,7 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12 + 1, coords, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
 
 	float texture_coords[6] =
@@ -103,10 +107,52 @@ int main()
 	LEti::Texture texture(texture_name, texture_coords, 6);
 
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 + 1, /*texture_coords*/texture.get_tc(), GL_STATIC_DRAW);
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
+	/*glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 + 1, texture.get_tc(), GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);*/
+	texture.setup_tex_coords_buffer(&buffer[1], 1);
+
+
+	//ASS EXPERIMENT
+
+	float crds2[12] =
+	{
+		0.0f, -1.0f, 0.0f, 1.0f,
+		1.0f, -1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f, 1.0f
+	};
+
+	unsigned int va2, buf2[2];
+	glGenVertexArrays(1, &va2);
+	glBindVertexArray(va2);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	glGenBuffers(2, buf2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, buf2[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12 + 1, crds2, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
+
+	/*glBindBuffer(GL_ARRAY_BUFFER, buf2[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 + 1, texture.get_tc(), GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);*/
+	texture.setup_tex_coords_buffer(&buf2[1], 1);
+
+
+
+	/*int a = 0;
+	std::cout << "ready to start search for memory leak\n";
+	std::cin >> a;
+	while (true)
+	{
+		LEti::Texture* temp = new LEti::Texture("plug.png", texture_coords, 6);
+		delete temp;
+		LEti::Shader* shader = new LEti::Shader();
+		shader->init_shader("resources\\vertex_shader.shader", "resources\\fragment_shader.shader");
+		delete shader;
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}*/
 
 
 	//matrix stuff
@@ -147,7 +193,10 @@ int main()
 		ASSERT(location == -1);
 		glUniform1i(location, 0);*/
 		LEti::shader.set_texture(texture);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
+		glBindVertexArray(va2);
+		LEti::shader.set_texture(texture);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		int error;

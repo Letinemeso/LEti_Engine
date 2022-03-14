@@ -46,7 +46,7 @@
 		#ifdef ASSERT
 			#undef ASSERT
 		#endif
-		#define ASSERT(condition) condition
+		#define ASSERT(condition)
 	#endif
 #endif
 

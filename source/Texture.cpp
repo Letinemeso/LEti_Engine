@@ -4,6 +4,12 @@
 
 using namespace LEti;
 
+Texture::Texture()
+{
+	picture_valid = false;
+	tex_coords_valid = false;
+}
+
 Texture::Texture(const char* _path, float* _tex_coords, unsigned int _tex_coords_count)
 {
 	init(_path, _tex_coords, _tex_coords_count);
@@ -63,7 +69,20 @@ void Texture::set_texture_coords(float* _tex_coords, unsigned int _tex_coords_co
 	tex_coords_valid = true;
 }
 
-//41920
+void Texture::setup_tex_coords_buffer(unsigned int* _buffer, unsigned int _attrib_index)
+{
+	ASSERT(!tex_coords_valid);
+
+	unsigned int& buffer = *_buffer;
+
+	glDeleteBuffers(1, &buffer);
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * tex_coords_count + 1, tex_coords, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
+}
+
+
 
 Texture::~Texture()
 {
