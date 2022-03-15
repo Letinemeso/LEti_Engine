@@ -79,7 +79,7 @@ void Texture::setup_tex_coords_buffer(unsigned int* _buffer, unsigned int _attri
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * tex_coords_count + 1, tex_coords, GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
+	glVertexAttribPointer(_attrib_index, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
 }
 
 

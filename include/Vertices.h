@@ -41,8 +41,11 @@ namespace LEti {
 		void load(float* _coords, unsigned int _count);
 		void load(const char* _path);
 
+		void setup_vertex_buffer(unsigned int* _buffer, unsigned int _attrib_index);
+
 	public:
 		const Row& operator[](unsigned int _row) const;
+		unsigned int get_vertices_count() const;
 
 	};
 

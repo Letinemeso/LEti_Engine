@@ -1,7 +1,9 @@
 #ifndef __OBJECT
 #define __OBJECT
 
+#include "../include/Shader.h"
 #include "../include/Texture.h"
+#include "../include/Vertices.h"
 
 
 namespace LEti {
@@ -13,6 +15,7 @@ namespace LEti {
 		unsigned int buffer[2] = { 0 };
 
 		LEti::Texture texture;
+		LEti::Vertices vertices;
 
 	public:
 		Object();

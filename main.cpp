@@ -33,52 +33,72 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//vertex arrays stuff
-	unsigned int vertex_array;
+	/*unsigned int vertex_array;
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
 	unsigned int buffer[2];
-	glGenBuffers(2, buffer);
+	glGenBuffers(2, buffer);*/
 	
 	//vertex buffer
-	float coords[9] =
+	/*float coords[9] =
 	{
 		-0.5f, 0.5f,  0.0f,
 		-0.5f, -0.5f, 0.0f,
 		0.5f,  0.5f,  0.0f
+	};*/
+	float coords[18] =
+	{
+		-0.5f, 0.5f,  0.0f,
+		-0.5f, -0.5f, 0.0f,
+		0.5f,  0.5f,  0.0f,
+		
+		0.5f, 0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f
 	};
 
-	LEti::Vertices vertices;
-	vertices.load(coords, 9);
-	for (unsigned int i = 0; i < 3; ++i)
+	/*LEti::Vertices vertices;
+	vertices.load(coords, 18);
+	for (unsigned int i = 0; i < 6; ++i)
 	{
 		for (unsigned int j=0; j<3; ++j)
 			std::cout << vertices[i][j] << "\t";
 		std::cout << "\n";
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 9 + 1, coords, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
+	vertices.setup_vertex_buffer(&buffer[0], 0);*/
 
-	float texture_coords[6] =
+	//glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
+	////glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 9 + 1, coords, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 18 + 1, coords, GL_STATIC_DRAW);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
+
+	float texture_coords[12] =
 	{
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 1.0f,
+
 		0.0f, 1.0f,
 		0.0f, 0.0f,
 		1.0f, 1.0f
 	};
+
+
 	//texture stuff
 	const char* texture_name = "plug.png";
 
-	LEti::Texture texture(texture_name, texture_coords, 6);
+	LEti::Texture texture(texture_name, texture_coords, 12);
+	//LEti::Texture texture(texture_name, texture_coords, 6);
 
 
 	/*glBindBuffer(GL_ARRAY_BUFFER, buffer[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 + 1, texture.get_tc(), GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);*/
-	texture.setup_tex_coords_buffer(&buffer[1], 1);
+	//texture.setup_tex_coords_buffer(&buffer[1], 1);
 
 
 	//ASS EXPERIMENT
@@ -122,6 +142,9 @@ int main()
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}*/
 
+	LEti::Object object;
+	object.init_texture(texture_name, texture_coords, 12);
+	object.init_vertices(coords, 18);
 
 	//matrix stuff
 	glm::mat4x4 matrix
@@ -152,16 +175,18 @@ int main()
 		}
 
 
-		glBindVertexArray(vertex_array);
+		//glBindVertexArray(vertex_array);
 		LEti::shader.set_matrix(matrix);
+
+		object.draw();
 
 		/*glBindTexture(GL_TEXTURE_2D, texture);
 		glActiveTexture(GL_TEXTURE0);
 		int location = glGetUniformLocation(LEti::shader.get_program(), "input_texture");
 		ASSERT(location == -1);
 		glUniform1i(location, 0);*/
-		LEti::shader.set_texture(texture);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		/*LEti::shader.set_texture(texture);
+		glDrawArrays(GL_TRIANGLES, 0, 6);*/
 
 		glBindVertexArray(va2);
 		LEti::shader.set_texture(texture);
@@ -171,7 +196,7 @@ int main()
 		do
 		{
 			error = glGetError();
-			if (error != GL_NO_ERROR) std::cout << error << "\n";
+			if (error != GL_NO_ERROR) std::cout << "error: " << error << "\n";
 		} while (error != GL_NO_ERROR);
 
 		glfwPollEvents();

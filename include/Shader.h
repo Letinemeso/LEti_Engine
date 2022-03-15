@@ -54,7 +54,7 @@ namespace LEti {
 		unsigned int get_program() const { return program; }	//TODO: remove this 
 	};
 
-	static Shader shader;
+	Shader shader;
 
 }	//LEti
 
