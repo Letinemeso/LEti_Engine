@@ -40,6 +40,6 @@ void Object::draw()
 {
 	glBindVertexArray(vertex_array);
 	//texture.use();
-	LEti::shader.set_texture(texture);
+	LEti::Shader::set_texture(texture);
 	glDrawArrays(GL_TRIANGLES, 0, vertices.get_vertices_count());
 }

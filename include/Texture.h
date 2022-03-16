@@ -39,10 +39,6 @@ namespace LEti {
 	public:
 		void use() const;
 
-		const float* const get_tc()	//TODO: remove this
-		{
-			return tex_coords;
-		}
 	};
 
 }

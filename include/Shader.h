@@ -17,23 +17,23 @@ namespace LEti {
 	class Shader
 	{
 	private:
-		bool initialized = false;
-		bool valid = true;
+		static bool initialized;
+		static bool valid;
 
 	private:
-		unsigned int vertex_shader = 0, fragment_shader = 0;
-		unsigned int program = 0;
+		static unsigned int vertex_shader, fragment_shader;
+		static unsigned int program;
 
 	private:
-		std::string matrix_uniform_name, texture_uniform_name;
+		static std::string matrix_uniform_name, texture_uniform_name;
 
 	private:
-		void get_shader_source(const char* _path, char*& _buffer, unsigned int* _size);
-		void shader_debug(unsigned int _shader);
-		void program_debug(unsigned int _program);
+		static void get_shader_source(const char* _path, char*& _buffer, unsigned int* _size);
+		static void shader_debug(unsigned int _shader);
+		static void program_debug(unsigned int _program);
 
 	public:
-		Shader();
+		Shader() = delete;
 		Shader(Shader&&) = delete;
 		void operator=(Shader&&) = delete;
 		Shader(const Shader&) = delete;
@@ -42,19 +42,16 @@ namespace LEti {
 		~Shader();
 
 	public:
-		void init_shader(const char* _v_path, const char* f_path);
-		void set_matrix_uniform_name(const char* _name);
-		void set_texture_uniform_name(const char* _name);
+		static void init_shader(const char* _v_path, const char* f_path);
+		static void set_matrix_uniform_name(const char* _name);
+		static void set_texture_uniform_name(const char* _name);
 
-		bool operator()() const;
+		//static bool operator()();
+		static bool is_valid();
 
-		void set_matrix(glm::mat4x4& _matrix);
-		void set_texture(LEti::Texture& _texture);
-
-		unsigned int get_program() const { return program; }	//TODO: remove this 
+		static void set_matrix(glm::mat4x4& _matrix);
+		static void set_texture(LEti::Texture& _texture);
 	};
-
-	Shader shader;
 
 }	//LEti
 

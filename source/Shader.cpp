@@ -2,6 +2,16 @@
 
 using namespace LEti;
 
+
+bool Shader::initialized = false;
+bool Shader::valid = true;
+
+std::string Shader::matrix_uniform_name, Shader::texture_uniform_name;
+
+unsigned int Shader::vertex_shader = 0, Shader::fragment_shader = 0;
+unsigned int Shader::program = 0;
+
+
 void Shader::get_shader_source(const char* _path, char*& _result_buffer, unsigned int* _result_size)
 {
 	std::ifstream file(_path, std::ios::in);
@@ -57,11 +67,6 @@ void Shader::program_debug(unsigned int _program)
 }
 
 
-
-Shader::Shader()
-{
-
-}
 
 Shader::~Shader()
 {
@@ -121,9 +126,14 @@ void Shader::set_texture_uniform_name(const char* _name)
 
 
 
-bool Shader::operator()() const
+//bool Shader::operator()() const
+//{
+//	return valid && initialized;
+//}
+
+bool Shader::is_valid()
 {
-	return valid && initialized;
+	return initialized && valid;
 }
 
 
