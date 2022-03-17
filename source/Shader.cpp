@@ -146,7 +146,7 @@ void Shader::set_matrix(glm::mat4x4& _matrix)
 	glUniformMatrix4fv(location, 1, false, &_matrix[0][0]);
 }
 
-void Shader::set_texture(LEti::Texture& _texture)
+void Shader::set_texture(const LEti::Texture& _texture)
 {
 	int location = glGetUniformLocation(program, texture_uniform_name.c_str());
 	ASSERT(location == -1);

@@ -50,7 +50,7 @@ namespace LEti {
 		static bool is_valid();
 
 		static void set_matrix(glm::mat4x4& _matrix);
-		static void set_texture(LEti::Texture& _texture);
+		static void set_texture(const LEti::Texture& _texture);
 	};
 
 }	//LEti

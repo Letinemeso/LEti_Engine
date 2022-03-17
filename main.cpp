@@ -31,6 +31,7 @@ int main()
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 	
 	//vertex buffer
 	float coords[18] =
@@ -55,13 +56,7 @@ int main()
 		1.0f, 1.0f
 	};
 
-
-	//texture stuff
 	const char* texture_name = "plug.png";
-
-	//LEti::Texture texture(texture_name, texture_coords, 12);
-
-	//ASS EXPERIMENT
 
 	float crds2[9] =
 	{
@@ -69,20 +64,6 @@ int main()
 		1.0f, -1.0f, 0.0f,
 		1.0f, 0.0f, 0.0f
 	};
-
-	/*unsigned int va2, buf2[2];
-	glGenVertexArrays(1, &va2);
-	glBindVertexArray(va2);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	glGenBuffers(2, buf2);
-
-	glBindBuffer(GL_ARRAY_BUFFER, buf2[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 9 + 1, crds2, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);*/
-
-	//texture.setup_tex_coords_buffer(&buf2[1], 1);
 
 	LEti::Object object;
 	object.init_texture(texture_name, texture_coords, 12);
@@ -100,9 +81,15 @@ int main()
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
-	
-	float delay_between_frames = 1.0f / 60.0f;
 
+	float scale = 1.0f;
+	
+	object.set_pos(0.0f, 0.0f, -0.1f);
+	object.set_rotation_data(0.0f, 0.0f, 1.0f, 0.0f);
+	object2.set_rotation_data(0.0f, 0.0f, 1.0f, 0.0f);
+	object2.set_overall_scale(1.0f);
+
+	float delay_between_frames = 1.0f / 60.0f;
 	float dt = 0.0f;
 	std::chrono::time_point<std::chrono::steady_clock> time_point_begin;
 	std::chrono::time_point<std::chrono::steady_clock> time_point_end;
@@ -110,17 +97,32 @@ int main()
 	{
 		time_point_begin = std::chrono::steady_clock::now();
 
-		glClear(GL_COLOR_BUFFER_BIT);
-
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if (dt >= delay_between_frames)
 		{
 			//call update()
+			if (glfwGetKey(wind, GLFW_KEY_UP) == GLFW_PRESS)
+			{
+				//object.move(0.0f, 0.0f, -0.05f);
+				(scale + 0.01f >= 1.0f ? scale = 1.0f : scale += 0.01f);
+			}
+			if (glfwGetKey(wind, GLFW_KEY_DOWN) == GLFW_PRESS)
+			{
+				//object.move(0.0f, 0.0f, 0.05f);
+				(scale - 0.01f <= 0.2f ? scale = 0.2f : scale -= 0.01f);
+			}
+
+			object.set_overall_scale(scale);
+			object2.set_overall_scale(scale);
+
+			object.rotate(6.28318f / (60.0f * 4.0f));
+			object2.rotate(-6.28318f / (60.0f * 4.0f));
 
 			dt -= delay_between_frames;
 		}
 
-		LEti::Shader::set_matrix(matrix);
+		//LEti::Shader::set_matrix(matrix);
 
 		object.draw();
 		object2.draw();
