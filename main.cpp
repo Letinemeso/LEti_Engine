@@ -82,6 +82,8 @@ int main()
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
+
+
 	float scale = 1.0f;
 	
 	object.set_pos(0.0f, 0.0f, -0.1f);

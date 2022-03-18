@@ -68,15 +68,6 @@ void Shader::program_debug(unsigned int _program)
 
 
 
-Shader::~Shader()
-{
-	glDeleteProgram(program);
-	glDeleteShader(vertex_shader);
-	glDeleteShader(fragment_shader);
-}
-
-
-
 void Shader::init_shader(const char* _v_path, const char* _f_path)
 {
 	if (initialized) return;
@@ -125,11 +116,6 @@ void Shader::set_texture_uniform_name(const char* _name)
 }
 
 
-
-//bool Shader::operator()() const
-//{
-//	return valid && initialized;
-//}
 
 bool Shader::is_valid()
 {

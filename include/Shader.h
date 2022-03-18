@@ -39,14 +39,11 @@ namespace LEti {
 		Shader(const Shader&) = delete;
 		void operator=(const Shader&) = delete;
 
-		~Shader();
-
 	public:
 		static void init_shader(const char* _v_path, const char* f_path);
 		static void set_matrix_uniform_name(const char* _name);
 		static void set_texture_uniform_name(const char* _name);
 
-		//static bool operator()();
 		static bool is_valid();
 
 		static void set_matrix(glm::mat4x4& _matrix);
