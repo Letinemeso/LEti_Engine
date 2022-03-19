@@ -6,7 +6,7 @@ using namespace LEti;
 bool Shader::initialized = false;
 bool Shader::valid = true;
 
-std::string Shader::matrix_uniform_name, Shader::texture_uniform_name;
+std::string Shader::projection_matrix_uniform_name, Shader::transform_matrix_uniform_name, Shader::texture_uniform_name;
 
 unsigned int Shader::vertex_shader = 0, Shader::fragment_shader = 0;
 unsigned int Shader::program = 0;
@@ -105,9 +105,14 @@ void Shader::init_shader(const char* _v_path, const char* _f_path)
 	initialized = true;
 }
 
-void Shader::set_matrix_uniform_name(const char* _name)
+void Shader::set_projection_matrix_uniform_name(const char* _name)
 {
-	matrix_uniform_name = _name;
+	projection_matrix_uniform_name = _name;
+}
+
+void Shader::set_transform_matrix_uniform_name(const char* _name)
+{
+	transform_matrix_uniform_name = _name;
 }
 
 void Shader::set_texture_uniform_name(const char* _name)
@@ -124,9 +129,17 @@ bool Shader::is_valid()
 
 
 
-void Shader::set_matrix(glm::mat4x4& _matrix)
+void Shader::set_projection_matrix(glm::mat4x4& _matrix)
 {
-	int location = glGetUniformLocation(program, matrix_uniform_name.c_str());
+	int location = glGetUniformLocation(program, projection_matrix_uniform_name.c_str());
+	ASSERT(location == -1);
+
+	glUniformMatrix4fv(location, 1, false, &_matrix[0][0]);
+}
+
+void Shader::set_transform_matrix(glm::mat4x4& _matrix)
+{
+	int location = glGetUniformLocation(program, transform_matrix_uniform_name.c_str());
 	ASSERT(location == -1);
 
 	glUniformMatrix4fv(location, 1, false, &_matrix[0][0]);

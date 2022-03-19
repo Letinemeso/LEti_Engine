@@ -25,7 +25,7 @@ namespace LEti {
 		static unsigned int program;
 
 	private:
-		static std::string matrix_uniform_name, texture_uniform_name;
+		static std::string projection_matrix_uniform_name, transform_matrix_uniform_name, texture_uniform_name;	//TODO: store not strings but find locations imidiatly after setting name
 
 	private:
 		static void get_shader_source(const char* _path, char*& _buffer, unsigned int* _size);
@@ -41,12 +41,14 @@ namespace LEti {
 
 	public:
 		static void init_shader(const char* _v_path, const char* f_path);
-		static void set_matrix_uniform_name(const char* _name);
+		static void set_projection_matrix_uniform_name(const char* _name);
+		static void set_transform_matrix_uniform_name(const char* _name);
 		static void set_texture_uniform_name(const char* _name);
 
 		static bool is_valid();
 
-		static void set_matrix(glm::mat4x4& _matrix);
+		static void set_projection_matrix(glm::mat4x4& _matrix);
+		static void set_transform_matrix(glm::mat4x4& _matrix);
 		static void set_texture(const LEti::Texture& _texture);
 	};
 

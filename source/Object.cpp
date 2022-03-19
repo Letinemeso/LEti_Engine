@@ -60,7 +60,7 @@ void Object::init_vertices(float* _coords, unsigned int _coords_count)
 void Object::draw() const
 {
 	glm::mat4x4 result_matrix = translation_matrix * rotation_matrix * scale_matrix;
-	LEti::Shader::set_matrix(result_matrix);
+	LEti::Shader::set_transform_matrix(result_matrix);
 
 	glBindVertexArray(vertex_array);
 	
