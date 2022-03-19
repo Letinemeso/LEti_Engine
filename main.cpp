@@ -8,6 +8,7 @@
 #include "include/Texture.h"
 #include "include/Object.h"
 #include "include/Vertices.h"
+#include "include/Event_Controller.h"
 
 #include <string>
 #include <iostream>
@@ -16,13 +17,11 @@
 
 #include <thread>
 
+using LEC = LEti::Event_Controller;
+
 int main()
 {
-	bool glfw_init_result = glfwInit();
-	GLFWwindow* wind = glfwCreateWindow(600, 600, "airstream", 0, 0);
-	glfwMakeContextCurrent(wind);
-	bool glew_init_result = glewInit();	//returns false for some reason
-	//ASSERT(!glfw_init_result || !glew_init_result);
+	LEti::Event_Controller::init_and_create_window(600, 600, "engine-test");
 
 	LEti::Shader::init_shader("resources\\vertex_shader.shader", "resources\\fragment_shader.shader");
 	ASSERT(!LEti::Shader::is_valid());
@@ -82,7 +81,7 @@ int main()
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
-
+	unsigned int current_rotation_state = 0;
 
 	float scale = 1.0f;
 	
@@ -91,40 +90,44 @@ int main()
 	object2.set_rotation_data(0.0f, 0.0f, 1.0f, 0.0f);
 	object2.set_overall_scale(1.0f);
 
-	float delay_between_frames = 1.0f / 60.0f;
-	float dt = 0.0f;
-	std::chrono::time_point<std::chrono::steady_clock> time_point_begin;
-	std::chrono::time_point<std::chrono::steady_clock> time_point_end;
-	while (!glfwWindowShouldClose(wind))
+	while (!LEti::Event_Controller::window_should_close())
 	{
-		time_point_begin = std::chrono::steady_clock::now();
+		LEti::Event_Controller::update();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		if (dt >= delay_between_frames)
+		for(unsigned int i=0; i<LEti::Event_Controller::get_times_to_update(); ++i)
 		{
 			//call update()
-			if (glfwGetKey(wind, GLFW_KEY_UP) == GLFW_PRESS)
+			if (LEti::Event_Controller::is_key_down(GLFW_KEY_UP))
 			{
 				//object.move(0.0f, 0.0f, -0.05f);
 				(scale + 0.01f >= 1.0f ? scale = 1.0f : scale += 0.01f);
 			}
-			if (glfwGetKey(wind, GLFW_KEY_DOWN) == GLFW_PRESS)
+			if (LEti::Event_Controller::is_key_down(GLFW_KEY_DOWN))
 			{
 				//object.move(0.0f, 0.0f, 0.05f);
 				(scale - 0.01f <= 0.2f ? scale = 0.2f : scale -= 0.01f);
+			}
+			if (LEC::key_was_pressed(GLFW_KEY_LEFT))
+			{
+				current_rotation_state = (current_rotation_state == 0 ? 3 : current_rotation_state - 1);
+				object.set_rotation_angle(6.28318f / 4.0f * current_rotation_state);
+				object2.set_rotation_angle(6.28318f / 4.0f * current_rotation_state);
+			}
+			if (LEC::key_was_pressed(GLFW_KEY_RIGHT))
+			{
+				current_rotation_state = (current_rotation_state == 3 ? 0 : current_rotation_state + 1);
+				object.set_rotation_angle(6.28318f / 4.0f * current_rotation_state);
+				object2.set_rotation_angle(6.28318f / 4.0f * current_rotation_state);
 			}
 
 			object.set_overall_scale(scale);
 			object2.set_overall_scale(scale);
 
-			object.rotate(6.28318f / (60.0f * 4.0f));
-			object2.rotate(-6.28318f / (60.0f * 4.0f));
-
-			dt -= delay_between_frames;
+			/*object.rotate(6.28318f / (60.0f * 4.0f));
+			object2.rotate(-6.28318f / (60.0f * 4.0f));*/
 		}
-
-		//LEti::Shader::set_matrix(matrix);
 
 		object.draw();
 		object2.draw();
@@ -136,12 +139,8 @@ int main()
 			if (error != GL_NO_ERROR) std::cout << "error: " << error << "\n";
 		} while (error != GL_NO_ERROR);
 
-		glfwPollEvents();
-		glfwSwapBuffers(wind);
-		time_point_end = std::chrono::steady_clock::now();
-
-		std::chrono::duration<float, std::ratio<1>> a(time_point_end - time_point_begin);
-		dt += a.count();
+		LEti::Event_Controller::process_events();
+		LEti::Event_Controller::swap_buffers();
 	}
 
 
@@ -150,7 +149,7 @@ int main()
 
 
 
-	glfwDestroyWindow(wind);
+	//glfwDestroyWindow(wind);
 	return 0;
 }
 
