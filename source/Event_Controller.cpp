@@ -17,6 +17,10 @@ std::chrono::time_point<std::chrono::steady_clock> Event_Controller::prev_time_p
 
 bool Event_Controller::keys_pressed_before[GLFW_KEY_LAST + 1] = { false };
 
+Event_Controller::cursor_position Event_Controller::prev_cursor_pos,
+								  Event_Controller::current_cursor_pos,
+								  Event_Controller::cursor_stride;
+
 
 
 //private methods
@@ -63,7 +67,15 @@ void Event_Controller::process_events()
 	}
 }
 
-#include <iostream>
+void Event_Controller::set_cursor_pos(double _x, double _y)
+{
+	glfwSetCursorPos(window, _x, _y);
+
+	cursor_stride.x = 0.0;
+	cursor_stride.y = 0.0;
+	prev_cursor_pos.x = _x;
+	prev_cursor_pos.y = _y;
+}
 
 //methods used in game cycle
 void Event_Controller::update()
@@ -84,11 +96,22 @@ void Event_Controller::update()
 	prev_time_point = current_time_point;
 
 	glfwPollEvents();
+
+	glfwGetCursorPos(window, &current_cursor_pos.x, &current_cursor_pos.y);
 }
 
 unsigned int Event_Controller::get_times_to_update()
 {
 	return times_to_update;
+}
+
+
+void Event_Controller::update_cursor_stride()
+{
+	cursor_stride.x = prev_cursor_pos.x - current_cursor_pos.x;
+	cursor_stride.y = prev_cursor_pos.y - current_cursor_pos.y;
+	prev_cursor_pos.x = current_cursor_pos.x;
+	prev_cursor_pos.y = current_cursor_pos.y;
 }
 
 
@@ -110,4 +133,16 @@ bool Event_Controller::key_was_pressed(unsigned int _key)
 bool Event_Controller::key_was_released(unsigned int _key)
 {
 	return !is_key_down(_key) && keys_pressed_before[_key];
+}
+
+
+
+const Event_Controller::cursor_position& Event_Controller::get_cursor_position()
+{
+	return current_cursor_pos;
+}
+
+const Event_Controller::cursor_position& Event_Controller::get_cursor_stride()
+{
+	return cursor_stride;
 }

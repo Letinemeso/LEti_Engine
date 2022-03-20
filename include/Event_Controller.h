@@ -14,6 +14,10 @@ namespace LEti {
 	class Event_Controller
 	{
 	private:
+		struct cursor_position { double x = 0; double y = 0; };
+		static cursor_position prev_cursor_pos, current_cursor_pos, cursor_stride;
+
+	private:
 		static GLFWwindow* window;
 		
 	private:
@@ -44,14 +48,23 @@ namespace LEti {
 		static void swap_buffers();
 		static void process_events();
 
+		static void set_cursor_pos(double _x, double _y);
+
 	public:
 		static void update();
 		static unsigned int get_times_to_update();
+
+		static void update_cursor_stride();
 
 		static bool is_key_down(unsigned int _key);
 		static bool is_key_up(unsigned int _key);
 		static bool key_was_pressed(unsigned int _key);
 		static bool key_was_released(unsigned int _key);
+
+	public:
+		static const cursor_position& get_cursor_position();
+		static const cursor_position& get_cursor_stride();
+
 
 	};
 

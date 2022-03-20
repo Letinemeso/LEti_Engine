@@ -33,7 +33,7 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
-	
+
 	glm::mat4x4 orthographic_matrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 	//LEti::Shader::set_projection_matrix(orthographic_matrix);
 
@@ -43,7 +43,7 @@ int main()
 		-0.5f, 0.5f,  0.0f,
 		-0.5f, -0.5f, 0.0f,
 		0.5f,  0.5f,  0.0f,
-		
+
 		0.5f, 0.5f, 0.0f,
 		-0.5f, -0.5f, 0.0f,
 		0.5f, -0.5f, 0.0f
@@ -85,8 +85,17 @@ int main()
 	object2.init_vertices(crds2, 9);
 
 
+	//attempt to create mouse-controlled view
+	//double prev_cpos_x = 0.0, prev_cpos_y = 0.0;
+	constexpr float additional_angle = 6.28318f / 4.0f / 60.0f;
+	constexpr double additional_cursor_pos = 37.0;
 
-
+	bool(*equal)(double, double) = [](double _f, double _s)
+	{
+		if (_s < _f + 0.0001 && _s > _f - 0.0001)
+			return true;
+		return false;
+	};
 
 	//matrix stuff
 
@@ -97,13 +106,16 @@ int main()
 	glm::vec3 camera_top(0.0f, 1.0f, 0.0f);
 	glm::mat4x4 look_at_matrix = glm::lookAt(camera_position, point_of_view + camera_position, camera_top);
 
-	glm::mat4x4 perspective_matrix = glm::perspective<float>(3.14159 / 2.0f, 1422.0f/800.0f, 0.001f, 10.0f);
+	glm::mat4x4 perspective_matrix = glm::perspective<float>(3.14159/1.8f, 1422.0f/800.0f, 0.001f, 10.0f);
 
 	glm::mat4x4 camera_matrix = perspective_matrix * look_at_matrix;
 
 
+	//matrix to rotate camera_top vector
 
 
+
+	bool mouse_control_enabled = false;
 
 
 
@@ -132,14 +144,6 @@ int main()
 		for(unsigned int i=0; i<LEti::Event_Controller::get_times_to_update(); ++i)
 		{
 			//call update()
-			/*if (LEti::Event_Controller::is_key_down(GLFW_KEY_UP))
-			{
-				(scale + 0.01f >= 1.0f ? scale = 1.0f : scale += 0.01f);
-			}
-			if (LEti::Event_Controller::is_key_down(GLFW_KEY_DOWN))
-			{
-				(scale - 0.01f <= 0.2f ? scale = 0.2f : scale -= 0.01f);
-			}*/
 			constexpr float movement_speed = 0.5f / 60.0f;
 
 			constexpr float half_str_angle = 6.28318f / 8.0f;
@@ -175,41 +179,36 @@ int main()
 				is_moving = true;
 			}
 
+			if (LEC::is_key_down(GLFW_KEY_SPACE))
+			{
+				camera_position[1] += movement_speed;
+			}
+			if (LEC::is_key_down(GLFW_KEY_LEFT_SHIFT))
+			{
+				camera_position[1] -= movement_speed;
+			}
+			
+
 			if (is_moving)
 			{
 				camera_position[0] += movement_speed * sin(movement_angle);
 				camera_position[2] += movement_speed * cos(movement_angle);
 			}
-			/*if (LEC::is_key_down(GLFW_KEY_W))
-			{
-				camera_position[0] += movement_speed * sin(camera_rotation_angle);
-				camera_position[2] += movement_speed * cos(camera_rotation_angle);
-			}
-			if (LEC::is_key_down(GLFW_KEY_S))
-			{
-				camera_position[0] -= movement_speed * sin(camera_rotation_angle);
-				camera_position[2] -= movement_speed * cos(camera_rotation_angle);
-			}
-			if (LEC::is_key_down(GLFW_KEY_A))
-			{
-				camera_position[0] += movement_speed * cos(camera_rotation_angle);
-				camera_position[2] -= movement_speed * sin(camera_rotation_angle);
-			}
-			if (LEC::is_key_down(GLFW_KEY_D))
-			{
-				camera_position[0] -= movement_speed * cos(camera_rotation_angle);
-				camera_position[2] += movement_speed * sin(camera_rotation_angle);
-			}*/
 
-			if (LEC::is_key_down(GLFW_KEY_LEFT))
+			//mouse controll is here i guess
+			if (LEC::key_was_released(GLFW_KEY_TAB))
 			{
-				camera_rotation_angle += 6.28318f / 4.0f / 60.0f;
+				mouse_control_enabled = (mouse_control_enabled == true ? false : true);
+				LEC::set_cursor_pos(1422.0 / 2.0, 800.0 / 2.0);
+				LEC::update_cursor_stride();
 			}
-			if (LEC::is_key_down(GLFW_KEY_RIGHT))
+
+			if (mouse_control_enabled)
 			{
-				camera_rotation_angle -= 6.28318f / 4.0f / 60.0f;
+				LEC::update_cursor_stride();
+				camera_rotation_angle += additional_angle * (LEC::get_cursor_stride().x / additional_cursor_pos);
+				LEC::set_cursor_pos(1422.0 / 2.0, 800.0 / 2.0);
 			}
-			
 
 			while (camera_rotation_angle > 6.28318f)
 				camera_rotation_angle -= 6.28318f;
