@@ -17,6 +17,9 @@ namespace LEti {
 		struct cursor_position { double x = 0; double y = 0; };
 		static cursor_position prev_cursor_pos, current_cursor_pos, cursor_stride;
 
+		struct window_size { unsigned int width = 0.0f, height = 0.0f; };
+		static window_size window_data;
+
 	private:
 		static GLFWwindow* window;
 		
@@ -65,6 +68,7 @@ namespace LEti {
 		static const cursor_position& get_cursor_position();
 		static const cursor_position& get_cursor_stride();
 
+		static const window_size& get_window_data();
 
 	};
 

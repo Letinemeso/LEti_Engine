@@ -21,6 +21,8 @@ Event_Controller::cursor_position Event_Controller::prev_cursor_pos,
 								  Event_Controller::current_cursor_pos,
 								  Event_Controller::cursor_stride;
 
+Event_Controller::window_size Event_Controller::window_data;
+
 
 
 //private methods
@@ -36,6 +38,9 @@ void Event_Controller::init_and_create_window(unsigned int _width, unsigned int 
 	glewInit();
 
 	ASSERT(window == nullptr);
+
+	window_data.width = _width;
+	window_data.height = _height;
 }
 
 
@@ -145,4 +150,10 @@ const Event_Controller::cursor_position& Event_Controller::get_cursor_position()
 const Event_Controller::cursor_position& Event_Controller::get_cursor_stride()
 {
 	return cursor_stride;
+}
+
+
+const Event_Controller::window_size& Event_Controller::get_window_data()
+{
+	return window_data;
 }
