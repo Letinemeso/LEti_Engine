@@ -2,4 +2,7 @@
 Debug/
 Release/
 .vs/
-
+Build/
+*.pro
+*.pro.user
+*.gch

@@ -25,7 +25,7 @@ int main()
 {
 	LEti::Event_Controller::init_and_create_window(1422, 800, "LEti");
 
-	LEti::Shader::init_shader("resources\\vertex_shader.shader", "resources\\fragment_shader.shader");
+    LEti::Shader::init_shader("resources/vertex_shader.shader", "resources/fragment_shader.shader");
 	ASSERT(!LEti::Shader::is_valid());
 	LEti::Shader::set_projection_matrix_uniform_name("projection_matrix");
 	LEti::Shader::set_transform_matrix_uniform_name("transform_matrix");

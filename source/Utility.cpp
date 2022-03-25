@@ -1,5 +1,7 @@
 #include "../include/Utility.h"
 
+#include <cmath>
+
 float LEti::Utility::vector_length(const glm::vec3& _vec)
 {
 	float sum = 0.0f;

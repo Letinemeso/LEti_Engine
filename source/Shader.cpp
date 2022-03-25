@@ -16,6 +16,8 @@ void Shader::get_shader_source(const char* _path, char*& _result_buffer, unsigne
 {
 	std::ifstream file(_path, std::ios::in);
 
+    ASSERT(!file.is_open());
+
 	file.seekg(0, std::ios::end);
 	unsigned int size = file.tellg();
 
