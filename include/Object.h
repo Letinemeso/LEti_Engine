@@ -15,6 +15,9 @@ namespace LEti {
 	class Object
 	{
 	private:
+		bool is_3d = true;
+
+	private:
 		unsigned int vertex_array = 0;
 		unsigned int buffer[2] = { 0 };
 
@@ -26,7 +29,7 @@ namespace LEti {
 		float rotation_angle = 0.0f;
 
 	public:
-		Object();
+		Object(bool _is_3d = true);
 		~Object();
 
 	public:

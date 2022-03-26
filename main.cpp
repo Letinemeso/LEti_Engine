@@ -35,7 +35,7 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 
-	glm::mat4x4 orthographic_matrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
+	//glm::mat4x4 orthographic_matrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
 	//LEti::Shader::set_projection_matrix(orthographic_matrix);
 
 	//vertex buffer
@@ -65,34 +65,38 @@ int main()
 
 	float crds2[9] =
 	{
-		0.0f, -1.0f, 0.0f,
+		/*0.0f, -1.0f, 0.0f,
 		1.0f, -1.0f, 0.0f,
-		1.0f, 0.0f, 0.0f
+		1.0f, 0.0f, 0.0f*/
+		1.0f, 100.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		100.0f, 1.0f, 0.0f
 	};
 
 	float texture_coords_ymany[6] =
 	{
-		1.0f, 0.0f,
+		0.0f, 1.0f,
 		0.0f, 0.0f,
-		0.0f, 1.0f
+		1.0f, 0.0f,
 	};
+
+	glm::vec3 v(0.0f, 0.0f, 0.0f);
+	float a = LEti::Utility::vector_length(v);
+	LEti::Utility::shrink_vector_to_1(v);
 
 	LEti::Object object;
 	object.init_texture(texture_name, texture_coords, 12);
 	object.init_vertices(coords, 18);
 
-	LEti::Object object2;
+	LEti::Object object2(false);
 	object2.init_texture("ymany.png", texture_coords_ymany, 6);
 	object2.init_vertices(crds2, 9);
 
 	//matrix to rotate camera_top vector
 
 	LEti::Camera::set_fov_and_max_distance(3.14159 / 1.8f, 5.0f);
-	LEti::Camera::set_camera_data({ 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 20.0f });
-
-	bool mouse_control_enabled = false;
-
-
+	LEti::Camera::set_camera_data({ 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 1.0f });
+	LEti::Camera::setup_orthographic_matrix();
 
 	//some shit, idk
 
@@ -126,7 +130,9 @@ int main()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		LEti::Camera::update();
+		if (LEti::Event_Controller::key_was_released(GLFW_KEY_TAB))
+			LEti::Camera::toggle_controll(LEti::Camera::get_controllable() == true ? false : true);
+		LEti::Camera::update(true, true);
 
 		object.draw();
 		object2.draw();

@@ -13,6 +13,8 @@ namespace LEti { namespace Utility {
 
 	float vector_length(const glm::vec3& _vec);
 
+	void shrink_vector_to_1(glm::vec3& _vec);
+
 }	/*LEti*/	}	/*Utility*/
 
 #endif

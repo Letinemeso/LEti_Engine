@@ -24,11 +24,7 @@ namespace LEti {
 		static GLFWwindow* window;
 		
 	private:
-		/*static float tickrate;
-		static float time_before_update;*/
 		static float dt;
-
-		//static unsigned int times_to_update;
 
 		static std::chrono::time_point<std::chrono::steady_clock> current_time_point;
 		static std::chrono::time_point<std::chrono::steady_clock> prev_time_point;

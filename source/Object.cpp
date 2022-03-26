@@ -2,8 +2,10 @@
 
 using namespace LEti;
 
-Object::Object()
+Object::Object(bool _is_3d)
 {
+	is_3d = _is_3d;
+
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
 	glEnableVertexAttribArray(0);
@@ -59,7 +61,8 @@ void Object::draw() const
 {
 	glm::mat4x4 result_matrix = translation_matrix * rotation_matrix * scale_matrix;
 	LEti::Shader::set_transform_matrix(result_matrix);
-	LEti::Camera::use();
+
+	LEti::Camera::use(is_3d);
 
 	glBindVertexArray(vertex_array);
 	
