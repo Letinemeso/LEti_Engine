@@ -20,7 +20,8 @@ namespace LEti {
 			{
 				unsigned int forward = GLFW_KEY_W, backward = GLFW_KEY_S,
 					left = GLFW_KEY_A, right = GLFW_KEY_D,
-					up = GLFW_KEY_SPACE, down = GLFW_KEY_LEFT_SHIFT;
+					up = GLFW_KEY_SPACE, down = GLFW_KEY_LEFT_SHIFT,
+					toggle_controlls = GLFW_KEY_TAB;
 			} movement_buttons;
 
 			float sensitivity_scale = 1.0f;
@@ -67,6 +68,7 @@ namespace LEti {
 
 	public:
 		static void update();
+		static void use();
 
 	};
 

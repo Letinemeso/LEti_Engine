@@ -4,6 +4,7 @@
 #include "../include/Shader.h"
 #include "../include/Texture.h"
 #include "../include/Vertices.h"
+#include "../include/Camera.h"
 
 #include "../OpenGL/GLM/mat4x4.hpp"
 #include "../OpenGL/GLM/gtx/transform.hpp"

@@ -6,11 +6,11 @@ using namespace LEti;
 GLFWwindow* Event_Controller::window = nullptr;
 
 
-float Event_Controller::tickrate = 60.0f;
-float Event_Controller::time_before_update = 1.0f / Event_Controller::tickrate;
+//float Event_Controller::tickrate = 60.0f;
+//float Event_Controller::time_before_update = 1.0f / Event_Controller::tickrate;
 float Event_Controller::dt = 0.0f;
 
-unsigned int Event_Controller::times_to_update = 0;
+//unsigned int Event_Controller::times_to_update = 0;
 
 std::chrono::time_point<std::chrono::steady_clock> Event_Controller::current_time_point = std::chrono::steady_clock::now();
 std::chrono::time_point<std::chrono::steady_clock> Event_Controller::prev_time_point = std::chrono::steady_clock::now();
@@ -41,9 +41,6 @@ void Event_Controller::init_and_create_window(unsigned int _width, unsigned int 
 
 	window_data.width = _width;
 	window_data.height = _height;
-
-	tickrate = _tickrate;
-	time_before_update = 1.0f / tickrate;
 }
 
 
@@ -57,22 +54,6 @@ bool Event_Controller::window_should_close()
 void Event_Controller::swap_buffers()
 {
 	glfwSwapBuffers(window);
-}
-
-void Event_Controller::process_events()
-{
-	if (times_to_update == 0) return;
-
-	for (unsigned int i = 0; i <= GLFW_KEY_LAST; ++i)
-	{
-		if (glfwGetKey(window, i))
-		{
-			//std::cout << "key pressed: " << i << "\n";
-			keys_pressed_before[i] = true;
-		}
-		else
-			keys_pressed_before[i] = false;
-	}
 }
 
 void Event_Controller::set_cursor_pos(double _x, double _y)
@@ -89,28 +70,20 @@ void Event_Controller::set_cursor_pos(double _x, double _y)
 void Event_Controller::update()
 {
 	current_time_point = std::chrono::steady_clock::now();
-	dt += std::chrono::duration<float, std::ratio<1>>(current_time_point - prev_time_point).count();
-
-	if (dt >= time_before_update)
-	{
-		while (dt - time_before_update >= 0.0f)
-		{
-			++times_to_update;
-			dt -= time_before_update;
-		}
-	}
-	else times_to_update = 0;
+	dt = std::chrono::duration<float, std::ratio<1>>(current_time_point - prev_time_point).count();
 
 	prev_time_point = current_time_point;
 
+	for (unsigned int i = 0; i <= GLFW_KEY_LAST; ++i)
+		keys_pressed_before[i] = glfwGetKey(window, i);
 	glfwPollEvents();
 
 	glfwGetCursorPos(window, &current_cursor_pos.x, &current_cursor_pos.y);
 }
 
-unsigned int Event_Controller::get_times_to_update()
+float Event_Controller::get_dt()
 {
-	return times_to_update;
+	return dt;
 }
 
 
@@ -159,10 +132,4 @@ const Event_Controller::cursor_position& Event_Controller::get_cursor_stride()
 const Event_Controller::window_size& Event_Controller::get_window_data()
 {
 	return window_data;
-}
-
-
-float Event_Controller::get_tickrate()
-{
-	return tickrate;
 }

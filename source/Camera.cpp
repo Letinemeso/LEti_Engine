@@ -12,7 +12,7 @@ glm::mat4x4 Camera::perspective_matrix, Camera::look_direction_matrix, Camera::r
 bool Camera::is_controllable = false;
 
 Camera::Controlls Camera::controlls;
-const float Camera::additional_angle = Utility::PI / 2.0f / Event_Controller::get_tickrate();
+const float Camera::additional_angle = Utility::PI / 2.0f;
 
 
 void Camera::setup_result_matrix()
@@ -99,56 +99,54 @@ Camera::Controlls& Camera::get_controlls_settings()
 
 void Camera::control()
 {
-	constexpr float half_str_angle = Utility::HALF_PI / 2.0f;
-	//constexpr float additional_angle = Utility::PI / 2.0f / Event_Controller::get_tickrate();
-	constexpr double additional_cursor_pos = 30.0f;
-
 	bool is_moving = false;
 	float movement_angle = look_angle_xz;
 
 	if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.forward))
 	{
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_A))
-			movement_angle += half_str_angle;
+			movement_angle += Utility::QUARTER_PI;
 		else if (LEti::Event_Controller::is_key_down(GLFW_KEY_D))
-			movement_angle -= half_str_angle;
+			movement_angle -= Utility::QUARTER_PI;
 		is_moving = true;
 	}
 	else if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.backward))
 	{
-		movement_angle += half_str_angle * 4.0f;
+		movement_angle += Utility::QUARTER_PI * 4.0f;
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_A))
-			movement_angle -= half_str_angle;
+			movement_angle -= Utility::QUARTER_PI;
 		else if (LEti::Event_Controller::is_key_down(GLFW_KEY_D))
-			movement_angle += half_str_angle;
+			movement_angle += Utility::QUARTER_PI;
 		is_moving = true;
 	}
 	else if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.left))
 	{
-		movement_angle += half_str_angle * 2.0f;
+		movement_angle += Utility::QUARTER_PI * 2.0f;
 		is_moving = true;
 	}
 	else if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.right))
 	{
-		movement_angle -= half_str_angle * 2.0f;
+		movement_angle -= Utility::QUARTER_PI * 2.0f;
 		is_moving = true;
 	}
 
 	if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.up))
-		position[1] += controlls.movement_speed / LEti::Event_Controller::get_tickrate();
+		position[1] += controlls.movement_speed * LEti::Event_Controller::get_dt();
 	if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.down))
-		position[1] -= controlls.movement_speed / LEti::Event_Controller::get_tickrate();
+		position[1] -= controlls.movement_speed * LEti::Event_Controller::get_dt();
 
 	if (is_moving)
 	{
-		position[0] += controlls.movement_speed / LEti::Event_Controller::get_tickrate() * sin(movement_angle);
-		position[2] += controlls.movement_speed / LEti::Event_Controller::get_tickrate() * cos(movement_angle);
+		position[0] += controlls.movement_speed * LEti::Event_Controller::get_dt() * sin(movement_angle);
+		position[2] += controlls.movement_speed * LEti::Event_Controller::get_dt() * cos(movement_angle);
 	}
 
 	LEti::Event_Controller::update_cursor_stride();
-	look_angle_xz += additional_angle * (LEti::Event_Controller::get_cursor_stride().x / additional_cursor_pos) 
+	look_angle_xz += additional_angle
+		* (LEti::Event_Controller::get_cursor_stride().x / LEti::Event_Controller::get_window_data().width)
 		* (controlls.sensitivity_scale >= 0.0f ? controlls.sensitivity_scale : 0.0f);
-	look_angle_y += additional_angle * (LEti::Event_Controller::get_cursor_stride().y / additional_cursor_pos) 
+	look_angle_y += additional_angle
+		* (LEti::Event_Controller::get_cursor_stride().y / LEti::Event_Controller::get_window_data().height)
 		* (controlls.sensitivity_scale >= 0.0f ? controlls.sensitivity_scale : 0.0f);
 
 	LEti::Event_Controller::set_cursor_pos(
@@ -176,15 +174,21 @@ void Camera::update()
 {
 	ASSERT(!pos_set || !look_direction_set || !fov_set);
 
-	if (LEti::Event_Controller::key_was_released(GLFW_KEY_TAB))
+	if (LEti::Event_Controller::key_was_released(controlls.movement_buttons.toggle_controlls))
 	{
 		is_controllable = (is_controllable == true ? false : true);
-		LEti::Event_Controller::set_cursor_pos(1422.0 / 2.0, 800.0 / 2.0);
+		LEti::Event_Controller::set_cursor_pos(
+			LEti::Event_Controller::get_window_data().width / 2.0,
+			LEti::Event_Controller::get_window_data().height / 2.0
+		);
 		LEti::Event_Controller::update_cursor_stride();
 	}
 
 	if (is_controllable)
 		control();
+}
 
+void Camera::use()
+{
 	LEti::Shader::set_projection_matrix(result_camera_matrix);
 }

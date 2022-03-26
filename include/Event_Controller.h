@@ -24,11 +24,11 @@ namespace LEti {
 		static GLFWwindow* window;
 		
 	private:
-		static float tickrate;
-		static float time_before_update;
+		/*static float tickrate;
+		static float time_before_update;*/
 		static float dt;
 
-		static unsigned int times_to_update;
+		//static unsigned int times_to_update;
 
 		static std::chrono::time_point<std::chrono::steady_clock> current_time_point;
 		static std::chrono::time_point<std::chrono::steady_clock> prev_time_point;
@@ -49,13 +49,12 @@ namespace LEti {
 	public:
 		static bool window_should_close();
 		static void swap_buffers();
-		static void process_events();
 
 		static void set_cursor_pos(double _x, double _y);
 
 	public:
 		static void update();
-		static unsigned int get_times_to_update();
+		static float get_dt();
 
 		static void update_cursor_stride();
 
@@ -69,8 +68,6 @@ namespace LEti {
 		static const cursor_position& get_cursor_stride();
 
 		static const window_size& get_window_data();
-
-		static float get_tickrate();
 	};
 
 }

@@ -51,8 +51,6 @@ void Object::init_vertices(float* _coords, unsigned int _coords_count)
 	glBindVertexArray(vertex_array);
 	vertices.load(_coords, _coords_count);
 	vertices.setup_vertex_buffer(&buffer[0], 0);
-
-	//glGenBuffers(1)
 }
 
 
@@ -61,6 +59,7 @@ void Object::draw() const
 {
 	glm::mat4x4 result_matrix = translation_matrix * rotation_matrix * scale_matrix;
 	LEti::Shader::set_transform_matrix(result_matrix);
+	LEti::Camera::use();
 
 	glBindVertexArray(vertex_array);
 	
