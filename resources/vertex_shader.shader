@@ -13,4 +13,4 @@ void main()
 	gl_Position = projection_matrix * transform_matrix * vec4(pos, 1.0f);
 
 	v_out_tex_coords = in_tex_coords;
-};
+}

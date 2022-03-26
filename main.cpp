@@ -25,7 +25,7 @@ int main()
 {
 	LEti::Event_Controller::init_and_create_window(1422, 800, "LEti", 100.0f);
 
-    LEti::Shader::init_shader("resources/vertex_shader.shader", "resources/fragment_shader.shader");
+	LEti::Shader::init_shader("resources/vertex_shader.shader", "resources/fragment_shader.shader");
 	ASSERT(!LEti::Shader::is_valid());
 	LEti::Shader::set_projection_matrix_uniform_name("projection_matrix");
 	LEti::Shader::set_transform_matrix_uniform_name("transform_matrix");
@@ -99,7 +99,7 @@ int main()
 	float ortho_value = 2.0f;
 
 	float scale = 1.0f;
-	
+
 	object.set_pos(0.0f, 0.0f, -0.1f);
 	object.set_rotation_data(0.0f, 0.0f, 1.0f, 0.0f);
 
@@ -141,7 +141,12 @@ int main()
 		do
 		{
 			error = glGetError();
-			if (error != GL_NO_ERROR) std::cout << "error: " << error << "\n";
+			if (error != GL_NO_ERROR)
+			{
+				std::cout << "error: " << error << "\n";
+				std::cout << glewGetErrorString(error) << "\n\n";
+				std::this_thread::sleep_for(std::chrono::seconds(10));
+			}
 		} while (error != GL_NO_ERROR);
 
 		//std::this_thread::sleep_for(std::chrono::microseconds(1));
