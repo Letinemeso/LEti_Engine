@@ -11,12 +11,25 @@
 
 namespace LEti {
 
-	constexpr float HALF_PI = 3.141593f / 2.0f;
-	constexpr float PI = 3.141593f;
-	constexpr float DOUBLE_PI = 3.141593f * 2.0f;
-
 	class Camera
 	{
+	private:
+		struct Controlls
+		{
+			struct
+			{
+				unsigned int forward = GLFW_KEY_W, backward = GLFW_KEY_S,
+					left = GLFW_KEY_A, right = GLFW_KEY_D,
+					up = GLFW_KEY_SPACE, down = GLFW_KEY_LEFT_SHIFT;
+			} movement_buttons;
+
+			float sensitivity_scale = 1.0f;
+			float movement_speed = 1.0f;
+		};
+		static Controlls controlls;
+
+		static const float additional_angle;
+
 	private:
 		static bool pos_set, look_direction_set, fov_set;
 
@@ -45,6 +58,9 @@ namespace LEti {
 		static void set_look_direction(glm::vec3 _direction);
 
 		static void set_fov_and_max_distance(float _fov, float _max_distance);
+
+	public:
+		static Controlls& get_controlls_settings();
 
 	private:
 		static void control();

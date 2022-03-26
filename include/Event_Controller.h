@@ -24,7 +24,7 @@ namespace LEti {
 		static GLFWwindow* window;
 		
 	private:
-		static float desirable_fps;
+		static float tickrate;
 		static float time_before_update;
 		static float dt;
 
@@ -44,7 +44,7 @@ namespace LEti {
 		Event_Controller(Event_Controller&&) = delete;
 
 	public:
-		static void init_and_create_window(unsigned int _width, unsigned int _height, const char* _name);
+		static void init_and_create_window(unsigned int _width, unsigned int _height, const char* _name, float _tickrate);
 
 	public:
 		static bool window_should_close();
@@ -70,6 +70,7 @@ namespace LEti {
 
 		static const window_size& get_window_data();
 
+		static float get_tickrate();
 	};
 
 }

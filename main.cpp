@@ -23,7 +23,7 @@ using LEC = LEti::Event_Controller;
 
 int main()
 {
-	LEti::Event_Controller::init_and_create_window(1422, 800, "LEti");
+	LEti::Event_Controller::init_and_create_window(1422, 800, "LEti", 100.0f);
 
     LEti::Shader::init_shader("resources/vertex_shader.shader", "resources/fragment_shader.shader");
 	ASSERT(!LEti::Shader::is_valid());

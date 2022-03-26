@@ -6,8 +6,8 @@ using namespace LEti;
 GLFWwindow* Event_Controller::window = nullptr;
 
 
-float Event_Controller::desirable_fps = 60.0f;
-float Event_Controller::time_before_update = 1.0f / Event_Controller::desirable_fps;
+float Event_Controller::tickrate = 60.0f;
+float Event_Controller::time_before_update = 1.0f / Event_Controller::tickrate;
 float Event_Controller::dt = 0.0f;
 
 unsigned int Event_Controller::times_to_update = 0;
@@ -30,7 +30,7 @@ Event_Controller::window_size Event_Controller::window_data;
 
 
 //init methods
-void Event_Controller::init_and_create_window(unsigned int _width, unsigned int _height, const char* _name)
+void Event_Controller::init_and_create_window(unsigned int _width, unsigned int _height, const char* _name, float _tickrate)
 {
 	glfwInit();
 	window = glfwCreateWindow(_width, _height, _name, 0, 0);
@@ -41,6 +41,9 @@ void Event_Controller::init_and_create_window(unsigned int _width, unsigned int 
 
 	window_data.width = _width;
 	window_data.height = _height;
+
+	tickrate = _tickrate;
+	time_before_update = 1.0f / tickrate;
 }
 
 
@@ -156,4 +159,10 @@ const Event_Controller::cursor_position& Event_Controller::get_cursor_stride()
 const Event_Controller::window_size& Event_Controller::get_window_data()
 {
 	return window_data;
+}
+
+
+float Event_Controller::get_tickrate()
+{
+	return tickrate;
 }

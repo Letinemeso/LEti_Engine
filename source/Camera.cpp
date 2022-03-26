@@ -11,6 +11,8 @@ glm::mat4x4 Camera::perspective_matrix, Camera::look_direction_matrix, Camera::r
 
 bool Camera::is_controllable = false;
 
+Camera::Controlls Camera::controlls;
+const float Camera::additional_angle = Utility::PI / 2.0f / Event_Controller::get_tickrate();
 
 
 void Camera::setup_result_matrix()
@@ -35,8 +37,8 @@ void Camera::setup_look_dir_and_top_vectors()
 
 void Camera::setup_top_vector()
 {
-	float look_angle_xz_top = look_angle_xz + PI,
-		  look_angle_y_top = look_angle_y + (HALF_PI);
+	float look_angle_xz_top = look_angle_xz + Utility::PI,
+		  look_angle_y_top = look_angle_y + (Utility::HALF_PI);
 
 	top.x = sin(look_angle_xz_top);
 	top.z = cos(look_angle_xz_top);
@@ -88,17 +90,23 @@ void Camera::set_fov_and_max_distance(float _fov, float _max_distance)
 
 
 
+Camera::Controlls& Camera::get_controlls_settings()
+{
+	return controlls;
+}
+
+
+
 void Camera::control()
 {
-	constexpr float movement_speed = 0.5f / 60.0f;
-	constexpr float half_str_angle = DOUBLE_PI / 8.0f;
-	constexpr float additional_angle = DOUBLE_PI / 4.0f / 60.0f;
-	constexpr double additional_cursor_pos = 37.0;
+	constexpr float half_str_angle = Utility::HALF_PI / 2.0f;
+	//constexpr float additional_angle = Utility::PI / 2.0f / Event_Controller::get_tickrate();
+	constexpr double additional_cursor_pos = 30.0f;
 
 	bool is_moving = false;
 	float movement_angle = look_angle_xz;
 
-	if (LEti::Event_Controller::is_key_down(GLFW_KEY_W))
+	if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.forward))
 	{
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_A))
 			movement_angle += half_str_angle;
@@ -106,7 +114,7 @@ void Camera::control()
 			movement_angle -= half_str_angle;
 		is_moving = true;
 	}
-	else if (LEti::Event_Controller::is_key_down(GLFW_KEY_S))
+	else if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.backward))
 	{
 		movement_angle += half_str_angle * 4.0f;
 		if (LEti::Event_Controller::is_key_down(GLFW_KEY_A))
@@ -115,46 +123,48 @@ void Camera::control()
 			movement_angle += half_str_angle;
 		is_moving = true;
 	}
-	else if (LEti::Event_Controller::is_key_down(GLFW_KEY_A))
+	else if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.left))
 	{
 		movement_angle += half_str_angle * 2.0f;
 		is_moving = true;
 	}
-	else if (LEti::Event_Controller::is_key_down(GLFW_KEY_D))
+	else if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.right))
 	{
 		movement_angle -= half_str_angle * 2.0f;
 		is_moving = true;
 	}
 
-	if (LEti::Event_Controller::is_key_down(GLFW_KEY_SPACE))
-	{
-		position[1] += movement_speed;
-	}
-	if (LEti::Event_Controller::is_key_down(GLFW_KEY_LEFT_SHIFT))
-	{
-		position[1] -= movement_speed;
-	}
+	if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.up))
+		position[1] += controlls.movement_speed / LEti::Event_Controller::get_tickrate();
+	if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.down))
+		position[1] -= controlls.movement_speed / LEti::Event_Controller::get_tickrate();
 
 	if (is_moving)
 	{
-		position[0] += movement_speed * sin(movement_angle);
-		position[2] += movement_speed * cos(movement_angle);
+		position[0] += controlls.movement_speed / LEti::Event_Controller::get_tickrate() * sin(movement_angle);
+		position[2] += controlls.movement_speed / LEti::Event_Controller::get_tickrate() * cos(movement_angle);
 	}
 
 	LEti::Event_Controller::update_cursor_stride();
-	look_angle_xz += additional_angle * (LEti::Event_Controller::get_cursor_stride().x / additional_cursor_pos);
-	look_angle_y += additional_angle * (LEti::Event_Controller::get_cursor_stride().y / additional_cursor_pos);
-	LEti::Event_Controller::set_cursor_pos(1422.0 / 2.0, 800.0 / 2.0);
+	look_angle_xz += additional_angle * (LEti::Event_Controller::get_cursor_stride().x / additional_cursor_pos) 
+		* (controlls.sensitivity_scale >= 0.0f ? controlls.sensitivity_scale : 0.0f);
+	look_angle_y += additional_angle * (LEti::Event_Controller::get_cursor_stride().y / additional_cursor_pos) 
+		* (controlls.sensitivity_scale >= 0.0f ? controlls.sensitivity_scale : 0.0f);
 
-	while (look_angle_xz > DOUBLE_PI)
-		look_angle_xz -= DOUBLE_PI;
+	LEti::Event_Controller::set_cursor_pos(
+		LEti::Event_Controller::get_window_data().width / 2.0, 
+		LEti::Event_Controller::get_window_data().height / 2.0
+	);
+
+	while (look_angle_xz > Utility::DOUBLE_PI)
+		look_angle_xz -= Utility::DOUBLE_PI;
 	while (look_angle_xz < 0.0f)
-		look_angle_xz += DOUBLE_PI;
+		look_angle_xz += Utility::DOUBLE_PI;
 
-	if (look_angle_y > HALF_PI)
-		look_angle_y = HALF_PI;
-	if (look_angle_y < -HALF_PI)
-		look_angle_y = -HALF_PI;
+	if (look_angle_y > Utility::HALF_PI)
+		look_angle_y = Utility::HALF_PI;
+	if (look_angle_y < -Utility::HALF_PI)
+		look_angle_y = -Utility::HALF_PI;
 
 	setup_look_dir_and_top_vectors();
 	setup_result_matrix();
