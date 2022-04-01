@@ -28,9 +28,9 @@ namespace LEti {
 		void operator=(const LEti::Texture&) = delete;
 		void operator=(LEti::Texture&&) = delete;
 
-		void init(const char* _path, float* _tex_coords, unsigned int _tex_coords_count);
+		void init(const char* _path, const float* const _tex_coords, unsigned int _tex_coords_count);
 		void set_picture(const char* _path);
-		void set_texture_coords(float* _tex_coords, unsigned int _tex_coords_count);
+		void set_texture_coords(const float* const _tex_coords, unsigned int _tex_coords_count);
 
 		void setup_tex_coords_buffer(unsigned int* _buffer, unsigned int _attrib_index);
 

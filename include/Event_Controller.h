@@ -40,7 +40,7 @@ namespace LEti {
 		Event_Controller(Event_Controller&&) = delete;
 
 	public:
-		static void init_and_create_window(unsigned int _width, unsigned int _height, const char* _name, float _tickrate);
+		static void init_and_create_window(unsigned int _width, unsigned int _height, const char* _name);
 
 	public:
 		static bool window_should_close();

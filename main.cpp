@@ -11,6 +11,7 @@
 #include "include/Vertices.h"
 #include "include/Event_Controller.h"
 #include "include/Camera.h"
+#include "include/Resource_Loader.h"
 
 #include <string>
 #include <iostream>
@@ -23,7 +24,7 @@ using LEC = LEti::Event_Controller;
 
 int main()
 {
-	LEti::Event_Controller::init_and_create_window(1422, 800, "LEti", 100.0f);
+	LEti::Event_Controller::init_and_create_window(1422, 800, "LEti");
 
 	LEti::Shader::init_shader("resources/vertex_shader.shader", "resources/fragment_shader.shader");
 	ASSERT(!LEti::Shader::is_valid());
@@ -35,39 +36,11 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 
-	//glm::mat4x4 orthographic_matrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
-	//LEti::Shader::set_projection_matrix(orthographic_matrix);
-
 	//vertex buffer
-	float coords[18] =
-	{
-		-0.5f, 0.5f,  0.0f,
-		-0.5f, -0.5f, 0.0f,
-		0.5f,  0.5f,  0.0f,
-
-		0.5f, 0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f
-	};
-
-	float texture_coords[12] =
-	{
-		0.0f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 1.0f,
-
-		1.0f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 0.0f
-	};
-
-	const char* texture_name = "plug.png";
+	LEti::Resource_Loader::load_object("quad", "resources/models/quad.mdl");
 
 	float crds2[9] =
 	{
-		/*0.0f, -1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		1.0f, 0.0f, 0.0f*/
 		1.0f, 100.0f, 0.0f,
 		1.0f, 1.0f, 0.0f,
 		100.0f, 1.0f, 0.0f
@@ -85,8 +58,11 @@ int main()
 	LEti::Utility::shrink_vector_to_1(v);
 
 	LEti::Object object;
-	object.init_texture(texture_name, texture_coords, 12);
-	object.init_vertices(coords, 18);
+	auto tcoords = LEti::Resource_Loader::get_data<float>("quad", "texture_coords");
+	object.init_texture(LEti::Resource_Loader::get_data<std::string>("quad", "texture_name").first->c_str(), tcoords.first, tcoords.second);
+
+	auto coords = LEti::Resource_Loader::get_data<float>("quad", "coords");
+	object.init_vertices(coords.first, coords.second);
 
 	LEti::Object object2(false);
 	object2.init_texture("ymany.png", texture_coords_ymany, 6);

@@ -18,3 +18,10 @@ void Utility::shrink_vector_to_1(glm::vec3& _vec)
 	if (vec_length < 0.000001f) return;
 	_vec /= vec_length;
 }
+
+bool Utility::is_digit(char _c)
+{
+	if (_c >= '0' && _c <= '9')
+		return true;
+	return false;
+}

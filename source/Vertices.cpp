@@ -10,7 +10,7 @@ Vertices::~Vertices()
 
 
 
-void Vertices::load(float* _coords, unsigned int _count)
+void Vertices::load(const float* const _coords, unsigned int _count)
 {
 	ASSERT(_coords == nullptr || _count == 0);
 

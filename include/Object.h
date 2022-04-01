@@ -33,8 +33,8 @@ namespace LEti {
 		~Object();
 
 	public:
-		void init_texture(const char* _tex_path, float* tex_coords, unsigned int _tex_coords_count);
-		void init_vertices(float* _coords, unsigned int _coords_count);
+		void init_texture(const char* _tex_path, const float* const tex_coords, unsigned int _tex_coords_count);
+		void init_vertices(const float* const _coords, unsigned int _coords_count);
 
 	public:
 		void draw() const;

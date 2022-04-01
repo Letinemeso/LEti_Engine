@@ -17,7 +17,7 @@ Texture::Texture(const char* _path, float* _tex_coords, unsigned int _tex_coords
 
 
 
-void Texture::init(const char* _path, float* _tex_coords, unsigned int _tex_coords_count)
+void Texture::init(const char* _path, const float* const _tex_coords, unsigned int _tex_coords_count)
 {
 	set_picture(_path);
 	set_texture_coords(_tex_coords, _tex_coords_count);
@@ -50,7 +50,7 @@ void Texture::set_picture(const char* _path)
 	picture_valid = true;
 }
 
-void Texture::set_texture_coords(float* _tex_coords, unsigned int _tex_coords_count)
+void Texture::set_texture_coords(const float* const _tex_coords, unsigned int _tex_coords_count)
 {
 	tex_coords_valid = false;
 

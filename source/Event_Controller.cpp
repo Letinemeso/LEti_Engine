@@ -30,7 +30,7 @@ Event_Controller::window_size Event_Controller::window_data;
 
 
 //init methods
-void Event_Controller::init_and_create_window(unsigned int _width, unsigned int _height, const char* _name, float _tickrate)
+void Event_Controller::init_and_create_window(unsigned int _width, unsigned int _height, const char* _name)
 {
 	glfwInit();
 	window = glfwCreateWindow(_width, _height, _name, 0, 0);

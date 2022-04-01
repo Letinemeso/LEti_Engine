@@ -15,6 +15,8 @@ namespace LEti { namespace Utility {
 
 	void shrink_vector_to_1(glm::vec3& _vec);
 
+	bool is_digit(char _c);
+
 }	/*LEti*/	}	/*Utility*/
 
 #endif

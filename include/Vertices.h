@@ -38,7 +38,7 @@ namespace LEti {
 		Vertices() {}
 		~Vertices();
 
-		void load(float* _coords, unsigned int _count);
+		void load(const float* const _coords, unsigned int _count);
 		void load(const char* _path);
 
 		void setup_vertex_buffer(unsigned int* _buffer, unsigned int _attrib_index);
