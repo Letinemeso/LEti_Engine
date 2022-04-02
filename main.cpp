@@ -60,11 +60,7 @@ int main()
 	LEti::Utility::shrink_vector_to_1(v);
 
 	LEti::Object object;
-	/*auto tcoords = LEti::Resource_Loader::get_data<float>("quad", "texture_coords");
-	object.init_texture(LEti::Resource_Loader::get_data<std::string>("quad", "texture_name").first->c_str(), tcoords.first, tcoords.second);
 
-	auto coords = LEti::Resource_Loader::get_data<float>("quad", "coords");
-	object.init_vertices(coords.first, coords.second);*/
 	object.init("quad");
 
 
@@ -79,7 +75,7 @@ int main()
 
 	LEti::Text_Field tftf;
 	tftf.init("text_field");
-	tftf.set_text("");
+	//tftf.set_text("1234567890.,!?*/+- ");
 	tftf.set_pos(0.0f, LEti::Event_Controller::get_window_data().height - 25, 0.0f);
 
 
@@ -115,7 +111,9 @@ int main()
 		++fps;
 		if (time_has_passed > 1.0f)
 		{
-			tftf.set_text(std::to_string(fps).c_str());
+			std::string sfps("fps ");
+			sfps += std::to_string(fps);
+			tftf.set_text(sfps.c_str());
 			std::cout << "fps: " << fps << "\n";
 			time_has_passed -= 1.0f;
 			fps = 0;
