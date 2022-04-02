@@ -80,6 +80,7 @@ int main()
 	LEti::Text_Field tftf;
 	tftf.init("text_field");
 	tftf.set_text("");
+	tftf.set_pos(0.0f, LEti::Event_Controller::get_window_data().height - 25, 0.0f);
 
 
 	//matrix to rotate camera_top vector
@@ -105,6 +106,7 @@ int main()
 	float time_has_passed = 0.0f;
 	unsigned int fps = 0;
 
+
 	while (!LEti::Event_Controller::window_should_close())
 	{
 		LEti::Event_Controller::update();
@@ -114,6 +116,7 @@ int main()
 		if (time_has_passed > 1.0f)
 		{
 			tftf.set_text(std::to_string(fps).c_str());
+			std::cout << "fps: " << fps << "\n";
 			time_has_passed -= 1.0f;
 			fps = 0;
 		}

@@ -86,11 +86,13 @@ void Object::init(const char* _object_name)
 
 void Object::set_texture(const char* _path)
 {
+	glBindVertexArray(vertex_array);
 	texture.set_picture(_path);
 }
 
 void Object::set_texture_coords(const float* _tc, unsigned int _tc_count)
 {
+	glBindVertexArray(vertex_array);
 	texture.set_texture_coords(_tc, _tc_count);
 	texture.setup_tex_coords_buffer(&buffer[1], 1);
 }
@@ -99,6 +101,8 @@ void Object::set_texture_coords(const float* _tc, unsigned int _tc_count)
 
 void Object::draw() const
 {
+	ASSERT(vertex_array == 0 || buffer[0] == 0 || buffer[1] == 0);
+
 	glm::mat4x4 result_matrix = translation_matrix * rotation_matrix * scale_matrix;
 	LEti::Shader::set_transform_matrix(result_matrix);
 
@@ -108,6 +112,8 @@ void Object::draw() const
 	
 	LEti::Shader::set_texture(texture);
 	glDrawArrays(GL_TRIANGLES, 0, vertices.get_vertices_count());
+
+	glBindVertexArray(0);
 }
 
 void Object::update(float _dt)
