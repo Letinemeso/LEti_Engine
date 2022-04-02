@@ -5,6 +5,7 @@
 #include "../include/Texture.h"
 #include "../include/Vertices.h"
 #include "../include/Camera.h"
+#include "../include/Resource_Loader.h"
 
 #include "../OpenGL/GLM/mat4x4.hpp"
 #include "../OpenGL/GLM/gtx/transform.hpp"
@@ -29,18 +30,25 @@ namespace LEti {
 		float rotation_angle = 0.0f;
 
 	public:
-		Object(bool _is_3d = true);
+		Object();
 		~Object();
 
 	public:
-		void init_texture(const char* _tex_path, const float* const tex_coords, unsigned int _tex_coords_count);
-		void init_vertices(const float* const _coords, unsigned int _coords_count);
+		virtual void init_texture(const char* _tex_path, const float* const tex_coords, unsigned int _tex_coords_count);
+		virtual void init_vertices(const float* const _coords, unsigned int _coords_count);
+		virtual void init(const char* _object_name);
+
+	protected:
+		void set_texture(const char* _path);
+		void set_texture_coords(const float* _tc, unsigned int _tc_count);
 
 	public:
-		void draw() const;
-		void update(float _dt);
+		virtual void draw() const;
+		virtual void update(float _dt);
 
 	public:
+		void set_is_3d(bool _is_3d);
+
 		void set_pos(float _x, float _y, float _z);
 		void move(float _x, float _y, float _z);
 

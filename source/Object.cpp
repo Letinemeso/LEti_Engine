@@ -2,10 +2,8 @@
 
 using namespace LEti;
 
-Object::Object(bool _is_3d)
+Object::Object()
 {
-	is_3d = _is_3d;
-
 	glGenVertexArrays(1, &vertex_array);
 	glBindVertexArray(vertex_array);
 	glEnableVertexAttribArray(0);
@@ -55,6 +53,48 @@ void Object::init_vertices(const float* const _coords, unsigned int _coords_coun
 	vertices.setup_vertex_buffer(&buffer[0], 0);
 }
 
+void Object::init(const char* _object_name)
+{
+	auto tcoords = LEti::Resource_Loader::get_data<float>(_object_name, "texture_coords");
+	init_texture(LEti::Resource_Loader::get_data<std::string>(_object_name, "texture_name").first->c_str(), tcoords.first, tcoords.second);
+
+	auto coords = LEti::Resource_Loader::get_data<float>(_object_name, "coords");
+	init_vertices(coords.first, coords.second);
+
+	auto translation = LEti::Resource_Loader::get_data<float>(_object_name, "position");
+	ASSERT(translation.second != 3);
+	set_pos(translation.first[0], translation.first[1], translation.first[2]);
+
+	auto scale = LEti::Resource_Loader::get_data<float>(_object_name, "scale");
+	ASSERT(scale.second != 3);
+	set_pos(scale.first[0], scale.first[1], scale.first[2]);
+
+	auto raxis = LEti::Resource_Loader::get_data<float>(_object_name, "rotation_axis");
+	ASSERT(raxis.second != 3);
+	set_pos(raxis.first[0], raxis.first[1], raxis.first[2]);
+
+	auto rangle = LEti::Resource_Loader::get_data<float>(_object_name, "rotation_angle");
+	ASSERT(rangle.second != 1);
+	set_pos(rangle.first[0], rangle.first[1], rangle.first[2]);
+
+	auto i3d = LEti::Resource_Loader::get_data<unsigned int>(_object_name, "is_3d");
+	ASSERT(i3d.second != 1 || *i3d.first > 1);
+	set_is_3d(*i3d.first);
+}
+
+
+
+void Object::set_texture(const char* _path)
+{
+	texture.set_picture(_path);
+}
+
+void Object::set_texture_coords(const float* _tc, unsigned int _tc_count)
+{
+	texture.set_texture_coords(_tc, _tc_count);
+	texture.setup_tex_coords_buffer(&buffer[1], 1);
+}
+
 
 
 void Object::draw() const
@@ -76,6 +116,11 @@ void Object::update(float _dt)
 }
 
 
+
+void Object::set_is_3d(bool _is_3d)
+{
+	is_3d = _is_3d;
+}
 
 void Object::set_pos(float _x, float _y, float _z)
 {

@@ -12,6 +12,7 @@
 #include "include/Event_Controller.h"
 #include "include/Camera.h"
 #include "include/Resource_Loader.h"
+#include "include/Text_Field.h"
 
 #include <string>
 #include <iostream>
@@ -38,6 +39,7 @@ int main()
 
 	//vertex buffer
 	LEti::Resource_Loader::load_object("quad", "resources/models/quad.mdl");
+	LEti::Resource_Loader::load_object("text_field", "resources/font/text_field.mdl");
 
 	float crds2[9] =
 	{
@@ -58,19 +60,31 @@ int main()
 	LEti::Utility::shrink_vector_to_1(v);
 
 	LEti::Object object;
-	auto tcoords = LEti::Resource_Loader::get_data<float>("quad", "texture_coords");
+	/*auto tcoords = LEti::Resource_Loader::get_data<float>("quad", "texture_coords");
 	object.init_texture(LEti::Resource_Loader::get_data<std::string>("quad", "texture_name").first->c_str(), tcoords.first, tcoords.second);
 
 	auto coords = LEti::Resource_Loader::get_data<float>("quad", "coords");
-	object.init_vertices(coords.first, coords.second);
+	object.init_vertices(coords.first, coords.second);*/
+	object.init("quad");
 
-	LEti::Object object2(false);
-	object2.init_texture("ymany.png", texture_coords_ymany, 6);
+
+
+
+	LEti::Object object2;
+	object2.set_is_3d(false);
+	object2.init_texture("resources/textures/ymany.png", texture_coords_ymany, 6);
 	object2.init_vertices(crds2, 9);
+
+
+
+	LEti::Text_Field tftf;
+	tftf.init("text_field");
+	tftf.set_text("");
+
 
 	//matrix to rotate camera_top vector
 
-	LEti::Camera::set_fov_and_max_distance(3.14159 / 1.8f, 5.0f);
+	LEti::Camera::set_fov_and_max_distance(3.14159 / 1.8f, 25.0f);
 	LEti::Camera::set_camera_data({ 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 1.0f });
 	LEti::Camera::setup_orthographic_matrix();
 
@@ -99,7 +113,7 @@ int main()
 		++fps;
 		if (time_has_passed > 1.0f)
 		{
-			std::cout << "fps: " << fps << "\n";
+			tftf.set_text(std::to_string(fps).c_str());
 			time_has_passed -= 1.0f;
 			fps = 0;
 		}
@@ -110,12 +124,13 @@ int main()
 			LEti::Camera::toggle_controll(LEti::Camera::get_controllable() == true ? false : true);
 		LEti::Camera::update(true, true);
 
+
+		glEnable(GL_DEPTH_TEST);
 		object.draw();
+		glDisable(GL_DEPTH_TEST);
 		object2.draw();
 
-
-
-
+		tftf.draw();
 
 		LEti::Event_Controller::swap_buffers();
 
