@@ -10,8 +10,6 @@ namespace std
 
 namespace LEti
 {
-	constexpr unsigned int tcpc = 12, cpc = 18;		//texture coordinates per character, coordinates per character
-
 	class Text_Field : public Object
 	{
 	private:

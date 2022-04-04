@@ -16,14 +16,12 @@ namespace LEti {
 
 	class Object
 	{
-	private:
+	protected:
 		bool is_3d = true;
+		bool visible = true;
 
-	private:
+	protected:
 		unsigned int vertex_array = 0;
-		unsigned int buffer[2] = { 0 };
-
-        LEti::Buffer cbuf, tcbuf;
 
 		LEti::Texture texture;
 		LEti::Vertices vertices;
@@ -47,10 +45,12 @@ namespace LEti {
 
 	public:
 		virtual void draw() const;
-        virtual void update(float _dt);
+		virtual void update(float _dt);
 
 	public:
 		void set_is_3d(bool _is_3d);
+		void set_visible(bool _visible);
+		bool get_visible() const;
 
 		void set_pos(float _x, float _y, float _z);
 		void move(float _x, float _y, float _z);

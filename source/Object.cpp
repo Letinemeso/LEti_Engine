@@ -33,7 +33,6 @@ Object::Object()
 
 Object::~Object()
 {
-	glDeleteBuffers(2, buffer);
 	glDeleteVertexArrays(1, &vertex_array);
 }
 
@@ -43,14 +42,14 @@ void Object::init_texture(const char* _tex_path, const float* const tex_coords, 
 {
 	glBindVertexArray(vertex_array);
 	texture.init(_tex_path, tex_coords, _tex_coords_count);
-	texture.setup_tex_coords_buffer(&buffer[1], 1);
+	texture.setup_buffer(1, 2);
 }
 
 void Object::init_vertices(const float* const _coords, unsigned int _coords_count)
 {
 	glBindVertexArray(vertex_array);
 	vertices.load(_coords, _coords_count);
-    vertices.setup_vertex_buffer(0);
+	vertices.setup_buffer(0, 3);
 
 //    cbuf.allocate_memory()
 }
@@ -96,14 +95,16 @@ void Object::set_texture_coords(const float* _tc, unsigned int _tc_count)
 {
 	glBindVertexArray(vertex_array);
 	texture.set_texture_coords(_tc, _tc_count);
-	texture.setup_tex_coords_buffer(&buffer[1], 1);
+	texture.setup_buffer(1, 2);
 }
 
 
 
 void Object::draw() const
 {
-    ASSERT(vertex_array == 0 || /*buffer[0] == 0 ||*/ buffer[1] == 0);
+	if (!visible) return;
+
+	ASSERT(vertex_array == 0 || vertices.get_vertices_count() == 0 || texture.size() == 0);
 
 	glm::mat4x4 result_matrix = translation_matrix * rotation_matrix * scale_matrix;
 	LEti::Shader::set_transform_matrix(result_matrix);
@@ -113,14 +114,14 @@ void Object::draw() const
 	glBindVertexArray(vertex_array);
 	
 	LEti::Shader::set_texture(texture);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.get_vertices_count());
+	glDrawArrays(GL_TRIANGLES, 0, vertices.get_vertices_count());
 
 	glBindVertexArray(0);
 }
 
 void Object::update(float _dt)
 {
-
+	
 }
 
 
@@ -129,6 +130,17 @@ void Object::set_is_3d(bool _is_3d)
 {
 	is_3d = _is_3d;
 }
+
+void Object::set_visible(bool _visible)
+{
+	visible = _visible;
+}
+
+bool Object::get_visible() const
+{
+	return visible;
+}
+
 
 void Object::set_pos(float _x, float _y, float _z)
 {

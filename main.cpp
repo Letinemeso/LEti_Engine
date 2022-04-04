@@ -44,32 +44,32 @@ int main()
 	LEti::Resource_Loader::load_object("text_field", "resources/font/text_field.mdl");
 
 	LEti::Object object;
+	object.init("quad");
 
-	object.init("quad");    
+	float crds2[9] =
+	{
+		1.0f, 100.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		100.0f, 1.0f, 0.0f
+	};
 
-    float crds2[9] =
-    {
-        1.0f, 100.0f, 0.0f,
-        1.0f, 1.0f, 0.0f,
-        100.0f, 1.0f, 0.0f
-    };
+	float texture_coords_ymany[6] =
+	{
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+	};
 
-    float texture_coords_ymany[6] =
-    {
-        0.0f, 1.0f,
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-    };
-
-    LEti::Object ymany;
-    ymany.set_is_3d(false);
-    ymany.init_texture("resources/textures/ymany.png", texture_coords_ymany, 6);
-    ymany.init_vertices(crds2, 9);
+	LEti::Object ymany;
+	ymany.set_is_3d(false);
+	ymany.init_texture("resources/textures/ymany.png", texture_coords_ymany, 6);
+	ymany.init_vertices(crds2, 9);
 
 
 
 	LEti::Text_Field tftf;
 	tftf.init("text_field");
+	tftf.set_visible(false);
 	//tftf.set_text("1234567890.,!?*/+- ");
 	tftf.set_pos(0.0f, LEti::Event_Controller::get_window_data().height - 25, 0.0f);
 
@@ -84,10 +84,10 @@ int main()
 	object.set_pos(0.0f, 0.0f, -0.1f);
 	object.set_rotation_data(0.0f, 0.0f, 1.0f, 0.0f);
 
-    ymany.set_pos(0.0f, 0.5f, 0.0f);
+	ymany.set_pos(0.0f, 0.5f, 0.0f);
 
-    ymany.set_rotation_data(0.0f, 0.0f, 1.0f, 0.0f);
-    ymany.set_overall_scale(1.0f);
+	ymany.set_rotation_data(0.0f, 0.0f, 1.0f, 0.0f);
+	ymany.set_overall_scale(1.0f);
 
 	float time_has_passed = 0.0f;
 	unsigned int fps = 0;
@@ -101,10 +101,10 @@ int main()
 		++fps;
 		if (time_has_passed > 1.0f)
 		{
-            std::string sfps("fps ");
-            sfps += std::to_string(fps);
-            tftf.set_text(sfps.c_str());
-//			std::cout << "fps: " << fps << "\n";
+			std::string sfps("fps ");
+			sfps += std::to_string(fps);
+			tftf.set_text(sfps.c_str());
+			tftf.set_visible(true);
 			time_has_passed -= 1.0f;
 			fps = 0;
 		}
@@ -119,12 +119,12 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 		object.draw();
 		glDisable(GL_DEPTH_TEST);
-        ymany.draw();
+		ymany.draw();
 
-        tftf.draw();
+		tftf.draw();
 
-        if(LEti::Event_Controller::key_was_released(GLFW_KEY_ESCAPE))
-            break;
+		if(LEti::Event_Controller::key_was_released(GLFW_KEY_ESCAPE))
+			break;
 
 		LEti::Event_Controller::swap_buffers();
 
