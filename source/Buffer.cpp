@@ -53,13 +53,13 @@ void Buffer::free_memory()
 
 void Buffer::copy_array(const float *_data, unsigned int _count, unsigned int _offset)
 {
-    ASSERT(_offset + _count > buffer_size);
+    ASSERT(_offset + _count > buffer_size || _data == nullptr);
 
     for(unsigned int i=_offset; i<_offset + _count; ++i)
         buffer_data[i] = _data[i];
 
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferSubData(GL_ARRAY_BUFFER, _offset, _count, _data);
+    glBufferSubData(GL_ARRAY_BUFFER, _offset, sizeof(float) * _count, _data);
 }
 
 
@@ -74,6 +74,6 @@ Buffer::float_container& Buffer::operator[](unsigned int _index)
 
 float Buffer::operator[](unsigned int _index) const
 {
-    fc.last_requested_index = _index;
-    return *fc;
+    ASSERT(_index >= buffer_size);
+    return buffer_data[_index];
 }

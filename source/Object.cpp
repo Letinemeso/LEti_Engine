@@ -50,7 +50,9 @@ void Object::init_vertices(const float* const _coords, unsigned int _coords_coun
 {
 	glBindVertexArray(vertex_array);
 	vertices.load(_coords, _coords_count);
-	vertices.setup_vertex_buffer(&buffer[0], 0);
+    vertices.setup_vertex_buffer(0);
+
+//    cbuf.allocate_memory()
 }
 
 void Object::init(const char* _object_name)
@@ -101,7 +103,7 @@ void Object::set_texture_coords(const float* _tc, unsigned int _tc_count)
 
 void Object::draw() const
 {
-	ASSERT(vertex_array == 0 || buffer[0] == 0 || buffer[1] == 0);
+    ASSERT(vertex_array == 0 || /*buffer[0] == 0 ||*/ buffer[1] == 0);
 
 	glm::mat4x4 result_matrix = translation_matrix * rotation_matrix * scale_matrix;
 	LEti::Shader::set_transform_matrix(result_matrix);

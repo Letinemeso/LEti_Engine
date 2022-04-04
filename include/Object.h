@@ -6,6 +6,7 @@
 #include "../include/Vertices.h"
 #include "../include/Camera.h"
 #include "../include/Resource_Loader.h"
+#include "../include/Buffer.h"
 
 #include "../OpenGL/GLM/mat4x4.hpp"
 #include "../OpenGL/GLM/gtx/transform.hpp"
@@ -21,6 +22,8 @@ namespace LEti {
 	private:
 		unsigned int vertex_array = 0;
 		unsigned int buffer[2] = { 0 };
+
+        LEti::Buffer cbuf, tcbuf;
 
 		LEti::Texture texture;
 		LEti::Vertices vertices;

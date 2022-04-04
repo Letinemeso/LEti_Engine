@@ -8,9 +8,9 @@
 
 namespace LEti {
 
-    class Buffer final
+    class Buffer
     {
-    private:
+    protected:
         class float_container final
         {
         private:
@@ -18,14 +18,14 @@ namespace LEti {
         private:
             unsigned int* buffer = nullptr;
             float* buffer_data = nullptr;
-            mutable unsigned int last_requested_index = 0;
+            unsigned int last_requested_index = 0;
         public:
             void operator=(float _f);
             float operator*() const;
         };
         float_container fc;
 
-    private:
+    protected:
         unsigned int buffer = 0;
 
         float* buffer_data = nullptr;
@@ -33,12 +33,12 @@ namespace LEti {
 
     public:
         Buffer() {}
-        ~Buffer();
+        virtual ~Buffer();
 
-        void allocate_memory(unsigned int _size);
-        void free_memory();
+        virtual void allocate_memory(unsigned int _size);
+        virtual void free_memory();
 
-        void copy_array(const float* _data, unsigned int _count, unsigned int _offset = 0);
+        virtual void copy_array(const float* _data, unsigned int _count, unsigned int _offset = 0);
 
         float_container& operator[](unsigned int _index);
         float operator[](unsigned int _index) const;
