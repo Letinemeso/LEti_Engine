@@ -16,7 +16,7 @@ namespace LEti {
 		private:
 			friend class Buffer;
 		private:
-			unsigned int* buffer = nullptr;
+			const unsigned int* buffer = nullptr;
 			float* buffer_data = nullptr;
 			unsigned int last_requested_index = 0;
 		public:
@@ -25,18 +25,21 @@ namespace LEti {
 		};
 		float_container fc;
 
+	public:
+		const unsigned int* vertex_array = nullptr;
+
 	protected:
 		unsigned int buffer = 0;
-
 		float* buffer_data = nullptr;
 		unsigned int buffer_size = 0;
 
 	public:
-		Buffer() {}
+		Buffer();
 		virtual ~Buffer();
 
 		virtual void allocate_memory(unsigned int _size);
 		virtual void free_memory();
+		virtual void resize(unsigned int _new_size);
 
 		virtual void copy_array(const float* _data, unsigned int _count, unsigned int _offset = 0);
 

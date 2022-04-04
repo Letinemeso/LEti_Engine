@@ -39,6 +39,9 @@ namespace LEti {
 		virtual void init_vertices(const float* const _coords, unsigned int _coords_count);
 		virtual void init(const char* _object_name);
 
+		virtual LEti::Vertices& get_vertices();
+		virtual LEti::Texture& get_texture();
+
 	protected:
 		void set_texture(const char* _path);
 		void set_texture_coords(const float* _tc, unsigned int _tc_count);

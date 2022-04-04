@@ -9,6 +9,9 @@ Object::Object()
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
+	vertices.vertex_array = &vertex_array;
+	texture.vertex_array = &vertex_array;
+
 	translation_matrix =
 	{
 		1.0f, 0.0f, 0.0f, 0.0f,
@@ -50,8 +53,6 @@ void Object::init_vertices(const float* const _coords, unsigned int _coords_coun
 	glBindVertexArray(vertex_array);
 	vertices.load(_coords, _coords_count);
 	vertices.setup_buffer(0, 3);
-
-//    cbuf.allocate_memory()
 }
 
 void Object::init(const char* _object_name)
@@ -81,6 +82,17 @@ void Object::init(const char* _object_name)
 	auto i3d = LEti::Resource_Loader::get_data<unsigned int>(_object_name, "is_3d");
 	ASSERT(i3d.second != 1 || *i3d.first > 1);
 	set_is_3d(*i3d.first);
+}
+
+
+LEti::Vertices& Object::get_vertices()
+{
+	return vertices;
+}
+
+LEti::Texture& Object::get_texture()
+{
+	return texture;
 }
 
 

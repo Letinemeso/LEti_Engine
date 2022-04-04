@@ -46,6 +46,17 @@ int main()
 	LEti::Object object;
 	object.init("quad");
 
+	float crds1[9] =
+	{
+		1.0f, 100.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
+		100.0f, 1.0f, 0.0f
+	};
+	for (unsigned int i = 0; i < 9; i+=3)
+		crds1[i] += 300.0f;
+	for (unsigned int i = 1; i < 9; i += 3)
+		crds1[i] += 300.0f;
+
 	float crds2[9] =
 	{
 		1.0f, 100.0f, 0.0f,
@@ -53,8 +64,11 @@ int main()
 		100.0f, 1.0f, 0.0f
 	};
 
-	float texture_coords_ymany[6] =
+	float texture_coords_ymany[12] =
 	{
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
 		0.0f, 1.0f,
 		0.0f, 0.0f,
 		1.0f, 0.0f,
@@ -62,15 +76,51 @@ int main()
 
 	LEti::Object ymany;
 	ymany.set_is_3d(false);
-	ymany.init_texture("resources/textures/ymany.png", texture_coords_ymany, 6);
+	ymany.init_texture("resources/textures/ymany.png", texture_coords_ymany, 12);
 	ymany.init_vertices(crds2, 9);
 
+	ymany.get_vertices().resize(18);
+	//ymany.get_texture().resize(12);
 
+	ymany.get_vertices().copy_array(crds1, 9, 9);
+	//ymany.get_texture().copy_array(texture_coords_ymany, 6, 6);
+
+	ymany.get_vertices().setup_buffer(0, 3);
+	//ymany.get_texture().setup_buffer(1, 2);
+
+	ymany.get_vertices().allocate_memory(18);
+	//ymany.get_texture().setup_buffer(1, 2);
+	ymany.get_vertices().copy_array(crds2, 9, 0);
+	ymany.get_vertices().copy_array(crds1, 9, 9);
+
+
+	unsigned int ind = 16;
+	
+	float tt = (*((ymany.get_vertices())[ind]));
+	float t = tt + 200.0f;
+	ymany.get_vertices()[ind] = t;
+
+	ymany.get_vertices().setup_buffer(0, 3);
+	//ymany.get_texture().setup_buffer(1, 2);
+
+
+	/*for (unsigned int i = 0; i < 9; ++i)
+	{
+		ymany.get_vertices()[i + 9] = crds2[i] + 300.0f;
+	}
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		ymany.get_texture()[i + 6] = texture_coords_ymany[i];
+	}*/
+
+
+
+	ymany.get_vertices().setup_buffer(0, 3);
+	ymany.get_texture().setup_buffer(1, 2);
 
 	LEti::Text_Field tftf;
 	tftf.init("text_field");
 	tftf.set_visible(false);
-	//tftf.set_text("1234567890.,!?*/+- ");
 	tftf.set_pos(0.0f, LEti::Event_Controller::get_window_data().height - 25, 0.0f);
 
 
