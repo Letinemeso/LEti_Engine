@@ -14,6 +14,8 @@
 #include "include/Resource_Loader.h"
 #include "include/Text_Field.h"
 
+#include "include/Buffer.h"
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -43,9 +45,7 @@ int main()
 
 	LEti::Object object;
 
-	object.init("quad");
-
-
+	object.init("quad");    
 
     float crds2[9] =
     {
@@ -104,7 +104,7 @@ int main()
             std::string sfps("fps ");
             sfps += std::to_string(fps);
             tftf.set_text(sfps.c_str());
-			std::cout << "fps: " << fps << "\n";
+//			std::cout << "fps: " << fps << "\n";
 			time_has_passed -= 1.0f;
 			fps = 0;
 		}
@@ -121,7 +121,7 @@ int main()
 		glDisable(GL_DEPTH_TEST);
         ymany.draw();
 
-		tftf.draw();
+        tftf.draw();
 
         if(LEti::Event_Controller::key_was_released(GLFW_KEY_ESCAPE))
             break;
