@@ -111,7 +111,7 @@ void Object::draw() const
 	glBindVertexArray(vertex_array);
 	
 	LEti::Shader::set_texture(texture);
-	glDrawArrays(GL_TRIANGLES, 0, vertices.get_vertices_count());
+    glDrawArrays(GL_TRIANGLES, 0, vertices.get_vertices_count());
 
 	glBindVertexArray(0);
 }

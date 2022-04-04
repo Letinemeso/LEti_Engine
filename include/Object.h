@@ -44,7 +44,7 @@ namespace LEti {
 
 	public:
 		virtual void draw() const;
-		virtual void update(float _dt);
+        virtual void update(float _dt);
 
 	public:
 		void set_is_3d(bool _is_3d);

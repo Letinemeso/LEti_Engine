@@ -41,35 +41,30 @@ int main()
 	LEti::Resource_Loader::load_object("quad", "resources/models/quad.mdl");
 	LEti::Resource_Loader::load_object("text_field", "resources/font/text_field.mdl");
 
-	float crds2[9] =
-	{
-		1.0f, 100.0f, 0.0f,
-		1.0f, 1.0f, 0.0f,
-		100.0f, 1.0f, 0.0f
-	};
-
-	float texture_coords_ymany[6] =
-	{
-		0.0f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-	};
-
-	glm::vec3 v(0.0f, 0.0f, 0.0f);
-	float a = LEti::Utility::vector_length(v);
-	LEti::Utility::shrink_vector_to_1(v);
-
 	LEti::Object object;
 
 	object.init("quad");
 
 
 
+    float crds2[9] =
+    {
+        1.0f, 100.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,
+        100.0f, 1.0f, 0.0f
+    };
 
-	LEti::Object object2;
-	object2.set_is_3d(false);
-	object2.init_texture("resources/textures/ymany.png", texture_coords_ymany, 6);
-	object2.init_vertices(crds2, 9);
+    float texture_coords_ymany[6] =
+    {
+        0.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+    };
+
+    LEti::Object ymany;
+    ymany.set_is_3d(false);
+    ymany.init_texture("resources/textures/ymany.png", texture_coords_ymany, 6);
+    ymany.init_vertices(crds2, 9);
 
 
 
@@ -85,19 +80,14 @@ int main()
 	LEti::Camera::set_camera_data({ 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f, 1.0f });
 	LEti::Camera::setup_orthographic_matrix();
 
-	//some shit, idk
-
-	float ortho_value = 2.0f;
-
-	float scale = 1.0f;
 
 	object.set_pos(0.0f, 0.0f, -0.1f);
 	object.set_rotation_data(0.0f, 0.0f, 1.0f, 0.0f);
 
-	object2.set_pos(0.0f, 0.5f, 0.0f);
+    ymany.set_pos(0.0f, 0.5f, 0.0f);
 
-	object2.set_rotation_data(0.0f, 0.0f, 1.0f, 0.0f);
-	object2.set_overall_scale(1.0f);
+    ymany.set_rotation_data(0.0f, 0.0f, 1.0f, 0.0f);
+    ymany.set_overall_scale(1.0f);
 
 	float time_has_passed = 0.0f;
 	unsigned int fps = 0;
@@ -111,9 +101,9 @@ int main()
 		++fps;
 		if (time_has_passed > 1.0f)
 		{
-			std::string sfps("fps ");
-			sfps += std::to_string(fps);
-			tftf.set_text(sfps.c_str());
+            std::string sfps("fps ");
+            sfps += std::to_string(fps);
+            tftf.set_text(sfps.c_str());
 			std::cout << "fps: " << fps << "\n";
 			time_has_passed -= 1.0f;
 			fps = 0;
@@ -129,9 +119,12 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 		object.draw();
 		glDisable(GL_DEPTH_TEST);
-		object2.draw();
+        ymany.draw();
 
 		tftf.draw();
+
+        if(LEti::Event_Controller::key_was_released(GLFW_KEY_ESCAPE))
+            break;
 
 		LEti::Event_Controller::swap_buffers();
 
