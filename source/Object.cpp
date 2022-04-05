@@ -69,15 +69,15 @@ void Object::init(const char* _object_name)
 
 	auto scale = LEti::Resource_Loader::get_data<float>(_object_name, "scale");
 	ASSERT(scale.second != 3);
-	set_pos(scale.first[0], scale.first[1], scale.first[2]);
+	set_scale(scale.first[0], scale.first[1], scale.first[2]);
 
 	auto raxis = LEti::Resource_Loader::get_data<float>(_object_name, "rotation_axis");
 	ASSERT(raxis.second != 3);
-	set_pos(raxis.first[0], raxis.first[1], raxis.first[2]);
+	set_rotation_axis(raxis.first[0], raxis.first[1], raxis.first[2]);
 
 	auto rangle = LEti::Resource_Loader::get_data<float>(_object_name, "rotation_angle");
 	ASSERT(rangle.second != 1);
-	set_pos(rangle.first[0], rangle.first[1], rangle.first[2]);
+	set_rotation_angle(*rangle.first);
 
 	auto i3d = LEti::Resource_Loader::get_data<unsigned int>(_object_name, "is_3d");
 	ASSERT(i3d.second != 1 || *i3d.first > 1);
