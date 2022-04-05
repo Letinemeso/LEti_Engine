@@ -1,8 +1,8 @@
 #ifndef __EVENT_CONTROLLER
 #define __EVENT_CONTROLLER
 
-#include "../OpenGL/GLEW/include/glew.h"
-#include "../OpenGL/GLFW/include/glfw3.h"
+#include "glew.h"
+#include "glfw3.h"
 
 #include "../Debug.h"
 

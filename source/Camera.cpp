@@ -208,7 +208,7 @@ void Camera::update(bool _update_2d, bool _update_3d)
 
 void Camera::use(bool _is_3d)
 {
-	ASSERT(_is_3d ? (!ortho_matrix_set) : (!pos_set || !look_direction_set || !fov_set));
+	ASSERT(_is_3d ? (!pos_set || !look_direction_set || !fov_set) : (!ortho_matrix_set));
 
 	LEti::Shader::set_projection_matrix(_is_3d ? result_camera_matrix : orthographic_matrix);
 }

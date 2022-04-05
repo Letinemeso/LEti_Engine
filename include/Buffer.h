@@ -1,7 +1,7 @@
 #ifndef __BUFFER
 #define __BUFFER
 
-#include "../OpenGL/GLEW/include/glew.h"
+#include "glew.h"
 
 #include "../Debug.h"
 

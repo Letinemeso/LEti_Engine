@@ -4,7 +4,7 @@
 #include "../Debug.h"
 #include "../include/Buffer.h"
 
-#include "../OpenGL/GLEW/include/glew.h"
+#include "glew.h"
 
 #include <fstream>
 
