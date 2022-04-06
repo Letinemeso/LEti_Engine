@@ -15,6 +15,8 @@ namespace LEti { namespace Utility {
 
 	void shrink_vector_to_1(glm::vec3& _vec);
 
+	float get_distance(const glm::vec3& _first, const glm::vec3& _second);
+
 	bool is_digit(char _c);
 
 }	/*LEti*/	}	/*Utility*/

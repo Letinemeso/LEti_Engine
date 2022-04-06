@@ -82,6 +82,7 @@ void Event_Controller::update()
 	glfwPollEvents();
 
 	glfwGetCursorPos(window, &current_cursor_pos.x, &current_cursor_pos.y);
+	current_cursor_pos.y = window_data.height - current_cursor_pos.y;
 }
 
 float Event_Controller::get_dt()

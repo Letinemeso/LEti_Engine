@@ -131,7 +131,7 @@ void Object::draw() const
 	glBindVertexArray(0);
 }
 
-void Object::update(float _dt)
+void Object::update()
 {
 	
 }

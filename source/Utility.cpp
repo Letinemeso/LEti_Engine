@@ -19,6 +19,13 @@ void Utility::shrink_vector_to_1(glm::vec3& _vec)
 	_vec /= vec_length;
 }
 
+float Utility::get_distance(const glm::vec3& _first, const glm::vec3& _second)
+{
+	if (_first == _second)
+		return 0.0f;
+	return sqrt(pow(_second.x - _first.x, 2) + pow(_second.y - _first.y, 2) + pow(_second.y - _first.y, 2));
+}
+
 bool Utility::is_digit(char _c)
 {
 	if (_c >= '0' && _c <= '9')
