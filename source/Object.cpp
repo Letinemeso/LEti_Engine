@@ -224,3 +224,31 @@ void Object::set_overall_scale(float _scale)
 {
 	Object::set_scale(_scale, _scale, _scale);
 }
+
+
+
+glm::vec3 Object::get_pos() const
+{
+    glm::vec3 result;
+    for(unsigned int i=0; i<3; ++i)
+        result[i] = translation_matrix[3][i];
+    return result;
+}
+
+glm::vec3 Object::get_scale() const
+{
+    glm::vec3 result;
+    for(unsigned int i=0; i<3; ++i)
+        result[i] = scale_matrix[i][i];
+    return result;
+}
+
+glm::vec3 Object::get_rotation_axis() const
+{
+    return rotation_axis;
+}
+
+float Object::get_rotation_angle() const
+{
+    return rotation_angle;
+}

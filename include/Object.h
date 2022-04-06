@@ -32,7 +32,7 @@ namespace LEti {
 
 	public:
 		Object();
-		~Object();
+        virtual ~Object();
 
 	public:
 		virtual void init_texture(const char* _tex_path, const float* const tex_coords, unsigned int _tex_coords_count);
@@ -66,6 +66,11 @@ namespace LEti {
 		void set_scale(float _scale_x, float _scale_y, float _scale_z);
 		void set_overall_scale(float _scale);
 
+    public:
+        glm::vec3 get_pos() const;
+        glm::vec3 get_scale() const;
+        glm::vec3 get_rotation_axis() const;
+        float get_rotation_angle() const;
 	};
 
 }	//LEti
