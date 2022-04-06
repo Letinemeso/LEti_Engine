@@ -16,6 +16,7 @@ std::chrono::time_point<std::chrono::steady_clock> Event_Controller::current_tim
 std::chrono::time_point<std::chrono::steady_clock> Event_Controller::prev_time_point = std::chrono::steady_clock::now();
 
 bool Event_Controller::keys_pressed_before[GLFW_KEY_LAST + 1] = { false };
+bool Event_Controller::mouse_buttons_pressed_before[GLFW_MOUSE_BUTTON_LAST + 1] = { false };
 
 Event_Controller::cursor_position Event_Controller::prev_cursor_pos,
 								  Event_Controller::current_cursor_pos,
@@ -76,6 +77,8 @@ void Event_Controller::update()
 
 	for (unsigned int i = 0; i <= GLFW_KEY_LAST; ++i)
 		keys_pressed_before[i] = glfwGetKey(window, i);
+    for (unsigned int i = 0; i <= GLFW_MOUSE_BUTTON_LAST; ++i)
+        mouse_buttons_pressed_before[i] = glfwGetMouseButton(window, i);
 	glfwPollEvents();
 
 	glfwGetCursorPos(window, &current_cursor_pos.x, &current_cursor_pos.y);
@@ -93,6 +96,27 @@ void Event_Controller::update_cursor_stride()
 	cursor_stride.y = prev_cursor_pos.y - current_cursor_pos.y;
 	prev_cursor_pos.x = current_cursor_pos.x;
 	prev_cursor_pos.y = current_cursor_pos.y;
+}
+
+
+bool Event_Controller::is_mouse_button_down(unsigned int _btn)
+{
+    return glfwGetMouseButton(window, _btn) == true;
+}
+
+bool Event_Controller::is_mouse_button_up(unsigned int _btn)
+{
+    return glfwGetMouseButton(window, _btn) == false;
+}
+
+bool Event_Controller::mouse_button_was_pressed(unsigned int _btn)
+{
+    return is_mouse_button_down(_btn) && !mouse_buttons_pressed_before[_btn];
+}
+
+bool Event_Controller::mouse_button_was_released(unsigned int _btn)
+{
+    return !is_mouse_button_up(_btn) && mouse_buttons_pressed_before[_btn];
 }
 
 

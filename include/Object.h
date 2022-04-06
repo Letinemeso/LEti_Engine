@@ -52,7 +52,7 @@ namespace LEti {
 
 	public:
 		void set_is_3d(bool _is_3d);
-		void set_visible(bool _visible);
+        virtual void set_visible(bool _visible);
 		bool get_visible() const;
 
 		void set_pos(float _x, float _y, float _z);
