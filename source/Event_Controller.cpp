@@ -116,7 +116,7 @@ bool Event_Controller::mouse_button_was_pressed(unsigned int _btn)
 
 bool Event_Controller::mouse_button_was_released(unsigned int _btn)
 {
-    return !is_mouse_button_up(_btn) && mouse_buttons_pressed_before[_btn];
+    return !is_mouse_button_down(_btn) && mouse_buttons_pressed_before[_btn];
 }
 
 
