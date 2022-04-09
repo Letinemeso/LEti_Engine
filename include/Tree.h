@@ -63,6 +63,8 @@ namespace LEti {
 
 			void insert_after(const Stored_Type& _new_data, unsigned int _child_index);
 			void insert_after(Stored_Type&& _new_data, unsigned int _child_index);
+			unsigned int insert_into_availible_index(const Stored_Type& _new_data);
+			unsigned int insert_into_availible_index(Stored_Type&& _new_data);
 
 			void delete_branch();
 
@@ -173,6 +175,49 @@ namespace LEti {
 			node->insert_after(std::move(_new_data), _child_index);
 		}
 	}
+
+	template<typename Stored_Type, unsigned int _cpn>
+	unsigned int Tree<Stored_Type, _cpn>::Iterator::insert_into_availible_index(const Stored_Type& _new_data)
+	{
+		if (!*head)
+		{
+			*head = new Node(_new_data);
+			node = *head;
+		}
+		else
+		{
+			for (unsigned int i = 0; i < _cpn; ++i)
+			{
+				if (!node->child[i])
+				{
+					node->insert_after(_new_data, i);
+					return;
+				}
+			}
+		}
+	}
+
+	template<typename Stored_Type, unsigned int _cpn>
+	unsigned int Tree<Stored_Type, _cpn>::Iterator::insert_into_availible_index(Stored_Type&& _new_data)
+	{
+		if (!*head)
+		{
+			*head = new Node(std::move(_new_data));
+			node = *head;
+		}
+		else
+		{
+			for (unsigned int i = 0; i < _cpn; ++i)
+			{
+				if (!node->child[i])
+				{
+					node->insert_after(std::move(_new_data), i);
+					return;
+				}
+			}
+		}
+	}
+
 
 	template<typename Stored_Type, unsigned int _cpn>
 	void Tree<Stored_Type, _cpn>::Iterator::delete_branch()
