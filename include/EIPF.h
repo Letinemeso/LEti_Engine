@@ -35,19 +35,21 @@ namespace LEti {
         bool** m_occupied = nullptr;
         unsigned int m_size_x = 0, m_size_y = 0;
 
+    protected:
+        unsigned int get_distance(const intp& _first, const intp& _second) const;
+        bool at(const intp& _ind) const;
+        bool out_of_bounds(const intp& _ind) const;
+
     private:
         bool is_step_unique(const intp& _step) const;
-        unsigned int get_distance(const intp& _first, const intp& _second) const;
-        bool out_of_bounds(const intp& _ind) const;
-        bool at(const intp& _ind) const;
 
         bool can_move_here(const EIPF::intp &_where) const;
 
-        std::pair<LEti::Tree<EIPF::intp, 3>::Iterator, EIPF::intp> find_closest_pos(const intp& _dest) const;
+        std::pair<LEti::Tree<EIPF::intp, 4>::Iterator, EIPF::intp> find_closest_pos(const intp& _dest) const;
 
     private:
-        LEti::Tree<intp, 3> m_tree;
-        LEti::Tree<intp, 3>::Const_Iterator m_path_end;
+        LEti::Tree<intp, 4> m_tree;
+        LEti::Tree<intp, 4>::Const_Iterator m_path_end;
         bool m_path_found = false;
         unsigned int m_steps_count = 0;
         intp m_current_pos = {-1, -1}, m_destination = {-1, -1};

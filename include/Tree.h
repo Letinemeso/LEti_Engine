@@ -82,8 +82,8 @@ namespace LEti {
 
             void insert_after(const Stored_Type& _new_data, unsigned int _child_index) override {};
             void insert_after(Stored_Type&& _new_data, unsigned int _child_index) override {};
-            unsigned int insert_into_availible_index(const Stored_Type& _new_data) override {};
-            unsigned int insert_into_availible_index(Stored_Type&& _new_data) override {};
+			unsigned int insert_into_availible_index(const Stored_Type& _new_data) override { return 0; };
+            unsigned int insert_into_availible_index(Stored_Type&& _new_data) override { return 0; };
 
             void delete_branch() override {};
 
