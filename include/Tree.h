@@ -28,7 +28,7 @@ namespace LEti {
 			static void clear_branch(Node* _node);
 		};
 
-		Node* head = nullptr;
+        mutable Node* head = nullptr;
 
 	public:
 		~Tree();
@@ -36,41 +36,37 @@ namespace LEti {
 	public:
 		class Iterator
 		{
-		private:
-			Node** head;
-			Node* node = nullptr;
+        protected:
+            Node** head;
+            Node* node = nullptr;
 
 		public:
 			Iterator() {  }
-			Iterator(Node*& _node) : node(_node), head(&_node) {  }
+            Iterator(Node** _node) : node(*_node), head(_node) {  }
             Iterator(Iterator&& _other) : node(_other.node), head(_other.head) {  }
             Iterator(const Iterator& _other) : node(_other.node), head(_other.head) {  }
-            void operator=(const Iterator& _other)
-            {
-                node = _other.node;
-                head = _other.head;
-            }
+            void operator=(const Iterator& _other) { node = _other.node; head = _other.head; }
 
-		private:
+        private:
 			unsigned int get_child_index();
 
 		public:
 			bool valid() const;
 
-			Stored_Type& operator*() { return *(node->data); }
+            virtual Stored_Type& operator*() { return *(node->data); }
 
-			bool operator==(const Iterator& _other) { return node == _other.node; }
-			bool operator!=(const Iterator& _other) { return !(*this == _other); }
+            bool operator==(const Iterator& _other) const { return node == _other.node; }
+            bool operator!=(const Iterator& _other) const { return !(*this == _other); }
 
-			void operator++();
-			void operator--();
+            void operator++();
+            void operator--();
 
-			void insert_after(const Stored_Type& _new_data, unsigned int _child_index);
-			void insert_after(Stored_Type&& _new_data, unsigned int _child_index);
-			unsigned int insert_into_availible_index(const Stored_Type& _new_data);
-			unsigned int insert_into_availible_index(Stored_Type&& _new_data);
+            virtual void insert_after(const Stored_Type& _new_data, unsigned int _child_index);
+            virtual void insert_after(Stored_Type&& _new_data, unsigned int _child_index);
+            virtual unsigned int insert_into_availible_index(const Stored_Type& _new_data);
+            virtual unsigned int insert_into_availible_index(Stored_Type&& _new_data);
 
-			void delete_branch();
+            virtual void delete_branch();
 
             unsigned int ascend();
 			void descend(unsigned int _child_index);
@@ -79,7 +75,32 @@ namespace LEti {
 			bool end() const;
 		};
 
-		Iterator create_iterator() { return Iterator(head); }
+        class Const_Iterator : public Iterator
+        {
+        private:
+//            Stored_Type& operator*() override {};
+
+            void insert_after(const Stored_Type& _new_data, unsigned int _child_index) override {};
+            void insert_after(Stored_Type&& _new_data, unsigned int _child_index) override {};
+            unsigned int insert_into_availible_index(const Stored_Type& _new_data) override {};
+            unsigned int insert_into_availible_index(Stored_Type&& _new_data) override {};
+
+            void delete_branch() override {};
+
+        public:
+            Const_Iterator() {  }
+            Const_Iterator(Node** _node) : Iterator(_node) { }
+            Const_Iterator(Iterator&& _other) : Iterator(_other) { }
+            Const_Iterator(const Iterator& _other) : Iterator(_other) { }
+//            void operator=(const Iterator& _other) { node = _other.node; head = _other.head; }
+
+        public:
+            Stored_Type& operator*() const { return *(Iterator::node->data); }
+
+        };
+
+        Iterator create_iterator() { return Iterator(&head); }
+        Const_Iterator create_iterator() const { return Const_Iterator(&head); }
 
 	public:
 
@@ -269,7 +290,7 @@ namespace LEti {
 
 
 	template<typename Stored_Type, unsigned int _cpn>
-	void Tree<Stored_Type, _cpn>::Iterator::operator++()
+    void Tree<Stored_Type, _cpn>::Iterator::operator++()
 	{
 		ASSERT(!*head);
 		ASSERT(!node);
@@ -306,7 +327,7 @@ namespace LEti {
 	}
 
 	template<typename Stored_Type, unsigned int _cpn>
-	void Tree<Stored_Type, _cpn>::Iterator::operator--()
+    void Tree<Stored_Type, _cpn>::Iterator::operator--()
 	{
 		ASSERT(!*head);
 		ASSERT(!node);
