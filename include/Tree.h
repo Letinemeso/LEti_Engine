@@ -43,9 +43,13 @@ namespace LEti {
 		public:
 			Iterator() {  }
 			Iterator(Node*& _node) : node(_node), head(&_node) {  }
-			Iterator(Iterator&& _other) : node(_other.node) {  }
-			Iterator(const Iterator& _other) : node(_other.node) {  }
-			void operator=(const Iterator& _other) { node = _other.node; }
+            Iterator(Iterator&& _other) : node(_other.node), head(_other.head) {  }
+            Iterator(const Iterator& _other) : node(_other.node), head(_other.head) {  }
+            void operator=(const Iterator& _other)
+            {
+                node = _other.node;
+                head = _other.head;
+            }
 
 		private:
 			unsigned int get_child_index();
@@ -68,7 +72,7 @@ namespace LEti {
 
 			void delete_branch();
 
-			void ascend();
+            unsigned int ascend();
 			void descend(unsigned int _child_index);
 
 			bool begin() const;
@@ -191,14 +195,15 @@ namespace LEti {
 				if (!node->child[i])
 				{
 					node->insert_after(_new_data, i);
-					return;
+                    return i;
 				}
 			}
 		}
+        return _cpn;
 	}
 
 	template<typename Stored_Type, unsigned int _cpn>
-	unsigned int Tree<Stored_Type, _cpn>::Iterator::insert_into_availible_index(Stored_Type&& _new_data)
+    unsigned int Tree<Stored_Type, _cpn>::Iterator::insert_into_availible_index(Stored_Type&& _new_data)
 	{
 		if (!*head)
 		{
@@ -212,10 +217,11 @@ namespace LEti {
 				if (!node->child[i])
 				{
 					node->insert_after(std::move(_new_data), i);
-					return;
+                    return i;
 				}
 			}
-		}
+        }
+        return _cpn;
 	}
 
 
@@ -242,11 +248,13 @@ namespace LEti {
 
 
 	template<typename Stored_Type, unsigned int _cpn>
-	void Tree<Stored_Type, _cpn>::Iterator::ascend()
+    unsigned int Tree<Stored_Type, _cpn>::Iterator::ascend()
 	{
 		ASSERT(!head);
 		ASSERT(!node->parent);
+        unsigned int prev_child_index = get_child_index();
 		node = node->parent;
+        return prev_child_index;
 	}
 
 	template<typename Stored_Type, unsigned int _cpn>
