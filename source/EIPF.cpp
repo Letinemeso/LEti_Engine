@@ -188,7 +188,6 @@ void EIPF::build_path()
 	if (iter.valid()) iter.delete_branch();
 	iter.insert_into_availible_index(m_current_pos);
 
-	m_steps_count = 0;
 	m_path_found = false;
 
 	while (*iter != m_destination)
@@ -197,24 +196,29 @@ void EIPF::build_path()
 		if (a.second == intp(-1, -1))
 		{
 			m_path_end = iter;
+			m_steps_count = 0;
 			return;
 		}
 
 		a.first.descend(a.first.insert_into_availible_index(a.second));
 		iter = a.first;
-
-		++m_steps_count;
 	}
 
 	m_path_end = iter;
 	m_path_found = true;
+
+	m_steps_count = 0;
+	while (!iter.begin())
+	{
+		++m_steps_count;
+		iter.ascend();
+	}
+	++m_steps_count;
 }
 
 std::pair<int, int> EIPF::get_next_step() const
 {
 	ASSERT(out_of_bounds(m_current_pos) || out_of_bounds(m_destination) || !m_occupied);
-
-	if (m_steps_count == 0) return { -1, -1 };
 
 	auto iter = m_path_end;
 	if (!iter.valid()) return { -1, -1 };
