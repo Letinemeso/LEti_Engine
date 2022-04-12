@@ -68,6 +68,8 @@ namespace LEti {
         void build_path();
         std::pair<int, int> get_next_step() const;
         std::vector<std::pair<int, int>> get_full_path() const;
+        unsigned int get_steps_count() const;
+        bool is_path_found() const;
 
     };
 }

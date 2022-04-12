@@ -248,3 +248,15 @@ std::vector<std::pair<int, int>> EIPF::get_full_path() const
 
 	return result;
 }
+
+unsigned int EIPF::get_steps_count() const
+{
+	return m_steps_count;
+}
+
+bool EIPF::is_path_found() const
+{
+	return m_path_found;
+}
+
+
