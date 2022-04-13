@@ -16,6 +16,13 @@ void EIPF::rotate_cw(Direction& _d) const
 
 
 
+std::pair<int, int> EIPF::get_field_size() const
+{
+    return {(int)m_size_x, (int)m_size_y};
+}
+
+
+
 void EIPF::intp::move(Direction _d)
 {
 	switch (_d)

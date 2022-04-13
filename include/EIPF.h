@@ -35,6 +35,9 @@ namespace LEti {
         bool** m_occupied = nullptr;
         unsigned int m_size_x = 0, m_size_y = 0;
 
+    public:
+        std::pair<int, int> get_field_size() const;
+
     protected:
         unsigned int get_distance(const intp& _first, const intp& _second) const;
         bool at(const intp& _ind) const;
