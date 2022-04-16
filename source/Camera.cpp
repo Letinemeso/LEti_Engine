@@ -169,7 +169,7 @@ void Camera::control(bool _update_2d, bool _update_3d)
 		look_angle_xz += additional_angle
 			* (LEti::Event_Controller::get_cursor_stride().x / LEti::Event_Controller::get_window_data().width)
 			* (controlls.sensitivity_scale >= 0.0f ? controlls.sensitivity_scale : 0.0f);
-		look_angle_y += additional_angle
+		look_angle_y -= additional_angle
 			* (LEti::Event_Controller::get_cursor_stride().y / LEti::Event_Controller::get_window_data().height)
 			* (controlls.sensitivity_scale >= 0.0f ? controlls.sensitivity_scale : 0.0f);
 
