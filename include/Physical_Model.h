@@ -6,6 +6,8 @@
 
 #include "../Debug.h"
 
+#include "../include/Utility.h"
+
 
 namespace LEti
 {
@@ -22,14 +24,13 @@ namespace LEti
 			static constexpr unsigned int m_cpv = 3;
 
 		private:
-			const float* m_raw_coords = nullptr;
-			const glm::mat4x4* m_translation = nullptr, * m_rotation = nullptr, * m_scale = nullptr;
-
-			glm::vec3 A, B, C;
+            const float* m_raw_coords = nullptr;
+            glm::vec3 A, B, C;
 
 		public:
 			Polygon();
-			void setup(const float* _coords, const glm::mat4x4* _translation, glm::mat4x4* _rotation, glm::mat4x4* _scale);
+            void setup(const float* _coords);
+            void update_points(const glm::mat4x4* _translation, glm::mat4x4* _rotation, glm::mat4x4* _scale);
 
 		private:
 			glm::vec3 get_normal() const;
@@ -38,12 +39,13 @@ namespace LEti
 
 		public:
 			glm::vec3 get_intersection_point(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
-			bool beam_intersecting_triangle(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
+            bool beam_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
 
 		};
 
 	private:
-		float* m_raw_coords = nullptr;
+        float* m_raw_coords = nullptr;
+        const glm::mat4x4* m_translation = nullptr, * m_rotation = nullptr, * m_scale = nullptr;
 
 	public:
 		Physical_Model(float* _raw_coords);
