@@ -69,14 +69,26 @@ void Camera::set_look_direction(glm::vec3 _direction)
     if(vector_length < 0.99999 || vector_length > 1.0f)
         _direction /= vector_length;
 
-    direction = _direction;
-
     look_angle_y = asin(_direction.y);
     _direction.y = 0.0f;
     _direction /= cos(look_angle_y);
-    look_angle_xz = asin(_direction.x);
+    
+    if (_direction.z > 0.0f)
+    {
+        if (_direction.x >= 0.0f) 
+            look_angle_xz = asin(_direction.z);
+        else 
+            look_angle_xz = -asin(_direction.z);
+    }
+    else
+    {
+        if (_direction.x >= 0.0f) 
+            look_angle_xz = Utility::HALF_PI - asin(_direction.z);
+        else 
+            look_angle_xz = asin(_direction.z) - Utility::HALF_PI;
+    }
 
-    setup_top_vector();
+    setup_look_dir_and_top_vectors();
 
     look_direction_set = true;
     setup_result_matrix();
