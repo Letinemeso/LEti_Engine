@@ -46,21 +46,21 @@ namespace LEti
             public:
                 glm::vec3 get_intersection_point(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
                 bool beam_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
+                bool point_is_on_the_right(const glm::vec3& _point) const;
+                bool point_is_on_the_left(const glm::vec3& _point) const;
 
             };
 
         private:
             static constexpr unsigned int m_raw_coords_count = 12;
-            static constexpr unsigned int m_vertices_count = 12;
             const float* m_raw_coords = nullptr;
-            const unsigned int* m_raw_sequence = nullptr;
 
             Polygon m_polygons[4];
 
         public:
             Pyramid();
 
-            void setup(const float* _raw_coords, const unsigned int* _raw_sequence);
+            void setup(const float* _raw_coords);
             void update_polygons(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
 
         public:
@@ -72,20 +72,20 @@ namespace LEti
         float* m_raw_coords = nullptr;
         unsigned int m_raw_coords_count = 0;
 
-        unsigned int* m_raw_sequence = nullptr;
-        unsigned int m_raw_sequence_size = 0;
-
         Pyramid* m_pyramids = nullptr;
         unsigned int m_pyramids_count = 0;
 
 	public:
         Physical_Model();
-        Physical_Model(unsigned int _sequence_size, const unsigned int* _raw_sequence, const float* _raw_coords);
-        void setup(unsigned int _sequence_size, const unsigned int* _raw_sequence, const float* _raw_coords);
+        Physical_Model(const float* _raw_coords, unsigned int _raw_coords_count);
+        void setup(const float* _raw_coords, unsigned int _raw_coords_count);
 
         ~Physical_Model();
 
         void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
+
+    public:
+        bool is_intersecting_with_point(const glm::vec3& _point) const;
 
 	};
 
