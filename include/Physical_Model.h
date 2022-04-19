@@ -13,43 +13,79 @@ namespace LEti
 {
 	class Physical_Model
 	{
-	private:
-		class Polygon
-		{
-		private:
-			struct Plane_Equasion_Data { float x_part = 0.0f, y_part = 0.0f, z_part = 0.0f, constant_part = 0.0f; };
+    private:
 
-		private:
-			static constexpr unsigned int m_count = 9;
-			static constexpr unsigned int m_cpv = 3;
+        //contains single pyramid which sides will be used to track collisions
+        class Pyramid
+        {
+        private:
+            //contains single polygon (triangle). four of these will form a pyramid
+            class Polygon
+            {
+            private:
+                struct Plane_Equasion_Data { float x_part = 0.0f, y_part = 0.0f, z_part = 0.0f, constant_part = 0.0f; };
 
-		private:
+            private:
+                static constexpr unsigned int m_count = 9;
+                static constexpr unsigned int m_cpv = 3;
+
+            private:
+                const float* m_raw_coords = nullptr;
+                glm::vec3 m_actual_A, m_actual_B, m_actual_C;
+
+            public:
+                Polygon();
+                void setup(const float* _raw_coords);
+                void update_points(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
+
+            private:
+                glm::vec3 get_normal() const;
+                Plane_Equasion_Data get_equasion() const;
+                bool point_belongs_to_triangle(const glm::vec3& _point) const;
+
+            public:
+                glm::vec3 get_intersection_point(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
+                bool beam_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
+
+            };
+
+        private:
+            static constexpr unsigned int m_raw_coords_count = 12;
+            static constexpr unsigned int m_vertices_count = 12;
             const float* m_raw_coords = nullptr;
-            glm::vec3 A, B, C;
+            const unsigned int* m_raw_sequence = nullptr;
 
-		public:
-			Polygon();
-            void setup(const float* _coords);
-            void update_points(const glm::mat4x4* _translation, glm::mat4x4* _rotation, glm::mat4x4* _scale);
+            Polygon m_polygons[4];
 
-		private:
-			glm::vec3 get_normal() const;
-			Plane_Equasion_Data get_equasion() const;
-			bool point_belongs_to_triangle(const glm::vec3& _point) const;
+        public:
+            Pyramid();
 
-		public:
-			glm::vec3 get_intersection_point(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
-            bool beam_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
+            void setup(const float* _raw_coords, const unsigned int* _raw_sequence);
+            void update_polygons(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
 
-		};
+        public:
+            bool point_belongs_to_pyramid(const glm::vec3& _point) const;
+
+        };
 
 	private:
         float* m_raw_coords = nullptr;
-        const glm::mat4x4* m_translation = nullptr, * m_rotation = nullptr, * m_scale = nullptr;
+        unsigned int m_raw_coords_count = 0;
+
+        unsigned int* m_raw_sequence = nullptr;
+        unsigned int m_raw_sequence_size = 0;
+
+        Pyramid* m_pyramids = nullptr;
+        unsigned int m_pyramids_count = 0;
 
 	public:
-		Physical_Model(float* _raw_coords);
+        Physical_Model();
+        Physical_Model(unsigned int _sequence_size, const unsigned int* _raw_sequence, const float* _raw_coords);
+        void setup(unsigned int _sequence_size, const unsigned int* _raw_sequence, const float* _raw_coords);
 
+        ~Physical_Model();
+
+        void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
 
 	};
 

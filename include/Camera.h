@@ -58,9 +58,9 @@ namespace LEti {
 		Camera(Camera&&) = delete;
 
 		//3D stuff
-		static void set_camera_data(glm::vec3 _pos, glm::vec3 _direction);
-		static void set_position(glm::vec3 _pos);
-		static void set_look_direction(glm::vec3 _direction);
+        static void set_camera_data(const glm::vec3& _pos, const glm::vec3& _direction);
+        static void set_position(const glm::vec3& _pos);
+        static void set_look_direction(glm::vec3 _direction);
 		static void set_fov_and_max_distance(float _fov, float _max_distance);
 
 		//2D stuff
