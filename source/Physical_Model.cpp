@@ -58,18 +58,23 @@ bool Physical_Model::Pyramid::Polygon::point_belongs_to_triangle(const glm::vec3
 {
 	ASSERT(!m_raw_coords);
 
-	glm::vec3 normal = get_normal();
+    glm::vec3 normal = get_normal();
 
-	float mult1 = Utility::mixed_vector_multiplication(normal, m_actual_A - _point, m_actual_B - _point);
-	float mult2 = Utility::mixed_vector_multiplication(normal, m_actual_B - _point, m_actual_C - _point);
-	float mult3 = Utility::mixed_vector_multiplication(normal, m_actual_C - _point, m_actual_A - _point);
+    float mult1 = Utility::mixed_vector_multiplication(normal, m_actual_A - _point, m_actual_B - _point);
+    float mult2 = Utility::mixed_vector_multiplication(normal, m_actual_B - _point, m_actual_C - _point);
+    float mult3 = Utility::mixed_vector_multiplication(normal, m_actual_C - _point, m_actual_A - _point);
 
-	if (mult1 >= 0 && mult2 >= 0 && mult3 >= 0)
-		return true;
-	return false;
+    if (mult1 >= 0 && mult2 >= 0 && mult3 >= 0)
+        return true;
+    return false;
 }
 
+//bool Physical_Model::Pyramid::Polygon::beam_faces_polygon(glm::vec3 _beam_pos, glm::vec3 _beam_direction) const
+//{
 
+//}
+
+/* start: 0.45983243 1.28283203 1.39208841    direction: -0.145590916 -0.457252026 -0.877339125 */
 
 glm::vec3 Physical_Model::Pyramid::Polygon::get_intersection_point(const glm::vec3& _start, const glm::vec3& _direction) const
 {
@@ -77,11 +82,11 @@ glm::vec3 Physical_Model::Pyramid::Polygon::get_intersection_point(const glm::ve
 
 	Plane_Equasion_Data ped = get_equasion();
 
-	float t = (_start.x * ped.x_part + _start.y * ped.y_part + _start.z * ped.z_part) /
-		(_direction.x * ped.x_part + _direction.y * ped.y_part + _direction.z * ped.z_part + ped.constant_part);
-	t *= -1;
+    float t = (_start.x * ped.x_part + _start.y * ped.y_part + _start.z * ped.z_part + ped.constant_part) /
+        (_direction.x * ped.x_part + _direction.y * ped.y_part + _direction.z * ped.z_part);
+    t *= -1;
 
-	return { _direction.x * t + _start.x, _direction.y * t + _start.y, _direction.z * t + _start.z };
+    return { _direction.x * t + _start.x, _direction.y * t + _start.y, _direction.z * t + _start.z };
 }
 
 bool Physical_Model::Pyramid::Polygon::beam_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const
@@ -89,7 +94,14 @@ bool Physical_Model::Pyramid::Polygon::beam_intersecting_polygon(const glm::vec3
 	ASSERT(!m_raw_coords);
 
 	glm::vec3 intersection_point = get_intersection_point(_beam_pos, _beam_direction);
-	return point_belongs_to_triangle(intersection_point);
+
+    glm::vec3 ip_direction = intersection_point - _beam_pos;
+    float angle_cos = (ip_direction.x * _beam_direction.x + ip_direction.y * _beam_direction.y + ip_direction.z * _beam_direction.z) /
+            ( Utility::vector_length(ip_direction) + Utility::vector_length(_beam_direction) );
+
+    if(angle_cos > 0.001f)
+        return point_belongs_to_triangle(intersection_point);
+    else return false;
 }
 
 bool Physical_Model::Pyramid::Polygon::point_is_on_the_right(const glm::vec3& _point) const
@@ -142,6 +154,15 @@ bool Physical_Model::Pyramid::point_belongs_to_pyramid(const glm::vec3& _point) 
 	for (unsigned int i = 0; i < 4; ++i)
 		if (m_polygons[i].point_is_on_the_right(_point)) return false;
 	return true;
+}
+
+bool Physical_Model::Pyramid::is_intersecting_with_beam(const glm::vec3 &_start, const glm::vec3 &_direction) const
+{
+    ASSERT(!m_raw_coords);
+
+    for(unsigned int i=0; i<4; ++i)
+        if(m_polygons[i].beam_intersecting_polygon(_start, _direction)) return true;
+    return false;
 }
 
 
@@ -200,6 +221,15 @@ bool Physical_Model::is_intersecting_with_point(const glm::vec3& _point) const
 	for (unsigned int i = 0; i < m_pyramids_count; ++i)
 		if (m_pyramids[i].point_belongs_to_pyramid(_point)) return true;
 	return false;
+}
+
+bool Physical_Model::is_intersecting_with_beam(const glm::vec3 &_start, const glm::vec3 &_direction) const
+{
+    ASSERT(!m_raw_coords || !m_pyramids);
+
+    for (unsigned int i = 0; i < m_pyramids_count; ++i)
+        if (m_pyramids[i].is_intersecting_with_beam(_start, _direction)) return true;
+    return false;
 }
 
 

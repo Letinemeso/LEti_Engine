@@ -72,6 +72,9 @@ namespace LEti {
 		static void toggle_controll(bool _is_controllable);
 		static bool get_controllable();
 
+        static glm::vec3 get_pos();
+        static glm::vec3 get_look_direction();
+
 	private:
 		static void control(bool _update_2d, bool _update_3d);
 

@@ -42,6 +42,7 @@ namespace LEti
                 glm::vec3 get_normal() const;
                 Plane_Equasion_Data get_equasion() const;
                 bool point_belongs_to_triangle(const glm::vec3& _point) const;
+                bool beam_faces_polygon(glm::vec3 _beam_pos, glm::vec3 _beam_direction) const;
 
             public:
                 glm::vec3 get_intersection_point(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
@@ -65,6 +66,7 @@ namespace LEti
 
         public:
             bool point_belongs_to_pyramid(const glm::vec3& _point) const;
+            bool is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const;
 
         };
 
@@ -86,6 +88,8 @@ namespace LEti
 
     public:
         bool is_intersecting_with_point(const glm::vec3& _point) const;
+        bool is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const;
+        bool is_intersecting_with_another_model(const Physical_Model& _other);
 
 	};
 

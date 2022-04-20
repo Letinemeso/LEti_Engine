@@ -140,6 +140,17 @@ bool Camera::get_controllable()
 }
 
 
+glm::vec3 Camera::get_pos()
+{
+    return position;
+}
+
+glm::vec3 Camera::get_look_direction()
+{
+    return direction;
+}
+
+
 
 void Camera::control(bool _update_2d, bool _update_3d)
 {
