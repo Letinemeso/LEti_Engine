@@ -18,7 +18,7 @@ namespace LEti
         //contains single pyramid which sides will be used to track collisions
         class Pyramid
         {
-        private:
+        public:
             //contains single polygon (triangle). four of these will form a pyramid
             class Polygon
             {
@@ -38,17 +38,22 @@ namespace LEti
                 void setup(const float* _raw_coords);
                 void update_points(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
 
-            private:
+            public:
                 glm::vec3 get_normal() const;
                 Plane_Equasion_Data get_equasion() const;
                 bool point_belongs_to_triangle(const glm::vec3& _point) const;
-                bool beam_faces_polygon(glm::vec3 _beam_pos, glm::vec3 _beam_direction) const;
 
             public:
                 glm::vec3 get_intersection_point(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
                 bool beam_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
+                bool segment_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
                 bool point_is_on_the_right(const glm::vec3& _point) const;
                 bool point_is_on_the_left(const glm::vec3& _point) const;
+
+            public:
+                const glm::vec3& A() const;
+                const glm::vec3& B() const;
+                const glm::vec3& C() const;
 
             };
 
@@ -67,6 +72,10 @@ namespace LEti
         public:
             bool point_belongs_to_pyramid(const glm::vec3& _point) const;
             bool is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const;
+            bool is_intersecting_with_segment(const glm::vec3& _start, const glm::vec3& _direction) const;
+
+        public:
+            const Polygon& operator[](unsigned int _index) const;
 
         };
 
@@ -89,7 +98,8 @@ namespace LEti
     public:
         bool is_intersecting_with_point(const glm::vec3& _point) const;
         bool is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const;
-        bool is_intersecting_with_another_model(const Physical_Model& _other);
+        bool is_intersecting_with_segment(const glm::vec3& _start, const glm::vec3& _direction) const;
+        bool is_intersecting_with_another_model(const Physical_Model& _other) const;
 
 	};
 
