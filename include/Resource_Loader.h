@@ -9,6 +9,9 @@
 #include "../Debug.h"
 #include "../include/Utility.h"
 
+#include "../include/Picture.h"
+
+
 namespace LEti {
 
 	class Resource_Loader
@@ -24,16 +27,17 @@ namespace LEti {
 		struct object_data
 		{
 			std::map<std::string, parsed_value> variables;
-		};
+        };
 
 	private:
-		static std::map<std::string, object_data> objects;
+        static std::map<std::string, object_data> m_objects;
+        static std::map<std::string, Picture> m_pictures;
 
 	public:
 		Resource_Loader() = delete;
 
 	private:
-		static void load_variables(const std::string& _source, const char* _name);
+        static void load_variables(const std::string& _source, const char* _name);
 
 	public:
 		static void load_object(const char* _name, const char* _path);
@@ -41,6 +45,7 @@ namespace LEti {
 
 		template<typename T>
 		static std::pair<const T* const, unsigned int> get_data(const char* _object_name, const char* _variable_name);
+        static const Picture& get_picture(const char* _name);
 
 	};
 
@@ -49,9 +54,9 @@ namespace LEti {
 	{
 		std::pair<const T*, unsigned int> result;
 
-		std::map<std::string, object_data>::iterator objects_it = objects.find(_object_name);
-		ASSERT(objects_it == objects.end());
-		std::map<std::string, parsed_value>::iterator vars_it = objects_it->second.variables.find(_variable_name);
+        std::map<std::string, object_data>::iterator objects_it = m_objects.find(_object_name);
+        ASSERT(objects_it == m_objects.end());
+        std::map<std::string, parsed_value>::iterator vars_it = objects_it->second.variables.find(_variable_name);
 		ASSERT(vars_it == objects_it->second.variables.end());
 
 		result.first = (T*)(vars_it->second.value);

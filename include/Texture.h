@@ -3,6 +3,8 @@
 
 #include "../Debug.h"
 #include "../include/Buffer.h"
+#include "../include/Picture.h"
+#include "../include/Resource_Loader.h"
 
 #include "glew.h"
 
@@ -24,7 +26,8 @@ namespace LEti {
 		void operator=(LEti::Texture&&) = delete;
 
 		void init(const char* _path, const float* const _tex_coords, unsigned int _tex_coords_count);
-		void set_picture(const char* _path);
+//		void set_picture(const char* _path);
+        void set_picture(const char* _picture_name);
 		void set_texture_coords(const float* const _tex_coords, unsigned int _tex_coords_count);
 
 		~Texture();

@@ -314,6 +314,27 @@ bool Physical_Model::is_intersecting_with_another_model(const Physical_Model &_o
             }
         }
     }
+
+    for(unsigned int pyr = 0; pyr < _other.m_pyramids_count; ++pyr)
+    {
+        for(unsigned int other_pyr = 0; other_pyr < m_pyramids_count; ++other_pyr)
+        {
+            for(unsigned int i=0; i<4; ++i)
+            {
+                const Pyramid::Polygon& crnt_polygon = m_pyramids[other_pyr][i];
+
+                glm::vec3 AB = crnt_polygon.B() - crnt_polygon.A();
+                glm::vec3 AC = crnt_polygon.C() - crnt_polygon.A();
+                glm::vec3 BC = crnt_polygon.C() - crnt_polygon.B();
+
+                if(_other.is_intersecting_with_segment(crnt_polygon.A(), AB) ||
+                        _other.is_intersecting_with_segment(crnt_polygon.A(), AC) ||
+                        _other.is_intersecting_with_segment(crnt_polygon.B(), BC))
+                    return true;
+            }
+        }
+    }
+
     return false;
 }
 

@@ -3,7 +3,8 @@
 using namespace LEti;
 
 
-std::map<std::string, Resource_Loader::object_data> Resource_Loader::objects;
+std::map<std::string, Resource_Loader::object_data> Resource_Loader::m_objects;
+std::map<std::string, Picture> Resource_Loader::m_pictures;
 
 
 void Resource_Loader::load_variables(const std::string& _source, const char* _name)
@@ -38,7 +39,7 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 
 				if (result.type == "float")
 					((float*)(result.value))[result.values_count - var_values_left] = std::stof(str_value);
-				else if (result.type == "string")
+                else if (result.type == "string" || result.type == "texture")
 					((std::string*)(result.value))[result.values_count - var_values_left] = std::move(str_value);
 				else if (result.type == "int")
 					((int*)(result.value))[result.values_count - var_values_left] = std::stoi(str_value);
@@ -76,7 +77,7 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 
 				if (result.type == "float")
 					result.value = (void*)(new float[result.values_count]);
-				else if (result.type == "string")
+                else if (result.type == "string" || result.type == "texture")
 					result.value = (void*)(new std::string[result.values_count]);
 				else if (result.type == "int")
 					result.value = (void*)(new int[result.values_count]);
@@ -107,7 +108,10 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 
 		if (_source[i] == '\n' || i + 1 == _source.size())
 		{
-			objects.at(_name).variables.emplace(std::move(name), result);
+            if(result.type == "texture")
+                m_pictures.emplace(name, LEti::load_picture(((std::string*)(result.value))->c_str()) );
+
+            m_objects.at(_name).variables.emplace(std::move(name), result);
 			result.type.clear();
 			result.value = nullptr;
 			result.values_count = 1;
@@ -116,6 +120,8 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 		++i;
 	}
 }
+
+
 
 void Resource_Loader::load_object(const char* _name, const char* _path)
 {
@@ -134,65 +140,44 @@ void Resource_Loader::load_object(const char* _name, const char* _path)
 
 	file.close();
 
-	objects.emplace(std::string(_name), object_data());
+    m_objects.emplace(std::string(_name), object_data());
 
 	load_variables(source, _name);
-
-	//	может пригодиться для сохранения
-	/*std::map<std::string, object_data>::iterator it = objects.begin();
-	while (it != objects.end())
-	{
-		std::cout << it->first << ":\n";
-		std::map<std::string, parsed_value>::iterator it2 = it->second.variables.begin();
-		while (it2 != it->second.variables.end())
-		{
-			std::cout << "\t" << it2->second.type << ' ' << it2->first << ": ";
-			if (it2->second.type == "float")
-			{
-				for (unsigned int i = 0; i < it2->second.values_count; ++i)
-					std::cout << ((float*)(it2->second.value))[i] << ' ';
-			}
-			else if (it2->second.type == "string")
-			{
-				for (unsigned int i = 0; i < it2->second.values_count; ++i)
-					std::cout << ((std::string*)(it2->second.value))[i] << ' ';
-			}
-			else if (it2->second.type == "int")
-			{
-				for (unsigned int i = 0; i < it2->second.values_count; ++i)
-					std::cout << ((int*)(it2->second.value))[i] << ' ';
-			}
-			std::cout << '\n';
-			++it2;
-		}
-		std::cout << '\n';
-		++it;
-	}*/
 }
 
 void Resource_Loader::delete_object(const char* _name)
 {
-	std::map<std::string, object_data>::iterator it = objects.find(_name);
-	ASSERT(it == objects.end());
-	std::map<std::string, parsed_value>::iterator pv_it = it->second.variables.begin();
-	while (pv_it != it->second.variables.end())
-	{
-		if (pv_it->second.type == "float")
-		{
-			float* ptr = (float*)(pv_it->second.value);
-			delete[] ptr;
-		}
-		else if (pv_it->second.type == "string")
-		{
-			std::string* ptr = (std::string*)(pv_it->second.value);
-			delete[] ptr;
-		}
-		else if (pv_it->second.type == "int")
-		{
-			int* ptr = (int*)(pv_it->second.value);
-			delete[] ptr;
-		}
-		++pv_it;
-	}
-	objects.erase(_name);
+    std::map<std::string, object_data>::iterator it = m_objects.find(_name);
+    ASSERT(it == m_objects.end());
+    std::map<std::string, parsed_value>::iterator pv_it = it->second.variables.begin();
+    while (pv_it != it->second.variables.end())
+    {
+        if (pv_it->second.type == "float")
+        {
+            float* ptr = (float*)(pv_it->second.value);
+            delete[] ptr;
+        }
+        else if (pv_it->second.type == "string")
+        {
+            std::string* ptr = (std::string*)(pv_it->second.value);
+            delete[] ptr;
+        }
+        else if (pv_it->second.type == "int")
+        {
+            int* ptr = (int*)(pv_it->second.value);
+            delete[] ptr;
+        }
+        ++pv_it;
+    }
+    m_objects.erase(_name);
+}
+
+
+
+const Picture& Resource_Loader::get_picture(const char *_name)
+{
+    std::map<std::string, Picture>::iterator it = m_pictures.find(_name);
+    ASSERT(it == m_pictures.end());
+
+    return it->second;
 }
