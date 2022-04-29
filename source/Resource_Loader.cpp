@@ -3,6 +3,8 @@
 using namespace LEti;
 
 
+std::map<std::string, Resource_Loader::Type_Handler> Resource_Loader::m_type_handlers;
+
 std::map<std::string, Resource_Loader::object_data> Resource_Loader::m_objects;
 std::map<std::string, Picture> Resource_Loader::m_pictures;
 
@@ -37,14 +39,9 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 				ASSERT(str_value.size() == 0);
 				ASSERT(var_values_left == 0);
 
-				if (result.type == "float")
-					((float*)(result.value))[result.values_count - var_values_left] = std::stof(str_value);
-                else if (result.type == "string" || result.type == "texture")
-					((std::string*)(result.value))[result.values_count - var_values_left] = std::move(str_value);
-				else if (result.type == "int")
-					((int*)(result.value))[result.values_count - var_values_left] = std::stoi(str_value);
-				else
-					ASSERT(true);
+                const Type_Handler& handler = m_type_handlers.at(result.type);
+                unsigned int index = result.values_count - var_values_left;
+                handler.parse_variable(result.value, index, str_value);
 
 				str_value.clear();
 				--var_values_left;
@@ -75,14 +72,8 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 				var_values_left = result.values_count;
 				str_value.clear();
 
-				if (result.type == "float")
-					result.value = (void*)(new float[result.values_count]);
-                else if (result.type == "string" || result.type == "texture")
-					result.value = (void*)(new std::string[result.values_count]);
-				else if (result.type == "int")
-					result.value = (void*)(new int[result.values_count]);
-				else
-					ASSERT(true);
+                const Type_Handler& handler = m_type_handlers.at(result.type);
+                handler.allocate_memory(result.value, result.values_count);
 			}
 			else if (Utility::is_digit(_source[i]))
 				str_value += _source[i];
@@ -98,9 +89,7 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 				result.type += _source[i];
 		}
 		else if (is_parsing_var)
-		{
-			ASSERT(result.type == "float" && (!Utility::is_digit(_source[i]) && _source[i] != '-' && _source[i] != '.'));
-			ASSERT(result.type == "int" && (!Utility::is_digit(_source[i]) && _source[i] != '-'));
+        {
 			str_value += _source[i];
 		}
 
@@ -111,14 +100,113 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
             if(result.type == "texture")
                 m_pictures.emplace(name, LEti::load_picture(((std::string*)(result.value))->c_str()) );
 
-            m_objects.at(_name).variables.emplace(std::move(name), result);
-			result.type.clear();
-			result.value = nullptr;
-			result.values_count = 1;
+            m_objects.at(_name).variables.emplace(std::move(name), std::move(result));
 		}
 
 		++i;
 	}
+}
+
+
+
+void Resource_Loader::init()
+{
+    m_type_handlers.emplace ( "float",
+                Type_Handler(
+                    [](void*& _result, unsigned int _size)
+                    {
+                        _result = new float[_size];
+                    },
+                    [](void*& _result)
+                    {
+                        float* ptr_to_delete = (float*)_result;
+                        delete[] ptr_to_delete;
+                        _result = nullptr;
+                    },
+                    [](void*& _arr, unsigned int _index, const std::string& _str_var)
+                    {
+                        for(unsigned int i=0; i<_str_var.size(); ++i)
+                            ASSERT(!Utility::is_digit(_str_var[i]) && _str_var[i] != '-' && _str_var[i] != '.');
+                        float* f_arr = (float*)_arr;
+                        f_arr[_index] = stof(_str_var);
+                    }
+                )
+            );
+    m_type_handlers.emplace ( "int",
+                Type_Handler(
+                    [](void*& _result, unsigned int _size)
+                    {
+                        _result = new int[_size];
+                    },
+                    [](void*& _result)
+                    {
+                        int* ptr_to_delete = (int*)_result;
+                        delete[] ptr_to_delete;
+                        _result = nullptr;
+                    },
+                    [](void*& _arr, unsigned int _index, const std::string& _str_var)
+                    {
+                        for(unsigned int i=0; i<_str_var.size(); ++i)
+                            ASSERT(!Utility::is_digit(_str_var[i]) && _str_var[i] != '-');
+                        int* f_arr = (int*)_arr;
+                        f_arr[_index] = stoi(_str_var);
+                    }
+                )
+            );
+    m_type_handlers.emplace ( "string",
+                Type_Handler(
+                    [](void*& _result, unsigned int _size)
+                    {
+                        _result = new std::string[_size];
+                    },
+                    [](void*& _result)
+                    {
+                        std::string* ptr_to_delete = (std::string*)_result;
+                        delete[] ptr_to_delete;
+                        _result = nullptr;
+                    },
+                    [](void*& _arr, unsigned int _index, const std::string& _str_var)
+                    {
+                        std::string* f_arr = (std::string*)_arr;
+                        f_arr[_index] = _str_var;
+                    }
+                )
+            );
+    m_type_handlers.emplace ( "texture",
+                Type_Handler(
+                    [](void*& _result, unsigned int _size)
+                    {
+                        _result = new std::string[_size];
+                    },
+                    [](void*& _result)
+                    {
+                        std::string* ptr_to_delete = (std::string*)_result;
+                        delete[] ptr_to_delete;
+                        _result = nullptr;
+                    },
+                    [](void*& _arr, unsigned int _index, const std::string& _str_var)
+                    {
+                        std::string* f_arr = (std::string*)_arr;
+                        f_arr[_index] = _str_var;
+                    }
+                )
+            );
+}
+
+void Resource_Loader::register_type(const std::string &_typename, alloc_fptr _allocate_func, free_fptr _free_func, parse_fptr _parse_func)
+{
+    std::map<std::string, Type_Handler>::iterator check = m_type_handlers.find(_typename);
+    ASSERT(check != m_type_handlers.end());
+
+    m_type_handlers.emplace(_typename, Type_Handler(_allocate_func, _free_func, _parse_func));
+}
+
+void Resource_Loader::unregister_type(const std::string &_typename)
+{
+    std::map<std::string, Type_Handler>::iterator it = m_type_handlers.find(_typename);
+    ASSERT(it == m_type_handlers.end());
+
+    m_type_handlers.erase(it);
 }
 
 
@@ -152,24 +240,23 @@ void Resource_Loader::delete_object(const char* _name)
     std::map<std::string, parsed_value>::iterator pv_it = it->second.variables.begin();
     while (pv_it != it->second.variables.end())
     {
-        if (pv_it->second.type == "float")
-        {
-            float* ptr = (float*)(pv_it->second.value);
-            delete[] ptr;
-        }
-        else if (pv_it->second.type == "string")
-        {
-            std::string* ptr = (std::string*)(pv_it->second.value);
-            delete[] ptr;
-        }
-        else if (pv_it->second.type == "int")
-        {
-            int* ptr = (int*)(pv_it->second.value);
-            delete[] ptr;
-        }
+        const Type_Handler& handler = m_type_handlers.at(pv_it->second.type);
+        handler.free_memory(pv_it->second.value);
         ++pv_it;
     }
     m_objects.erase(_name);
+}
+
+void Resource_Loader::delete_picture(const char *_name)
+{
+    std::map<std::string, Picture>::iterator it = m_pictures.find(_name);
+    ASSERT(it == m_pictures.end());
+    m_pictures.erase(it);
+}
+
+void Resource_Loader::clear_pictures()
+{
+    m_pictures.clear();
 }
 
 
