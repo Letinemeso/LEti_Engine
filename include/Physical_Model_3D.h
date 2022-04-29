@@ -1,8 +1,7 @@
 #ifndef __PHYSICAL_MODEL
 #define __PHYSICAL_MODEL
 
-#include "../OpenGL/GLM/vec4.hpp"
-#include "../OpenGL/GLM/mat4x4.hpp"
+#include "../include/Physical_Model_Interface.h"
 
 #include "../Debug.h"
 
@@ -11,7 +10,7 @@
 
 namespace LEti
 {
-	class Physical_Model
+    class Physical_Model_3D : public Physical_Model_Interface
 	{
     private:
 
@@ -79,32 +78,26 @@ namespace LEti
 
         };
 
-	private:
-        float* m_raw_coords = nullptr;
-        unsigned int m_raw_coords_count = 0;
-
+    private:
         Pyramid* m_pyramids = nullptr;
         unsigned int m_pyramids_count = 0;
 
 	public:
-        Physical_Model();
-        Physical_Model(const float* _raw_coords, unsigned int _raw_coords_count);
-        void setup(const float* _raw_coords, unsigned int _raw_coords_count);
+        Physical_Model_3D();
+        Physical_Model_3D(const float* _raw_coords, unsigned int _raw_coords_count);
+        void setup(const float* _raw_coords, unsigned int _raw_coords_count) override;
 
-        ~Physical_Model();
+        ~Physical_Model_3D();
 
-        void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
+        void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale) override;
 
     public:
-        bool is_intersecting_with_point(const glm::vec3& _point) const;
-        bool is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const;
-        bool is_intersecting_with_segment(const glm::vec3& _start, const glm::vec3& _direction) const;
-        bool is_intersecting_with_another_model(const Physical_Model& _other) const;
+        bool is_intersecting_with_point(const glm::vec3& _point) const override;
+        bool is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const override;
+        bool is_intersecting_with_segment(const glm::vec3& _start, const glm::vec3& _direction) const override;
+        bool is_intersecting_with_another_model(const Physical_Model_Interface& _other) const override;
 
 	};
-
-
-
 }
 
 
