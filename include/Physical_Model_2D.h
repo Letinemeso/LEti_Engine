@@ -14,7 +14,13 @@ namespace LEti
 		class Polygon
 		{
 		private:
-			struct Equasion_Data { float k = 0.0f, b = 0.0f; };
+            struct Equasion_Data
+            {
+                float k = 0.0f, b = 0.0f;
+                bool goes_left = false;
+                bool is_vertical() const { return fabs(k) < 0.00001f && fabs(b) < 0.00001f; }
+                bool is_horisontal() const { return !is_vertical() && fabs(k) < 0.00001f; }
+            };
 			Equasion_Data get_equasion(const glm::vec3& _point_1, const glm::vec3& _point_2) const;
 
 		private:
@@ -34,7 +40,7 @@ namespace LEti
 			bool point_belongs_to_triangle(const glm::vec3& _point) const;
 			
 		private:
-			bool segments_intersects(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22) const;
+            bool segments_intersect(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22) const;
 		public:
 			bool segment_intersecting_polygon(const glm::vec3& _point_1, const glm::vec3& _point_2) const;
 			bool intersects_with_another_polygon(const Polygon& _other) const;

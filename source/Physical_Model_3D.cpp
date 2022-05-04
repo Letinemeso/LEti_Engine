@@ -307,7 +307,10 @@ bool Physical_Model_3D::is_intersecting_with_another_model(const Physical_Model_
 
 				if(is_intersecting_with_segment(crnt_polygon.A(), AB) ||
 						is_intersecting_with_segment(crnt_polygon.A(), AC) ||
-						is_intersecting_with_segment(crnt_polygon.B(), BC))
+                        is_intersecting_with_segment(crnt_polygon.B(), BC) ||
+                        is_intersecting_with_point(crnt_polygon.A()) ||
+                        is_intersecting_with_point(crnt_polygon.B()) ||
+                        is_intersecting_with_point(crnt_polygon.C()))
 					return true;
 			}
 		}
@@ -327,7 +330,10 @@ bool Physical_Model_3D::is_intersecting_with_another_model(const Physical_Model_
 
 				if(other.is_intersecting_with_segment(crnt_polygon.A(), AB) ||
 						other.is_intersecting_with_segment(crnt_polygon.A(), AC) ||
-						other.is_intersecting_with_segment(crnt_polygon.B(), BC))
+                        other.is_intersecting_with_segment(crnt_polygon.B(), BC) ||
+                        other.is_intersecting_with_point(crnt_polygon.A()) ||
+                        other.is_intersecting_with_point(crnt_polygon.B()) ||
+                        other.is_intersecting_with_point(crnt_polygon.C()))
 					return true;
 			}
 		}

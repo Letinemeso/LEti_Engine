@@ -26,7 +26,7 @@ namespace LEti {
 
     public:
         virtual bool is_intersecting_with_point(const glm::vec3& _point) const = 0;
-        virtual bool is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const = 0;
+//        virtual bool is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const = 0;
         virtual bool is_intersecting_with_segment(const glm::vec3& _start, const glm::vec3& _direction) const = 0;
         virtual bool is_intersecting_with_another_model(const Physical_Model_Interface& _other) const = 0;
 
