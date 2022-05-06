@@ -11,43 +11,38 @@
 namespace LEti {
 
     #define DEFINE_TYPE(type_name) static std::string type() { return type_name; }
-    struct Message_Base
-    {
-        static std::string type();
-    };
-
 
     class Message_Translator
     {
     private:
         struct func_wrapper_interface
         {
-            virtual void call(const Message_Base& _msg) = 0;
+            virtual void call(void* _arg) const = 0;
 
             func_wrapper_interface() { }
             virtual ~func_wrapper_interface() { }
         };
 
-        template<typename func_type>
+        template<typename arg_type, typename func_type>
         struct static_func_wrapper : public func_wrapper_interface
         {
             func_type action;
 
-            void call(const Message_Base& _msg) override { action(_msg); }
+            void call(void* _arg) const override { action(*(arg_type*)_arg); }
 
-            static_func_wrapper(func_type _action) : func_wrapper_interface(), action(_action) { }
+            static_func_wrapper(func_type _action) : func_wrapper_interface(), action(_action) { /*action = _action;*/ }
             ~static_func_wrapper() {}
         };
 
-        template<typename obj_type, typename func_type>
+        template<typename arg_type, typename obj_type, typename func_type>
         struct member_func_wrapper : public func_wrapper_interface
         {
             obj_type* object = nullptr;
             func_type action = nullptr;
 
-            void call(const Message_Base& _msg) override { (object->*action)(_msg); }
+            void call(void* _arg) const override { (object->*action)(*(arg_type*)_arg); }
 
-            member_func_wrapper(obj_type* _object, func_type _action) : func_wrapper_interface(), object(_object), action(_action) { }
+            member_func_wrapper(obj_type* _object, func_type _action) : func_wrapper_interface(/*_action*/), object(_object), action(_action) { }
             ~member_func_wrapper() {}
         };
 
@@ -73,11 +68,11 @@ namespace LEti {
         template <typename msg_type>
         static void unregister_message_type();
 
-        template<typename func_type>
-        static subscriber_handle subscribe(const std::string& _message_type, func_type _func);
+        template<typename msg_type, typename func_type>
+        static subscriber_handle subscribe(func_type _func);
 
-        template<typename obj_type, typename func_type>
-        static subscriber_handle subscribe(const std::string& _message_type, obj_type* _obj_ptr, func_type _func);
+        template<typename msg_type, typename obj_type, typename func_type>
+        static subscriber_handle subscribe(obj_type* _obj_ptr, func_type _func);
 
         template<typename msg_type>
         static void publish(const msg_type& _message);
@@ -109,13 +104,13 @@ namespace LEti {
         m_subscribers.erase(check);
     }
 
-    template<typename func_type>
-    Message_Translator::subscriber_handle Message_Translator::subscribe(const std::string& _message_type, func_type _func)
+    template<typename msg_type, typename func_type>
+    Message_Translator::subscriber_handle Message_Translator::subscribe(func_type _func)
     {
-        std::map<std::string, std::vector<func_wrapper_interface*>>::iterator check = m_subscribers.find(_message_type);
+        std::map<std::string, std::vector<func_wrapper_interface*>>::iterator check = m_subscribers.find(msg_type::type());
         ASSERT(check == m_subscribers.end());
 
-        check->second.push_back(new static_func_wrapper<func_type>(_func));
+        check->second.push_back(new static_func_wrapper<msg_type, func_type>(_func));
 
         subscriber_handle result;
         result.belongs_to_msg = check;
@@ -125,13 +120,13 @@ namespace LEti {
         return result;
     }
 
-    template<typename obj_type, typename func_type>
-    Message_Translator::subscriber_handle Message_Translator::subscribe(const std::string& _message_type, obj_type* _obj_ptr, func_type _func)
+    template<typename msg_type, typename obj_type, typename func_type>
+    Message_Translator::subscriber_handle Message_Translator::subscribe(obj_type* _obj_ptr, func_type _func)
     {
-        std::map<std::string, std::vector<func_wrapper_interface*>>::iterator check = m_subscribers.find(_message_type);
+        std::map<std::string, std::vector<func_wrapper_interface*>>::iterator check = m_subscribers.find(msg_type::type());
         ASSERT(check == m_subscribers.end());
 
-        check->second.push_back(new member_func_wrapper<obj_type, func_type>(_obj_ptr, _func));
+        check->second.push_back(new member_func_wrapper<msg_type, obj_type, func_type>(_obj_ptr, _func));
 
         subscriber_handle result;
         result.belongs_to_msg = check;
@@ -148,7 +143,7 @@ namespace LEti {
         ASSERT(subscribers == m_subscribers.end());
 
         for(unsigned int i=0; i<subscribers->second.size(); ++i)
-            subscribers->second[i]->call(_message);
+            subscribers->second[i]->call((void*)&_message);
     }
 
     void Message_Translator::clear_subscribers()
