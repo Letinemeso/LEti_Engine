@@ -35,7 +35,7 @@ namespace LEti {
 
             void call(const Message_Base& _msg) override { action(_msg); }
 
-            static_func_wrapper(func_type _action) : func_wrapper_interface() { action = _action; }
+            static_func_wrapper(func_type _action) : func_wrapper_interface(), action(_action) { }
             ~static_func_wrapper() {}
         };
 
@@ -47,7 +47,7 @@ namespace LEti {
 
             void call(const Message_Base& _msg) override { (object->*action)(_msg); }
 
-            member_func_wrapper(obj_type* _object, func_type _action) : func_wrapper_interface(/*_action*/) { object = _object, action = _action; }
+            member_func_wrapper(obj_type* _object, func_type _action) : func_wrapper_interface(), object(_object), action(_action) { }
             ~member_func_wrapper() {}
         };
 
