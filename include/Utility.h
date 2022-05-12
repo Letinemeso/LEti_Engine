@@ -1,6 +1,8 @@
 #ifndef __UTILITY
 #define __UTILITY
 
+#include "Debug.h"
+
 #include "../OpenGL/GLM/vec3.hpp"
 
 
@@ -22,6 +24,10 @@ namespace LEti { namespace Utility {
     float mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third);
 
 	bool is_digit(char _c);
+
+    float angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& _second);
+
+    bool beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& _second);
 
 }	/*LEti*/	}	/*Utility*/
 

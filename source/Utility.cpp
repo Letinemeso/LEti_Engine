@@ -23,7 +23,7 @@ float Utility::get_distance(const glm::vec3& _first, const glm::vec3& _second)
 {
 	if (_first == _second)
 		return 0.0f;
-	return sqrt(pow(_second.x - _first.x, 2) + pow(_second.y - _first.y, 2) + pow(_second.y - _first.y, 2));
+    return sqrt(pow(_second.x - _first.x, 2) + pow(_second.y - _first.y, 2) + pow(_second.z - _first.z, 2));
 }
 
 glm::vec3 Utility::normalize(const glm::vec3& _first, const glm::vec3& _second)
@@ -42,4 +42,24 @@ bool Utility::is_digit(char _c)
 	if (_c >= '0' && _c <= '9')
 		return true;
 	return false;
+}
+
+float Utility::angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& _second)
+{
+    ASSERT(Utility::vector_length(_first) == 0 ||  Utility::vector_length(_second) == 0);
+
+    //  (_first * _second) / (|_first| * |_second|)
+    float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
+    float divider = Utility::vector_length(_first) * Utility::vector_length(_second);
+    return divident / divider;
+}
+
+bool Utility::beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& _second)
+{
+    ASSERT(Utility::vector_length(_first) == 0 ||  Utility::vector_length(_second) == 0);
+
+    //  (_first * _second) / (|_first| * |_second|)
+    float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
+
+    return divident < 0.0f; // angles cos must be negative
 }

@@ -37,13 +37,13 @@ namespace LEti
 			void update_points(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
 
 		public:
-			bool point_belongs_to_triangle(const glm::vec3& _point) const;
+            Physical_Model_Interface::Intersection_Data point_belongs_to_triangle(const glm::vec3& _point) const;
 			
 		private:
-            bool segments_intersect(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22) const;
+            Physical_Model_Interface::Intersection_Data segments_intersect(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22) const;
 		public:
-			bool segment_intersecting_polygon(const glm::vec3& _point_1, const glm::vec3& _point_2) const;
-			bool intersects_with_another_polygon(const Polygon& _other) const;
+            Physical_Model_Interface::Intersection_Data segment_intersecting_polygon(const glm::vec3& _point_1, const glm::vec3& _point_2) const;
+            Physical_Model_Interface::Intersection_Data intersects_with_another_polygon(const Polygon& _other) const;
 
 		};
 
@@ -61,9 +61,9 @@ namespace LEti
 		void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale) override;
 
 	public:
-		bool is_intersecting_with_point(const glm::vec3& _point) const override;
-		bool is_intersecting_with_segment(const glm::vec3& _point_1, const glm::vec3& _point_2) const override;
-		bool is_intersecting_with_another_model(const Physical_Model_Interface& _other) const override;
+        Intersection_Data is_intersecting_with_point(const glm::vec3& _point) const override;
+        Intersection_Data is_intersecting_with_segment(const glm::vec3& _point_1, const glm::vec3& _point_2) const override;
+        Intersection_Data is_intersecting_with_another_model(const Physical_Model_Interface& _other) const override;
 
 	};
 }

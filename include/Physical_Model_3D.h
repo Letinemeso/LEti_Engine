@@ -42,8 +42,8 @@ namespace LEti
 
             public:
                 glm::vec3 get_intersection_point(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
-                bool beam_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
-                bool segment_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
+                Intersection_Data beam_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
+                Intersection_Data segment_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const;
                 bool point_is_on_the_right(const glm::vec3& _point) const;
                 bool point_is_on_the_left(const glm::vec3& _point) const;
 
@@ -68,8 +68,8 @@ namespace LEti
 
         public:
             bool point_belongs_to_pyramid(const glm::vec3& _point) const;
-            bool is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const;
-            bool is_intersecting_with_segment(const glm::vec3& _start, const glm::vec3& _direction) const;
+            Intersection_Data is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const;
+            Intersection_Data is_intersecting_with_segment(const glm::vec3& _start, const glm::vec3& _direction) const;
 
         public:
             const Polygon& operator[](unsigned int _index) const;
@@ -90,10 +90,10 @@ namespace LEti
         void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale) override;
 
     public:
-        bool is_intersecting_with_point(const glm::vec3& _point) const override;
-        bool is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const /*override*/;
-        bool is_intersecting_with_segment(const glm::vec3& _start, const glm::vec3& _direction) const override;
-        bool is_intersecting_with_another_model(const Physical_Model_Interface& _other) const override;
+        Intersection_Data is_intersecting_with_point(const glm::vec3& _point) const override;
+        Intersection_Data is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const /*override*/;
+        Intersection_Data is_intersecting_with_segment(const glm::vec3& _start, const glm::vec3& _direction) const override;
+        Intersection_Data is_intersecting_with_another_model(const Physical_Model_Interface& _other) const override;
 
 	};
 }

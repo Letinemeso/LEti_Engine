@@ -50,7 +50,7 @@ Physical_Model_2D::Polygon::Equasion_Data Physical_Model_2D::Polygon::get_equasi
 
 
 
-bool Physical_Model_2D::Polygon::point_belongs_to_triangle(const glm::vec3& _point) const
+Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::point_belongs_to_triangle(const glm::vec3& _point) const
 {
 	Equasion_Data AB_eq = get_equasion(m_actual_A, m_actual_B);
 //    bool AB_goes_left = m_actual_B.x < m_actual_A.x;
@@ -70,14 +70,24 @@ bool Physical_Model_2D::Polygon::point_belongs_to_triangle(const glm::vec3& _poi
 //	return (AB_goes_left ? AB_y_proj < _point.y : AB_y_proj > _point.y) &&
 //		(BC_goes_left ? BC_y_proj < _point.y : BC_y_proj > _point.y) &&
 //		(CA_goes_left ? CA_y_proj < _point.y : CA_y_proj > _point.y);
-    return AB_right_side && BC_right_side && CA_right_side;
+    if (AB_right_side && BC_right_side && CA_right_side) return Intersection_Data(Intersection_Data::Intersection_Type::inside);
+    return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
 
+#include <vector>
 
 
-
-bool Physical_Model_2D::Polygon::segments_intersect(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22) const
+Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::segments_intersect(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22) const
 {
+    std::pair<std::pair<float, float>, std::pair<float, float>> f({_point_11.x, _point_11.y}, {_point_21.x, _point_21.y});
+    std::pair<std::pair<float, float>, std::pair<float, float>> s({_point_12.x, _point_12.y}, {_point_22.x, _point_22.y});
+    glm::vec3 first_from_zero = _point_21 - _point_11;
+    glm::vec3 second_from_zero = _point_22 - _point_12;
+
+    //    if(!LEti::Utility::beams_cross_at_right_angle(first_from_zero, second_from_zero))
+//    if(fabs(LEti::Utility::angle_cos_between_vectors(first_from_zero, second_from_zero)) < 0.5f)
+//        return Intersection_Data(Intersection_Data::Intersection_Type::none);
+
 	Equasion_Data first_eq = get_equasion(_point_11, _point_21);
 	Equasion_Data second_eq = get_equasion(_point_12, _point_22);
 
@@ -94,28 +104,45 @@ bool Physical_Model_2D::Polygon::segments_intersect(const glm::vec3& _point_11, 
 	float first_length = LEti::Utility::get_distance(_point_11, _point_21);
 	float second_length = LEti::Utility::get_distance(_point_12, _point_22);
 
-	return (LEti::Utility::get_distance(intersection_point, _point_11) < first_length) &&
+    //TODO: think about optimization: calculating vectors' lengths may be unnecessary
+    if ((LEti::Utility::get_distance(intersection_point, _point_11) < first_length) &&
 		(LEti::Utility::get_distance(intersection_point, _point_21) < first_length) &&
 		(LEti::Utility::get_distance(intersection_point, _point_12) < second_length) &&
-		(LEti::Utility::get_distance(intersection_point, _point_22) < second_length);
+        (LEti::Utility::get_distance(intersection_point, _point_22) < second_length))
+    {
+        return Intersection_Data(Intersection_Data::Intersection_Type::partly_outside, intersection_point);
+    }
+
+    return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
 
 
-bool Physical_Model_2D::Polygon::segment_intersecting_polygon(const glm::vec3 &_point_1, const glm::vec3 &_point_2) const
+Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::segment_intersecting_polygon(const glm::vec3 &_point_1, const glm::vec3 &_point_2) const
 {
-    return segments_intersect(m_actual_A, m_actual_B, _point_1, _point_2) ||
-        segments_intersect(m_actual_B, m_actual_C, _point_1, _point_2) ||
-        segments_intersect(m_actual_C, m_actual_A, _point_1, _point_2);
+    Intersection_Data _0 = segments_intersect(m_actual_A, m_actual_B, _point_1, _point_2);
+    if(_0) return _0;
+    Intersection_Data _1 = segments_intersect(m_actual_B, m_actual_C, _point_1, _point_2);
+    if(_1) return _1;
+    Intersection_Data _2 = segments_intersect(m_actual_C, m_actual_A, _point_1, _point_2);
+    if(_2) return _2;
+    return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
 
-bool Physical_Model_2D::Polygon::intersects_with_another_polygon(const Polygon& _other) const
+Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::intersects_with_another_polygon(const Polygon& _other) const
 {
-	return segment_intersecting_polygon(_other.m_actual_A, _other.m_actual_B) ||
-		segment_intersecting_polygon(_other.m_actual_B, _other.m_actual_C) ||
-        segment_intersecting_polygon(_other.m_actual_C, _other.m_actual_A) ||
-        point_belongs_to_triangle(_other.m_actual_A) ||
-        point_belongs_to_triangle(_other.m_actual_B) ||
-        point_belongs_to_triangle(_other.m_actual_C);
+    Intersection_Data _0 = segment_intersecting_polygon(_other.m_actual_A, _other.m_actual_B);
+    if(_0) return _0;
+    Intersection_Data _1 = segment_intersecting_polygon(_other.m_actual_B, _other.m_actual_C);
+    if(_1) return _1;
+    Intersection_Data _2 = segment_intersecting_polygon(_other.m_actual_C, _other.m_actual_A);
+    if(_2) return _2;
+    Intersection_Data _3 = point_belongs_to_triangle(_other.m_actual_A);
+    if(_3) return _3;
+    Intersection_Data _4 = point_belongs_to_triangle(_other.m_actual_B);
+    if(_4) return _4;
+    Intersection_Data _5 = point_belongs_to_triangle(_other.m_actual_C);
+    if(_5) return _5;
+    return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
 
 
@@ -159,36 +186,49 @@ void Physical_Model_2D::update(const glm::mat4x4& _translation, const glm::mat4x
 
 
 
-bool Physical_Model_2D::is_intersecting_with_point(const glm::vec3& _point) const
+Physical_Model_Interface::Intersection_Data Physical_Model_2D::is_intersecting_with_point(const glm::vec3& _point) const
 {
 	ASSERT(!m_polygons);
 
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
-		if (m_polygons[i].point_belongs_to_triangle(_point)) return true;
-	return false;
+        if (m_polygons[i].point_belongs_to_triangle(_point)) return Intersection_Data(Intersection_Data::Intersection_Type::inside);
+    return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
 
-bool Physical_Model_2D::is_intersecting_with_segment(const glm::vec3& _point_1, const glm::vec3& _point_2) const
+Physical_Model_Interface::Intersection_Data Physical_Model_2D::is_intersecting_with_segment(const glm::vec3& _point_1, const glm::vec3& _point_2) const
 {
 	ASSERT(!m_polygons);
 
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
-		if (m_polygons[i].segment_intersecting_polygon(_point_1, _point_2)) return true;
-	return false;
+    {
+        Intersection_Data id = m_polygons[i].segment_intersecting_polygon(_point_1, _point_2);
+        if (id) return id;
+    }
+    return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
 
-bool Physical_Model_2D::is_intersecting_with_another_model(const Physical_Model_Interface& _other) const
+Physical_Model_Interface::Intersection_Data Physical_Model_2D::is_intersecting_with_another_model(const Physical_Model_Interface& _other) const
 {
 	const Physical_Model_2D& other = (Physical_Model_2D&)_other;
 
 	ASSERT(!m_polygons || !other.m_polygons);
 
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
+    {
 		for (unsigned int j = 0; j < other.m_polygons_count; ++j)
-			if (m_polygons[i].intersects_with_another_polygon(other.m_polygons[i])) return true;
+        {
+            Intersection_Data id = m_polygons[i].intersects_with_another_polygon(other.m_polygons[i]);
+            if (id) return id;
+        }
+    }
     for (unsigned int i = 0; i < other.m_polygons_count; ++i)
+    {
         for (unsigned int j = 0; j < m_polygons_count; ++j)
-            if (other.m_polygons[i].intersects_with_another_polygon(m_polygons[i])) return true;
+        {
+            Intersection_Data id = other.m_polygons[i].intersects_with_another_polygon(m_polygons[i]);
+            if (id) return id;
+        }
+    }
 
-	return false;
+    return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
