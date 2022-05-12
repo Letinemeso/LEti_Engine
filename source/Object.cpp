@@ -184,8 +184,8 @@ void Object::set_rotation_angle(float _angle)
 
 	while (rotation_angle >= 6.28318f)
 		rotation_angle -= 6.28318f;
-	while (rotation_angle <= -6.28318f)
-		rotation_angle += -6.28318f;
+    while (rotation_angle <= -6.28318f)
+        rotation_angle += 6.28318f;
 
 	rotation_matrix = glm::rotate(rotation_angle, rotation_axis);
 }
