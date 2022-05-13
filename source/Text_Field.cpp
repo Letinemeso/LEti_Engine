@@ -6,9 +6,9 @@ using namespace LEti;
 constexpr unsigned int tcpc = 12, cpc = 18;		//texture coordinates per character, coordinates per character
 
 
-Text_Field::Text_Field() : Object()
+Text_Field::Text_Field() : Object_2D()
 {
-	set_is_3d(false);
+//	set_is_3d(false);
 }
 
 void Text_Field::init(const char* _object_name)
@@ -87,5 +87,5 @@ const std::unsigned_string& Text_Field::get_text() const
 void Text_Field::draw() const
 {
 	if (text.size() == 0) return;
-	Object::draw();
+    Object_2D::draw();
 }

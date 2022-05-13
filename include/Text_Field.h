@@ -10,7 +10,7 @@ namespace std
 
 namespace LEti
 {
-	class Text_Field : public Object
+    class Text_Field : public Object_2D
 	{
 	private:
 		const std::unsigned_string* sequence = nullptr;
