@@ -1,7 +1,7 @@
 #ifndef __UTILITY
 #define __UTILITY
 
-#include "Debug.h"
+#include "../Debug.h"
 
 #include "../OpenGL/GLM/vec3.hpp"
 

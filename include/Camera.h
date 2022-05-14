@@ -80,7 +80,8 @@ namespace LEti {
 
 	public:
 		static void update(bool _update_2d, bool _update_3d);
-		static void use(bool _is_3d);
+		static void use_3d();
+		static void use_2d();
 
 	};
 

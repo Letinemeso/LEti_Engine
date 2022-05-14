@@ -4,12 +4,12 @@ using namespace LEti;
 
 void Object_Interface::set_visible(bool _visible)
 {
-    m_visible = _visible;
+	m_visible = _visible;
 }
 
 bool Object_Interface::get_visible() const
 {
-    return m_visible;
+	return m_visible;
 }
 
 
@@ -18,127 +18,229 @@ bool Object_Interface::get_visible() const
 
 Drawable_Object::Drawable_Object() : Object_Interface()
 {
-    glGenVertexArrays(1, &vertex_array);
-    glBindVertexArray(vertex_array);
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
+	glGenVertexArrays(1, &m_vertex_array);
+	glBindVertexArray(m_vertex_array);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 
-    vertices.vertex_array = &vertex_array;
-    texture.vertex_array = &vertex_array;
+	m_vertices.vertex_array = &m_vertex_array;
+	m_texture.vertex_array = &m_vertex_array;
 
-    translation_matrix =
-    {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
+	m_translation_matrix =
+	{
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
 
-    rotation_matrix = glm::rotate(0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    rotation_axis[0] = 0.0f;
-    rotation_axis[1] = 1.0f;
-    rotation_axis[2] = 0.0f;
+	m_rotation_matrix = glm::rotate(0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	m_rotation_axis[0] = 0.0f;
+	m_rotation_axis[1] = 1.0f;
+	m_rotation_axis[2] = 0.0f;
 
-    scale_matrix =
-    {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
+	m_scale_matrix =
+	{
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
 }
 
 Drawable_Object::~Drawable_Object()
 {
-    glDeleteVertexArrays(1, &vertex_array);
+	glDeleteVertexArrays(1, &m_vertex_array);
 }
 
 
 
 void Drawable_Object::init_texture(const char* _tex_path, const float* const tex_coords, unsigned int _tex_coords_count)
 {
-    glBindVertexArray(vertex_array);
-    texture.init(_tex_path, tex_coords, _tex_coords_count);
-    texture.setup_buffer(1, 2);
+	glBindVertexArray(m_vertex_array);
+	m_texture.init(_tex_path, tex_coords, _tex_coords_count);
+	m_texture.setup_buffer(1, 2);
 }
 
 void Drawable_Object::init_vertices(const float* const _coords, unsigned int _coords_count)
 {
-    glBindVertexArray(vertex_array);
-    vertices.load(_coords, _coords_count);
-    vertices.setup_buffer(0, 3);
+	glBindVertexArray(m_vertex_array);
+	m_vertices.load(_coords, _coords_count);
+	m_vertices.setup_buffer(0, 3);
 }
 
 void Drawable_Object::init(const char* _object_name)
 {
-    auto tcoords = LEti::Resource_Loader::get_data<float>(_object_name, "texture_coords");
-    init_texture(LEti::Resource_Loader::get_data<std::string>(_object_name, "texture_name").first->c_str(), tcoords.first, tcoords.second);
+	auto tcoords = LEti::Resource_Loader::get_data<float>(_object_name, "texture_coords");
+	init_texture(LEti::Resource_Loader::get_data<std::string>(_object_name, "texture_name").first->c_str(), tcoords.first, tcoords.second);
 
-    auto coords = LEti::Resource_Loader::get_data<float>(_object_name, "coords");
-    init_vertices(coords.first, coords.second);
+	auto coords = LEti::Resource_Loader::get_data<float>(_object_name, "coords");
+	init_vertices(coords.first, coords.second);
 
-    auto translation = LEti::Resource_Loader::get_data<float>(_object_name, "position");
-    ASSERT(translation.second != 3);
-    set_pos(translation.first[0], translation.first[1], translation.first[2]);
+	auto translation = LEti::Resource_Loader::get_data<float>(_object_name, "position");
+	ASSERT(translation.second != 3);
+	set_pos(translation.first[0], translation.first[1], translation.first[2]);
 
-    auto scale = LEti::Resource_Loader::get_data<float>(_object_name, "scale");
-    ASSERT(scale.second != 3);
-    set_scale(scale.first[0], scale.first[1], scale.first[2]);
+	auto scale = LEti::Resource_Loader::get_data<float>(_object_name, "scale");
+	ASSERT(scale.second != 3);
+	set_scale(scale.first[0], scale.first[1], scale.first[2]);
 
-    auto raxis = LEti::Resource_Loader::get_data<float>(_object_name, "rotation_axis");
-    ASSERT(raxis.second != 3);
-    set_rotation_axis(raxis.first[0], raxis.first[1], raxis.first[2]);
+	auto raxis = LEti::Resource_Loader::get_data<float>(_object_name, "rotation_axis");
+	ASSERT(raxis.second != 3);
+	set_rotation_axis(raxis.first[0], raxis.first[1], raxis.first[2]);
 
-    auto rangle = LEti::Resource_Loader::get_data<float>(_object_name, "rotation_angle");
-    ASSERT(rangle.second != 1);
-    set_rotation_angle(*rangle.first);
+	auto rangle = LEti::Resource_Loader::get_data<float>(_object_name, "rotation_angle");
+	ASSERT(rangle.second != 1);
+	set_rotation_angle(*rangle.first);
 }
 
 
 
 LEti::Vertices& Drawable_Object::get_vertices()
 {
-    return vertices;
+	return m_vertices;
 }
 
 LEti::Texture& Drawable_Object::get_texture()
 {
-    return texture;
+	return m_texture;
 }
 
 
 
 void Drawable_Object::set_texture(const char* _path)
 {
-    glBindVertexArray(vertex_array);
-    texture.set_picture(_path);
+	glBindVertexArray(m_vertex_array);
+	m_texture.set_picture(_path);
 }
 
 void Drawable_Object::set_texture_coords(const float* _tc, unsigned int _tc_count)
 {
-    glBindVertexArray(vertex_array);
-    texture.set_texture_coords(_tc, _tc_count);
-    texture.setup_buffer(1, 2);
+	glBindVertexArray(m_vertex_array);
+	m_texture.set_texture_coords(_tc, _tc_count);
+	m_texture.setup_buffer(1, 2);
 }
 
 
 
 void Drawable_Object::draw() const
 {
-    if (!get_visible()) return;
+	if (!get_visible()) return;
 
-    ASSERT(vertex_array == 0 || vertices.get_vertices_count() == 0 || texture.size() == 0);
+	ASSERT(m_vertex_array == 0 || m_vertices.get_vertices_count() == 0 || m_texture.size() == 0);
 
-    glm::mat4x4 result_matrix = translation_matrix * rotation_matrix * scale_matrix;
-    LEti::Shader::set_transform_matrix(result_matrix);
+	glm::mat4x4 result_matrix = m_translation_matrix * m_rotation_matrix * m_scale_matrix;
+	LEti::Shader::set_transform_matrix(result_matrix);
 
-    glBindVertexArray(vertex_array);
+	glBindVertexArray(m_vertex_array);
 
-    LEti::Shader::set_texture(texture);
-    glDrawArrays(GL_TRIANGLES, 0, vertices.get_vertices_count());
+	LEti::Shader::set_texture(m_texture);
+	glDrawArrays(GL_TRIANGLES, 0, m_vertices.get_vertices_count());
 
-    glBindVertexArray(0);
+	glBindVertexArray(0);
 }
+
+
+
+void Drawable_Object::set_pos(float _x, float _y, float _z)
+{
+	m_translation_matrix[3][0] = _x;
+	m_translation_matrix[3][1] = _y;
+	m_translation_matrix[3][2] = _z;
+}
+
+void Drawable_Object::move(float _x, float _y, float _z)
+{
+	m_translation_matrix[3][0] += _x;
+	m_translation_matrix[3][1] += _y;
+	m_translation_matrix[3][2] += _z;
+}
+
+
+void Drawable_Object::set_rotation_axis(float _x, float _y, float _z)
+{
+	m_rotation_axis[0] = _x;
+	m_rotation_axis[1] = _y;
+	m_rotation_axis[2] = _z;
+
+	m_rotation_matrix = glm::rotate(m_rotation_angle, m_rotation_axis);
+}
+
+void Drawable_Object::set_rotation_angle(float _angle)
+{
+	m_rotation_angle = _angle;
+
+	while (m_rotation_angle >= 6.28318f)
+		m_rotation_angle -= 6.28318f;
+	while (m_rotation_angle <= -6.28318f)
+		m_rotation_angle += 6.28318f;
+
+	m_rotation_matrix = glm::rotate(m_rotation_angle, m_rotation_axis);
+}
+
+void Drawable_Object::set_rotation_data(float _axis_x, float _axis_y, float _axis_z, float _angle)
+{
+	m_rotation_axis[0] = _axis_x;
+	m_rotation_axis[1] = _axis_y;
+	m_rotation_axis[2] = _axis_z;
+	m_rotation_angle = _angle;
+
+	m_rotation_matrix = glm::rotate(m_rotation_angle, m_rotation_axis);
+}
+
+void Drawable_Object::rotate(float _angle)
+{
+	m_rotation_angle += _angle;
+
+	if (m_rotation_angle >= 6.28318f)
+		m_rotation_angle -= 6.28318f;
+	if (m_rotation_angle <= -6.28318f)
+		m_rotation_angle += -6.28318f;
+
+	m_rotation_matrix = glm::rotate(m_rotation_angle, m_rotation_axis);
+}
+
+
+void Drawable_Object::set_scale(float _scale_x, float _scale_y, float _scale_z)
+{
+	m_scale_matrix[0][0] = _scale_x;
+	m_scale_matrix[1][1] = _scale_y;
+	m_scale_matrix[2][2] = _scale_z;
+}
+
+void Drawable_Object::set_overall_scale(float _scale)
+{
+	Drawable_Object::set_scale(_scale, _scale, _scale);
+}
+
+
+
+glm::vec3 Drawable_Object::get_pos() const
+{
+	glm::vec3 result;
+	for (unsigned int i = 0; i < 3; ++i)
+		result[i] = m_translation_matrix[3][i];
+	return result;
+}
+
+glm::vec3 Drawable_Object::get_scale() const
+{
+	glm::vec3 result;
+	for (unsigned int i = 0; i < 3; ++i)
+		result[i] = m_scale_matrix[i][i];
+	return result;
+}
+
+glm::vec3 Drawable_Object::get_rotation_axis() const
+{
+	return m_rotation_axis;
+}
+
+float Drawable_Object::get_rotation_angle() const
+{
+	return m_rotation_angle;
+}
+
 
 
 
@@ -165,12 +267,18 @@ Object_2D::~Object_2D()
 }
 
 
+//void Object_2D::init(const char* _object_name)
+//{
+//	Drawable_Object::init(_object_name);
+//}
+
+
 
 void Object_2D::draw() const
 {
-    LEti::Camera::use(false);
+	LEti::Camera::use_2d();
 
-    Drawable_Object::draw();
+	Drawable_Object::draw();
 }
 
 void Object_2D::update()
@@ -180,101 +288,33 @@ void Object_2D::update()
 
 
 
-void Object_2D::set_pos(float _x, float _y, float _z)
+
+
+
+
+
+
+
+Object_3D::Object_3D() : Drawable_Object()
 {
-    translation_matrix[3][0] = _x;
-    translation_matrix[3][1] = _y;
-    translation_matrix[3][2] = _z;
+
 }
 
-void Object_2D::move(float _x, float _y, float _z)
+Object_3D::~Object_3D()
 {
-    translation_matrix[3][0] += _x;
-    translation_matrix[3][1] += _y;
-    translation_matrix[3][2] += _z;
-}
 
-
-void Object_2D::set_rotation_axis(float _x, float _y, float _z)
-{
-    rotation_axis[0] = _x;
-    rotation_axis[1] = _y;
-    rotation_axis[2] = _z;
-
-    rotation_matrix = glm::rotate(rotation_angle, rotation_axis);
-}
-
-void Object_2D::set_rotation_angle(float _angle)
-{
-    rotation_angle = _angle;
-
-    while (rotation_angle >= 6.28318f)
-        rotation_angle -= 6.28318f;
-    while (rotation_angle <= -6.28318f)
-        rotation_angle += 6.28318f;
-
-    rotation_matrix = glm::rotate(rotation_angle, rotation_axis);
-}
-
-void Object_2D::set_rotation_data(float _axis_x, float _axis_y, float _axis_z, float _angle)
-{
-    rotation_axis[0] = _axis_x;
-    rotation_axis[1] = _axis_y;
-    rotation_axis[2] = _axis_z;
-    rotation_angle = _angle;
-
-    rotation_matrix = glm::rotate(rotation_angle, rotation_axis);
-}
-
-void Object_2D::rotate(float _angle)
-{
-    rotation_angle += _angle;
-
-    if (rotation_angle >= 6.28318f)
-        rotation_angle -= 6.28318f;
-    if (rotation_angle <= -6.28318f)
-        rotation_angle += -6.28318f;
-
-    rotation_matrix = glm::rotate(rotation_angle, rotation_axis);
-}
-
-
-void Object_2D::set_scale(float _scale_x, float _scale_y, float _scale_z)
-{
-    scale_matrix[0][0] = _scale_x;
-    scale_matrix[1][1] = _scale_y;
-    scale_matrix[2][2] = _scale_z;
-}
-
-void Object_2D::set_overall_scale(float _scale)
-{
-    Object_2D::set_scale(_scale, _scale, _scale);
 }
 
 
 
-glm::vec3 Object_2D::get_pos() const
+void Object_3D::draw() const
 {
-    glm::vec3 result;
-    for(unsigned int i=0; i<3; ++i)
-        result[i] = translation_matrix[3][i];
-    return result;
+	LEti::Camera::use_3d();
+
+	Drawable_Object::draw();
 }
 
-glm::vec3 Object_2D::get_scale() const
+void Object_3D::update()
 {
-    glm::vec3 result;
-    for(unsigned int i=0; i<3; ++i)
-        result[i] = scale_matrix[i][i];
-    return result;
-}
 
-glm::vec3 Object_2D::get_rotation_axis() const
-{
-    return rotation_axis;
-}
-
-float Object_2D::get_rotation_angle() const
-{
-    return rotation_angle;
 }
