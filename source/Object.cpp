@@ -277,6 +277,7 @@ Object_2D::~Object_2D()
 void Object_2D::draw() const
 {
 	LEti::Camera::use_2d();
+    glDisable(GL_DEPTH_TEST);
 
 	Drawable_Object::draw();
 }
@@ -310,6 +311,7 @@ Object_3D::~Object_3D()
 void Object_3D::draw() const
 {
 	LEti::Camera::use_3d();
+    glEnable(GL_DEPTH_TEST);
 
 	Drawable_Object::draw();
 }

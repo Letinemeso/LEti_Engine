@@ -88,7 +88,12 @@ namespace LEti {
         std::map<std::string, object_data>::iterator objects_it = m_objects.find(_object_name);
         ASSERT(objects_it == m_objects.end());
         std::map<std::string, parsed_value>::iterator vars_it = objects_it->second.variables.find(_variable_name);
-        ASSERT(vars_it == objects_it->second.variables.end());
+        if(vars_it == objects_it->second.variables.end())
+        {
+            _result.first == nullptr;
+            _result.second == 0;
+            return;
+        }
 
         _result.first = (T*)(vars_it->second.value);
         _result.second = vars_it->second.values_count;
@@ -100,24 +105,24 @@ namespace LEti {
         std::map<std::string, object_data>::iterator objects_it = m_objects.find(_object_name);
         ASSERT(objects_it == m_objects.end());
         std::map<std::string, parsed_value>::iterator vars_it = objects_it->second.variables.find(_variable_name);
-        ASSERT(vars_it == objects_it->second.variables.end());
+        if(vars_it == objects_it->second.variables.end())
+        {
+            _result == nullptr;
+            return;
+        }
 
         _result = (T*)(vars_it->second.value);
     }
 
 	template<typename T>
 	std::pair<const T* const, unsigned int> Resource_Loader::get_data(const char* _object_name, const char* _variable_name)
-	{
-		std::pair<const T*, unsigned int> result;
-
+    {
         std::map<std::string, object_data>::iterator objects_it = m_objects.find(_object_name);
         ASSERT(objects_it == m_objects.end());
         std::map<std::string, parsed_value>::iterator vars_it = objects_it->second.variables.find(_variable_name);
-		ASSERT(vars_it == objects_it->second.variables.end());
+        if(vars_it == objects_it->second.variables.end()) return {nullptr, 0};
 
-		result.first = (T*)(vars_it->second.value);
-		result.second = vars_it->second.values_count;
-		return result;
+        return { (T*)(vars_it->second.value), vars_it->second.values_count };
 	}
 
 }	/*LEti*/

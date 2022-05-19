@@ -113,9 +113,7 @@ namespace LEti {
 	{
 	public:
 		Object_2D();
-		virtual ~Object_2D();
-
-		//virtual void init(const char* _object_name) override;
+        virtual ~Object_2D();
 
 	public:
 		virtual void draw() const override;
