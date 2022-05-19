@@ -37,7 +37,7 @@ namespace LEti {
     public:
         Physical_Model_Interface() { };
         Physical_Model_Interface(const float* _raw_coords, unsigned int _raw_coords_count);
-        virtual void setup(const float* _raw_coords, unsigned int _raw_coords_count);
+        virtual void setup(const float* _raw_coords, unsigned int _raw_coords_count) = 0;
 
         virtual ~Physical_Model_Interface();
 

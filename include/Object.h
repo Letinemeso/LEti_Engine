@@ -11,6 +11,9 @@
 #include "../OpenGL/GLM/mat4x4.hpp"
 #include "../OpenGL/GLM/gtx/transform.hpp"
 
+#include "../include/Physical_Model_2D.h"
+#include "../include/Physical_Model_3D.h"
+
 
 namespace LEti {
 
@@ -67,6 +70,10 @@ namespace LEti {
 		glm::vec3 m_rotation_axis;
 		float m_rotation_angle = 0.0f;
 
+    protected:
+        bool m_can_cause_collision = false;
+        LEti::Physical_Model_Interface* m_physical_model = nullptr;
+
 	public:
 		Drawable_Object();
 		virtual ~Drawable_Object();
@@ -74,6 +81,8 @@ namespace LEti {
 	public:
 		void init_texture(const char* _tex_path, const float* const tex_coords, unsigned int _tex_coords_count);
 		void init_vertices(const float* const _coords, unsigned int _coords_count);
+        virtual void init_physical_model(const float* _coords, unsigned int _coords_count);
+        void remove_physical_model();
 		virtual void init(const char* _object_name);
 
 		LEti::Vertices& get_vertices();
@@ -84,8 +93,8 @@ namespace LEti {
 		void set_texture_coords(const float* _tc, unsigned int _tc_count);
 
 	public:
-		virtual void draw() const override = 0;
-		virtual void update() override = 0;
+        virtual void draw() const override = 0;
+        virtual void update() override = 0;
 
 	public:
 		void set_pos(float _x, float _y, float _z) override;
@@ -105,6 +114,11 @@ namespace LEti {
 		glm::vec3 get_rotation_axis() const override;
 		float get_rotation_angle() const override;
 
+    public:
+        void set_collision_possibility(bool _can_cause_collision);
+        bool get_collision_possibility() const;
+        LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Drawable_Object& _other);
+
 	};
 
 
@@ -114,6 +128,10 @@ namespace LEti {
 	public:
 		Object_2D();
         virtual ~Object_2D();
+
+        void init_physical_model(const float* _coords, unsigned int _coords_count) override;
+
+        virtual void init(const char* _object_name) override;
 
 	public:
 		virtual void draw() const override;
@@ -127,6 +145,10 @@ namespace LEti {
 	public:
 		Object_3D();
 		virtual ~Object_3D();
+
+        void init_physical_model(const float* _coords, unsigned int _coords_count) override;
+
+        virtual void init(const char* _object_name) override;
 
 	public:
 		virtual void draw() const override;
