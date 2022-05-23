@@ -89,9 +89,9 @@ bool EIPF::can_move_here(const intp& _where) const
 }
 
 
-std::pair<LEti::Tree<EIPF::intp, 4>::Iterator, EIPF::intp> EIPF::find_closest_pos(const intp& _dest) const
+std::pair<LEti::Tree<EIPF::intp, 4>::Iterator, EIPF::intp> EIPF::find_closest_pos(const intp& _dest)
 {
-	auto iter = m_tree.create_iterator();
+	LEti::Tree<intp, 4>::Iterator iter = m_tree.create_iterator();
 
 	unsigned int min_dist = -1;
 	intp min_dist_pos = { -1, -1 };
@@ -269,5 +269,6 @@ bool EIPF::is_path_found() const
 {
 	return m_path_found;
 }
+
 
 

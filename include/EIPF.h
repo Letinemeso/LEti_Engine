@@ -48,7 +48,7 @@ namespace LEti {
 
         bool can_move_here(const EIPF::intp &_where) const;
 
-        std::pair<LEti::Tree<EIPF::intp, 4>::Iterator, EIPF::intp> find_closest_pos(const intp& _dest) const;
+		std::pair<LEti::Tree<EIPF::intp, 4>::Iterator, EIPF::intp> find_closest_pos(const intp& _dest);
 
     private:
         LEti::Tree<intp, 4> m_tree;
@@ -78,3 +78,4 @@ namespace LEti {
 }
 
 #endif // __A_STAR
+

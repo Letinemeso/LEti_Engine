@@ -33,19 +33,22 @@ namespace LEti {
 	public:
 		~Tree();
 
-	public:
-		class Iterator
+	private:
+		class Iterator_Imlementation
 		{
-        protected:
+		private:
+//			bool is_const = false;
+
+		private:
             Node** head;
             Node* node = nullptr;
 
 		public:
-			Iterator() {  }
-            Iterator(Node** _node) : node(*_node), head(_node) {  }
-            Iterator(Iterator&& _other) : node(_other.node), head(_other.head) {  }
-            Iterator(const Iterator& _other) : node(_other.node), head(_other.head) {  }
-            void operator=(const Iterator& _other) { node = _other.node; head = _other.head; }
+			Iterator_Imlementation() {  }
+			Iterator_Imlementation(Node** _node) : node(*_node), head(_node) {  }
+			Iterator_Imlementation(Iterator_Imlementation&& _other) : node(_other.node), head(_other.head) {  }
+			Iterator_Imlementation(const Iterator_Imlementation& _other) : node(_other.node), head(_other.head) {  }
+			void operator=(const Iterator_Imlementation& _other) { node = _other.node; head = _other.head; }
 
         private:
 			unsigned int get_child_index();
@@ -53,20 +56,21 @@ namespace LEti {
 		public:
 			bool valid() const;
 
-            virtual Stored_Type& operator*() { return *(node->data); }
+			Stored_Type& operator*() { return *(node->data); }
+			Stored_Type* operator->() { return (node->data); }
 
-            bool operator==(const Iterator& _other) const { return node == _other.node; }
-            bool operator!=(const Iterator& _other) const { return !(*this == _other); }
+			bool operator==(const Iterator_Imlementation& _other) const { return node == _other.node; }
+			bool operator!=(const Iterator_Imlementation& _other) const { return !(*this == _other); }
 
             void operator++();
             void operator--();
 
-            virtual void insert_after(const Stored_Type& _new_data, unsigned int _child_index);
-            virtual void insert_after(Stored_Type&& _new_data, unsigned int _child_index);
-            virtual unsigned int insert_into_availible_index(const Stored_Type& _new_data);
-            virtual unsigned int insert_into_availible_index(Stored_Type&& _new_data);
+			void insert_after(const Stored_Type& _new_data, unsigned int _child_index);
+			void insert_after(Stored_Type&& _new_data, unsigned int _child_index);
+			unsigned int insert_into_availible_index(const Stored_Type& _new_data);
+			unsigned int insert_into_availible_index(Stored_Type&& _new_data);
 
-            virtual void delete_branch();
+			void delete_branch();
 
             unsigned int ascend();
 			void descend(unsigned int _child_index);
@@ -75,32 +79,88 @@ namespace LEti {
 			bool end() const;
 		};
 
-        class Const_Iterator : public Iterator
-        {
-        private:
-//            Stored_Type& operator*() override {};
+	public:
+		class Const_Iterator;
 
-            void insert_after(const Stored_Type& _new_data, unsigned int _child_index) override {};
-            void insert_after(Stored_Type&& _new_data, unsigned int _child_index) override {};
-			unsigned int insert_into_availible_index(const Stored_Type& _new_data) override { return 0; };
-            unsigned int insert_into_availible_index(Stored_Type&& _new_data) override { return 0; };
+		class Iterator
+		{
+		private:
+			friend class Const_Iterator;
 
-            void delete_branch() override {};
+		private:
+			Iterator_Imlementation m_iter_impl;
 
-        public:
-            Const_Iterator() {  }
-            Const_Iterator(Node** _node) : Iterator(_node) { }
-            Const_Iterator(Iterator&& _other) : Iterator(_other) { }
-            Const_Iterator(const Iterator& _other) : Iterator(_other) { }
-//            void operator=(const Iterator& _other) { node = _other.node; head = _other.head; }
+		public:
+			Iterator() { }
+			Iterator(const Iterator_Imlementation& _ii) : m_iter_impl(_ii) { }
+			Iterator(const Iterator& _i) : m_iter_impl(_i.m_iter_impl) { }
+			void operator=(const Iterator& _i) { m_iter_impl = _i.m_iter_impl; }
 
-        public:
-            Stored_Type& operator*() const { return *(Iterator::node->data); }
+		public:
+			bool valid() const { return m_iter_impl.valid(); }
 
-        };
+			Stored_Type& operator*() { return *m_iter_impl; }
+			Stored_Type* operator->() { return m_iter_impl.operator->(); }
 
-        Iterator create_iterator() { return Iterator(&head); }
-        Const_Iterator create_iterator() const { return Const_Iterator(&head); }
+			bool operator==(const Iterator& _other) const { return m_iter_impl == _other.m_iter_impl; }
+			bool operator!=(const Iterator& _other) const { return !(*this == _other); }
+
+			void operator++() { ++m_iter_impl; }
+			void operator--() { --m_iter_impl; }
+
+			void insert_after(const Stored_Type& _new_data, unsigned int _child_index) { m_iter_impl.insert_after(_new_data, _child_index); }
+			void insert_after(Stored_Type&& _new_data, unsigned int _child_index) { m_iter_impl.insert_after(std::move(_new_data), _child_index); }
+			unsigned int insert_into_availible_index(const Stored_Type& _new_data) { return m_iter_impl.insert_into_availible_index(_new_data); }
+			unsigned int insert_into_availible_index(Stored_Type&& _new_data) { return m_iter_impl.insert_into_availible_index(std::move(_new_data)); }
+
+			void delete_branch() { m_iter_impl.delete_branch(); }
+
+			unsigned int ascend() { return m_iter_impl.ascend(); }
+			void descend(unsigned int _child_index) { m_iter_impl.descend(_child_index); }
+
+			bool begin() const { return m_iter_impl.begin(); }
+			bool end() const { return m_iter_impl.end(); }
+
+		};
+
+		class Const_Iterator
+		{
+		private:
+			friend class Iterator;
+
+		private:
+			Iterator_Imlementation m_iter_impl;
+
+		public:
+			Const_Iterator() { }
+			Const_Iterator(const Iterator_Imlementation& _ii) : m_iter_impl(_ii) { }
+			Const_Iterator(const Const_Iterator& _i) : m_iter_impl(_i.m_iter_impl) { }
+			void operator=(const Const_Iterator& _i) { m_iter_impl = _i.m_iter_impl; }
+			Const_Iterator(const Iterator& _i) : m_iter_impl(_i.m_iter_impl) { }
+			void operator=(const Iterator& _i) { m_iter_impl = _i.m_iter_impl; }
+
+		public:
+			bool valid() const { return m_iter_impl.valid(); }
+
+			const Stored_Type& operator*() { return *m_iter_impl; }
+			const Stored_Type* operator->() { return m_iter_impl.operator->(); }
+
+			bool operator==(const Const_Iterator& _other) const { return m_iter_impl == _other.m_iter_impl; }
+			bool operator!=(const Const_Iterator& _other) const { return !(*this == _other); }
+
+			void operator++() { ++m_iter_impl; }
+			void operator--() { --m_iter_impl; }
+
+			unsigned int ascend() { return m_iter_impl.ascend(); }
+			void descend(unsigned int _child_index) { m_iter_impl.descend(_child_index); }
+
+			bool begin() const { return m_iter_impl.begin(); }
+			bool end() const { return m_iter_impl.end(); }
+
+		};
+
+		Iterator create_iterator() { return Iterator(&head); }
+		Const_Iterator create_iterator() const { return Const_Iterator(&head); }
 
 	public:
 
@@ -160,7 +220,7 @@ namespace LEti {
 	//ITERATOR IMPLEMENTATION
 
 	template<typename Stored_Type, unsigned int _cpn>
-	unsigned int Tree<Stored_Type, _cpn>::Iterator::get_child_index()
+	unsigned int Tree<Stored_Type, _cpn>::Iterator_Imlementation::get_child_index()
 	{
 		ASSERT(!valid());
 		if (!node->parent) return _cpn;
@@ -170,14 +230,14 @@ namespace LEti {
 
 
 	template<typename Stored_Type, unsigned int _cpn>
-	bool Tree<Stored_Type, _cpn>::Iterator::valid() const
+	bool Tree<Stored_Type, _cpn>::Iterator_Imlementation::valid() const
 	{
 		return *head != nullptr && node != nullptr;
 	}
 
 
 	template<typename Stored_Type, unsigned int _cpn>
-	void Tree<Stored_Type, _cpn>::Iterator::insert_after(const Stored_Type& _new_data, unsigned int _child_index)
+	void Tree<Stored_Type, _cpn>::Iterator_Imlementation::insert_after(const Stored_Type& _new_data, unsigned int _child_index)
 	{
 		if (!*head)
 		{
@@ -188,7 +248,7 @@ namespace LEti {
 	}
 
 	template<typename Stored_Type, unsigned int _cpn>
-	void Tree<Stored_Type, _cpn>::Iterator::insert_after(Stored_Type&& _new_data, unsigned int _child_index)
+	void Tree<Stored_Type, _cpn>::Iterator_Imlementation::insert_after(Stored_Type&& _new_data, unsigned int _child_index)
 	{
 		if (!*head)
 		{
@@ -202,7 +262,7 @@ namespace LEti {
 	}
 
 	template<typename Stored_Type, unsigned int _cpn>
-	unsigned int Tree<Stored_Type, _cpn>::Iterator::insert_into_availible_index(const Stored_Type& _new_data)
+	unsigned int Tree<Stored_Type, _cpn>::Iterator_Imlementation::insert_into_availible_index(const Stored_Type& _new_data)
 	{
 		if (!*head)
 		{
@@ -224,7 +284,7 @@ namespace LEti {
 	}
 
 	template<typename Stored_Type, unsigned int _cpn>
-    unsigned int Tree<Stored_Type, _cpn>::Iterator::insert_into_availible_index(Stored_Type&& _new_data)
+	unsigned int Tree<Stored_Type, _cpn>::Iterator_Imlementation::insert_into_availible_index(Stored_Type&& _new_data)
 	{
 		if (!*head)
 		{
@@ -247,7 +307,7 @@ namespace LEti {
 
 
 	template<typename Stored_Type, unsigned int _cpn>
-	void Tree<Stored_Type, _cpn>::Iterator::delete_branch()
+	void Tree<Stored_Type, _cpn>::Iterator_Imlementation::delete_branch()
 	{
 		ASSERT(!*head || !node);
 
@@ -269,7 +329,7 @@ namespace LEti {
 
 
 	template<typename Stored_Type, unsigned int _cpn>
-    unsigned int Tree<Stored_Type, _cpn>::Iterator::ascend()
+	unsigned int Tree<Stored_Type, _cpn>::Iterator_Imlementation::ascend()
 	{
 		ASSERT(!head);
 		ASSERT(!node->parent);
@@ -279,7 +339,7 @@ namespace LEti {
 	}
 
 	template<typename Stored_Type, unsigned int _cpn>
-	void Tree<Stored_Type, _cpn>::Iterator::descend(unsigned int _ci)
+	void Tree<Stored_Type, _cpn>::Iterator_Imlementation::descend(unsigned int _ci)
 	{
 		ASSERT(!head);
 		ASSERT(_ci >= _cpn);
@@ -290,7 +350,7 @@ namespace LEti {
 
 
 	template<typename Stored_Type, unsigned int _cpn>
-    void Tree<Stored_Type, _cpn>::Iterator::operator++()
+	void Tree<Stored_Type, _cpn>::Iterator_Imlementation::operator++()
 	{
 		ASSERT(!*head);
 		ASSERT(!node);
@@ -327,7 +387,7 @@ namespace LEti {
 	}
 
 	template<typename Stored_Type, unsigned int _cpn>
-    void Tree<Stored_Type, _cpn>::Iterator::operator--()
+	void Tree<Stored_Type, _cpn>::Iterator_Imlementation::operator--()
 	{
 		ASSERT(!*head);
 		ASSERT(!node);
@@ -368,14 +428,14 @@ namespace LEti {
 
 
 	template<typename Stored_Type, unsigned int _cpn>
-	bool Tree<Stored_Type, _cpn>::Iterator::begin() const
+	bool Tree<Stored_Type, _cpn>::Iterator_Imlementation::begin() const
 	{
 		ASSERT(!valid());
 		return node->parent == nullptr;
 	}
 
 	template<typename Stored_Type, unsigned int _cpn>
-	bool Tree<Stored_Type, _cpn>::Iterator::end() const
+	bool Tree<Stored_Type, _cpn>::Iterator_Imlementation::end() const
 	{
 		ASSERT(!valid());
 
