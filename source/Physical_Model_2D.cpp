@@ -166,9 +166,9 @@ Physical_Model_2D::Physical_Model_2D() : Physical_Model_Interface()
 
 }
 
-Physical_Model_2D::Physical_Model_2D(const float* _raw_coords, unsigned int _raw_coords_count) : Physical_Model_Interface(_raw_coords, _raw_coords_count)
+Physical_Model_2D::Physical_Model_2D(const float* _raw_coords, unsigned int _raw_coords_count)
 {
-
+    setup(_raw_coords, _raw_coords_count);
 }
 
 void Physical_Model_2D::setup(const float* _raw_coords, unsigned int _raw_coords_count)
