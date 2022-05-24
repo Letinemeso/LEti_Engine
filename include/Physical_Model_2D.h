@@ -10,6 +10,12 @@ namespace LEti
 {
 	class Physical_Model_2D : public Physical_Model_Interface
 	{
+	public:
+		struct Rectangular_Border
+		{
+			float left = 0.0f, right = 0.0f, top = 0.0f, bottom = 0.0f;
+		};
+
 	private:
 		class Polygon
 		{
@@ -45,6 +51,9 @@ namespace LEti
             Physical_Model_Interface::Intersection_Data segment_intersecting_polygon(const glm::vec3& _point_1, const glm::vec3& _point_2) const;
             Physical_Model_Interface::Intersection_Data intersects_with_another_polygon(const Polygon& _other) const;
 
+		public:
+			const glm::vec3& operator[](unsigned int _index) const;
+
 		};
 
 	private:
@@ -64,6 +73,9 @@ namespace LEti
         Intersection_Data is_intersecting_with_point(const glm::vec3& _point) const override;
         Intersection_Data is_intersecting_with_segment(const glm::vec3& _point_1, const glm::vec3& _point_2) const override;
         Intersection_Data is_intersecting_with_another_model(const Physical_Model_Interface& _other) const override;
+
+	public:
+		Rectangular_Border construct_rectangular_border() const;
 
 	};
 }

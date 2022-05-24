@@ -147,6 +147,20 @@ Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::intersec
 
 
 
+const glm::vec3& Physical_Model_2D::Polygon::operator[](unsigned int _index) const
+{
+	ASSERT(_index > 2);
+	switch(_index)
+	{
+		case 0 : return m_actual_A;
+		case 1: return m_actual_B;
+		case 2: return m_actual_C;
+	}
+	return m_actual_C;
+}
+
+
+
 Physical_Model_2D::Physical_Model_2D() : Physical_Model_Interface()
 {
 
@@ -231,4 +245,30 @@ Physical_Model_Interface::Intersection_Data Physical_Model_2D::is_intersecting_w
     }
 
     return Intersection_Data(Intersection_Data::Intersection_Type::none);
+}
+
+
+
+Physical_Model_2D::Rectangular_Border Physical_Model_2D::construct_rectangular_border() const
+{
+	ASSERT(!m_polygons);
+	Rectangular_Border result;
+
+	result.left = m_polygons[0][0].x;
+	result.right = m_polygons[0][0].x;
+	result.top = m_polygons[0][0].y;
+	result.bottom = m_polygons[0][0].y;
+
+	for(unsigned int i=0; i<m_polygons_count; ++i)
+	{
+		for(unsigned int p=0; p<3; ++p)
+		{
+			if(result.left > m_polygons[i][p].x) result.left = m_polygons[i][p].x;
+			if(result.right < m_polygons[i][p].x) result.right = m_polygons[i][p].x;
+			if(result.top < m_polygons[i][p].y) result.top = m_polygons[i][p].y;
+			if(result.bottom > m_polygons[i][p].y) result.bottom = m_polygons[i][p].y;
+		}
+	}
+
+	return result;
 }
