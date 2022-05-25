@@ -324,11 +324,9 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
                 Intersection_Data _2 = is_intersecting_with_segment(crnt_polygon.B(), BC);
                 if(_2) return _2;
                 Intersection_Data _3 = is_intersecting_with_point(crnt_polygon.A());
-                if(_3) return _3;
                 Intersection_Data _4 = is_intersecting_with_point(crnt_polygon.B());
-                if(_4) return _4;
                 Intersection_Data _5 = is_intersecting_with_point(crnt_polygon.C());
-                if(_5) return _5;
+				if(_3 && _4 && _5) return _3;
 			}
 		}
 	}
@@ -352,11 +350,9 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
                 Intersection_Data _2 = other.is_intersecting_with_segment(crnt_polygon.B(), BC);
                 if(_2) return _2;
                 Intersection_Data _3 = other.is_intersecting_with_point(crnt_polygon.A());
-                if(_3) return _3;
                 Intersection_Data _4 = other.is_intersecting_with_point(crnt_polygon.B());
-                if(_4) return _4;
                 Intersection_Data _5 = other.is_intersecting_with_point(crnt_polygon.C());
-                if(_5) return _5;
+				if(_3 && _4 && _5) return _3;
 			}
 		}
 	}
