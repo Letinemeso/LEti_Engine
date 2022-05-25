@@ -113,6 +113,7 @@ namespace LEti {
 		glm::vec3 get_scale() const override;
 		glm::vec3 get_rotation_axis() const override;
 		float get_rotation_angle() const override;
+		const Physical_Model_Interface* get_physical_model() const;
 
     public:
         void set_collision_possibility(bool _can_cause_collision);

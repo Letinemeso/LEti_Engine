@@ -261,6 +261,11 @@ float Drawable_Object::get_rotation_angle() const
 	return m_rotation_angle;
 }
 
+const Physical_Model_Interface* Drawable_Object::get_physical_model() const
+{
+	return m_physical_model;
+}
+
 
 
 void Drawable_Object::set_collision_possibility(bool _can_cause_collision)
