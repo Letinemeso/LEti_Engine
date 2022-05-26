@@ -150,6 +150,18 @@ const glm::vec3& Physical_Model_3D::Pyramid::Polygon::C() const
 	return m_actual_C;
 }
 
+const glm::vec3& Physical_Model_3D::Pyramid::Polygon::operator[](unsigned int _index) const
+{
+	ASSERT(_index >=3);
+	switch (_index)
+	{
+	case 0: return m_actual_A;
+	case 1: return m_actual_B;
+	case 2: return m_actual_C;
+	}
+	return m_actual_C;
+}
+
 
 
 //  Pyramid implementation
@@ -358,4 +370,36 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
 	}
 
     return Intersection_Data(Intersection_Data::Intersection_Type::none);
+}
+
+
+
+Physical_Model_3D::Volumetric_Rectangular_Border Physical_Model_3D::construct_volumetric_rectangular_border() const
+{
+	Volumetric_Rectangular_Border result;
+
+	result.left = m_pyramids[0][0].A().x;
+	result.right = m_pyramids[0][0].A().x;
+	result.top = m_pyramids[0][0].A().y;
+	result.bottom = m_pyramids[0][0].A().y;
+	result.far = m_pyramids[0][0].A().z;
+	result.close = m_pyramids[0][0].A().z;
+
+	for(unsigned int pyr=0; pyr < m_pyramids_count; ++pyr)
+	{
+		for(unsigned int pol=0; pol < 4; ++pol)
+		{
+			for(unsigned int vert=0; vert<3; ++vert)
+			{
+				if(result.left > m_pyramids[pyr][pol][vert].x) result.left = m_pyramids[pyr][pol][vert].x;
+				if(result.right < m_pyramids[pyr][pol][vert].x) result.right = m_pyramids[pyr][pol][vert].x;
+				if(result.top < m_pyramids[pyr][pol][vert].y) result.top = m_pyramids[pyr][pol][vert].y;
+				if(result.bottom > m_pyramids[pyr][pol][vert].y) result.bottom = m_pyramids[pyr][pol][vert].y;
+				if(result.far < m_pyramids[pyr][pol][vert].z) result.far = m_pyramids[pyr][pol][vert].z;
+				if(result.close > m_pyramids[pyr][pol][vert].z) result.close = m_pyramids[pyr][pol][vert].z;
+			}
+		}
+	}
+
+	return result;
 }

@@ -278,7 +278,7 @@ bool Drawable_Object::get_collision_possibility() const
     return m_can_cause_collision;
 }
 
-LEti::Physical_Model_Interface::Intersection_Data Drawable_Object::is_colliding_with_other(const Drawable_Object& _other)
+LEti::Physical_Model_Interface::Intersection_Data Drawable_Object::is_colliding_with_other(const Drawable_Object& _other) const
 {
     ASSERT(m_can_cause_collision && !m_physical_model);
     ASSERT(_other.m_can_cause_collision && !_other.m_physical_model);

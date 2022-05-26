@@ -118,7 +118,7 @@ namespace LEti {
     public:
         void set_collision_possibility(bool _can_cause_collision);
         bool get_collision_possibility() const;
-        LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Drawable_Object& _other);
+		LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Drawable_Object& _other) const;
 
 	};
 
