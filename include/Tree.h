@@ -37,9 +37,6 @@ namespace LEti {
 		class Iterator_Imlementation
 		{
 		private:
-//			bool is_const = false;
-
-		private:
             Node** head;
             Node* node = nullptr;
 
@@ -77,6 +74,7 @@ namespace LEti {
 
 			bool begin() const;
 			bool end() const;
+			bool is_leaf() const;
 		};
 
 	public:
@@ -120,6 +118,7 @@ namespace LEti {
 
 			bool begin() const { return m_iter_impl.begin(); }
 			bool end() const { return m_iter_impl.end(); }
+			bool is_leaf() const { return m_iter_impl.is_leaf(); }
 
 		};
 
@@ -156,6 +155,7 @@ namespace LEti {
 
 			bool begin() const { return m_iter_impl.begin(); }
 			bool end() const { return m_iter_impl.end(); }
+			bool is_leaf() const { return m_iter_impl.is_leaf(); }
 
 		};
 
@@ -462,6 +462,16 @@ namespace LEti {
 			tptr = tptr->parent;
 		}
 
+		return true;
+	}
+
+	template<typename Stored_Type, unsigned int _cpn>
+	bool Tree<Stored_Type, _cpn>::Iterator_Imlementation::is_leaf() const
+	{
+		ASSERT(!valid());
+
+		for(unsigned int i=0; i<_cpn; ++i)
+			if(node->child[i]) return false;
 		return true;
 	}
 
