@@ -376,6 +376,8 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
 
 Physical_Model_3D::Volumetric_Rectangular_Border Physical_Model_3D::construct_volumetric_rectangular_border() const
 {
+	ASSERT(!m_raw_coords || !m_pyramids);
+
 	Volumetric_Rectangular_Border result;
 
 	result.left = m_pyramids[0][0].A().x;
@@ -402,4 +404,15 @@ Physical_Model_3D::Volumetric_Rectangular_Border Physical_Model_3D::construct_vo
 	}
 
 	return result;
+}
+
+unsigned int Physical_Model_3D::get_pyramids_count() const
+{
+	return m_pyramids_count;
+}
+
+const Physical_Model_3D::Pyramid& Physical_Model_3D::operator[](unsigned int _index) const
+{
+	ASSERT(!m_raw_coords || !m_pyramids || _index >= m_pyramids_count);
+	return m_pyramids[_index];
 }
