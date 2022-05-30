@@ -70,10 +70,6 @@ namespace LEti {
 		glm::vec3 m_rotation_axis;
 		float m_rotation_angle = 0.0f;
 
-    protected:
-        bool m_can_cause_collision = false;
-        LEti::Physical_Model_Interface* m_physical_model = nullptr;
-
 	public:
 		Drawable_Object();
 		virtual ~Drawable_Object();
@@ -81,8 +77,6 @@ namespace LEti {
 	public:
 		void init_texture(const char* _tex_path, const float* const tex_coords, unsigned int _tex_coords_count);
 		void init_vertices(const float* const _coords, unsigned int _coords_count);
-        virtual void init_physical_model(const float* _coords, unsigned int _coords_count);
-        void remove_physical_model();
 		virtual void init(const char* _object_name);
 
 		LEti::Vertices& get_vertices();
@@ -113,18 +107,41 @@ namespace LEti {
 		glm::vec3 get_scale() const override;
 		glm::vec3 get_rotation_axis() const override;
 		float get_rotation_angle() const override;
-		const Physical_Model_Interface* get_physical_model() const;
-
-    public:
-        void set_collision_possibility(bool _can_cause_collision);
-        bool get_collision_possibility() const;
-		LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Drawable_Object& _other) const;
 
 	};
 
 
 
-	class Object_2D : public Drawable_Object
+	class Colliding_Object : public Drawable_Object
+	{
+	protected:
+		bool m_can_cause_collision = false;
+		LEti::Physical_Model_Interface* m_physical_model = nullptr;
+
+	public:
+		Colliding_Object() : Drawable_Object() { }
+		virtual ~Colliding_Object();
+
+		virtual void init_physical_model(const float* _coords, unsigned int _coords_count);
+		void remove_physical_model();
+		virtual void init(const char* _object_name) override;
+
+	public:
+		const Physical_Model_Interface* get_physical_model() const;
+
+	public:
+		virtual void update() override = 0;
+
+	public:
+		void set_collision_possibility(bool _can_cause_collision);
+		bool get_collision_possibility() const;
+		LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Colliding_Object& _other) const;
+
+	};
+
+
+
+	class Object_2D : public Colliding_Object
 	{
 	public:
 		Object_2D();
@@ -141,7 +158,7 @@ namespace LEti {
 
 
 
-	class Object_3D : public Drawable_Object
+	class Object_3D : public Colliding_Object
 	{
 	public:
 		Object_3D();

@@ -51,8 +51,6 @@ Drawable_Object::Drawable_Object() : Object_Interface()
 Drawable_Object::~Drawable_Object()
 {
 	glDeleteVertexArrays(1, &m_vertex_array);
-
-    delete m_physical_model;
 }
 
 
@@ -69,18 +67,6 @@ void Drawable_Object::init_vertices(const float* const _coords, unsigned int _co
 	glBindVertexArray(m_vertex_array);
 	m_vertices.load(_coords, _coords_count);
 	m_vertices.setup_buffer(0, 3);
-}
-
-void Drawable_Object::init_physical_model(const float *_coords, unsigned int _coords_count)
-{
-    m_can_cause_collision = true;
-    delete m_physical_model;
-}
-
-void Drawable_Object::remove_physical_model()
-{
-    delete m_physical_model;
-    m_can_cause_collision = false;
 }
 
 void Drawable_Object::init(const char* _object_name)
@@ -152,12 +138,6 @@ void Drawable_Object::draw() const
 	glDrawArrays(GL_TRIANGLES, 0, m_vertices.get_vertices_count());
 
 	glBindVertexArray(0);
-}
-
-void Drawable_Object::update()
-{
-    if(m_can_cause_collision)
-        m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
 }
 
 
@@ -261,24 +241,71 @@ float Drawable_Object::get_rotation_angle() const
 	return m_rotation_angle;
 }
 
-const Physical_Model_Interface* Drawable_Object::get_physical_model() const
+
+
+
+
+
+
+
+
+
+
+Colliding_Object::~Colliding_Object()
+{
+	delete m_physical_model;
+}
+
+
+
+void Colliding_Object::init_physical_model(const float *_coords, unsigned int _coords_count)
+{
+	m_can_cause_collision = true;
+	delete m_physical_model;
+}
+
+void Colliding_Object::remove_physical_model()
+{
+	delete m_physical_model;
+	m_can_cause_collision = false;
+}
+
+void Colliding_Object::init(const char *_object_name)
+{
+	Drawable_Object::init(_object_name);
+
+	std::pair<const float*, unsigned int> physical_model_data;
+	LEti::Resource_Loader::assign(physical_model_data, _object_name, "physical_model_data");
+	if((physical_model_data.first))
+		init_physical_model(physical_model_data.first, physical_model_data.second);
+}
+
+
+
+void Colliding_Object::update()
+{
+	if(m_can_cause_collision)
+		m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
+}
+
+const Physical_Model_Interface* Colliding_Object::get_physical_model() const
 {
 	return m_physical_model;
 }
 
 
 
-void Drawable_Object::set_collision_possibility(bool _can_cause_collision)
+void Colliding_Object::set_collision_possibility(bool _can_cause_collision)
 {
     m_can_cause_collision = _can_cause_collision;
 }
 
-bool Drawable_Object::get_collision_possibility() const
+bool Colliding_Object::get_collision_possibility() const
 {
     return m_can_cause_collision;
 }
 
-LEti::Physical_Model_Interface::Intersection_Data Drawable_Object::is_colliding_with_other(const Drawable_Object& _other) const
+LEti::Physical_Model_Interface::Intersection_Data Colliding_Object::is_colliding_with_other(const Colliding_Object& _other) const
 {
     ASSERT(m_can_cause_collision && !m_physical_model);
     ASSERT(_other.m_can_cause_collision && !_other.m_physical_model);
@@ -302,7 +329,7 @@ LEti::Physical_Model_Interface::Intersection_Data Drawable_Object::is_colliding_
 
 
 
-Object_2D::Object_2D() : Drawable_Object()
+Object_2D::Object_2D() : Colliding_Object()
 {
 
 }
@@ -315,19 +342,14 @@ Object_2D::~Object_2D()
 
 void Object_2D::init_physical_model(const float *_coords, unsigned int _coords_count)
 {
-    Drawable_Object::init_physical_model(_coords, _coords_count);
+	Colliding_Object::init_physical_model(_coords, _coords_count);
     m_physical_model = new Physical_Model_2D(_coords, _coords_count);
 }
 
 
 void Object_2D::init(const char* _object_name)
 {
-    Drawable_Object::init(_object_name);
-
-    std::pair<const float*, unsigned int> physical_model_data;
-    LEti::Resource_Loader::assign(physical_model_data, _object_name, "physical_model_data");
-    if((physical_model_data.first))
-        init_physical_model(physical_model_data.first, physical_model_data.second);
+	Colliding_Object::init(_object_name);
 }
 
 
@@ -337,12 +359,12 @@ void Object_2D::draw() const
 	LEti::Camera::use_2d();
     glDisable(GL_DEPTH_TEST);
 
-	Drawable_Object::draw();
+	Colliding_Object::draw();
 }
 
 void Object_2D::update()
 {
-    Drawable_Object::update();
+	Colliding_Object::update();
 }
 
 
@@ -354,7 +376,7 @@ void Object_2D::update()
 
 
 
-Object_3D::Object_3D() : Drawable_Object()
+Object_3D::Object_3D() : Colliding_Object()
 {
 
 }
@@ -367,19 +389,14 @@ Object_3D::~Object_3D()
 
 void Object_3D::init_physical_model(const float *_coords, unsigned int _coords_count)
 {
-    Drawable_Object::init_physical_model(_coords, _coords_count);
+	Colliding_Object::init_physical_model(_coords, _coords_count);
     m_physical_model = new Physical_Model_3D(_coords, _coords_count);
 }
 
 
 void Object_3D::init(const char* _object_name)
 {
-    Drawable_Object::init(_object_name);
-
-    std::pair<const float*, unsigned int> physical_model_data;
-    LEti::Resource_Loader::assign(physical_model_data, _object_name, "physical_model_data");
-    if((physical_model_data.first))
-        init_physical_model(physical_model_data.first, physical_model_data.second);
+	Colliding_Object::init(_object_name);
 }
 
 
@@ -389,10 +406,10 @@ void Object_3D::draw() const
 	LEti::Camera::use_3d();
     glEnable(GL_DEPTH_TEST);
 
-	Drawable_Object::draw();
+	Colliding_Object::draw();
 }
 
 void Object_3D::update()
 {
-    Drawable_Object::update();
+	Colliding_Object::update();
 }
