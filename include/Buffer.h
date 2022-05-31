@@ -50,6 +50,8 @@ namespace LEti {
 
 		unsigned int size() const;
 
+		void bind() const;
+
 	};
 
 

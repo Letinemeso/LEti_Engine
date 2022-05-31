@@ -135,3 +135,11 @@ unsigned int Buffer::size() const
 {
 	return buffer_size;
 }
+
+
+
+void Buffer::bind() const
+{
+	ASSERT(buffer == 0 || buffer_size == 0 || buffer_data == nullptr || vertex_array == nullptr);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+}
