@@ -29,6 +29,8 @@ namespace LEti { namespace Utility {
 
     bool beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& _second);
 
+	bool floats_are_equal(float _first, float _second);
+
 }	/*LEti*/	}	/*Utility*/
 
 #endif

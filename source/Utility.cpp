@@ -63,3 +63,8 @@ bool Utility::beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec
 
     return divident < 0.0f; // angles cos must be negative
 }
+
+bool Utility::floats_are_equal(float _first, float _second)
+{
+	return fabs(fabs(_first)-fabs(_second)) < 0.0001f;
+}
