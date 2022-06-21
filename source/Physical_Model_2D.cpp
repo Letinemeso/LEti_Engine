@@ -273,3 +273,16 @@ Physical_Model_2D::Rectangular_Border Physical_Model_2D::construct_rectangular_b
 
 	return result;
 }
+
+
+unsigned int Physical_Model_2D::get_polygons_count() const
+{
+	return m_polygons_count;
+}
+
+const Physical_Model_2D::Polygon& Physical_Model_2D::operator[](unsigned int _index) const
+{
+	ASSERT(!m_polygons || _index >= m_polygons_count);
+
+	return m_polygons[_index];
+}
