@@ -120,29 +120,36 @@ Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::segments
 Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::segment_intersecting_polygon(const glm::vec3 &_point_1, const glm::vec3 &_point_2) const
 {
 	Intersection_Data _0 = segments_intersect(m_actual_A, m_actual_B, _point_1, _point_2);
-	if(_0) return _0;
+	if(_0)
+		return _0;
 	Intersection_Data _1 = segments_intersect(m_actual_B, m_actual_C, _point_1, _point_2);
-	if(_1) return _1;
+	if(_1)
+		return _1;
 	Intersection_Data _2 = segments_intersect(m_actual_C, m_actual_A, _point_1, _point_2);
-	if(_2) return _2;
+	if(_2)
+		return _2;
 	return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
 
 Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::intersects_with_another_polygon(const Polygon& _other) const
 {
 	Intersection_Data _0 = segment_intersecting_polygon(_other.m_actual_A, _other.m_actual_B);
-	if(_0) return _0;
+	if(_0)
+		return _0;
 	Intersection_Data _1 = segment_intersecting_polygon(_other.m_actual_B, _other.m_actual_C);
-	if(_1) return _1;
+	if(_1)
+		return _1;
 	Intersection_Data _2 = segment_intersecting_polygon(_other.m_actual_C, _other.m_actual_A);
-	if(_2) return _2;
+	if(_2)
+		return _2;
 	Intersection_Data _3 = point_belongs_to_triangle(_other.m_actual_A);
 	Intersection_Data _4 = point_belongs_to_triangle(_other.m_actual_B);
 	Intersection_Data _5 = point_belongs_to_triangle(_other.m_actual_C);
 //	if(_3) return _3;
 //	if(_4) return _4;
 //	if(_5) return _5;
-	if(_3 && _4 && _5) return _3;
+	if(_3 && _4 && _5)
+		return _3;
 	return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
 
@@ -232,7 +239,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_2D::is_intersecting_w
 	{
 		for (unsigned int j = 0; j < other.m_polygons_count; ++j)
 		{
-			Intersection_Data id = m_polygons[i].intersects_with_another_polygon(other.m_polygons[i]);
+			Intersection_Data id = m_polygons[i].intersects_with_another_polygon(other.m_polygons[j]);
 			if (id) return id;
 		}
 	}
@@ -240,7 +247,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_2D::is_intersecting_w
 	{
 		for (unsigned int j = 0; j < m_polygons_count; ++j)
 		{
-			Intersection_Data id = other.m_polygons[i].intersects_with_another_polygon(m_polygons[i]);
+			Intersection_Data id = other.m_polygons[i].intersects_with_another_polygon(m_polygons[j]);
 			if (id) return id;
 		}
 	}
