@@ -92,6 +92,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::segments
 	Equasion_Data second_eq = get_equasion(_point_12, _point_22);
 
 	glm::vec3 intersection_point;
+	intersection_point.z = 0;
 
 	if(_point_11.x == _point_21.x)
 		intersection_point.x = _point_11.x;
