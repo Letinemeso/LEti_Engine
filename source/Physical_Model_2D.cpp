@@ -27,7 +27,7 @@ void Physical_Model_2D::Polygon::update_points(const glm::mat4x4 &_translation, 
 
 
 
-Physical_Model_2D::Polygon::Equasion_Data Physical_Model_2D::Polygon::get_equasion(const glm::vec3 &_point_1, const glm::vec3 &_point_2) const
+Physical_Model_2D::Equasion_Data Physical_Model_2D::get_equasion(const glm::vec3 &_point_1, const glm::vec3 &_point_2)
 {
 	Equasion_Data result;
 
@@ -48,45 +48,10 @@ Physical_Model_2D::Polygon::Equasion_Data Physical_Model_2D::Polygon::get_equasi
 	return result;
 }
 
-
-
-Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::point_belongs_to_triangle(const glm::vec3& _point) const
-{
-	Equasion_Data AB_eq = get_equasion(m_actual_A, m_actual_B);
-	//    bool AB_goes_left = m_actual_B.x < m_actual_A.x;
-	Equasion_Data BC_eq = get_equasion(m_actual_B, m_actual_C);
-	//	bool BC_goes_left = m_actual_C.x < m_actual_B.x;
-	Equasion_Data CA_eq = get_equasion(m_actual_C, m_actual_A);
-	//	bool CA_goes_left = m_actual_A.x < m_actual_C.x;
-
-	float AB_y_proj = _point.x * AB_eq.k + AB_eq.b;
-	float BC_y_proj = _point.x * BC_eq.k + BC_eq.b;
-	float CA_y_proj = _point.x * CA_eq.k + CA_eq.b;
-
-	bool AB_right_side = AB_eq.is_vertical() ? ( m_actual_B.y < m_actual_A.y ? _point.x >= m_actual_A.x : _point.x <= m_actual_A.x ) : ( AB_eq.goes_left ? AB_y_proj > _point.y : AB_y_proj < _point.y );
-	bool BC_right_side = BC_eq.is_vertical() ? ( m_actual_C.y < m_actual_B.y ? _point.x >= m_actual_B.x : _point.x <= m_actual_B.x ) : ( BC_eq.goes_left ? BC_y_proj > _point.y : BC_y_proj < _point.y );
-	bool CA_right_side = CA_eq.is_vertical() ? ( m_actual_A.y < m_actual_C.y ? _point.x >= m_actual_C.x : _point.x <= m_actual_C.x ) : ( CA_eq.goes_left ? CA_y_proj > _point.y : CA_y_proj < _point.y );
-
-	//	return (AB_goes_left ? AB_y_proj < _point.y : AB_y_proj > _point.y) &&
-	//		(BC_goes_left ? BC_y_proj < _point.y : BC_y_proj > _point.y) &&
-	//		(CA_goes_left ? CA_y_proj < _point.y : CA_y_proj > _point.y);
-	if (AB_right_side && BC_right_side && CA_right_side) return Intersection_Data(Intersection_Data::Intersection_Type::inside);
-	return Intersection_Data(Intersection_Data::Intersection_Type::none);
-}
-
-#include <vector>
-
-
-Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::segments_intersect(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22) const
+Physical_Model_Interface::Intersection_Data Physical_Model_2D::segments_intersect(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22)
 {
 	std::pair<std::pair<float, float>, std::pair<float, float>> f({_point_11.x, _point_11.y}, {_point_21.x, _point_21.y});
 	std::pair<std::pair<float, float>, std::pair<float, float>> s({_point_12.x, _point_12.y}, {_point_22.x, _point_22.y});
-	glm::vec3 first_from_zero = _point_21 - _point_11;
-	glm::vec3 second_from_zero = _point_22 - _point_12;
-
-	//    if(!LEti::Utility::beams_cross_at_right_angle(first_from_zero, second_from_zero))
-	//    if(fabs(LEti::Utility::angle_cos_between_vectors(first_from_zero, second_from_zero)) < 0.5f)
-	//        return Intersection_Data(Intersection_Data::Intersection_Type::none);
 
 	Equasion_Data first_eq = get_equasion(_point_11, _point_21);
 	Equasion_Data second_eq = get_equasion(_point_12, _point_22);
@@ -114,6 +79,32 @@ Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::segments
 		return Intersection_Data(Intersection_Data::Intersection_Type::partly_outside, intersection_point);
 	}
 
+	return Intersection_Data(Intersection_Data::Intersection_Type::none);
+}
+
+
+
+Physical_Model_Interface::Intersection_Data Physical_Model_2D::Polygon::point_belongs_to_triangle(const glm::vec3& _point) const
+{
+	Equasion_Data AB_eq = get_equasion(m_actual_A, m_actual_B);
+	//    bool AB_goes_left = m_actual_B.x < m_actual_A.x;
+	Equasion_Data BC_eq = get_equasion(m_actual_B, m_actual_C);
+	//	bool BC_goes_left = m_actual_C.x < m_actual_B.x;
+	Equasion_Data CA_eq = get_equasion(m_actual_C, m_actual_A);
+	//	bool CA_goes_left = m_actual_A.x < m_actual_C.x;
+
+	float AB_y_proj = _point.x * AB_eq.k + AB_eq.b;
+	float BC_y_proj = _point.x * BC_eq.k + BC_eq.b;
+	float CA_y_proj = _point.x * CA_eq.k + CA_eq.b;
+
+	bool AB_right_side = AB_eq.is_vertical() ? ( m_actual_B.y < m_actual_A.y ? _point.x >= m_actual_A.x : _point.x <= m_actual_A.x ) : ( AB_eq.goes_left ? AB_y_proj > _point.y : AB_y_proj < _point.y );
+	bool BC_right_side = BC_eq.is_vertical() ? ( m_actual_C.y < m_actual_B.y ? _point.x >= m_actual_B.x : _point.x <= m_actual_B.x ) : ( BC_eq.goes_left ? BC_y_proj > _point.y : BC_y_proj < _point.y );
+	bool CA_right_side = CA_eq.is_vertical() ? ( m_actual_A.y < m_actual_C.y ? _point.x >= m_actual_C.x : _point.x <= m_actual_C.x ) : ( CA_eq.goes_left ? CA_y_proj > _point.y : CA_y_proj < _point.y );
+
+	//	return (AB_goes_left ? AB_y_proj < _point.y : AB_y_proj > _point.y) &&
+	//		(BC_goes_left ? BC_y_proj < _point.y : BC_y_proj > _point.y) &&
+	//		(CA_goes_left ? CA_y_proj < _point.y : CA_y_proj > _point.y);
+	if (AB_right_side && BC_right_side && CA_right_side) return Intersection_Data(Intersection_Data::Intersection_Type::inside);
 	return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
 
@@ -168,6 +159,48 @@ const glm::vec3& Physical_Model_2D::Polygon::operator[](unsigned int _index) con
 	return m_actual_C;
 }
 
+glm::vec3& Physical_Model_2D::Polygon::operator[](unsigned int _index)
+{
+	ASSERT(_index > 2);
+	switch(_index)
+	{
+	case 0 : return m_actual_A;
+	case 1: return m_actual_B;
+	case 2: return m_actual_C;
+	}
+	return m_actual_C;
+}
+
+
+
+void Physical_Model_2D::update_rectangular_border()
+{
+	ASSERT(!m_polygons);
+
+	m_current_border.left = m_polygons[0][0].x;
+	m_current_border.right = m_polygons[0][0].x;
+	m_current_border.top = m_polygons[0][0].y;
+	m_current_border.bottom = m_polygons[0][0].y;
+
+	for(unsigned int i=0; i<m_polygons_count; ++i)
+	{
+		for(unsigned int p=0; p<3; ++p)
+		{
+			if(m_current_border.left > m_polygons[i][p].x) m_current_border.left = m_polygons[i][p].x;
+			if(m_current_border.right < m_polygons[i][p].x) m_current_border.right = m_polygons[i][p].x;
+			if(m_current_border.top < m_polygons[i][p].y) m_current_border.top = m_polygons[i][p].y;
+			if(m_current_border.bottom > m_polygons[i][p].y) m_current_border.bottom = m_polygons[i][p].y;
+		}
+	}
+}
+
+
+
+const Physical_Model_2D::Rectangular_Border& Physical_Model_2D::curr_rect_border() const
+{
+	return m_current_border;
+}
+
 
 
 Physical_Model_2D::Physical_Model_2D() : Physical_Model_Interface()
@@ -178,6 +211,11 @@ Physical_Model_2D::Physical_Model_2D() : Physical_Model_Interface()
 Physical_Model_2D::Physical_Model_2D(const float* _raw_coords, unsigned int _raw_coords_count)
 {
 	setup(_raw_coords, _raw_coords_count);
+}
+
+Physical_Model_2D::Physical_Model_2D(const Physical_Model_2D& _other)
+{
+	setup(_other.m_raw_coords, _other.m_raw_coords_count);
 }
 
 void Physical_Model_2D::setup(const float* _raw_coords, unsigned int _raw_coords_count)
@@ -205,6 +243,18 @@ void Physical_Model_2D::update(const glm::mat4x4& _translation, const glm::mat4x
 
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
 		m_polygons[i].update_points(_translation, _rotation, _scale);
+
+	update_rectangular_border();
+}
+
+void Physical_Model_2D::copy_real_coordinates(const Physical_Model_2D &_other)
+{
+	for (unsigned int i = 0; i < m_polygons_count; ++i)
+	{
+		for(unsigned int points_i = 0; points_i < 3; ++points_i)
+			m_polygons[i][points_i] = _other.m_polygons[i][points_i];
+	}
+	m_current_border = _other.m_current_border;
 }
 
 
@@ -256,31 +306,6 @@ Physical_Model_Interface::Intersection_Data Physical_Model_2D::is_intersecting_w
 	return Intersection_Data(Intersection_Data::Intersection_Type::none);
 }
 
-
-
-Physical_Model_2D::Rectangular_Border Physical_Model_2D::construct_rectangular_border() const
-{
-	ASSERT(!m_polygons);
-	Rectangular_Border result;
-
-	result.left = m_polygons[0][0].x;
-	result.right = m_polygons[0][0].x;
-	result.top = m_polygons[0][0].y;
-	result.bottom = m_polygons[0][0].y;
-
-	for(unsigned int i=0; i<m_polygons_count; ++i)
-	{
-		for(unsigned int p=0; p<3; ++p)
-		{
-			if(result.left > m_polygons[i][p].x) result.left = m_polygons[i][p].x;
-			if(result.right < m_polygons[i][p].x) result.right = m_polygons[i][p].x;
-			if(result.top < m_polygons[i][p].y) result.top = m_polygons[i][p].y;
-			if(result.bottom > m_polygons[i][p].y) result.bottom = m_polygons[i][p].y;
-		}
-	}
-
-	return result;
-}
 
 
 unsigned int Physical_Model_2D::get_polygons_count() const

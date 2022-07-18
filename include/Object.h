@@ -70,6 +70,16 @@ namespace LEti {
 		glm::vec3 m_rotation_axis;
 		float m_rotation_angle = 0.0f;
 
+		struct
+		{
+			glm::mat4x4 translation_matrix, rotation_matrix, scale_matrix;
+			glm::vec3 rotation_axis;
+			float rotation_angle = 0.0f;
+			void update(const glm::mat4x4& _translation_matrix, const glm::mat4x4& _rotation_matrix, const glm::mat4x4& _scale_matrix,
+						const glm::vec3& _rotation_axis, float _rotation_angle)
+				{ translation_matrix = _translation_matrix; rotation_matrix = _rotation_matrix; scale_matrix = _scale_matrix; rotation_axis = _rotation_axis; rotation_angle = _rotation_angle; }
+		} m_previous_state;
+
 	public:
 		Drawable_Object();
 		virtual ~Drawable_Object();
@@ -108,6 +118,11 @@ namespace LEti {
 		glm::vec3 get_rotation_axis() const override;
 		float get_rotation_angle() const override;
 
+		glm::vec3 get_pos_prev() const;
+		glm::vec3 get_scale_prev() const;
+		glm::vec3 get_rotation_axis_prev() const;
+		float get_rotation_angle_prev() const;
+
 	};
 
 
@@ -117,6 +132,7 @@ namespace LEti {
 	protected:
 		bool m_can_cause_collision = false;
 		LEti::Physical_Model_Interface* m_physical_model = nullptr;
+		LEti::Physical_Model_Interface* m_physical_model_prev_state = nullptr;
 
 	public:
 		Colliding_Object() : Drawable_Object() { }
@@ -127,7 +143,10 @@ namespace LEti {
 		virtual void init(const char* _object_name) override;
 
 	public:
-		const Physical_Model_Interface* get_physical_model() const;
+		const Physical_Model_Interface* get_physical_model_interface() const;
+		Physical_Model_Interface* get_physical_model_interface();
+		const Physical_Model_Interface* get_physical_model_interface_prev_state() const;
+		Physical_Model_Interface* get_physical_model_interface_prev_state();
 
 	public:
 		virtual void update() override = 0;
@@ -135,7 +154,11 @@ namespace LEti {
 	public:
 		void set_collision_possibility(bool _can_cause_collision);
 		bool get_collision_possibility() const;
-		LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Colliding_Object& _other) const;
+
+		void set_is_dynamic(bool _is_dynamic);
+		bool is_dynamic() const;
+
+		virtual LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Colliding_Object& _other) const;
 
 	};
 
@@ -151,9 +174,30 @@ namespace LEti {
 
         virtual void init(const char* _object_name) override;
 
+	private:
+		Physical_Model_2D::Rectangular_Border m_dynamic_rb;
+
 	public:
 		virtual void draw() const override;
 		virtual void update() override;
+
+	protected:
+		Physical_Model_2D* get_physical_model();
+		Physical_Model_2D* get_physical_model_prev_state();
+	public:
+		const Physical_Model_2D* get_physical_model() const;
+		const Physical_Model_2D* get_physical_model_prev_state() const;
+		const Physical_Model_2D::Rectangular_Border& get_dynamic_rb() const;
+
+	private:
+		unsigned int m_precision_level = 3;
+
+	private:
+		LEti::Physical_Model_Interface::Intersection_Data get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, bool _collision_detected, float _min_ratio, float _max_ratio) const;
+
+	public:
+		LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Colliding_Object& _other) const override;
+
 	};
 
 

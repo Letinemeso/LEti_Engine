@@ -42,6 +42,21 @@ void Space_Splitter_2D::Area::split(LEti::Tree<Area, 4>::Iterator _it)
 
 
 
+Space_Splitter_2D::Collision_Data::Collision_Data(const Object_2D* _first, const Object_2D* _second)
+	: first(_first), second(_second)
+{
+//	if(!_first->is_dynamic() && !_second->is_dynamic())
+	{
+		collision_data = _first->is_colliding_with_other(*_second);
+		return;
+	}
+
+
+
+}
+
+
+
 void Space_Splitter_2D::set_max_tree_depth(unsigned int _max_depth)
 {
 	m_max_tree_depth = _max_depth;
@@ -76,8 +91,8 @@ void Space_Splitter_2D::unregister_object(const Object_2D *_model)
 
 void Space_Splitter_2D::split_space_recursive(LEti::Tree<Area, 4>::Iterator _it, unsigned int _level)
 {
-	const auto& rectangles = _it->rectangles;
-	if (rectangles.size() < 3 || _level > m_max_tree_depth) return;
+	const auto& objects = _it->objects;
+	if (objects.size() < 3 || _level > m_max_tree_depth) return;
 
 	_it->split(_it);
 
@@ -86,16 +101,93 @@ void Space_Splitter_2D::split_space_recursive(LEti::Tree<Area, 4>::Iterator _it,
 		LEti::Tree<Area, 4>::Iterator next = _it;
 		next.descend(i);
 
-		std::list<Rectangle_Wrapper>::const_iterator point_it = rectangles.begin();
-		while(point_it != rectangles.end())
+		std::list<const Object_2D*>::const_iterator point_it = objects.begin();
+		while(point_it != objects.end())
 		{
-			if(next->rectangle_is_inside(point_it->rectangle))
-				next->rectangles.push_back(*point_it);
+			const Physical_Model_2D::Rectangular_Border& rb = (*point_it)->get_physical_model()->is_dynamic() ?
+						(*point_it)->get_dynamic_rb() :
+						(*point_it)->get_physical_model()->curr_rect_border();
+			if(next->rectangle_is_inside(rb))
+				next->objects.push_back(*point_it);
+
 			++point_it;
 		}
 
 		split_space_recursive(next, _level+1);
 	}
+}
+
+void Space_Splitter_2D::check_for_collisions(LEti::Tree<Area, 4>::Iterator _it)
+{
+	LEti::Tree<Area, 4>::Iterator it = _it;
+
+	while(!it.end())
+	{
+		if(it->objects.size() == 2)
+		{
+			std::list<const Object_2D*>::iterator colliding_model = it->objects.begin();
+			std::list<const Object_2D*>::iterator next = colliding_model;
+			++next;
+			Collision_Data cd(*colliding_model, *next);
+			if(cd.collision_data)
+				save_collision_data(cd);
+		}
+		else if(it.is_leaf() && it->objects.size() > 2)
+		{
+			std::list<const Object_2D*>::const_iterator colliding_model = it->objects.begin();
+			while(colliding_model != it->objects.end())
+			{
+				std::list<const Object_2D*>::const_iterator next = colliding_model;
+				++next;
+				while(next != it->objects.end())
+				{
+					Collision_Data cd(*colliding_model, *next);
+					if(cd.collision_data)
+						save_collision_data(cd);
+					++next;
+				}
+				++colliding_model;
+			}
+		}
+		++it;
+	}
+	if(it->objects.size() == 2)
+	{
+		std::list<const Object_2D*>::iterator colliding_model = it->objects.begin();
+		std::list<const Object_2D*>::iterator next = colliding_model;
+		++next;
+		Collision_Data cd(*colliding_model, *next);
+		if(cd.collision_data)
+			save_collision_data(cd);
+	}
+	else if(it.is_leaf() && it->objects.size() > 2)
+	{
+		std::list<const Object_2D*>::const_iterator colliding_model = it->objects.begin();
+		while(colliding_model != it->objects.end())
+		{
+			std::list<const Object_2D*>::const_iterator next = colliding_model;
+			++next;
+			while(next != it->objects.end())
+			{
+				Collision_Data cd(*colliding_model, *next);
+				if(cd.collision_data)
+					save_collision_data(cd);
+				++next;
+			}
+			++colliding_model;
+		}
+	}
+}
+
+void Space_Splitter_2D::save_collision_data(const Collision_Data &_cd)
+{
+	std::list<Collision_Data>::iterator it = m_collisions.begin();
+	while(it != m_collisions.end())
+	{
+		if(*it == _cd) break;
+		++it;
+	}
+	if(it == m_collisions.end()) m_collisions.push_back(_cd);
 }
 
 
@@ -124,108 +216,23 @@ void Space_Splitter_2D::update()
 			continue;
 		}
 
-		Physical_Model_2D::Rectangular_Border rb = ((Physical_Model_2D*)((*model_it)->get_physical_model()))->construct_rectangular_border();
+		const Physical_Model_2D::Rectangular_Border& rb = (*model_it)->get_physical_model()->is_dynamic() ?
+					(*model_it)->get_dynamic_rb() :
+					(*model_it)->get_physical_model()->curr_rect_border();
 
 		if(rb.left < it->left.value || it->left.inf) it->left = rb.left;
 		if(rb.right > it->right.value || it->right.inf) it->right = rb.right;
 		if(rb.top > it->top.value || it->top.inf) it->top = rb.top;
 		if(rb.bottom < it->bottom.value || it->bottom.inf) it->bottom = rb.bottom;
 
-		it->rectangles.push_back({*model_it, rb});
+		it->objects.push_back(*model_it);
 
 		++model_it;
 	}
 
 	split_space_recursive(it, 0);
 
-	while(!it.end())
-	{
-		if(it->rectangles.size() == 2)
-		{
-			std::list<Rectangle_Wrapper>::iterator colliding_model = it->rectangles.begin();
-			std::list<Rectangle_Wrapper>::iterator next = colliding_model;
-			++next;
-			Collision_Data cd(colliding_model->belongs_to, next->belongs_to, colliding_model->belongs_to->is_colliding_with_other(*next->belongs_to));
-			if(cd.collision_data)
-			{
-				std::list<Collision_Data>::iterator it = m_collisions.begin();
-				while(it != m_collisions.end())
-				{
-					if(*it == cd) break;
-					++it;
-				}
-				if(it == m_collisions.end()) m_collisions.push_back(cd);
-			}
-		}
-		else if(it.is_leaf() && it->rectangles.size() > 2)
-		{
-			std::list<Rectangle_Wrapper>::const_iterator colliding_model = it->rectangles.begin();
-			while(colliding_model != it->rectangles.end())
-			{
-				std::list<Rectangle_Wrapper>::const_iterator next = colliding_model;
-				++next;
-				while(next != it->rectangles.end())
-				{
-					Collision_Data cd(colliding_model->belongs_to, next->belongs_to, colliding_model->belongs_to->is_colliding_with_other(*next->belongs_to));
-					if(cd.collision_data)
-					{
-						std::list<Collision_Data>::iterator it = m_collisions.begin();
-						while(it != m_collisions.end())
-						{
-							if(*it == cd) break;
-							++it;
-						}
-						if(it == m_collisions.end()) m_collisions.push_back(cd);
-					}
-					++next;
-				}
-				++colliding_model;
-			}
-		}
-		++it;
-	}
-	if(it->rectangles.size() == 2)
-	{
-		std::list<Rectangle_Wrapper>::iterator colliding_model = it->rectangles.begin();
-		std::list<Rectangle_Wrapper>::iterator next = colliding_model;
-		++next;
-		Collision_Data cd(colliding_model->belongs_to, next->belongs_to, colliding_model->belongs_to->is_colliding_with_other(*next->belongs_to));
-		if(cd.collision_data)
-		{
-			std::list<Collision_Data>::iterator it = m_collisions.begin();
-			while(it != m_collisions.end())
-			{
-				if(*it == cd) break;
-				++it;
-			}
-			if(it == m_collisions.end()) m_collisions.push_back(cd);
-		}
-	}
-	else if(it->rectangles.size() > 2)
-	{
-		std::list<Rectangle_Wrapper>::const_iterator colliding_model = it->rectangles.begin();
-		while(colliding_model != it->rectangles.end())
-		{
-			std::list<Rectangle_Wrapper>::const_iterator next = colliding_model;
-			++next;
-			while(next != it->rectangles.end())
-			{
-				Collision_Data cd(colliding_model->belongs_to, next->belongs_to, colliding_model->belongs_to->is_colliding_with_other(*next->belongs_to));
-				if(cd.collision_data)
-				{
-					std::list<Collision_Data>::iterator it = m_collisions.begin();
-					while(it != m_collisions.end())
-					{
-						if(*it == cd) break;
-						++it;
-					}
-					if(it == m_collisions.end()) m_collisions.push_back(cd);
-				}
-				++next;
-			}
-			++colliding_model;
-		}
-	}
+	check_for_collisions(it);
 }
 
 

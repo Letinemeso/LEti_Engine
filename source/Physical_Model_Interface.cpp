@@ -22,3 +22,14 @@ Physical_Model_Interface::~Physical_Model_Interface()
 {
     delete[] m_raw_coords;
 }
+
+
+void Physical_Model_Interface::set_is_dynamic(bool _is_dynamic)
+{
+	m_is_dynamic = _is_dynamic;
+}
+
+bool Physical_Model_Interface::is_dynamic() const
+{
+	return m_is_dynamic;
+}

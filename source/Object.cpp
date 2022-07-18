@@ -144,6 +144,8 @@ void Drawable_Object::draw() const
 
 void Drawable_Object::set_pos(float _x, float _y, float _z)
 {
+	m_previous_state.translation_matrix = m_translation_matrix;
+
 	m_translation_matrix[3][0] = _x;
 	m_translation_matrix[3][1] = _y;
 	m_translation_matrix[3][2] = _z;
@@ -151,6 +153,8 @@ void Drawable_Object::set_pos(float _x, float _y, float _z)
 
 void Drawable_Object::move(float _x, float _y, float _z)
 {
+	m_previous_state.translation_matrix = m_translation_matrix;
+
 	m_translation_matrix[3][0] += _x;
 	m_translation_matrix[3][1] += _y;
 	m_translation_matrix[3][2] += _z;
@@ -159,6 +163,8 @@ void Drawable_Object::move(float _x, float _y, float _z)
 
 void Drawable_Object::set_rotation_axis(float _x, float _y, float _z)
 {
+	m_previous_state.rotation_axis = m_rotation_axis;
+
 	m_rotation_axis[0] = _x;
 	m_rotation_axis[1] = _y;
 	m_rotation_axis[2] = _z;
@@ -168,18 +174,23 @@ void Drawable_Object::set_rotation_axis(float _x, float _y, float _z)
 
 void Drawable_Object::set_rotation_angle(float _angle)
 {
-	m_rotation_angle = _angle;
+	m_previous_state.rotation_angle = m_rotation_angle;
 
-	while (m_rotation_angle >= 6.28318f)
-		m_rotation_angle -= 6.28318f;
-	while (m_rotation_angle <= -6.28318f)
-		m_rotation_angle += 6.28318f;
+	while (_angle >= 6.28318f)
+		_angle -= 6.28318f;
+	while (_angle <= -6.28318f)
+		_angle += 6.28318f;
+
+	m_rotation_angle = _angle;
 
 	m_rotation_matrix = glm::rotate(m_rotation_angle, m_rotation_axis);
 }
 
 void Drawable_Object::set_rotation_data(float _axis_x, float _axis_y, float _axis_z, float _angle)
 {
+	m_previous_state.rotation_angle = m_rotation_angle;
+	m_previous_state.rotation_axis = m_rotation_axis;
+
 	m_rotation_axis[0] = _axis_x;
 	m_rotation_axis[1] = _axis_y;
 	m_rotation_axis[2] = _axis_z;
@@ -190,6 +201,8 @@ void Drawable_Object::set_rotation_data(float _axis_x, float _axis_y, float _axi
 
 void Drawable_Object::rotate(float _angle)
 {
+	m_previous_state.rotation_angle = m_rotation_angle;
+
 	m_rotation_angle += _angle;
 
 	if (m_rotation_angle >= 6.28318f)
@@ -203,6 +216,8 @@ void Drawable_Object::rotate(float _angle)
 
 void Drawable_Object::set_scale(float _scale_x, float _scale_y, float _scale_z)
 {
+	m_previous_state.scale_matrix = m_scale_matrix;
+
 	m_scale_matrix[0][0] = _scale_x;
 	m_scale_matrix[1][1] = _scale_y;
 	m_scale_matrix[2][2] = _scale_z;
@@ -210,6 +225,8 @@ void Drawable_Object::set_scale(float _scale_x, float _scale_y, float _scale_z)
 
 void Drawable_Object::set_overall_scale(float _scale)
 {
+	m_previous_state.scale_matrix = m_scale_matrix;
+
 	Drawable_Object::set_scale(_scale, _scale, _scale);
 }
 
@@ -242,6 +259,33 @@ float Drawable_Object::get_rotation_angle() const
 }
 
 
+glm::vec3 Drawable_Object::get_pos_prev() const
+{
+	glm::vec3 result;
+	for (unsigned int i = 0; i < 3; ++i)
+		result[i] = m_previous_state.translation_matrix[3][i];
+	return result;
+}
+
+glm::vec3 Drawable_Object::get_scale_prev() const
+{
+	glm::vec3 result;
+	for (unsigned int i = 0; i < 3; ++i)
+		result[i] = m_previous_state.scale_matrix[i][i];
+	return result;
+}
+
+glm::vec3 Drawable_Object::get_rotation_axis_prev() const
+{
+	return m_previous_state.rotation_axis;
+}
+
+float Drawable_Object::get_rotation_angle_prev() const
+{
+	return m_previous_state.rotation_angle;
+}
+
+
 
 
 
@@ -262,6 +306,9 @@ void Colliding_Object::init_physical_model(const float *_coords, unsigned int _c
 {
 	m_can_cause_collision = true;
 	delete m_physical_model;
+	m_physical_model = nullptr;
+	delete m_physical_model_prev_state;
+	m_physical_model_prev_state = nullptr;
 }
 
 void Colliding_Object::remove_physical_model()
@@ -288,9 +335,24 @@ void Colliding_Object::update()
 		m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
 }
 
-const Physical_Model_Interface* Colliding_Object::get_physical_model() const
+const Physical_Model_Interface* Colliding_Object::get_physical_model_interface() const
 {
 	return m_physical_model;
+}
+
+Physical_Model_Interface* Colliding_Object::get_physical_model_interface()
+{
+	return m_physical_model;
+}
+
+const Physical_Model_Interface* Colliding_Object::get_physical_model_interface_prev_state() const
+{
+	return m_physical_model_prev_state;
+}
+
+Physical_Model_Interface* Colliding_Object::get_physical_model_interface_prev_state()
+{
+	return m_physical_model_prev_state;
 }
 
 
@@ -304,6 +366,21 @@ bool Colliding_Object::get_collision_possibility() const
 {
     return m_can_cause_collision;
 }
+
+
+void Colliding_Object::set_is_dynamic(bool _is_dynamic)
+{
+	ASSERT(!m_physical_model || !m_physical_model_prev_state);
+	m_physical_model->set_is_dynamic(_is_dynamic);
+	m_physical_model_prev_state->set_is_dynamic(_is_dynamic);
+}
+
+bool Colliding_Object::is_dynamic() const
+{
+	ASSERT(!m_physical_model || !m_physical_model_prev_state);
+	return m_physical_model->is_dynamic();
+}
+
 
 LEti::Physical_Model_Interface::Intersection_Data Colliding_Object::is_colliding_with_other(const Colliding_Object& _other) const
 {
@@ -344,6 +421,7 @@ void Object_2D::init_physical_model(const float *_coords, unsigned int _coords_c
 {
 	Colliding_Object::init_physical_model(_coords, _coords_count);
     m_physical_model = new Physical_Model_2D(_coords, _coords_count);
+	m_physical_model_prev_state = new Physical_Model_2D(_coords, _coords_count);
 }
 
 
@@ -364,7 +442,248 @@ void Object_2D::draw() const
 
 void Object_2D::update()
 {
+	if(m_can_cause_collision)
+	{
+		get_physical_model_prev_state()->copy_real_coordinates(*get_physical_model());
+		if(is_dynamic())
+		{
+			const Physical_Model_2D::Rectangular_Border& prev_rb = get_physical_model_prev_state()->curr_rect_border(),
+					curr_rb = get_physical_model()->curr_rect_border();
+			m_dynamic_rb.left = prev_rb.left < curr_rb.left ? prev_rb.left : curr_rb.left;
+			m_dynamic_rb.right = prev_rb.right > curr_rb.right ? prev_rb.right : curr_rb.right;
+			m_dynamic_rb.top = prev_rb.top > curr_rb.top ? prev_rb.top : curr_rb.top;
+			m_dynamic_rb.bottom = prev_rb.bottom < curr_rb.bottom ? prev_rb.bottom : curr_rb.bottom;
+		}
+	}
 	Colliding_Object::update();
+}
+
+
+
+Physical_Model_2D* Object_2D::get_physical_model()
+{
+	return (Physical_Model_2D*)get_physical_model_interface();
+}
+
+Physical_Model_2D* Object_2D::get_physical_model_prev_state()
+{
+	return (Physical_Model_2D*)get_physical_model_interface_prev_state();
+}
+
+
+const Physical_Model_2D* Object_2D::get_physical_model() const
+{
+	return (const Physical_Model_2D*)get_physical_model_interface();
+}
+
+const Physical_Model_2D* Object_2D::get_physical_model_prev_state() const
+{
+	return (const Physical_Model_2D*)get_physical_model_interface_prev_state();
+}
+
+const Physical_Model_2D::Rectangular_Border& Object_2D::get_dynamic_rb() const
+{
+	return m_dynamic_rb;
+}
+
+
+
+LEti::Physical_Model_Interface::Intersection_Data Object_2D::get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, bool _collision_detected, float _min_ratio, float _max_ratio) const
+{
+	ASSERT(!m_can_cause_collision || !_other.m_can_cause_collision);
+	ASSERT(!is_dynamic() && !_other.is_dynamic());
+
+	float time_mid_point = (_max_ratio + _min_ratio) / 2.0f;
+
+	Physical_Model_Interface::Intersection_Data result;
+
+	if(_level < m_precision_level)
+	{
+		result = get_precise_time_ratio_of_collision(_level + 1, _other, false, _min_ratio, time_mid_point);
+		if(result)
+			return result;
+
+		result = get_precise_time_ratio_of_collision(_level + 1, _other, false, time_mid_point, _max_ratio);
+		return result;
+	}
+
+	//if this is the maximum precision level
+	Physical_Model_2D this_init_pm = *get_physical_model_prev_state();
+	Physical_Model_2D other_init_pm = *_other.get_physical_model_prev_state();
+
+	glm::vec3 this_stride = get_pos() - get_pos_prev();
+	glm::mat4x4 this_stride_matrix = m_previous_state.translation_matrix;
+	for(unsigned int i=0; i<3; ++i)
+		this_stride_matrix[3][i] = this_stride[i];
+
+	glm::vec3 other_stride = _other.get_pos() - _other.get_pos_prev();
+	glm::mat4x4 other_stride_matrix = m_previous_state.translation_matrix;
+	for(unsigned int i=0; i<3; ++i)
+		other_stride_matrix[3][i] = other_stride[i];
+
+	this_init_pm.update(this_stride_matrix, m_previous_state.rotation_matrix, m_previous_state.scale_matrix);
+	other_init_pm.update(other_stride_matrix, _other.m_previous_state.rotation_matrix, _other.m_previous_state.scale_matrix);
+
+	result = this_init_pm.is_intersecting_with_another_model(other_init_pm);
+	if(!result)
+		return result;
+	result.time_of_intersection_ratio = time_mid_point;
+	return result;
+}
+
+
+
+LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_other(const Colliding_Object& _other) const
+{
+	ASSERT(m_can_cause_collision && !m_physical_model);
+	ASSERT(_other.get_collision_possibility() && !_other.get_physical_model_interface());
+	if(!_other.is_dynamic() && !is_dynamic())
+	{
+		if(!_other.get_collision_possibility() || !get_collision_possibility())
+			return LEti::Physical_Model_Interface::Intersection_Data(LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::none);
+		return m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model_interface());
+	}
+
+	const Physical_Model_2D::Rectangular_Border this_rb_prev = get_physical_model_prev_state()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border this_rb_curr = get_physical_model()->curr_rect_border();
+
+	const Physical_Model_2D::Rectangular_Border other_rb_prev = ((const Object_2D&)_other).get_physical_model_prev_state()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border other_rb_curr = ((const Object_2D&)_other).get_physical_model()->curr_rect_border();
+
+//	Physical_Model_2D::Equasion_Data first_segments[4];
+//	Physical_Model_2D::Equasion_Data second_segments[4];
+
+//	first_segments[0] = Physical_Model_2D::get_equasion({this_rb_prev.left, this_rb_prev.top, 0.0f}, {this_rb_curr.left, this_rb_curr.top, 0.0f});
+//	first_segments[1] = Physical_Model_2D::get_equasion({this_rb_prev.right, this_rb_prev.top, 0.0f}, {this_rb_curr.right, this_rb_curr.top, 0.0f});
+//	first_segments[2] = Physical_Model_2D::get_equasion({this_rb_prev.left, this_rb_prev.bottom, 0.0f}, {this_rb_curr.left, this_rb_curr.bottom, 0.0f});
+//	first_segments[3] = Physical_Model_2D::get_equasion({this_rb_prev.right, this_rb_prev.bottom, 0.0f}, {this_rb_curr.right, this_rb_curr.bottom, 0.0f});
+
+//	second_segments[0] = Physical_Model_2D::get_equasion(;
+//	second_segments[1] = Physical_Model_2D::get_equasion({other_rb_prev.right, other_rb_prev.top, 0.0f}, {other_rb_curr.right, other_rb_curr.top, 0.0f});
+//	second_segments[2] = Physical_Model_2D::get_equasion({other_rb_prev.left, other_rb_prev.bottom, 0.0f}, {other_rb_curr.left, other_rb_curr.bottom, 0.0f});
+//	second_segments[3] = Physical_Model_2D::get_equasion({other_rb_prev.right, other_rb_prev.bottom, 0.0f}, {other_rb_curr.right, other_rb_curr.bottom, 0.0f});
+
+	std::pair<glm::vec3, glm::vec3> this_segments[4] = {
+		{{this_rb_prev.left, this_rb_prev.top, 0.0f}, {this_rb_curr.left, this_rb_curr.top, 0.0f}},
+		{{this_rb_prev.right, this_rb_prev.top, 0.0f}, {this_rb_curr.right, this_rb_curr.top, 0.0f}},
+		{{this_rb_prev.left, this_rb_prev.bottom, 0.0f}, {this_rb_curr.left, this_rb_curr.bottom, 0.0f}},
+		{{this_rb_prev.right, this_rb_prev.bottom, 0.0f}, {this_rb_curr.right, this_rb_curr.bottom, 0.0f}}
+	};
+	std::pair<glm::vec3, glm::vec3> other_segments[4] = {
+		{{other_rb_prev.left, other_rb_prev.top, 0.0f}, {other_rb_curr.left, other_rb_curr.top, 0.0f}},
+		{{other_rb_prev.right, other_rb_prev.top, 0.0f}, {other_rb_curr.right, other_rb_curr.top, 0.0f}},
+		{{other_rb_prev.left, other_rb_prev.bottom, 0.0f}, {other_rb_curr.left, other_rb_curr.bottom, 0.0f}},
+		{{other_rb_prev.right, other_rb_prev.bottom, 0.0f}, {other_rb_curr.right, other_rb_curr.bottom, 0.0f}}
+	};
+
+	std::pair<glm::vec3, glm::vec3> this_frame_segments[4] = {
+		{{this_rb_curr.left, this_rb_curr.top, 0.0f}, {this_rb_curr.left, this_rb_curr.bottom, 0.0f}},
+		{{this_rb_curr.left, this_rb_curr.bottom, 0.0f}, {this_rb_curr.right, this_rb_curr.bottom, 0.0f}},
+		{{this_rb_curr.right, this_rb_curr.bottom, 0.0f}, {this_rb_curr.right, this_rb_curr.top, 0.0f}},
+		{{this_rb_curr.right, this_rb_curr.top, 0.0f}, {this_rb_curr.left, this_rb_curr.top, 0.0f}}
+	};
+	std::pair<glm::vec3, glm::vec3> other_frame_segments[4] = {
+		{{other_rb_curr.left, other_rb_curr.top, 0.0f}, {other_rb_curr.left, other_rb_curr.bottom, 0.0f}},
+		{{other_rb_curr.left, other_rb_curr.bottom, 0.0f}, {other_rb_curr.right, other_rb_curr.bottom, 0.0f}},
+		{{other_rb_curr.right, other_rb_curr.bottom, 0.0f}, {other_rb_curr.right, other_rb_curr.top, 0.0f}},
+		{{other_rb_curr.right, other_rb_curr.top, 0.0f}, {other_rb_curr.left, other_rb_curr.top, 0.0f}}
+	};
+
+	float this_segments_lengths[4] = {
+		Utility::get_distance(this_segments[0].first, this_segments[0].second),
+		Utility::get_distance(this_segments[1].first, this_segments[1].second),
+		Utility::get_distance(this_segments[2].first, this_segments[2].second),
+		Utility::get_distance(this_segments[3].first, this_segments[3].second)
+	};
+	float other_segments_lengths[4] = {
+		Utility::get_distance(other_segments[0].first, other_segments[0].second),
+		Utility::get_distance(other_segments[1].first, other_segments[1].second),
+		Utility::get_distance(other_segments[2].first, other_segments[2].second),
+		Utility::get_distance(other_segments[3].first, other_segments[3].second)
+	};
+
+	float min_ratio = 1.1f, max_ratio = -0.1f;
+	for(unsigned int i=0; i<4; ++i)
+	{
+		for(unsigned int j=0; j<4; ++j)
+		{
+			LEti::Physical_Model_Interface::Intersection_Data id =
+					Physical_Model_2D::segments_intersect(this_segments[i].first, this_segments[i].second,
+					other_segments[j].first, other_segments[j].second);
+			if(id)
+			{
+				if(!Utility::floats_are_equal(this_segments_lengths[i], 0.0f))
+				{
+					float this_ratio = Utility::get_distance(this_segments[i].first, id.closest_intersection_point) / this_segments_lengths[i];
+					if(min_ratio > this_ratio) min_ratio = this_ratio;
+					if(max_ratio < this_ratio) max_ratio = this_ratio;
+				}
+				if(!Utility::floats_are_equal(other_segments_lengths[i], 0.0f))
+				{
+					float other_ratio = Utility::get_distance(other_segments[j].first, id.closest_intersection_point) / other_segments_lengths[j];
+					if(min_ratio > other_ratio) min_ratio = other_ratio;
+					if(max_ratio < other_ratio) max_ratio = other_ratio;
+				}
+			}
+		}
+		for(unsigned int j=0; j<4; ++j)
+		{
+			LEti::Physical_Model_Interface::Intersection_Data id =
+					Physical_Model_2D::segments_intersect(this_segments[i].first, this_segments[i].second,
+					other_frame_segments[j].first, other_frame_segments[j].second);
+			if(id)
+			{
+				if(!Utility::floats_are_equal(this_segments_lengths[i], 0.0f))
+				{
+					float this_ratio = Utility::get_distance(this_segments[i].first, id.closest_intersection_point) / this_segments_lengths[i];
+					if(min_ratio > this_ratio) min_ratio = this_ratio;
+					if(max_ratio < this_ratio) max_ratio = this_ratio;
+				}
+				if(!Utility::floats_are_equal(other_segments_lengths[i], 0.0f))
+				{
+					float other_ratio = Utility::get_distance(other_segments[j].first, id.closest_intersection_point) / other_segments_lengths[j];
+					if(min_ratio > other_ratio) min_ratio = other_ratio;
+					if(max_ratio < other_ratio) max_ratio = other_ratio;
+				}
+			}
+			id = Physical_Model_2D::segments_intersect(other_segments[i].first, other_segments[i].second,
+					this_frame_segments[j].first, this_frame_segments[j].second);
+			if(id)
+			{
+				if(!Utility::floats_are_equal(this_segments_lengths[i], 0.0f))
+				{
+					float this_ratio = Utility::get_distance(this_segments[i].first, id.closest_intersection_point) / this_segments_lengths[i];
+					if(min_ratio > this_ratio) min_ratio = this_ratio;
+					if(max_ratio < this_ratio) max_ratio = this_ratio;
+				}
+				if(!Utility::floats_are_equal(other_segments_lengths[i], 0.0f))
+				{
+					float other_ratio = Utility::get_distance(other_segments[j].first, id.closest_intersection_point) / other_segments_lengths[j];
+					if(min_ratio > other_ratio) min_ratio = other_ratio;
+					if(max_ratio < other_ratio) max_ratio = other_ratio;
+				}
+			}
+		}
+	}
+
+	if(max_ratio > 0.0f && max_ratio <= 1.0f && min_ratio < 1.0f && min_ratio >= 0.0f)
+	{
+		int a = 1;
+		a /= 2;
+		std::cout << min_ratio << ' ' << max_ratio << "\n";
+
+		if(Utility::floats_are_equal(min_ratio, max_ratio))
+		{
+			Physical_Model_2D::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model_interface());
+			result.time_of_intersection_ratio = min_ratio;
+			return result;
+		}
+
+
+
+	}
+
+	return LEti::Physical_Model_Interface::Intersection_Data(LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::none);
 }
 
 

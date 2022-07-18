@@ -17,15 +17,6 @@ namespace LEti
 		Space_Splitter_2D() = delete;
 
 	private:
-		struct Rectangle_Wrapper
-		{
-			const Object_2D* belongs_to = nullptr;
-			Physical_Model_2D::Rectangular_Border rectangle;
-			Rectangle_Wrapper(const Object_2D* _belongs_to) : belongs_to(_belongs_to), rectangle((((Physical_Model_2D*)(belongs_to->get_physical_model()))->construct_rectangular_border())) { }
-			Rectangle_Wrapper(const Object_2D* _belongs_to, const Physical_Model_2D::Rectangular_Border& _rectangle) : belongs_to(_belongs_to), rectangle(_rectangle) { }
-			Rectangle_Wrapper(const Rectangle_Wrapper& _other) : belongs_to(_other.belongs_to), rectangle(_other.rectangle) { }
-		};
-
 		struct Border
 		{
 			bool inf = true;
@@ -44,7 +35,7 @@ namespace LEti
 		struct Area
 		{
 			Border left, right, top, bottom;
-			std::list<Rectangle_Wrapper> rectangles;
+			std::list<const Object_2D*> objects;
 
 			Area(const Border& _left, const Border& _right, const Border& _top, const Border& _bottom)
 				: left(_left), right(_right), top(_top), bottom(_bottom) { }
@@ -59,8 +50,7 @@ namespace LEti
 		{
 			const Object_2D* first = nullptr, * second = nullptr;
 			LEti::Physical_Model_2D::Intersection_Data collision_data;
-			Collision_Data(const Object_2D* _first, const Object_2D* _second, LEti::Physical_Model_2D::Intersection_Data _id)
-				: first(_first), second(_second), collision_data(_id) { }
+			Collision_Data(const Object_2D* _first, const Object_2D* _second);
 			bool operator==(const Collision_Data& _other) const { return first == _other.first && second == _other.second; }
 		};
 
@@ -72,6 +62,9 @@ namespace LEti
 
 		static std::list<Collision_Data> m_collisions;
 
+	private:
+		static Timer m_timer;
+
 	public:
 //		static void set_update_rate(float _rate); // times per second, aka 1.0f / 60.0f
 		static void set_max_tree_depth(unsigned int _max_depth);
@@ -81,8 +74,9 @@ namespace LEti
 
 	private:
 		static void split_space_recursive(LEti::Tree<Area, 4>::Iterator _it, unsigned int _level);
-	private:
-		static Timer m_timer;
+		static void check_for_collisions(LEti::Tree<Area, 4>::Iterator _it);
+		static void save_collision_data(const Collision_Data& _cd);
+
 	public:
 		static void update();
 
