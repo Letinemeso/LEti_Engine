@@ -514,12 +514,12 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::get_precise_time_ra
 	glm::vec3 this_stride = get_pos() - get_pos_prev();
 	glm::mat4x4 this_stride_matrix = m_previous_state.translation_matrix;
 	for(unsigned int i=0; i<3; ++i)
-		this_stride_matrix[3][i] = this_stride[i];
+		this_stride_matrix[3][i] = get_pos_prev()[i] + this_stride[i];
 
 	glm::vec3 other_stride = _other.get_pos() - _other.get_pos_prev();
 	glm::mat4x4 other_stride_matrix = m_previous_state.translation_matrix;
 	for(unsigned int i=0; i<3; ++i)
-		other_stride_matrix[3][i] = other_stride[i];
+		other_stride_matrix[3][i] = _other.get_pos_prev()[i] + other_stride[i];
 
 	this_init_pm.update(this_stride_matrix, m_previous_state.rotation_matrix, m_previous_state.scale_matrix);
 	other_init_pm.update(other_stride_matrix, _other.m_previous_state.rotation_matrix, _other.m_previous_state.scale_matrix);
@@ -724,14 +724,12 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 			{
 				//check final state first
 				std::pair<glm::vec3, glm::vec3>& current_other_segment = other_segments[j];
-				Physical_Model_2D::Equasion_Data other_equasion = Physical_Model_2D::get_equasion(current_other_segment.first, current_other_segment.second);
 
 				if(is_in_bounds_of_segment_by_x(current_this_segment, current_other_segment.first))
 				{
 					float this_y = this_equasion.solve_by_x(current_other_segment.first.x);
 					if(this_y <= current_other_segment.first.y) above_found = true;
 					if(this_y >= current_other_segment.first.y) underneath_found = true;
-					float other_y = other_equasion.solve_by_x(current_other_segment.first.x);
 
 					float other_ratio = 0.0f;
 					float this_ratio = Utility::get_distance({current_other_segment.first.x, this_y, 0.0f}, current_this_segment.first) / this_segments_lengths[i];
@@ -748,7 +746,6 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 					float this_y = this_equasion.solve_by_x(current_other_segment.first.x);
 					if(this_y <= current_other_segment.second.y) above_found = true;
 					if(this_y >= current_other_segment.second.y) underneath_found = true;
-					float other_y = other_equasion.solve_by_x(current_other_segment.second.x);
 
 					float other_ratio = 0.0f;
 					float this_ratio = Utility::get_distance({current_other_segment.second.x, this_y, 0.0f}, current_this_segment.first) / this_segments_lengths[i];
