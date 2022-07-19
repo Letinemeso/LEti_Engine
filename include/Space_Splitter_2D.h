@@ -50,7 +50,8 @@ namespace LEti
 		{
 			const Object_2D* first = nullptr, * second = nullptr;
 			LEti::Physical_Model_2D::Intersection_Data collision_data;
-			Collision_Data(const Object_2D* _first, const Object_2D* _second);
+			Collision_Data(const Object_2D* _first, const Object_2D* _second) : first(_first), second(_second) {};
+			void update_collision_data();
 			bool operator==(const Collision_Data& _other) const { return first == _other.first && second == _other.second; }
 		};
 
@@ -75,7 +76,8 @@ namespace LEti
 	private:
 		static void split_space_recursive(LEti::Tree<Area, 4>::Iterator _it, unsigned int _level);
 		static void check_for_collisions(LEti::Tree<Area, 4>::Iterator _it);
-		static void save_collision_data(const Collision_Data& _cd);
+		static bool collision_is_already_saved(const Collision_Data& _cd);
+		static void save_collision_data_if_needed(const Object_2D* _first, const Object_2D* _second);
 
 	public:
 		static void update();

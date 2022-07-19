@@ -24,8 +24,10 @@ namespace LEti
 		{
 			float k = 0.0f, b = 0.0f;
 			bool goes_left = false;
-			bool is_vertical() const { return fabs(k) < 0.00001f && fabs(b) < 0.00001f; }
-			bool is_horisontal() const { return !is_vertical() && fabs(k) < 0.00001f; }
+			bool is_vertical() const { return Utility::floats_are_equal(k, 0.0f) && Utility::floats_are_equal(b, 0.0f); }
+			bool is_horisontal() const { return !Utility::floats_are_equal(b, 0.0f) && Utility::floats_are_equal(k, 0.0f); }
+			float solve_by_x(float _x) { return k * _x + b; }
+			float solve_by_y(float _y) { return is_horisontal() ? b : (_y - b) / k; }
 		};
 		static Equasion_Data get_equasion(const glm::vec3& _point_1, const glm::vec3& _point_2);
 		static Physical_Model_Interface::Intersection_Data segments_intersect(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22);

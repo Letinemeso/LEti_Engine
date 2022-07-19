@@ -42,17 +42,13 @@ void Space_Splitter_2D::Area::split(LEti::Tree<Area, 4>::Iterator _it)
 
 
 
-Space_Splitter_2D::Collision_Data::Collision_Data(const Object_2D* _first, const Object_2D* _second)
-	: first(_first), second(_second)
+void Space_Splitter_2D::Collision_Data::update_collision_data()
 {
-//	if(!_first->is_dynamic() && !_second->is_dynamic())
+	//	if(!_first->is_dynamic() && !_second->is_dynamic())
 	{
-		collision_data = _first->is_colliding_with_other(*_second);
+		collision_data = first->is_colliding_with_other(*second);
 		return;
 	}
-
-
-
 }
 
 
@@ -128,9 +124,7 @@ void Space_Splitter_2D::check_for_collisions(LEti::Tree<Area, 4>::Iterator _it)
 			std::list<const Object_2D*>::iterator colliding_model = it->objects.begin();
 			std::list<const Object_2D*>::iterator next = colliding_model;
 			++next;
-			Collision_Data cd(*colliding_model, *next);
-			if(cd.collision_data)
-				save_collision_data(cd);
+			save_collision_data_if_needed(*colliding_model, *next);
 		}
 		else if(it.is_leaf() && it->objects.size() > 2)
 		{
@@ -141,9 +135,7 @@ void Space_Splitter_2D::check_for_collisions(LEti::Tree<Area, 4>::Iterator _it)
 				++next;
 				while(next != it->objects.end())
 				{
-					Collision_Data cd(*colliding_model, *next);
-					if(cd.collision_data)
-						save_collision_data(cd);
+					save_collision_data_if_needed(*colliding_model, *next);
 					++next;
 				}
 				++colliding_model;
@@ -156,9 +148,7 @@ void Space_Splitter_2D::check_for_collisions(LEti::Tree<Area, 4>::Iterator _it)
 		std::list<const Object_2D*>::iterator colliding_model = it->objects.begin();
 		std::list<const Object_2D*>::iterator next = colliding_model;
 		++next;
-		Collision_Data cd(*colliding_model, *next);
-		if(cd.collision_data)
-			save_collision_data(cd);
+		save_collision_data_if_needed(*colliding_model, *next);
 	}
 	else if(it.is_leaf() && it->objects.size() > 2)
 	{
@@ -169,9 +159,7 @@ void Space_Splitter_2D::check_for_collisions(LEti::Tree<Area, 4>::Iterator _it)
 			++next;
 			while(next != it->objects.end())
 			{
-				Collision_Data cd(*colliding_model, *next);
-				if(cd.collision_data)
-					save_collision_data(cd);
+				save_collision_data_if_needed(*colliding_model, *next);
 				++next;
 			}
 			++colliding_model;
@@ -179,7 +167,7 @@ void Space_Splitter_2D::check_for_collisions(LEti::Tree<Area, 4>::Iterator _it)
 	}
 }
 
-void Space_Splitter_2D::save_collision_data(const Collision_Data &_cd)
+bool Space_Splitter_2D::collision_is_already_saved(const Collision_Data &_cd)
 {
 	std::list<Collision_Data>::iterator it = m_collisions.begin();
 	while(it != m_collisions.end())
@@ -187,7 +175,19 @@ void Space_Splitter_2D::save_collision_data(const Collision_Data &_cd)
 		if(*it == _cd) break;
 		++it;
 	}
-	if(it == m_collisions.end()) m_collisions.push_back(_cd);
+	if(it == m_collisions.end()) return false;
+	return true;
+}
+
+void Space_Splitter_2D::save_collision_data_if_needed(const Object_2D* _first, const Object_2D* _second)
+{
+	Collision_Data cd(_first, _second);
+	if(!collision_is_already_saved(cd))
+	{
+		cd.update_collision_data();
+		if(cd.collision_data)
+			m_collisions.push_back(cd);
+	}
 }
 
 
