@@ -92,8 +92,8 @@ namespace LEti {
 		LEti::Vertices& get_vertices();
 		LEti::Texture& get_texture();
 
-	protected:
-		void set_texture(const char* _path);
+	public:
+		void set_texture(const char* _name);
 		void set_texture_coords(const float* _tc, unsigned int _tc_count);
 
 	public:
