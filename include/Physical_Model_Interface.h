@@ -4,7 +4,7 @@
 #include "../OpenGL/GLM/vec4.hpp"
 #include "../OpenGL/GLM/mat4x4.hpp"
 
-#include "../include/Utility.h"
+#include "../include/Math.h"
 
 
 namespace LEti {

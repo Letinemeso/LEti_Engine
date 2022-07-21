@@ -36,7 +36,7 @@ glm::vec3 Physical_Model_3D::Pyramid::Polygon::get_normal() const
 	glm::vec3 AB = m_actual_B - m_actual_A;
 	glm::vec3 AC = m_actual_C - m_actual_A;
 
-	return Utility::normalize(AB, AC);
+	return Math::normalize(AB, AC);
 }
 
 Physical_Model_3D::Pyramid::Polygon::Plane_Equasion_Data Physical_Model_3D::Pyramid::Polygon::get_equasion() const
@@ -60,9 +60,9 @@ bool Physical_Model_3D::Pyramid::Polygon::point_belongs_to_triangle(const glm::v
 
 	glm::vec3 normal = get_normal();
 
-	float mult1 = Utility::mixed_vector_multiplication(normal, m_actual_A - _point, m_actual_B - _point);
-	float mult2 = Utility::mixed_vector_multiplication(normal, m_actual_B - _point, m_actual_C - _point);
-	float mult3 = Utility::mixed_vector_multiplication(normal, m_actual_C - _point, m_actual_A - _point);
+	float mult1 = Math::mixed_vector_multiplication(normal, m_actual_A - _point, m_actual_B - _point);
+	float mult2 = Math::mixed_vector_multiplication(normal, m_actual_B - _point, m_actual_C - _point);
+	float mult3 = Math::mixed_vector_multiplication(normal, m_actual_C - _point, m_actual_A - _point);
 
 	if (mult1 >= 0 && mult2 >= 0 && mult3 >= 0)
 		return true;
@@ -92,7 +92,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::Polygon:
 
 	glm::vec3 ip_direction = intersection_point - _beam_pos;
 	float angle_cos = (ip_direction.x * _beam_direction.x + ip_direction.y * _beam_direction.y + ip_direction.z * _beam_direction.z) /
-			( Utility::vector_length(ip_direction) + Utility::vector_length(_beam_direction) );
+			( Math::vector_length(ip_direction) + Math::vector_length(_beam_direction) );
 
 	if(angle_cos > 0.001f)
         if (point_belongs_to_triangle(intersection_point)) return Intersection_Data(Intersection_Data::Intersection_Type::partly_outside, intersection_point);
@@ -106,8 +106,8 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::Polygon:
 	glm::vec3 intersection_point = get_intersection_point(_beam_pos, _beam_direction);
 	glm::vec3 ip_direction = intersection_point - _beam_pos;
 
-	float ip_length = Utility::vector_length(ip_direction),
-			beam_length = Utility::vector_length(_beam_direction);
+	float ip_length = Math::vector_length(ip_direction),
+			beam_length = Math::vector_length(_beam_direction);
 
     if(ip_length > beam_length) return Intersection_Data(Intersection_Data::Intersection_Type::none);
 

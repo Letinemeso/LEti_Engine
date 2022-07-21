@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "../Debug.h"
-#include "../include/Utility.h"
+#include "../include/Math.h"
 
 #include "../include/Picture.h"
 

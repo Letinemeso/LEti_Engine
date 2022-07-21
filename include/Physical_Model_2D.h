@@ -24,8 +24,8 @@ namespace LEti
 		{
 			float k = 0.0f, b = 0.0f;
 			bool goes_left = false;
-			bool is_vertical() const { return Utility::floats_are_equal(k, 0.0f) && Utility::floats_are_equal(b, 0.0f); }
-			bool is_horisontal() const { return !Utility::floats_are_equal(b, 0.0f) && Utility::floats_are_equal(k, 0.0f); }
+			bool is_vertical() const { return Math::floats_are_equal(k, 0.0f) && Math::floats_are_equal(b, 0.0f); }
+			bool is_horisontal() const { return !Math::floats_are_equal(b, 0.0f) && Math::floats_are_equal(k, 0.0f); }
 			float solve_by_x(float _x) { return k * _x + b; }
 			float solve_by_y(float _y) { return is_horisontal() ? b : (_y - b) / k; }
 		};

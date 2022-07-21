@@ -574,15 +574,15 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 	};
 
 	float this_segments_lengths[4] = {
-		Utility::get_distance(this_segments[0].first, this_segments[0].second),
-		Utility::get_distance(this_segments[1].first, this_segments[1].second),
-		Utility::get_distance(this_segments[2].first, this_segments[2].second),
-		Utility::get_distance(this_segments[3].first, this_segments[3].second)
+		Math::get_distance(this_segments[0].first, this_segments[0].second),
+		Math::get_distance(this_segments[1].first, this_segments[1].second),
+		Math::get_distance(this_segments[2].first, this_segments[2].second),
+		Math::get_distance(this_segments[3].first, this_segments[3].second)
 	};
 	bool this_frame_is_static = true;
 	for(unsigned int i=0; i<4; ++i)
 	{
-		if(!Utility::floats_are_equal(this_segments_lengths[i], 0.0f))
+		if(!Math::floats_are_equal(this_segments_lengths[i], 0.0f))
 		{
 			this_frame_is_static = false;
 			break;
@@ -590,15 +590,15 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 	}
 
 	float other_segments_lengths[4] = {
-		Utility::get_distance(other_segments[0].first, other_segments[0].second),
-		Utility::get_distance(other_segments[1].first, other_segments[1].second),
-		Utility::get_distance(other_segments[2].first, other_segments[2].second),
-		Utility::get_distance(other_segments[3].first, other_segments[3].second)
+		Math::get_distance(other_segments[0].first, other_segments[0].second),
+		Math::get_distance(other_segments[1].first, other_segments[1].second),
+		Math::get_distance(other_segments[2].first, other_segments[2].second),
+		Math::get_distance(other_segments[3].first, other_segments[3].second)
 	};
 	bool other_frame_is_static = true;
 	for(unsigned int i=0; i<4; ++i)
 	{
-		if(!Utility::floats_are_equal(other_segments_lengths[i], 0.0f))
+		if(!Math::floats_are_equal(other_segments_lengths[i], 0.0f))
 		{
 			other_frame_is_static = false;
 			break;
@@ -617,15 +617,15 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 					other_segments[j].first, other_segments[j].second);
 			if(id)
 			{
-				if(!Utility::floats_are_equal(this_segments_lengths[i], 0.0f))
+				if(!Math::floats_are_equal(this_segments_lengths[i], 0.0f))
 				{
-					float this_ratio = Utility::get_distance(this_segments[i].first, id.closest_intersection_point) / this_segments_lengths[i];
+					float this_ratio = Math::get_distance(this_segments[i].first, id.closest_intersection_point) / this_segments_lengths[i];
 					if(min_ratio > this_ratio) min_ratio = this_ratio;
 					if(max_ratio < this_ratio) max_ratio = this_ratio;
 				}
-				if(!Utility::floats_are_equal(other_segments_lengths[i], 0.0f))
+				if(!Math::floats_are_equal(other_segments_lengths[i], 0.0f))
 				{
-					float other_ratio = Utility::get_distance(other_segments[j].first, id.closest_intersection_point) / other_segments_lengths[j];
+					float other_ratio = Math::get_distance(other_segments[j].first, id.closest_intersection_point) / other_segments_lengths[j];
 					if(min_ratio > other_ratio) min_ratio = other_ratio;
 					if(max_ratio < other_ratio) max_ratio = other_ratio;
 				}
@@ -634,7 +634,7 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 	}
 	if(max_ratio > 0.0f && max_ratio <= 1.0f && min_ratio < 1.0f && min_ratio >= 0.0f)
 	{
-		if(Utility::floats_are_equal(min_ratio, max_ratio))
+		if(Math::floats_are_equal(min_ratio, max_ratio))
 		{
 			std::cout << min_ratio << ' ' << max_ratio << "\n";
 			Physical_Model_2D::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model_interface());
@@ -676,7 +676,7 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 					if(this_y >= current_other_segment.first.y) underneath_found = true;
 
 					float other_ratio = 0.0f;
-					float distance_between_start_and_projection = Utility::get_distance({current_other_segment.first.x, this_y, 0.0f}, current_this_segment.first);
+					float distance_between_start_and_projection = Math::get_distance({current_other_segment.first.x, this_y, 0.0f}, current_this_segment.first);
 					float this_ratio = distance_between_start_and_projection / this_segments_lengths[i];
 					if(this_ratio <= 1.0f && this_ratio >= 0.0f)
 					{
@@ -699,7 +699,7 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 					if(this_y >= current_other_segment.second.y) underneath_found = true;
 
 					float other_ratio = 1.0f;
-					float distance_between_start_and_projection = Utility::get_distance({current_other_segment.first.x, this_y, 0.0f}, current_this_segment.first);
+					float distance_between_start_and_projection = Math::get_distance({current_other_segment.first.x, this_y, 0.0f}, current_this_segment.first);
 					float this_ratio = distance_between_start_and_projection / this_segments_lengths[i];
 					if(this_ratio <= 1.0f && this_ratio >= 0.0f)
 					{
@@ -726,7 +726,7 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 	}
 	if(max_ratio > 0.0f && max_ratio <= 1.0f && min_ratio < 1.0f && min_ratio >= 0.0f)
 	{
-		if(Utility::floats_are_equal(min_ratio, max_ratio))
+		if(Math::floats_are_equal(min_ratio, max_ratio))
 		{
 			std::cout << min_ratio << ' ' << max_ratio << "\n";
 			Physical_Model_2D::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model_interface());
@@ -760,7 +760,7 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 	{
 //		std::cout << "(2 are moving) collision should be here, but it's not detected!\n";
 	}
-	if(really_colliding && ((Utility::floats_are_equal(this_segments_lengths[0], 0.0f) && other_segments_lengths[0] > 0.0f) || (Utility::floats_are_equal(this_segments_lengths[0], 0.0f) && other_segments_lengths[0] > 0.0f)))
+	if(really_colliding && ((Math::floats_are_equal(this_segments_lengths[0], 0.0f) && other_segments_lengths[0] > 0.0f) || (Math::floats_are_equal(this_segments_lengths[0], 0.0f) && other_segments_lengths[0] > 0.0f)))
 	{
 		std::cout << "(1 is moving) collision should be here, but it's not detected!\n";
 	}

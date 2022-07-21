@@ -13,7 +13,7 @@ glm::mat4x4 Camera::orthographic_matrix;
 bool Camera::is_controllable = false;
 
 Camera::Controlls Camera::controlls;
-constexpr float Camera::additional_angle = Utility::PI;
+constexpr float Camera::additional_angle = Math::PI;
 
 
 void Camera::setup_result_matrix()
@@ -38,8 +38,8 @@ void Camera::setup_look_dir_and_top_vectors()
 
 void Camera::setup_top_vector()
 {
-	float look_angle_xz_top = look_angle_xz + Utility::PI,
-		  look_angle_y_top = look_angle_y + (Utility::HALF_PI);
+	float look_angle_xz_top = look_angle_xz + Math::PI,
+		  look_angle_y_top = look_angle_y + (Math::HALF_PI);
 
 	top.x = sin(look_angle_xz_top);
 	top.z = cos(look_angle_xz_top);
@@ -64,7 +64,7 @@ void Camera::set_position(const glm::vec3& _pos)
 
 void Camera::set_look_direction(glm::vec3 _direction)
 {
-	float vector_length = Utility::vector_length(_direction);
+	float vector_length = Math::vector_length(_direction);
 	ASSERT(vector_length < 0.000001f);
 	if(vector_length < 0.99999 || vector_length > 1.0f)
 		_direction /= vector_length;
@@ -83,9 +83,9 @@ void Camera::set_look_direction(glm::vec3 _direction)
 	else
 	{
 		if (_direction.x >= 0.0f) 
-			look_angle_xz = Utility::HALF_PI - asin(_direction.z);
+			look_angle_xz = Math::HALF_PI - asin(_direction.z);
 		else 
-			look_angle_xz = asin(_direction.z) - Utility::HALF_PI;
+			look_angle_xz = asin(_direction.z) - Math::HALF_PI;
 	}
 
 	setup_look_dir_and_top_vectors();
@@ -169,14 +169,14 @@ void Camera::control(bool _update_2d, bool _update_3d)
 		if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.right))
 			movement_vec.x -= 1.0f;
 
-		float movement_vector_length = LEti::Utility::vector_length(movement_vec);
+		float movement_vector_length = LEti::Math::vector_length(movement_vec);
 		if (movement_vector_length > 0.00001f)
 		{
 			movement_vec /= movement_vector_length;
 
 			float movement_angle = acos(movement_vec.z);
 			if (movement_vec.x < 0.0f)
-				movement_angle = Utility::DOUBLE_PI - movement_angle;
+				movement_angle = Math::DOUBLE_PI - movement_angle;
 
 			movement_angle += look_angle_xz;
 
@@ -202,15 +202,15 @@ void Camera::control(bool _update_2d, bool _update_3d)
 			LEti::Event_Controller::get_window_data().height / 2.0
 		);
 
-		while (look_angle_xz > Utility::DOUBLE_PI)
-			look_angle_xz -= Utility::DOUBLE_PI;
+		while (look_angle_xz > Math::DOUBLE_PI)
+			look_angle_xz -= Math::DOUBLE_PI;
 		while (look_angle_xz < 0.0f)
-			look_angle_xz += Utility::DOUBLE_PI;
+			look_angle_xz += Math::DOUBLE_PI;
 
-		if (look_angle_y > Utility::HALF_PI)
-			look_angle_y = Utility::HALF_PI;
-		if (look_angle_y < -Utility::HALF_PI)
-			look_angle_y = -Utility::HALF_PI;
+		if (look_angle_y > Math::HALF_PI)
+			look_angle_y = Math::HALF_PI;
+		if (look_angle_y < -Math::HALF_PI)
+			look_angle_y = -Math::HALF_PI;
 
 		setup_look_dir_and_top_vectors();
 		setup_result_matrix();

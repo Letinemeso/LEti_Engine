@@ -75,7 +75,7 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
                 const Type_Handler& handler = m_type_handlers.at(result.type);
                 handler.allocate_memory(result.value, result.values_count);
 			}
-			else if (Utility::is_digit(_source[i]))
+			else if (Math::is_digit(_source[i]))
 				str_value += _source[i];
 			else ASSERT(false);
 		}
@@ -126,7 +126,7 @@ void Resource_Loader::init()
                     [](void*& _arr, unsigned int _index, const std::string& _str_var)
                     {
                         for(unsigned int i=0; i<_str_var.size(); ++i)
-                            ASSERT(!Utility::is_digit(_str_var[i]) && _str_var[i] != '-' && _str_var[i] != '.');
+							ASSERT(!Math::is_digit(_str_var[i]) && _str_var[i] != '-' && _str_var[i] != '.');
                         float* f_arr = (float*)_arr;
                         f_arr[_index] = stof(_str_var);
                     }
@@ -147,7 +147,7 @@ void Resource_Loader::init()
                     [](void*& _arr, unsigned int _index, const std::string& _str_var)
                     {
                         for(unsigned int i=0; i<_str_var.size(); ++i)
-                            ASSERT(!Utility::is_digit(_str_var[i]) && _str_var[i] != '-');
+							ASSERT(!Math::is_digit(_str_var[i]) && _str_var[i] != '-');
                         int* f_arr = (int*)_arr;
                         f_arr[_index] = stoi(_str_var);
                     }

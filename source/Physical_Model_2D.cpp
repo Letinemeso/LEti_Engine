@@ -67,14 +67,14 @@ Physical_Model_Interface::Intersection_Data Physical_Model_2D::segments_intersec
 		intersection_point.x = (first_eq.k - second_eq.k == 0) ? 0.0f : (second_eq.b - first_eq.b) / (first_eq.k - second_eq.k);
 	intersection_point.y = first_eq.k * intersection_point.x + first_eq.b;
 
-	float first_length = LEti::Utility::get_distance(_point_11, _point_21);
-	float second_length = LEti::Utility::get_distance(_point_12, _point_22);
+	float first_length = LEti::Math::get_distance(_point_11, _point_21);
+	float second_length = LEti::Math::get_distance(_point_12, _point_22);
 
 	//TODO: think about optimization: calculating vectors' lengths may be unnecessary
-	if ((LEti::Utility::get_distance(intersection_point, _point_11) < first_length) &&
-			(LEti::Utility::get_distance(intersection_point, _point_21) < first_length) &&
-			(LEti::Utility::get_distance(intersection_point, _point_12) < second_length) &&
-			(LEti::Utility::get_distance(intersection_point, _point_22) < second_length))
+	if ((LEti::Math::get_distance(intersection_point, _point_11) < first_length) &&
+			(LEti::Math::get_distance(intersection_point, _point_21) < first_length) &&
+			(LEti::Math::get_distance(intersection_point, _point_12) < second_length) &&
+			(LEti::Math::get_distance(intersection_point, _point_22) < second_length))
 	{
 		return Intersection_Data(Intersection_Data::Intersection_Type::partly_outside, intersection_point);
 	}

@@ -7,7 +7,7 @@
 
 #include "../include/Shader.h"
 #include "../include/Event_Controller.h"
-#include "../include/Utility.h"
+#include "../include/Math.h"
 
 namespace LEti {
 

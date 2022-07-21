@@ -6,7 +6,7 @@
 #include "../OpenGL/GLM/vec3.hpp"
 
 
-namespace LEti { namespace Utility {
+namespace LEti { namespace Math {
 
 	constexpr float PI = 3.141593f;
 	constexpr float HALF_PI = PI / 2.0f;
@@ -31,6 +31,6 @@ namespace LEti { namespace Utility {
 
 	bool floats_are_equal(float _first, float _second);
 
-}	/*LEti*/	}	/*Utility*/
+}	/*LEti*/	}	/*Math*/
 
 #endif
