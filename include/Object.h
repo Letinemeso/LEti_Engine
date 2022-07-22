@@ -98,7 +98,7 @@ namespace LEti {
 
 	public:
         virtual void draw() const override = 0;
-        virtual void update() override = 0;
+		virtual void update() override = 0;
 
 	public:
 		void set_pos(float _x, float _y, float _z) override;
@@ -127,82 +127,93 @@ namespace LEti {
 
 
 
-	class Colliding_Object : public Drawable_Object
+//	class Colliding_Object : public Drawable_Object
+//	{
+//	protected:
+//		bool m_can_cause_collision = false;
+//		LEti::Physical_Model_Interface* m_physical_model = nullptr;
+//		LEti::Physical_Model_Interface* m_physical_model_prev_state = nullptr;
+
+//	public:
+//		Colliding_Object() : Drawable_Object() { }
+//		virtual ~Colliding_Object();
+
+//		virtual void init_physical_model(const float* _coords, unsigned int _coords_count);
+//		void remove_physical_model();
+//		virtual void init(const char* _object_name) override;
+
+//	public:
+//		const Physical_Model_Interface* get_physical_model_interface() const;
+//		Physical_Model_Interface* get_physical_model_interface();
+//		const Physical_Model_Interface* get_physical_model_interface_prev_state() const;
+//		Physical_Model_Interface* get_physical_model_interface_prev_state();
+
+//	public:
+//		virtual void update() override = 0;
+
+//	public:
+//		void set_collision_possibility(bool _can_cause_collision);
+//		bool get_collision_possibility() const;
+
+//		void set_is_dynamic(bool _is_dynamic);
+//		bool is_dynamic() const;
+
+//		virtual LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Colliding_Object& _other) const;
+
+//	};
+
+
+
+	class Object_2D : public Drawable_Object
 	{
+	public:
+	    Object_2D();
+	    virtual ~Object_2D();
+
+	    void init_physical_model(const float* _coords, unsigned int _coords_count);
+
+	    virtual void init(const char* _object_name) override;
+
+	private:
+	    bool m_can_cause_collision = false;
+	    Physical_Model_2D* m_physical_model = nullptr;
+	    Physical_Model_2D* m_physical_model_prev_state = nullptr;
+	    Physical_Model_2D::Rectangular_Border m_dynamic_rb;
+	    bool m_is_dynamic = false;
+
+	public:
+	    bool is_dynamic() const;
+	    void set_dynamic(bool _is_dynamic);
+
+	    void set_can_cause_collision(bool _can_cause_collision);
+	    bool get_collision_possibility() const;
+
+	public:
+	    virtual void draw() const override;
+	    virtual void update() override;
+
 	protected:
-		bool m_can_cause_collision = false;
-		LEti::Physical_Model_Interface* m_physical_model = nullptr;
-		LEti::Physical_Model_Interface* m_physical_model_prev_state = nullptr;
+	    Physical_Model_2D* get_physical_model();
+	    Physical_Model_2D* get_physical_model_prev_state();
+	public:
+	    const Physical_Model_2D* get_physical_model() const;
+	    const Physical_Model_2D* get_physical_model_prev_state() const;
+	    const Physical_Model_2D::Rectangular_Border& get_dynamic_rb() const;
+
+	private:
+	    unsigned int m_precision_level = 3;
+
+	private:
+	    Geometry::Intersection_Data get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, bool _collision_detected, float _min_ratio, float _max_ratio) const;
 
 	public:
-		Colliding_Object() : Drawable_Object() { }
-		virtual ~Colliding_Object();
-
-		virtual void init_physical_model(const float* _coords, unsigned int _coords_count);
-		void remove_physical_model();
-		virtual void init(const char* _object_name) override;
-
-	public:
-		const Physical_Model_Interface* get_physical_model_interface() const;
-		Physical_Model_Interface* get_physical_model_interface();
-		const Physical_Model_Interface* get_physical_model_interface_prev_state() const;
-		Physical_Model_Interface* get_physical_model_interface_prev_state();
-
-	public:
-		virtual void update() override = 0;
-
-	public:
-		void set_collision_possibility(bool _can_cause_collision);
-		bool get_collision_possibility() const;
-
-		void set_is_dynamic(bool _is_dynamic);
-		bool is_dynamic() const;
-
-		virtual LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Colliding_Object& _other) const;
+	    Geometry::Intersection_Data is_colliding_with_other(const Object_2D& _other) const;
 
 	};
 
 
-
-	class Object_2D : public Colliding_Object
-	{
-	public:
-		Object_2D();
-        virtual ~Object_2D();
-
-        void init_physical_model(const float* _coords, unsigned int _coords_count) override;
-
-        virtual void init(const char* _object_name) override;
-
-	private:
-		Physical_Model_2D::Rectangular_Border m_dynamic_rb;
-
-	public:
-		virtual void draw() const override;
-		virtual void update() override;
-
-	protected:
-		Physical_Model_2D* get_physical_model();
-		Physical_Model_2D* get_physical_model_prev_state();
-	public:
-		const Physical_Model_2D* get_physical_model() const;
-		const Physical_Model_2D* get_physical_model_prev_state() const;
-		const Physical_Model_2D::Rectangular_Border& get_dynamic_rb() const;
-
-	private:
-		unsigned int m_precision_level = 3;
-
-	private:
-		LEti::Physical_Model_Interface::Intersection_Data get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, bool _collision_detected, float _min_ratio, float _max_ratio) const;
-
-	public:
-		LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Colliding_Object& _other) const override;
-
-	};
-
-
-
-	class Object_3D : public Colliding_Object
+/*
+	class Object_3D : public Drawable_Object
 	{
 	public:
 		Object_3D();
@@ -216,6 +227,7 @@ namespace LEti {
 		virtual void draw() const override;
 		virtual void update() override;
 	};
+*/
 
 }	//LEti
 

@@ -1,5 +1,6 @@
 #include "../include/Physical_Model_3D.h"
 
+/*
 using namespace LEti;
 
 
@@ -95,8 +96,8 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::Polygon:
 			( Math::vector_length(ip_direction) + Math::vector_length(_beam_direction) );
 
 	if(angle_cos > 0.001f)
-        if (point_belongs_to_triangle(intersection_point)) return Intersection_Data(Intersection_Data::Intersection_Type::partly_outside, intersection_point);
-    return Intersection_Data(Intersection_Data::Intersection_Type::none);
+        if (point_belongs_to_triangle(intersection_point)) return Intersection_Data(Intersection_Data::Type::partly_outside, intersection_point);
+    return Intersection_Data(Intersection_Data::Type::none);
 }
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::Polygon::segment_intersecting_polygon(const glm::vec3 &_beam_pos, const glm::vec3 &_beam_direction) const
@@ -109,14 +110,14 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::Polygon:
 	float ip_length = Math::vector_length(ip_direction),
 			beam_length = Math::vector_length(_beam_direction);
 
-    if(ip_length > beam_length) return Intersection_Data(Intersection_Data::Intersection_Type::none);
+    if(ip_length > beam_length) return Intersection_Data(Intersection_Data::Type::none);
 
 	float angle_cos = (ip_direction.x * _beam_direction.x + ip_direction.y * _beam_direction.y + ip_direction.z * _beam_direction.z) /
 			( ip_length + beam_length );
 
     if(angle_cos > 0.001f)
-        if (point_belongs_to_triangle(intersection_point)) return Intersection_Data(Intersection_Data::Intersection_Type::partly_outside, intersection_point);
-    return Intersection_Data(Intersection_Data::Intersection_Type::none);
+        if (point_belongs_to_triangle(intersection_point)) return Intersection_Data(Intersection_Data::Type::partly_outside, intersection_point);
+    return Intersection_Data(Intersection_Data::Type::none);
 }
 
 bool Physical_Model_3D::Pyramid::Polygon::point_is_on_the_right(const glm::vec3& _point) const
@@ -209,7 +210,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::is_inter
         Intersection_Data id = m_polygons[i].beam_intersecting_polygon(_start, _direction);
         if(id) return id;
     }
-    return Intersection_Data(Intersection_Data::Intersection_Type::none);
+    return Intersection_Data(Intersection_Data::Type::none);
 }
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::is_intersecting_with_segment(const glm::vec3 &_start, const glm::vec3 &_direction) const
@@ -221,7 +222,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::is_inter
         Intersection_Data id = m_polygons[i].segment_intersecting_polygon(_start, _direction);
         if(id) return id;
     }
-    return Intersection_Data(Intersection_Data::Intersection_Type::none);
+    return Intersection_Data(Intersection_Data::Type::none);
 }
 
 
@@ -242,7 +243,7 @@ Physical_Model_3D::Physical_Model_3D() : Physical_Model_Interface()
 
 }
 
-Physical_Model_3D::Physical_Model_3D(const float* _raw_coords, unsigned int _raw_coords_count)/* : Physical_Model_Interface(_raw_coords, _raw_coords_count)*/
+Physical_Model_3D::Physical_Model_3D(const float* _raw_coords, unsigned int _raw_coords_count)
 {
     setup(_raw_coords, _raw_coords_count);
 }
@@ -283,8 +284,8 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
 	ASSERT(!m_raw_coords || !m_pyramids);
 
 	for (unsigned int i = 0; i < m_pyramids_count; ++i)
-        if (m_pyramids[i].point_belongs_to_pyramid(_point)) return Intersection_Data(Intersection_Data::Intersection_Type::inside);
-    return Intersection_Data(Intersection_Data::Intersection_Type::none);
+        if (m_pyramids[i].point_belongs_to_pyramid(_point)) return Intersection_Data(Intersection_Data::Type::inside);
+    return Intersection_Data(Intersection_Data::Type::none);
 }
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_with_beam(const glm::vec3 &_start, const glm::vec3 &_direction) const
@@ -296,7 +297,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
         Intersection_Data id = m_pyramids[i].is_intersecting_with_beam(_start, _direction);
         if(id) return id;
     }
-    return Intersection_Data(Intersection_Data::Intersection_Type::none);
+    return Intersection_Data(Intersection_Data::Type::none);
 }
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_with_segment(const glm::vec3 &_start, const glm::vec3 &_direction) const
@@ -308,7 +309,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
         Intersection_Data id = m_pyramids[i].is_intersecting_with_segment(_start, _direction);
         if(id) return id;
     }
-    return Intersection_Data(Intersection_Data::Intersection_Type::none);
+    return Intersection_Data(Intersection_Data::Type::none);
 }
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_with_another_model(const Physical_Model_Interface &_other) const
@@ -369,7 +370,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
 		}
 	}
 
-    return Intersection_Data(Intersection_Data::Intersection_Type::none);
+    return Intersection_Data(Intersection_Data::Type::none);
 }
 
 
@@ -416,3 +417,4 @@ const Physical_Model_3D::Pyramid& Physical_Model_3D::operator[](unsigned int _in
 	ASSERT(!m_raw_coords || !m_pyramids || _index >= m_pyramids_count);
 	return m_pyramids[_index];
 }
+*/

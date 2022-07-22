@@ -140,6 +140,11 @@ void Drawable_Object::draw() const
 	glBindVertexArray(0);
 }
 
+void Drawable_Object::update()
+{
+
+}
+
 
 
 void Drawable_Object::set_pos(float _x, float _y, float _z)
@@ -294,7 +299,7 @@ float Drawable_Object::get_rotation_angle_prev() const
 
 
 
-
+/*
 Colliding_Object::~Colliding_Object()
 {
 	delete m_physical_model;
@@ -382,14 +387,15 @@ bool Colliding_Object::is_dynamic() const
 }
 
 
-LEti::Physical_Model_Interface::Intersection_Data Colliding_Object::is_colliding_with_other(const Colliding_Object& _other) const
+Geometry::Intersection_Data Colliding_Object::is_colliding_with_other(const Colliding_Object& _other) const
 {
     ASSERT(m_can_cause_collision && !m_physical_model);
     ASSERT(_other.m_can_cause_collision && !_other.m_physical_model);
 	if(!_other.m_can_cause_collision || !m_can_cause_collision)
-		return LEti::Physical_Model_Interface::Intersection_Data(LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::none);
+		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
     return m_physical_model->is_intersecting_with_another_model(*_other.m_physical_model);
 }
+*/
 
 
 
@@ -405,29 +411,71 @@ LEti::Physical_Model_Interface::Intersection_Data Colliding_Object::is_colliding
 
 
 
-
-Object_2D::Object_2D() : Colliding_Object()
+Object_2D::Object_2D()
 {
 
 }
 
 Object_2D::~Object_2D()
 {
-
+	delete m_physical_model;
+	delete m_physical_model_prev_state;
 }
 
 
 void Object_2D::init_physical_model(const float *_coords, unsigned int _coords_count)
 {
-	Colliding_Object::init_physical_model(_coords, _coords_count);
-    m_physical_model = new Physical_Model_2D(_coords, _coords_count);
-	m_physical_model_prev_state = new Physical_Model_2D(_coords, _coords_count);
+	m_can_cause_collision = true;
+	delete m_physical_model;
+	m_physical_model = nullptr;
+	delete m_physical_model_prev_state;
+	m_physical_model_prev_state = nullptr;
+
+	m_physical_model = new Physical_Model_2D(_coords, _coords_count);
+	m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
 }
 
 
 void Object_2D::init(const char* _object_name)
 {
-	Colliding_Object::init(_object_name);
+	Drawable_Object::init(_object_name);
+
+	std::pair<const float*, unsigned int> physical_model_data;
+	LEti::Resource_Loader::assign(physical_model_data, _object_name, "physical_model_data");
+	if((physical_model_data.first))
+		init_physical_model(physical_model_data.first, physical_model_data.second);
+}
+
+
+
+void Object_2D::set_dynamic(bool _is_dynamic)
+{
+	if(_is_dynamic && !m_is_dynamic)
+	{
+		m_physical_model_prev_state = new Physical_Model_2D(*m_physical_model);
+	}
+	else if(!_is_dynamic && m_is_dynamic)
+	{
+		delete m_physical_model_prev_state;
+		m_physical_model_prev_state = nullptr;
+	}
+	m_is_dynamic = _is_dynamic;
+}
+
+bool Object_2D::is_dynamic() const
+{
+	return m_is_dynamic;
+}
+
+
+void Object_2D::set_can_cause_collision(bool _can_cause_collision)
+{
+	m_can_cause_collision = _can_cause_collision;
+}
+
+bool Object_2D::get_collision_possibility() const
+{
+	return m_can_cause_collision;
 }
 
 
@@ -437,48 +485,52 @@ void Object_2D::draw() const
 	LEti::Camera::use_2d();
     glDisable(GL_DEPTH_TEST);
 
-	Colliding_Object::draw();
+	Drawable_Object::draw();
 }
 
 void Object_2D::update()
 {
+	Drawable_Object::update();
 	if(m_can_cause_collision)
 	{
-		get_physical_model_prev_state()->copy_real_coordinates(*get_physical_model());
 		if(is_dynamic())
 		{
 			const Physical_Model_2D::Rectangular_Border& prev_rb = get_physical_model_prev_state()->curr_rect_border(),
-					curr_rb = get_physical_model()->curr_rect_border();
+														 curr_rb = get_physical_model()->curr_rect_border();
+
 			m_dynamic_rb.left = prev_rb.left < curr_rb.left ? prev_rb.left : curr_rb.left;
 			m_dynamic_rb.right = prev_rb.right > curr_rb.right ? prev_rb.right : curr_rb.right;
 			m_dynamic_rb.top = prev_rb.top > curr_rb.top ? prev_rb.top : curr_rb.top;
 			m_dynamic_rb.bottom = prev_rb.bottom < curr_rb.bottom ? prev_rb.bottom : curr_rb.bottom;
+
+			get_physical_model_prev_state()->copy_real_coordinates(*get_physical_model());
 		}
+
+		m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
 	}
-	Colliding_Object::update();
 }
 
 
 
 Physical_Model_2D* Object_2D::get_physical_model()
 {
-	return (Physical_Model_2D*)get_physical_model_interface();
+	return m_physical_model;
 }
 
 Physical_Model_2D* Object_2D::get_physical_model_prev_state()
 {
-	return (Physical_Model_2D*)get_physical_model_interface_prev_state();
+	return m_physical_model_prev_state;
 }
 
 
 const Physical_Model_2D* Object_2D::get_physical_model() const
 {
-	return (const Physical_Model_2D*)get_physical_model_interface();
+	return m_physical_model;
 }
 
 const Physical_Model_2D* Object_2D::get_physical_model_prev_state() const
 {
-	return (const Physical_Model_2D*)get_physical_model_interface_prev_state();
+	return m_physical_model_prev_state;
 }
 
 const Physical_Model_2D::Rectangular_Border& Object_2D::get_dynamic_rb() const
@@ -488,14 +540,14 @@ const Physical_Model_2D::Rectangular_Border& Object_2D::get_dynamic_rb() const
 
 
 
-LEti::Physical_Model_Interface::Intersection_Data Object_2D::get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, bool _collision_detected, float _min_ratio, float _max_ratio) const
+Geometry::Intersection_Data Object_2D::get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, bool _collision_detected, float _min_ratio, float _max_ratio) const
 {
 	ASSERT(!m_can_cause_collision || !_other.m_can_cause_collision);
 	ASSERT(!is_dynamic() && !_other.is_dynamic());
 
 	float time_mid_point = (_max_ratio + _min_ratio) / 2.0f;
 
-	Physical_Model_Interface::Intersection_Data result;
+	Geometry::Intersection_Data result;
 
 	if(_level < m_precision_level)
 	{
@@ -539,26 +591,26 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::get_precise_time_ra
 
 
 
-LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_other(const Colliding_Object& _other) const
+Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& _other) const
 {
 	ASSERT(m_can_cause_collision && !m_physical_model);
-	ASSERT(_other.get_collision_possibility() && !_other.get_physical_model_interface());
+	ASSERT(_other.m_can_cause_collision && !_other.m_physical_model);
 	if(!_other.is_dynamic() && !is_dynamic())
 	{
-		if(!_other.get_collision_possibility() || !get_collision_possibility())
-			return LEti::Physical_Model_Interface::Intersection_Data(LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::none);
-		return m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model_interface());
+		if(!_other.m_can_cause_collision || !m_can_cause_collision)
+			return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+		return m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
 	}
 
 	//	TODO: remove this - only for testing purpose
-	bool really_colliding = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model_interface());
+	auto really_colliding = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
 	//
 
 	const Physical_Model_2D::Rectangular_Border this_rb_prev = get_physical_model_prev_state()->curr_rect_border();
 	const Physical_Model_2D::Rectangular_Border this_rb_curr = get_physical_model()->curr_rect_border();
 
-	const Physical_Model_2D::Rectangular_Border other_rb_prev = ((const Object_2D&)_other).get_physical_model_prev_state()->curr_rect_border();
-	const Physical_Model_2D::Rectangular_Border other_rb_curr = ((const Object_2D&)_other).get_physical_model()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border other_rb_prev = _other.get_physical_model_prev_state()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border other_rb_curr = _other.get_physical_model()->curr_rect_border();
 
 	std::pair<glm::vec3, glm::vec3> this_segments[4] = {
 		{{this_rb_prev.left, this_rb_prev.top, 0.0f}, {this_rb_curr.left, this_rb_curr.top, 0.0f}},
@@ -612,20 +664,20 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 	{
 		for(unsigned int j=0; j<4; ++j)
 		{
-			LEti::Physical_Model_Interface::Intersection_Data id =
-					Physical_Model_2D::segments_intersect(this_segments[i].first, this_segments[i].second,
+			Geometry::Intersection_Data id =
+					Geometry_2D::segments_intersect(this_segments[i].first, this_segments[i].second,
 					other_segments[j].first, other_segments[j].second);
 			if(id)
 			{
 				if(!Math::floats_are_equal(this_segments_lengths[i], 0.0f))
 				{
-					float this_ratio = Math::get_distance(this_segments[i].first, id.closest_intersection_point) / this_segments_lengths[i];
+					float this_ratio = Math::get_distance(this_segments[i].first, id.point) / this_segments_lengths[i];
 					if(min_ratio > this_ratio) min_ratio = this_ratio;
 					if(max_ratio < this_ratio) max_ratio = this_ratio;
 				}
 				if(!Math::floats_are_equal(other_segments_lengths[i], 0.0f))
 				{
-					float other_ratio = Math::get_distance(other_segments[j].first, id.closest_intersection_point) / other_segments_lengths[j];
+					float other_ratio = Math::get_distance(other_segments[j].first, id.point) / other_segments_lengths[j];
 					if(min_ratio > other_ratio) min_ratio = other_ratio;
 					if(max_ratio < other_ratio) max_ratio = other_ratio;
 				}
@@ -637,7 +689,7 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 		if(Math::floats_are_equal(min_ratio, max_ratio))
 		{
 			std::cout << min_ratio << ' ' << max_ratio << "\n";
-			Physical_Model_2D::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model_interface());
+			Geometry::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
 			result.time_of_intersection_ratio = min_ratio;
 			return result;
 		}
@@ -658,7 +710,7 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 		for(unsigned int i=0; i<4; ++i)
 		{
 			std::pair<glm::vec3, glm::vec3>& current_this_segment = this_segments[i];
-			Physical_Model_2D::Equasion_Data this_equasion = Physical_Model_2D::get_equasion(current_this_segment.first, current_this_segment.second);
+			Geometry_2D::Equasion_Data this_equasion(current_this_segment.first, current_this_segment.second);
 
 			bool above_found = false, underneath_found = false;
 			float temp_min_ratio = 1.1f, temp_max_ratio = -0.1f;
@@ -729,13 +781,13 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 		if(Math::floats_are_equal(min_ratio, max_ratio))
 		{
 			std::cout << min_ratio << ' ' << max_ratio << "\n";
-			Physical_Model_2D::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model_interface());
+			Geometry::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
 			result.time_of_intersection_ratio = min_ratio;
 			return result;
 		}
 		else
 		{
-			Physical_Model_2D::Intersection_Data result = get_precise_time_ratio_of_collision(0, (const Object_2D&)_other, false, min_ratio, max_ratio);
+			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(0, (const Object_2D&)_other, false, min_ratio, max_ratio);
 			if(result) std::cout << "detected collision! precise collision time ratio: " << result.time_of_intersection_ratio << '\n';
 			return result;
 		}
@@ -765,8 +817,9 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 		std::cout << "(1 is moving) collision should be here, but it's not detected!\n";
 	}
 
-//	return LEti::Physical_Model_Interface::Intersection_Data(LEti::Physical_Model_Interface::Intersection_Data::Intersection_Type::none);
-	return m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model_interface());
+//	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+//	return m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
+	return really_colliding;
 }
 
 
@@ -777,7 +830,7 @@ LEti::Physical_Model_Interface::Intersection_Data Object_2D::is_colliding_with_o
 
 
 
-
+/*
 Object_3D::Object_3D() : Colliding_Object()
 {
 
@@ -815,3 +868,4 @@ void Object_3D::update()
 {
 	Colliding_Object::update();
 }
+*/

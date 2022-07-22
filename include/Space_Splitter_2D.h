@@ -2,6 +2,7 @@
 #define __SPACE_SPLITTER_2D
 
 #include <list>
+#include <map>
 
 #include "Tree.h"
 #include "Object.h"
@@ -49,10 +50,12 @@ namespace LEti
 		struct Collision_Data
 		{
 			const Object_2D* first = nullptr, * second = nullptr;
-			LEti::Physical_Model_2D::Intersection_Data collision_data;
+			Geometry::Intersection_Data collision_data;
 			Collision_Data(const Object_2D* _first, const Object_2D* _second) : first(_first), second(_second) {};
 			void update_collision_data();
-			bool operator==(const Collision_Data& _other) const { return first == _other.first && second == _other.second; }
+			bool operator==(const Collision_Data& _other) const { return (first == _other.first && second == _other.second) || (first == _other.second && second == _other.first); }
+			bool operator<(const Collision_Data& _other) const { return first < _other.first ? true : second < _other.second ? true : false; }
+			bool operator>(const Collision_Data& _other) const { return !(*this < _other); }
 		};
 
 	private:
@@ -62,6 +65,9 @@ namespace LEti
 		static LEti::Tree<Area, 4> m_quad_tree;
 
 		static std::list<Collision_Data> m_collisions;
+
+		//map is used for quick search for repeating possible collisions. "bool" as a second template parameter is some sort of a "plug"
+		static std::map<Collision_Data, bool> m_possible_collisions;
 
 	private:
 		static Timer m_timer;
@@ -75,9 +81,10 @@ namespace LEti
 
 	private:
 		static void split_space_recursive(LEti::Tree<Area, 4>::Iterator _it, unsigned int _level);
-		static void check_for_collisions(LEti::Tree<Area, 4>::Iterator _it);
-		static bool collision_is_already_saved(const Collision_Data& _cd);
-		static void save_collision_data_if_needed(const Object_2D* _first, const Object_2D* _second);
+		static void check_for_possible_collisions(LEti::Tree<Area, 4>::Iterator _it);
+		static bool possible_collision_is_already_saved(const Collision_Data& _cd);
+		static void save_possible_collision(const Object_2D* _first, const Object_2D* _second);
+		static void save_actual_collisions();
 
 	public:
 		static void update();

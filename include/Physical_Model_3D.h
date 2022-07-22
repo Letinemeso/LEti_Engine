@@ -1,6 +1,7 @@
 #ifndef __PHYSICAL_MODEL
 #define __PHYSICAL_MODEL
 
+/*
 #include "../include/Physical_Model_Interface.h"
 
 #include "../Debug.h"
@@ -98,7 +99,7 @@ namespace LEti
 
 	public:
 		Intersection_Data is_intersecting_with_point(const glm::vec3& _point) const override;
-		Intersection_Data is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const /*override*/;
+		Intersection_Data is_intersecting_with_beam(const glm::vec3& _start, const glm::vec3& _direction) const;
 		Intersection_Data is_intersecting_with_segment(const glm::vec3& _start, const glm::vec3& _direction) const override;
 		Intersection_Data is_intersecting_with_another_model(const Physical_Model_Interface& _other) const override;
 
@@ -109,6 +110,6 @@ namespace LEti
 
 	};
 }
-
+*/
 
 #endif
