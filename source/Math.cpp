@@ -117,6 +117,15 @@ Geometry::Intersection_Data Geometry_2D::lines_intersect(const Equasion_Data& _f
 			return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
 	}
 
+	if((_first.is_vertical() && !_second.is_vertical()) || (!_first.is_vertical() && _second.is_vertical()))
+	{
+		const Equasion_Data& vertical = _first.is_vertical() ? _first : _second;
+		const Equasion_Data& not_vertical = _first.is_vertical() ? _second : _first;
+
+		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::intersection,
+			{vertical.get_x_if_vertical(), not_vertical.solve_by_x(vertical.get_x_if_vertical()), 0.0f});
+	}
+
 	if(Math::floats_are_equal(_first.get_k(), _second.get_k()))
 	{
 		if(Math::floats_are_equal(_first.get_b(), _second.get_b()))
@@ -130,7 +139,7 @@ Geometry::Intersection_Data Geometry_2D::lines_intersect(const Equasion_Data& _f
 
 	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::intersection, {x, y, 0.0f});
 }
-
+#include <iostream>
 Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22)
 {
 	Equasion_Data first_eq(_point_11, _point_21);
@@ -149,6 +158,17 @@ Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _po
 			(LEti::Math::get_distance(id.point, _point_12) < second_length) &&
 			(LEti::Math::get_distance(id.point, _point_22) < second_length))
 	{
+		std::cout << "11 x: " << _point_11.x << "\ty: " << _point_11.y << '\n';
+		std::cout << "21 x: " << _point_21.x << "\ty: " << _point_21.y << '\n';
+		std::cout << "12 x: " << _point_12.x << "\ty: " << _point_12.y << '\n';
+		std::cout << "22 x: " << _point_22.x << "\ty: " << _point_22.y << '\n';
+		std::cout << "\n";
+		std::cout << LEti::Math::get_distance(id.point, _point_11) << "\t" << first_length << '\n'
+					<< LEti::Math::get_distance(id.point, _point_21) << "\t" << first_length << '\n'
+					<< LEti::Math::get_distance(id.point, _point_12) << "\t" << second_length << '\n'
+					<< LEti::Math::get_distance(id.point, _point_22) << "\t" << second_length << "\n\n";
+		std::cout << "intersection point:\n\tx: " << id.point.x << "\ty: " << id.point.y << "\n\n";
+
 		return id;
 	}
 

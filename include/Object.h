@@ -204,7 +204,7 @@ namespace LEti {
 	    unsigned int m_precision_level = 3;
 
 	private:
-	    Geometry::Intersection_Data get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, bool _collision_detected, float _min_ratio, float _max_ratio) const;
+	    Geometry::Intersection_Data get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, float _min_ratio, float _max_ratio) const;
 
 	public:
 	    Geometry::Intersection_Data is_colliding_with_other(const Object_2D& _other) const;
