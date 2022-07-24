@@ -1,10 +1,10 @@
 #ifndef __PHYSICAL_MODEL_2D
 #define __PHYSICAL_MODEL_2D
 
-#include "OpenGL/GLM/vec3.hpp"
-#include "OpenGL/GLM/mat4x4.hpp"
+#include "../OpenGL/GLM/vec3.hpp"
+#include "../OpenGL/GLM/mat4x4.hpp"
 
-#include "../include/Math.h"
+#include "../include/Math_Stuff.h"
 #include "../include/Tree.h"
 
 #include "../Debug.h"

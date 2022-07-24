@@ -1,6 +1,4 @@
-#include "../include/Math.h"
-
-#include <cmath>
+#include "../include/Math_Stuff.h"
 
 using namespace LEti;
 

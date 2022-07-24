@@ -5,6 +5,7 @@
 
 #include "../OpenGL/GLM/vec3.hpp"
 
+#include <cmath>
 #include <utility>
 
 
