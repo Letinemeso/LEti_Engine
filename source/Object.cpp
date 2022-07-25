@@ -299,117 +299,6 @@ float Drawable_Object::get_rotation_angle_prev() const
 
 
 
-/*
-Colliding_Object::~Colliding_Object()
-{
-	delete m_physical_model;
-}
-
-
-
-void Colliding_Object::init_physical_model(const float *_coords, unsigned int _coords_count)
-{
-	m_can_cause_collision = true;
-	delete m_physical_model;
-	m_physical_model = nullptr;
-	delete m_physical_model_prev_state;
-	m_physical_model_prev_state = nullptr;
-}
-
-void Colliding_Object::remove_physical_model()
-{
-	delete m_physical_model;
-	m_can_cause_collision = false;
-}
-
-void Colliding_Object::init(const char *_object_name)
-{
-	Drawable_Object::init(_object_name);
-
-	std::pair<const float*, unsigned int> physical_model_data;
-	LEti::Resource_Loader::assign(physical_model_data, _object_name, "physical_model_data");
-	if((physical_model_data.first))
-		init_physical_model(physical_model_data.first, physical_model_data.second);
-}
-
-
-
-void Colliding_Object::update()
-{
-	if(m_can_cause_collision)
-		m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
-}
-
-const Physical_Model_Interface* Colliding_Object::get_physical_model_interface() const
-{
-	return m_physical_model;
-}
-
-Physical_Model_Interface* Colliding_Object::get_physical_model_interface()
-{
-	return m_physical_model;
-}
-
-const Physical_Model_Interface* Colliding_Object::get_physical_model_interface_prev_state() const
-{
-	return m_physical_model_prev_state;
-}
-
-Physical_Model_Interface* Colliding_Object::get_physical_model_interface_prev_state()
-{
-	return m_physical_model_prev_state;
-}
-
-
-
-void Colliding_Object::set_collision_possibility(bool _can_cause_collision)
-{
-    m_can_cause_collision = _can_cause_collision;
-}
-
-bool Colliding_Object::get_collision_possibility() const
-{
-    return m_can_cause_collision;
-}
-
-
-void Colliding_Object::set_is_dynamic(bool _is_dynamic)
-{
-	ASSERT(!m_physical_model || !m_physical_model_prev_state);
-	m_physical_model->set_is_dynamic(_is_dynamic);
-	m_physical_model_prev_state->set_is_dynamic(_is_dynamic);
-}
-
-bool Colliding_Object::is_dynamic() const
-{
-	ASSERT(!m_physical_model || !m_physical_model_prev_state);
-	return m_physical_model->is_dynamic();
-}
-
-
-Geometry::Intersection_Data Colliding_Object::is_colliding_with_other(const Colliding_Object& _other) const
-{
-    ASSERT(m_can_cause_collision && !m_physical_model);
-    ASSERT(_other.m_can_cause_collision && !_other.m_physical_model);
-	if(!_other.m_can_cause_collision || !m_can_cause_collision)
-		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
-    return m_physical_model->is_intersecting_with_another_model(*_other.m_physical_model);
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 Object_2D::Object_2D()
 {
@@ -737,75 +626,6 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 			min_ratio = local_ratio_1;
 			max_ratio = local_ratio_2;
 		}
-
-		/*for(unsigned int i=0; i<4; ++i)
-		{
-			std::pair<glm::vec3, glm::vec3>& current_this_segment = this_segments[i];
-			Geometry_2D::Equasion_Data this_equasion(current_this_segment.first, current_this_segment.second);
-
-			bool above_found = false, underneath_found = false;
-			float temp_min_ratio = 1.1f, temp_max_ratio = -0.1f;
-
-			for(unsigned int j=0; j<4; ++j)
-			{
-				//check current this state
-				std::pair<glm::vec3, glm::vec3>& current_other_segment = other_segments[j];
-
-				//check other previous state
-				if(is_in_bounds_of_segment_by_x(current_this_segment, current_other_segment.first))
-				{
-					float this_y = this_equasion.solve_by_x(current_other_segment.first.x);
-					if(this_y <= current_other_segment.first.y) above_found = true;
-					if(this_y >= current_other_segment.first.y) underneath_found = true;
-
-					float other_ratio = 0.0f;
-					float distance_between_start_and_projection = Math::get_distance({current_other_segment.first.x, this_y, 0.0f}, current_this_segment.first);
-					float this_ratio = distance_between_start_and_projection / this_segments_lengths[i];
-					if(this_ratio <= 1.0f && this_ratio >= 0.0f)
-					{
-						if(temp_min_ratio > other_ratio) temp_min_ratio = other_ratio;
-						if(temp_max_ratio < other_ratio) temp_max_ratio = other_ratio;
-						if(temp_min_ratio > this_ratio) temp_min_ratio = this_ratio;
-						if(temp_max_ratio < this_ratio) temp_max_ratio = this_ratio;
-					}
-				}
-//				else
-				{
-//					std::cout << "previous state frame does not intersect\n";
-				}
-
-				//check other current state
-				if(is_in_bounds_of_segment_by_x(current_this_segment, current_other_segment.second))
-				{
-					float this_y = this_equasion.solve_by_x(current_other_segment.second.x);
-					if(this_y <= current_other_segment.second.y) above_found = true;
-					if(this_y >= current_other_segment.second.y) underneath_found = true;
-
-					float other_ratio = 1.0f;
-					float distance_between_start_and_projection = Math::get_distance({current_other_segment.first.x, this_y, 0.0f}, current_this_segment.first);
-					float this_ratio = distance_between_start_and_projection / this_segments_lengths[i];
-					if(this_ratio <= 1.0f && this_ratio >= 0.0f)
-					{
-						if(temp_min_ratio > other_ratio) temp_min_ratio = other_ratio;
-						if(temp_max_ratio < other_ratio) temp_max_ratio = other_ratio;
-						if(temp_min_ratio > this_ratio) temp_min_ratio = this_ratio;
-						if(temp_max_ratio < this_ratio) temp_max_ratio = this_ratio;
-					}
-				}
-//				else
-				{
-//					std::cout << "current state frame does not intersect\n";
-				}
-			}
-
-			if(above_found && underneath_found)
-			{
-				min_ratio = temp_min_ratio;
-				max_ratio = temp_max_ratio;
-				int a =0;
-				++a;
-			}
-		}*/
 	}
 	if(max_ratio > 0.0f && max_ratio <= 1.0f && min_ratio < 1.0f && min_ratio >= 0.0f)
 	{
@@ -850,9 +670,6 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 			float curr_segment_length = dynamic_object_segments_lengths[i];
 			const Physical_Model_2D::Rectangular_Border& rb = static_object.get_physical_model()->curr_rect_border();
 
-//			float segment_left = curr_segment.first.x < curr_segment.second.x ? curr_segment.first.x : curr_segment.second.x;
-//			float segment_right = curr_segment.first.x > curr_segment.second.x ? curr_segment.first.x : curr_segment.second.x;
-
 			float temp_ratio_1 = 1.1f, temp_ratio_2 = -0.1f;
 
 			Geometry_2D::Equasion_Data eq(curr_segment.first, curr_segment.second);
@@ -869,18 +686,26 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 			temp_ratio_1 = Math::get_distance({rb.left, eq.solve_by_x(rb.left), 0.0f}, curr_segment.first) / curr_segment_length;
 			temp_ratio_2 = Math::get_distance({rb.right, eq.solve_by_x(rb.right), 0.0f}, curr_segment.first) / curr_segment_length;
 
-			if(temp_ratio_1 > temp_ratio_2)
-			{
-				float temp = temp_ratio_1;
-				temp_ratio_1 = temp_ratio_2;
-				temp_ratio_2 = temp;
-			}
+//			if(temp_ratio_1 > temp_ratio_2)
+//			{
+//				float temp = temp_ratio_1;
+//				temp_ratio_1 = temp_ratio_2;
+//				temp_ratio_2 = temp;
+//			}
 
-			if(temp_ratio_1 >= 0.0f && temp_ratio_1 <= 1.0f && temp_ratio_1 < min_ratio
-					&& temp_ratio_2 >= 0.0f && temp_ratio_2 <= 1.0f && temp_ratio_2 > max_ratio)
+			if(temp_ratio_1 >= 0.0f && temp_ratio_1 <= 1.0f)
 			{
-				min_ratio = temp_ratio_1;
-				max_ratio = temp_ratio_2;
+				if(min_ratio > temp_ratio_1)
+					min_ratio = temp_ratio_1;
+				if(max_ratio < temp_ratio_1)
+					max_ratio = temp_ratio_1;
+			}
+			if(temp_ratio_2 >= 0.0f && temp_ratio_2 <= 1.0f)
+			{
+				if(min_ratio > temp_ratio_2)
+					min_ratio = temp_ratio_2;
+				if(max_ratio < temp_ratio_2)
+					max_ratio = temp_ratio_2;
 			}
 		}
 	}

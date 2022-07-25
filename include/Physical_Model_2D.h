@@ -24,31 +24,30 @@ namespace LEti
 		};
 
 	public:
-		class Polygon
+		class Imprint final
 		{
 		private:
-			static constexpr unsigned int m_count = 9;
-			static constexpr unsigned int m_cpv = 3;
+			friend class Physical_Model_2D;
+			const Physical_Model_2D* m_parent = nullptr;
 
 		private:
-			const float* m_raw_coords = nullptr;
-			glm::vec3 m_actual_A, m_actual_B, m_actual_C;
+			Geometry_2D::Polygon* m_polygons = nullptr;
+			unsigned int m_polygons_count = 0;
+
+		private:
+			Imprint(const Geometry_2D::Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent);
 
 		public:
-			Polygon();
-			void setup(const float* _raw_coords);
-			void update_points(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
+			Imprint(Imprint&& _other);
+			Imprint(const Imprint& _other);
+			~Imprint();
 
 		public:
-			Geometry::Intersection_Data point_belongs_to_triangle(const glm::vec3& _point) const;
+			void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
 
-		public:
-			Geometry::Intersection_Data segment_intersecting_polygon(const glm::vec3& _point_1, const glm::vec3& _point_2) const;
-			Geometry::Intersection_Data intersects_with_another_polygon(const Polygon& _other) const;
-
-		public:
-			const glm::vec3& operator[](unsigned int _index) const;
-			glm::vec3& operator[](unsigned int _index);
+			const Geometry_2D::Polygon& operator[](unsigned int _index) const;
+			const Physical_Model_2D* get_parent() const;
+			Geometry::Intersection_Data imprints_intersect(const Imprint& _other) const;
 
 		};
 
@@ -56,7 +55,7 @@ namespace LEti
 		float* m_raw_coords = nullptr;
 		unsigned int m_raw_coords_count = 0;
 
-		Polygon* m_polygons = nullptr;
+		Geometry_2D::Polygon* m_polygons = nullptr;
 		unsigned int m_polygons_count = 0;
 
 	private:
@@ -83,10 +82,11 @@ namespace LEti
 		Geometry::Intersection_Data is_intersecting_with_point(const glm::vec3& _point) const;
 		Geometry::Intersection_Data is_intersecting_with_segment(const glm::vec3& _point_1, const glm::vec3& _point_2) const;
 		Geometry::Intersection_Data is_intersecting_with_another_model(const Physical_Model_2D& _other) const;
+		Geometry::Intersection_Data is_intersecting_with_another_model(const Physical_Model_2D::Imprint& _other) const;
 
 	public:
 		unsigned int get_polygons_count() const;
-		const Polygon& operator[](unsigned int _index) const;
+		const Geometry_2D::Polygon& operator[](unsigned int _index) const;
 
 	};
 }

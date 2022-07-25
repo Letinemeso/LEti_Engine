@@ -4,6 +4,7 @@
 #include "../Debug.h"
 
 #include "../OpenGL/GLM/vec3.hpp"
+#include "../OpenGL/GLM/mat4x4.hpp"
 
 #include <cmath>
 #include <utility>
@@ -64,6 +65,36 @@ namespace Geometry {
 }
 
 namespace Geometry_2D {
+
+	class Polygon
+	{
+	private:
+		static constexpr unsigned int m_count = 9;
+		static constexpr unsigned int m_cpv = 3;
+
+	private:
+		const float* m_raw_coords = nullptr;
+		glm::vec3 m_actual_A, m_actual_B, m_actual_C;
+
+	public:
+		Polygon();
+		Polygon(const Polygon& _other);
+		void setup(const float* _raw_coords);
+		void setup(const Polygon& _other);
+		void update_points(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
+
+	public:
+		Geometry::Intersection_Data point_belongs_to_triangle(const glm::vec3& _point) const;
+
+	public:
+		Geometry::Intersection_Data segment_intersecting_polygon(const glm::vec3& _point_1, const glm::vec3& _point_2) const;
+		Geometry::Intersection_Data intersects_with_another_polygon(const Polygon& _other) const;
+
+	public:
+		const glm::vec3& operator[](unsigned int _index) const;
+		glm::vec3& operator[](unsigned int _index);
+
+	};
 
 	class Equasion_Data
 	{

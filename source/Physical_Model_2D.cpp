@@ -2,111 +2,88 @@
 
 using namespace LEti;
 
-Physical_Model_2D::Polygon::Polygon()
+
+
+
+
+Physical_Model_2D::Imprint::Imprint(const Geometry_2D::Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent)
+	: m_parent(_parent)
 {
-
-}
-
-void Physical_Model_2D::Polygon::setup(const float *_raw_coords)
-{
-	m_raw_coords = _raw_coords;
-
-	ASSERT(!m_raw_coords);
-}
-
-
-void Physical_Model_2D::Polygon::update_points(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)
-{
-	ASSERT(!m_raw_coords);
-
-	glm::mat4x4 result_matrix = _translation * _rotation * _scale;
-	m_actual_A = result_matrix * glm::vec4(m_raw_coords[0], m_raw_coords[1], m_raw_coords[2], 1.0f);
-	m_actual_B = result_matrix * glm::vec4(m_raw_coords[3], m_raw_coords[4], m_raw_coords[5], 1.0f);
-	m_actual_C = result_matrix * glm::vec4(m_raw_coords[6], m_raw_coords[7], m_raw_coords[8], 1.0f);
+	m_polygons_count = _polygons_count;
+	m_polygons = new Geometry_2D::Polygon[m_polygons_count];
+	for(unsigned int i=0; i<m_polygons_count; ++i)
+		m_polygons[i].setup(_polygons[i]);
 }
 
 
-
-Geometry::Intersection_Data Physical_Model_2D::Polygon::point_belongs_to_triangle(const glm::vec3& _point) const
+Physical_Model_2D::Imprint::Imprint(Imprint&& _other)
 {
-	Geometry_2D::Equasion_Data AB_eq(m_actual_A, m_actual_B);
-	Geometry_2D::Equasion_Data BC_eq(m_actual_B, m_actual_C);
-	Geometry_2D::Equasion_Data CA_eq(m_actual_C, m_actual_A);
+	delete[] m_polygons;
 
-	float AB_y_proj = AB_eq.solve_by_x(_point.x);
-	float BC_y_proj = BC_eq.solve_by_x(_point.x);
-	float CA_y_proj = CA_eq.solve_by_x(_point.x);
+	m_polygons = _other.m_polygons;
+	_other.m_polygons = nullptr;
+	m_polygons_count = _other.m_polygons_count;
+	_other.m_polygons_count = 0;
+	m_parent = _other.m_parent;
+	_other.m_parent = nullptr;
+}
 
-	bool AB_right_side = AB_eq.is_vertical() ? ( m_actual_B.y < m_actual_A.y ? _point.x >= m_actual_A.x : _point.x <= m_actual_A.x ) : ( AB_eq.goes_left() ? AB_y_proj > _point.y : AB_y_proj < _point.y );
-	bool BC_right_side = BC_eq.is_vertical() ? ( m_actual_C.y < m_actual_B.y ? _point.x >= m_actual_B.x : _point.x <= m_actual_B.x ) : ( BC_eq.goes_left() ? BC_y_proj > _point.y : BC_y_proj < _point.y );
-	bool CA_right_side = CA_eq.is_vertical() ? ( m_actual_A.y < m_actual_C.y ? _point.x >= m_actual_C.x : _point.x <= m_actual_C.x ) : ( CA_eq.goes_left() ? CA_y_proj > _point.y : CA_y_proj < _point.y );
+Physical_Model_2D::Imprint::Imprint(const Imprint& _other)
+	: m_parent(_other.m_parent)
+{
+	m_polygons_count = _other.m_polygons_count;
+	m_polygons = new Geometry_2D::Polygon[m_polygons_count];
+	for(unsigned int i=0; i<m_polygons_count; ++i)
+		m_polygons[i].setup(_other.m_polygons[i]);
+}
 
-	//	return (AB_goes_left() ? AB_y_proj < _point.y : AB_y_proj > _point.y) &&
-	//		(BC_goes_left() ? BC_y_proj < _point.y : BC_y_proj > _point.y) &&
-	//		(CA_goes_left() ? CA_y_proj < _point.y : CA_y_proj > _point.y);
-	if (AB_right_side && BC_right_side && CA_right_side)
-		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::intersection, _point);
-	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+Physical_Model_2D::Imprint::~Imprint()
+{
+	delete[] m_polygons;
 }
 
 
-Geometry::Intersection_Data Physical_Model_2D::Polygon::segment_intersecting_polygon(const glm::vec3 &_point_1, const glm::vec3 &_point_2) const
+void Physical_Model_2D::Imprint::update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)
 {
-	Geometry::Intersection_Data _0 = Geometry_2D::segments_intersect(m_actual_A, m_actual_B, _point_1, _point_2);
-	if(_0)
-		return _0;
-	Geometry::Intersection_Data _1 = Geometry_2D::segments_intersect(m_actual_B, m_actual_C, _point_1, _point_2);
-	if(_1)
-		return _1;
-	Geometry::Intersection_Data _2 = Geometry_2D::segments_intersect(m_actual_C, m_actual_A, _point_1, _point_2);
-	if(_2)
-		return _2;
-	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
-}
-
-Geometry::Intersection_Data Physical_Model_2D::Polygon::intersects_with_another_polygon(const Polygon& _other) const
-{
-	Geometry::Intersection_Data _0 = segment_intersecting_polygon(_other.m_actual_A, _other.m_actual_B);
-	if(_0)
-		return _0;
-	Geometry::Intersection_Data _1 = segment_intersecting_polygon(_other.m_actual_B, _other.m_actual_C);
-	if(_1)
-		return _1;
-	Geometry::Intersection_Data _2 = segment_intersecting_polygon(_other.m_actual_C, _other.m_actual_A);
-	if(_2)
-		return _2;
-	Geometry::Intersection_Data _3 = point_belongs_to_triangle(_other.m_actual_A);
-	Geometry::Intersection_Data _4 = point_belongs_to_triangle(_other.m_actual_B);
-	Geometry::Intersection_Data _5 = point_belongs_to_triangle(_other.m_actual_C);
-	if(_3 && _4 && _5)
-		return _3;
-	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+	for(unsigned int i=0; i<m_polygons_count; ++i)
+		m_polygons[i].update_points(_translation, _rotation, _scale);
 }
 
 
-
-const glm::vec3& Physical_Model_2D::Polygon::operator[](unsigned int _index) const
+const Geometry_2D::Polygon& Physical_Model_2D::Imprint::operator[](unsigned int _index) const
 {
-	ASSERT(_index > 2);
-	switch(_index)
+	ASSERT(_index >= m_polygons_count);
+
+	return m_polygons[_index];
+}
+
+const Physical_Model_2D* Physical_Model_2D::Imprint::get_parent() const
+{
+	return m_parent;
+}
+
+Geometry::Intersection_Data Physical_Model_2D::Imprint::imprints_intersect(const Imprint &_other) const
+{
+	ASSERT(!m_polygons || !_other.m_polygons);
+
+	for (unsigned int i = 0; i < m_polygons_count; ++i)
 	{
-	case 0 : return m_actual_A;
-	case 1: return m_actual_B;
-	case 2: return m_actual_C;
+		for (unsigned int j = 0; j < _other.m_polygons_count; ++j)
+		{
+			Geometry::Intersection_Data id = m_polygons[i].intersects_with_another_polygon(_other.m_polygons[j]);
+			if (id) return id;
+		}
 	}
-	return m_actual_C;
-}
-
-glm::vec3& Physical_Model_2D::Polygon::operator[](unsigned int _index)
-{
-	ASSERT(_index > 2);
-	switch(_index)
+	for (unsigned int i = 0; i < _other.m_polygons_count; ++i)
 	{
-	case 0 : return m_actual_A;
-	case 1: return m_actual_B;
-	case 2: return m_actual_C;
+		for (unsigned int j = 0; j < m_polygons_count; ++j)
+		{
+			Geometry::Intersection_Data id = _other.m_polygons[i].intersects_with_another_polygon(m_polygons[j]);
+			if (id) return id;
+		}
 	}
-	return m_actual_C;
+
+	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
 }
 
 
@@ -170,7 +147,7 @@ void Physical_Model_2D::setup(const float* _raw_coords, unsigned int _raw_coords
 	delete[] m_polygons;
 
 	m_polygons_count = m_raw_coords_count / 9;
-	m_polygons = new Polygon[m_polygons_count];
+	m_polygons = new Geometry_2D::Polygon[m_polygons_count];
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
 		m_polygons[i].setup(&m_raw_coords[i * 9]);
 }
@@ -229,7 +206,29 @@ Geometry::Intersection_Data Physical_Model_2D::is_intersecting_with_another_mode
 {
 	ASSERT(!m_polygons || !_other.m_polygons);
 
-//	Geometry::Intersection_Data::counter = 0;
+	for (unsigned int i = 0; i < m_polygons_count; ++i)
+	{
+		for (unsigned int j = 0; j < _other.m_polygons_count; ++j)
+		{
+			Geometry::Intersection_Data id = m_polygons[i].intersects_with_another_polygon(_other.m_polygons[j]);
+			if (id) return id;
+		}
+	}
+	for (unsigned int i = 0; i < _other.m_polygons_count; ++i)
+	{
+		for (unsigned int j = 0; j < m_polygons_count; ++j)
+		{
+			Geometry::Intersection_Data id = _other.m_polygons[i].intersects_with_another_polygon(m_polygons[j]);
+			if (id) return id;
+		}
+	}
+
+	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+}
+
+Geometry::Intersection_Data Physical_Model_2D::is_intersecting_with_another_model(const Physical_Model_2D::Imprint &_other) const
+{
+	ASSERT(!m_polygons || !_other.m_polygons);
 
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
 	{
@@ -248,8 +247,6 @@ Geometry::Intersection_Data Physical_Model_2D::is_intersecting_with_another_mode
 		}
 	}
 
-//	std::cout << Geometry::Intersection_Data::counter << "\n";
-
 	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
 }
 
@@ -260,9 +257,10 @@ unsigned int Physical_Model_2D::get_polygons_count() const
 	return m_polygons_count;
 }
 
-const Physical_Model_2D::Polygon& Physical_Model_2D::operator[](unsigned int _index) const
+const Geometry_2D::Polygon& Physical_Model_2D::operator[](unsigned int _index) const
 {
 	ASSERT(!m_polygons || _index >= m_polygons_count);
 
 	return m_polygons[_index];
 }
+
