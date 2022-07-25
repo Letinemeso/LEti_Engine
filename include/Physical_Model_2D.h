@@ -33,6 +33,7 @@ namespace LEti
 		private:
 			Geometry_2D::Polygon* m_polygons = nullptr;
 			unsigned int m_polygons_count = 0;
+			Rectangular_Border m_rect_border;
 
 		private:
 			Imprint(const Geometry_2D::Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent);
@@ -44,10 +45,12 @@ namespace LEti
 
 		public:
 			void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
+			void update_to_current_model_state();
 
 			const Geometry_2D::Polygon& operator[](unsigned int _index) const;
 			const Physical_Model_2D* get_parent() const;
 			Geometry::Intersection_Data imprints_intersect(const Imprint& _other) const;
+			const Rectangular_Border& curr_rect_border() const;
 
 		};
 
@@ -77,6 +80,8 @@ namespace LEti
 
 		void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
 		void copy_real_coordinates(const Physical_Model_2D& _other);
+
+		Imprint create_imprint() const;
 
 	public:
 		Geometry::Intersection_Data is_intersecting_with_point(const glm::vec3& _point) const;

@@ -13,6 +13,7 @@ Physical_Model_2D::Imprint::Imprint(const Geometry_2D::Polygon* _polygons, unsig
 	m_polygons = new Geometry_2D::Polygon[m_polygons_count];
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].setup(_polygons[i]);
+	m_rect_border = _parent->curr_rect_border();
 }
 
 
@@ -26,6 +27,7 @@ Physical_Model_2D::Imprint::Imprint(Imprint&& _other)
 	_other.m_polygons_count = 0;
 	m_parent = _other.m_parent;
 	_other.m_parent = nullptr;
+	m_rect_border = _other.m_rect_border;
 }
 
 Physical_Model_2D::Imprint::Imprint(const Imprint& _other)
@@ -35,6 +37,7 @@ Physical_Model_2D::Imprint::Imprint(const Imprint& _other)
 	m_polygons = new Geometry_2D::Polygon[m_polygons_count];
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].setup(_other.m_polygons[i]);
+	m_rect_border = _other.m_rect_border;
 }
 
 Physical_Model_2D::Imprint::~Imprint()
@@ -47,6 +50,16 @@ void Physical_Model_2D::Imprint::update(const glm::mat4x4 &_translation, const g
 {
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].update_points(_translation, _rotation, _scale);
+}
+
+void Physical_Model_2D::Imprint::update_to_current_model_state()
+{
+	for(unsigned int i=0; i<m_polygons_count; ++i)
+	{
+		for(unsigned int vert=0; vert<3; ++vert)
+			m_polygons[i][vert] = m_parent->m_polygons[i][vert];
+	}
+	m_rect_border = m_parent->curr_rect_border();
 }
 
 
@@ -84,6 +97,11 @@ Geometry::Intersection_Data Physical_Model_2D::Imprint::imprints_intersect(const
 	}
 
 	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+}
+
+const Physical_Model_2D::Rectangular_Border& Physical_Model_2D::Imprint::curr_rect_border() const
+{
+	return m_rect_border;
 }
 
 
@@ -177,6 +195,12 @@ void Physical_Model_2D::copy_real_coordinates(const Physical_Model_2D &_other)
 			m_polygons[i][points_i] = _other.m_polygons[i][points_i];
 	}
 	m_current_border = _other.m_current_border;
+}
+
+
+Physical_Model_2D::Imprint Physical_Model_2D::create_imprint() const
+{
+	return Imprint(m_polygons, m_polygons_count, this);
 }
 
 

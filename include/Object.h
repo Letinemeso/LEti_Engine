@@ -80,6 +80,11 @@ namespace LEti {
 				{ translation_matrix = _translation_matrix; rotation_matrix = _rotation_matrix; scale_matrix = _scale_matrix; rotation_axis = _rotation_axis; rotation_angle = _rotation_angle; }
 		} m_previous_state;
 
+	protected:
+		glm::mat4x4 get_translation_matrix_for_time_ratio(float _ratio) const;
+		glm::mat4x4 get_rotation_matrix_for_time_ratio(float _ratio) const;
+		glm::mat4x4 get_scale_matrix_for_time_ratio(float _ratio) const;
+
 	public:
 		Drawable_Object();
 		virtual ~Drawable_Object();
@@ -127,41 +132,6 @@ namespace LEti {
 
 
 
-//	class Colliding_Object : public Drawable_Object
-//	{
-//	protected:
-//		bool m_can_cause_collision = false;
-//		LEti::Physical_Model_Interface* m_physical_model = nullptr;
-//		LEti::Physical_Model_Interface* m_physical_model_prev_state = nullptr;
-
-//	public:
-//		Colliding_Object() : Drawable_Object() { }
-//		virtual ~Colliding_Object();
-
-//		virtual void init_physical_model(const float* _coords, unsigned int _coords_count);
-//		void remove_physical_model();
-//		virtual void init(const char* _object_name) override;
-
-//	public:
-//		const Physical_Model_Interface* get_physical_model_interface() const;
-//		Physical_Model_Interface* get_physical_model_interface();
-//		const Physical_Model_Interface* get_physical_model_interface_prev_state() const;
-//		Physical_Model_Interface* get_physical_model_interface_prev_state();
-
-//	public:
-//		virtual void update() override = 0;
-
-//	public:
-//		void set_collision_possibility(bool _can_cause_collision);
-//		bool get_collision_possibility() const;
-
-//		void set_is_dynamic(bool _is_dynamic);
-//		bool is_dynamic() const;
-
-//		virtual LEti::Physical_Model_Interface::Intersection_Data is_colliding_with_other(const Colliding_Object& _other) const;
-
-//	};
-
 
 
 	class Object_2D : public Drawable_Object
@@ -176,10 +146,10 @@ namespace LEti {
 
 	private:
 	    bool m_can_cause_collision = false;
-	    Physical_Model_2D* m_physical_model = nullptr;
-	    Physical_Model_2D* m_physical_model_prev_state = nullptr;
+		Physical_Model_2D* m_physical_model = nullptr;
+		Physical_Model_2D::Imprint* m_physical_model_prev_state = nullptr;
 	    Physical_Model_2D::Rectangular_Border m_dynamic_rb;
-	    bool m_is_dynamic = false;
+		bool m_is_dynamic = false;
 
 	public:
 	    bool is_dynamic() const;
@@ -194,10 +164,10 @@ namespace LEti {
 
 	protected:
 	    Physical_Model_2D* get_physical_model();
-	    Physical_Model_2D* get_physical_model_prev_state();
+		Physical_Model_2D::Imprint* get_physical_model_prev_state();
 	public:
 	    const Physical_Model_2D* get_physical_model() const;
-	    const Physical_Model_2D* get_physical_model_prev_state() const;
+		const Physical_Model_2D::Imprint* get_physical_model_prev_state() const;
 	    const Physical_Model_2D::Rectangular_Border& get_dynamic_rb() const;
 
 	private:

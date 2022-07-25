@@ -56,9 +56,9 @@ namespace Geometry {
 		Intersection_Data() { }
 		Intersection_Data(Type _type) : type(_type) { }
 		Intersection_Data(Type _type, const glm::vec3& _point) : type(_type), point(_point) { }
-		Intersection_Data(const Intersection_Data& _other) : type(_other.type), point(_other.point) { }
-		Intersection_Data(Intersection_Data&& _other) : type(_other.type), point(_other.point) { }
-		void operator=(const Intersection_Data& _other) { type = _other.type; point = _other.point; }
+		Intersection_Data(const Intersection_Data& _other) : type(_other.type), point(_other.point), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
+		Intersection_Data(Intersection_Data&& _other) : type(_other.type), point(_other.point), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
+		void operator=(const Intersection_Data& _other) { type = _other.type; point = _other.point; time_of_intersection_ratio = _other.time_of_intersection_ratio; }
 		operator bool() { return type != Type::none; }
 	};
 

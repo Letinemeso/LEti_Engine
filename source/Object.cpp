@@ -55,6 +55,48 @@ Drawable_Object::~Drawable_Object()
 
 
 
+glm::mat4x4 Drawable_Object::get_translation_matrix_for_time_ratio(float _ratio) const
+{
+	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
+
+	glm::vec3 curr_pos = get_pos();
+	glm::vec3 prev_pos = get_pos_prev();
+	glm::vec3 diff = curr_pos - prev_pos;
+	diff *= _ratio;
+
+	glm::mat4x4 result = m_previous_state.translation_matrix;
+	for(unsigned int i=0; i<3; ++i)
+		result[3][i] += diff[i];
+	return result;
+}
+
+glm::mat4x4 Drawable_Object::get_rotation_matrix_for_time_ratio(float _ratio) const
+{
+	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
+
+	glm::vec3 axis_diff = m_previous_state.rotation_axis + ((m_rotation_axis - m_previous_state.rotation_axis) * _ratio);
+	float angle_diff = m_previous_state.rotation_angle + ((m_rotation_angle - m_previous_state.rotation_angle) * _ratio);
+
+	return glm::rotate(angle_diff, axis_diff);
+}
+
+glm::mat4x4 Drawable_Object::get_scale_matrix_for_time_ratio(float _ratio) const
+{
+	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
+
+	glm::vec3 curr_scale = get_scale();
+	glm::vec3 prev_scale = get_scale_prev();
+	glm::vec3 diff_vec = curr_scale - prev_scale;
+	diff_vec *= _ratio;
+
+	glm::mat4x4 result = m_previous_state.scale_matrix;
+	for(unsigned int i=0; i<3; ++i)
+		result[i][i] += diff_vec[i];
+	return result;
+}
+
+
+
 void Drawable_Object::init_texture(const char* _tex_path, const float* const tex_coords, unsigned int _tex_coords_count)
 {
 	glBindVertexArray(m_vertex_array);
@@ -142,7 +184,11 @@ void Drawable_Object::draw() const
 
 void Drawable_Object::update()
 {
-
+	m_previous_state.translation_matrix = m_translation_matrix;
+	m_previous_state.rotation_axis = m_rotation_axis;
+	m_previous_state.rotation_angle = m_rotation_angle;
+	m_previous_state.rotation_matrix = m_rotation_matrix;
+	m_previous_state.scale_matrix = m_scale_matrix;
 }
 
 
@@ -181,10 +227,10 @@ void Drawable_Object::set_rotation_angle(float _angle)
 {
 	m_previous_state.rotation_angle = m_rotation_angle;
 
-	while (_angle >= 6.28318f)
-		_angle -= 6.28318f;
-	while (_angle <= -6.28318f)
-		_angle += 6.28318f;
+//	while (_angle >= 6.28318f)
+//		_angle -= 6.28318f;
+//	while (_angle <= -6.28318f)
+//		_angle += 6.28318f;
 
 	m_rotation_angle = _angle;
 
@@ -341,7 +387,7 @@ void Object_2D::set_dynamic(bool _is_dynamic)
 {
 	if(_is_dynamic && !m_is_dynamic)
 	{
-		m_physical_model_prev_state = new Physical_Model_2D(*m_physical_model);
+		m_physical_model_prev_state = new Physical_Model_2D::Imprint(m_physical_model->create_imprint());
 	}
 	else if(!_is_dynamic && m_is_dynamic)
 	{
@@ -392,7 +438,7 @@ void Object_2D::update()
 			m_dynamic_rb.top = prev_rb.top > curr_rb.top ? prev_rb.top : curr_rb.top;
 			m_dynamic_rb.bottom = prev_rb.bottom < curr_rb.bottom ? prev_rb.bottom : curr_rb.bottom;
 
-			get_physical_model_prev_state()->copy_real_coordinates(*get_physical_model());
+			get_physical_model_prev_state()->update_to_current_model_state();
 		}
 
 		m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
@@ -406,7 +452,7 @@ Physical_Model_2D* Object_2D::get_physical_model()
 	return m_physical_model;
 }
 
-Physical_Model_2D* Object_2D::get_physical_model_prev_state()
+Physical_Model_2D::Imprint* Object_2D::get_physical_model_prev_state()
 {
 	return m_physical_model_prev_state;
 }
@@ -417,7 +463,7 @@ const Physical_Model_2D* Object_2D::get_physical_model() const
 	return m_physical_model;
 }
 
-const Physical_Model_2D* Object_2D::get_physical_model_prev_state() const
+const Physical_Model_2D::Imprint* Object_2D::get_physical_model_prev_state() const
 {
 	return m_physical_model_prev_state;
 }
@@ -431,51 +477,52 @@ const Physical_Model_2D::Rectangular_Border& Object_2D::get_dynamic_rb() const
 
 Geometry::Intersection_Data Object_2D::get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, float _min_ratio, float _max_ratio) const
 {
-	ASSERT(!m_can_cause_collision || !_other.m_can_cause_collision);
-	ASSERT(!is_dynamic() && !_other.is_dynamic());
+//	ASSERT(!m_can_cause_collision || !_other.m_can_cause_collision);
+//	ASSERT(!is_dynamic() && !_other.is_dynamic());
 
-	float time_mid_point = (_max_ratio + _min_ratio) / 2.0f;
+//	float time_mid_point = (_max_ratio + _min_ratio) / 2.0f;
 
-	Geometry::Intersection_Data result;
+//	Geometry::Intersection_Data result;
 
-	if(_level < m_precision_level)
-	{
-		result = get_precise_time_ratio_of_collision(_level + 1, _other, _min_ratio, time_mid_point);
-		if(result)
-			return result;
+//	if(_level < m_precision_level)
+//	{
+//		result = get_precise_time_ratio_of_collision(_level + 1, _other, _min_ratio, time_mid_point);
+//		if(result)
+//			return result;
 
-		result = get_precise_time_ratio_of_collision(_level + 1, _other, time_mid_point, _max_ratio);
-		return result;
-	}
+//		result = get_precise_time_ratio_of_collision(_level + 1, _other, time_mid_point, _max_ratio);
+//		return result;
+//	}
 
-	//if this is the maximum precision level
-	Physical_Model_2D this_init_pm = *get_physical_model_prev_state();
-	Physical_Model_2D other_init_pm = *_other.get_physical_model_prev_state();
+//	//if this is the maximum precision level
+//	Physical_Model_2D this_init_pm = *get_physical_model_prev_state();
+//	Physical_Model_2D other_init_pm = *_other.get_physical_model_prev_state();
 
-	glm::vec3 this_pos = get_pos();
-	glm::vec3 this_pos_prev = get_pos_prev();
-	glm::vec3 this_stride = this_pos - this_pos_prev;
+//	glm::vec3 this_pos = get_pos();
+//	glm::vec3 this_pos_prev = get_pos_prev();
+//	glm::vec3 this_stride = this_pos - this_pos_prev;
 
-	glm::mat4x4 this_stride_matrix = m_previous_state.translation_matrix;
-	for(unsigned int i=0; i<3; ++i)
-		this_stride_matrix[3][i] = this_pos_prev[i] + this_stride[i];
+//	glm::mat4x4 this_stride_matrix = m_previous_state.translation_matrix;
+//	for(unsigned int i=0; i<3; ++i)
+//		this_stride_matrix[3][i] = this_pos_prev[i] + this_stride[i];
 
-	glm::vec3 other_pos = _other.get_pos();
-	glm::vec3 other_pos_prev = _other.get_pos_prev();
-	glm::vec3 other_stride = other_pos - other_pos_prev;
+//	glm::vec3 other_pos = _other.get_pos();
+//	glm::vec3 other_pos_prev = _other.get_pos_prev();
+//	glm::vec3 other_stride = other_pos - other_pos_prev;
 
-	glm::mat4x4 other_stride_matrix = m_previous_state.translation_matrix;
-	for(unsigned int i=0; i<3; ++i)
-		other_stride_matrix[3][i] = other_pos_prev[i] + other_stride[i];
+//	glm::mat4x4 other_stride_matrix = m_previous_state.translation_matrix;
+//	for(unsigned int i=0; i<3; ++i)
+//		other_stride_matrix[3][i] = other_pos_prev[i] + other_stride[i];
 
-	this_init_pm.update(this_stride_matrix, m_previous_state.rotation_matrix, m_previous_state.scale_matrix);
-	other_init_pm.update(other_stride_matrix, _other.m_previous_state.rotation_matrix, _other.m_previous_state.scale_matrix);
+//	this_init_pm.update(this_stride_matrix, m_previous_state.rotation_matrix, m_previous_state.scale_matrix);
+//	other_init_pm.update(other_stride_matrix, _other.m_previous_state.rotation_matrix, _other.m_previous_state.scale_matrix);
 
-	result = this_init_pm.is_intersecting_with_another_model(other_init_pm);
-	if(!result)
-		return result;
-	result.time_of_intersection_ratio = time_mid_point;
-	return result;
+//	result = this_init_pm.is_intersecting_with_another_model(other_init_pm);
+//	if(!result)
+//		return result;
+//	result.time_of_intersection_ratio = time_mid_point;
+//	return result;
+	return Geometry::Intersection_Data();
 }
 
 
@@ -495,11 +542,11 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 	auto really_colliding = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
 	//
 
-	const Physical_Model_2D::Rectangular_Border this_rb_prev = get_physical_model_prev_state()->curr_rect_border();
-	const Physical_Model_2D::Rectangular_Border this_rb_curr = get_physical_model()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border& this_rb_prev = get_physical_model_prev_state()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border& this_rb_curr = get_physical_model()->curr_rect_border();
 
-	const Physical_Model_2D::Rectangular_Border other_rb_prev = _other.get_physical_model_prev_state()->curr_rect_border();
-	const Physical_Model_2D::Rectangular_Border other_rb_curr = _other.get_physical_model()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border& other_rb_prev = _other.get_physical_model_prev_state()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border& other_rb_curr = _other.get_physical_model()->curr_rect_border();
 
 	std::pair<glm::vec3, glm::vec3> this_segments[4] = {
 		{{this_rb_prev.left, this_rb_prev.top, 0.0f}, {this_rb_curr.left, this_rb_curr.top, 0.0f}},
@@ -632,7 +679,14 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 		if(Math::floats_are_equal(min_ratio, max_ratio))
 		{
 			std::cout << min_ratio << ' ' << max_ratio << "\n";
-			Geometry::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
+
+			Physical_Model_2D::Imprint this_state_at_ratio = *m_physical_model_prev_state;
+			this_state_at_ratio.update(get_translation_matrix_for_time_ratio(min_ratio), get_rotation_matrix_for_time_ratio(min_ratio), get_scale_matrix_for_time_ratio(min_ratio));
+			Physical_Model_2D::Imprint other_state_at_ratio = *_other.m_physical_model_prev_state;
+			other_state_at_ratio.update(_other.get_translation_matrix_for_time_ratio(min_ratio), _other.get_rotation_matrix_for_time_ratio(min_ratio), _other.get_scale_matrix_for_time_ratio(min_ratio));
+
+//			Geometry::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
+			Geometry::Intersection_Data result = this_state_at_ratio.imprints_intersect(other_state_at_ratio);
 			result.time_of_intersection_ratio = min_ratio;
 			return result;
 		}
@@ -713,8 +767,13 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 	{
 		if(Math::floats_are_equal(min_ratio, max_ratio))
 		{
-			std::cout << min_ratio << ' ' << max_ratio << "\n";
-			Geometry::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
+			Physical_Model_2D::Imprint this_state_at_ratio = *m_physical_model_prev_state;
+			this_state_at_ratio.update(get_translation_matrix_for_time_ratio(min_ratio), get_rotation_matrix_for_time_ratio(min_ratio), get_scale_matrix_for_time_ratio(min_ratio));
+			Physical_Model_2D::Imprint other_state_at_ratio = *_other.m_physical_model_prev_state;
+			other_state_at_ratio.update(_other.get_translation_matrix_for_time_ratio(min_ratio), _other.get_rotation_matrix_for_time_ratio(min_ratio), _other.get_scale_matrix_for_time_ratio(min_ratio));
+
+//			Geometry::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
+			Geometry::Intersection_Data result = this_state_at_ratio.imprints_intersect(other_state_at_ratio);
 			result.time_of_intersection_ratio = min_ratio;
 			return result;
 		}
