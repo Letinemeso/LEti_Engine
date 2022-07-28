@@ -43,6 +43,9 @@ namespace LEti
 			Imprint(const Imprint& _other);
 			~Imprint();
 
+		private:
+			void update_rectangular_border();
+
 		public:
 			void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
 			void update_to_current_model_state();

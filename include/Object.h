@@ -102,6 +102,9 @@ namespace LEti {
 		void set_texture_coords(const float* _tc, unsigned int _tc_count);
 
 	public:
+		void update_previous_state();
+
+	public:
         virtual void draw() const override = 0;
 		virtual void update() override = 0;
 
@@ -171,10 +174,10 @@ namespace LEti {
 	    const Physical_Model_2D::Rectangular_Border& get_dynamic_rb() const;
 
 	private:
-	    unsigned int m_precision_level = 3;
+		unsigned int m_precision_level = 10;
 
 	private:
-	    Geometry::Intersection_Data get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, float _min_ratio, float _max_ratio) const;
+		Geometry::Intersection_Data get_precise_time_ratio_of_collision(const Object_2D& _other, float _min_ratio, float _max_ratio) const;
 
 	public:
 	    Geometry::Intersection_Data is_colliding_with_other(const Object_2D& _other) const;

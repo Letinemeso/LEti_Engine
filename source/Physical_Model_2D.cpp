@@ -46,10 +46,35 @@ Physical_Model_2D::Imprint::~Imprint()
 }
 
 
+
+void Physical_Model_2D::Imprint::update_rectangular_border()
+{
+	ASSERT(!m_polygons);
+
+	m_rect_border.left = m_polygons[0][0].x;
+	m_rect_border.right = m_polygons[0][0].x;
+	m_rect_border.top = m_polygons[0][0].y;
+	m_rect_border.bottom = m_polygons[0][0].y;
+
+	for(unsigned int i=0; i<m_polygons_count; ++i)
+	{
+		for(unsigned int p=0; p<3; ++p)
+		{
+			if(m_rect_border.left > m_polygons[i][p].x) m_rect_border.left = m_polygons[i][p].x;
+			if(m_rect_border.right < m_polygons[i][p].x) m_rect_border.right = m_polygons[i][p].x;
+			if(m_rect_border.top < m_polygons[i][p].y) m_rect_border.top = m_polygons[i][p].y;
+			if(m_rect_border.bottom > m_polygons[i][p].y) m_rect_border.bottom = m_polygons[i][p].y;
+		}
+	}
+}
+
+
+
 void Physical_Model_2D::Imprint::update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)
 {
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].update_points(_translation, _rotation, _scale);
+	update_rectangular_border();
 }
 
 void Physical_Model_2D::Imprint::update_to_current_model_state()

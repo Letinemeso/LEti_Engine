@@ -165,6 +165,17 @@ void Drawable_Object::set_texture_coords(const float* _tc, unsigned int _tc_coun
 
 
 
+void Drawable_Object::update_previous_state()
+{
+	m_previous_state.translation_matrix = m_translation_matrix;
+	m_previous_state.rotation_axis = m_rotation_axis;
+	m_previous_state.rotation_angle = m_rotation_angle;
+	m_previous_state.rotation_matrix = m_rotation_matrix;
+	m_previous_state.scale_matrix = m_scale_matrix;
+}
+
+
+
 void Drawable_Object::draw() const
 {
 	if (!get_visible()) return;
@@ -184,19 +195,13 @@ void Drawable_Object::draw() const
 
 void Drawable_Object::update()
 {
-	m_previous_state.translation_matrix = m_translation_matrix;
-	m_previous_state.rotation_axis = m_rotation_axis;
-	m_previous_state.rotation_angle = m_rotation_angle;
-	m_previous_state.rotation_matrix = m_rotation_matrix;
-	m_previous_state.scale_matrix = m_scale_matrix;
+
 }
 
 
 
 void Drawable_Object::set_pos(float _x, float _y, float _z)
 {
-	m_previous_state.translation_matrix = m_translation_matrix;
-
 	m_translation_matrix[3][0] = _x;
 	m_translation_matrix[3][1] = _y;
 	m_translation_matrix[3][2] = _z;
@@ -204,8 +209,6 @@ void Drawable_Object::set_pos(float _x, float _y, float _z)
 
 void Drawable_Object::move(float _x, float _y, float _z)
 {
-	m_previous_state.translation_matrix = m_translation_matrix;
-
 	m_translation_matrix[3][0] += _x;
 	m_translation_matrix[3][1] += _y;
 	m_translation_matrix[3][2] += _z;
@@ -214,8 +217,6 @@ void Drawable_Object::move(float _x, float _y, float _z)
 
 void Drawable_Object::set_rotation_axis(float _x, float _y, float _z)
 {
-	m_previous_state.rotation_axis = m_rotation_axis;
-
 	m_rotation_axis[0] = _x;
 	m_rotation_axis[1] = _y;
 	m_rotation_axis[2] = _z;
@@ -225,13 +226,6 @@ void Drawable_Object::set_rotation_axis(float _x, float _y, float _z)
 
 void Drawable_Object::set_rotation_angle(float _angle)
 {
-	m_previous_state.rotation_angle = m_rotation_angle;
-
-//	while (_angle >= 6.28318f)
-//		_angle -= 6.28318f;
-//	while (_angle <= -6.28318f)
-//		_angle += 6.28318f;
-
 	m_rotation_angle = _angle;
 
 	m_rotation_matrix = glm::rotate(m_rotation_angle, m_rotation_axis);
@@ -239,9 +233,6 @@ void Drawable_Object::set_rotation_angle(float _angle)
 
 void Drawable_Object::set_rotation_data(float _axis_x, float _axis_y, float _axis_z, float _angle)
 {
-	m_previous_state.rotation_angle = m_rotation_angle;
-	m_previous_state.rotation_axis = m_rotation_axis;
-
 	m_rotation_axis[0] = _axis_x;
 	m_rotation_axis[1] = _axis_y;
 	m_rotation_axis[2] = _axis_z;
@@ -252,8 +243,6 @@ void Drawable_Object::set_rotation_data(float _axis_x, float _axis_y, float _axi
 
 void Drawable_Object::rotate(float _angle)
 {
-	m_previous_state.rotation_angle = m_rotation_angle;
-
 	m_rotation_angle += _angle;
 
 	if (m_rotation_angle >= 6.28318f)
@@ -267,8 +256,6 @@ void Drawable_Object::rotate(float _angle)
 
 void Drawable_Object::set_scale(float _scale_x, float _scale_y, float _scale_z)
 {
-	m_previous_state.scale_matrix = m_scale_matrix;
-
 	m_scale_matrix[0][0] = _scale_x;
 	m_scale_matrix[1][1] = _scale_y;
 	m_scale_matrix[2][2] = _scale_z;
@@ -276,8 +263,6 @@ void Drawable_Object::set_scale(float _scale_x, float _scale_y, float _scale_z)
 
 void Drawable_Object::set_overall_scale(float _scale)
 {
-	m_previous_state.scale_matrix = m_scale_matrix;
-
 	Drawable_Object::set_scale(_scale, _scale, _scale);
 }
 
@@ -430,6 +415,9 @@ void Object_2D::update()
 	{
 		if(is_dynamic())
 		{
+			get_physical_model_prev_state()->update_to_current_model_state();
+			m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
+
 			const Physical_Model_2D::Rectangular_Border& prev_rb = get_physical_model_prev_state()->curr_rect_border(),
 														 curr_rb = get_physical_model()->curr_rect_border();
 
@@ -437,11 +425,11 @@ void Object_2D::update()
 			m_dynamic_rb.right = prev_rb.right > curr_rb.right ? prev_rb.right : curr_rb.right;
 			m_dynamic_rb.top = prev_rb.top > curr_rb.top ? prev_rb.top : curr_rb.top;
 			m_dynamic_rb.bottom = prev_rb.bottom < curr_rb.bottom ? prev_rb.bottom : curr_rb.bottom;
-
-			get_physical_model_prev_state()->update_to_current_model_state();
 		}
-
-		m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
+		else
+		{
+			m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
+		}
 	}
 }
 
@@ -475,53 +463,86 @@ const Physical_Model_2D::Rectangular_Border& Object_2D::get_dynamic_rb() const
 
 
 
-Geometry::Intersection_Data Object_2D::get_precise_time_ratio_of_collision(unsigned int _level, const Object_2D& _other, float _min_ratio, float _max_ratio) const
+Geometry::Intersection_Data Object_2D::get_precise_time_ratio_of_collision(const Object_2D& _other, float _min_ratio, float _max_ratio) const
 {
-//	ASSERT(!m_can_cause_collision || !_other.m_can_cause_collision);
-//	ASSERT(!is_dynamic() && !_other.is_dynamic());
+	ASSERT(!m_can_cause_collision || !_other.m_can_cause_collision);
+	ASSERT(!is_dynamic() && !_other.is_dynamic());
+	ASSERT(_min_ratio < 0.0f || _max_ratio < 0.0f || _min_ratio > 1.0f || _max_ratio > 1.0f);
 
-//	float time_mid_point = (_max_ratio + _min_ratio) / 2.0f;
+	/*float time_mid_point = (_max_ratio + _min_ratio) / 2.0f;
 
-//	Geometry::Intersection_Data result;
+	Geometry::Intersection_Data result;
 
-//	if(_level < m_precision_level)
+	if(_level < m_precision_level)
+	{
+		result = get_precise_time_ratio_of_collision(_level + 1, _other, _min_ratio, time_mid_point);
+		if(result)
+			return result;
+
+		result = get_precise_time_ratio_of_collision(_level + 1, _other, time_mid_point, _max_ratio);
+		return result;
+	}
+
+	//if this is the maximum precision level
+	Physical_Model_2D this_init_pm = *get_physical_model_prev_state();
+	Physical_Model_2D other_init_pm = *_other.get_physical_model_prev_state();
+
+	glm::vec3 this_pos = get_pos();
+	glm::vec3 this_pos_prev = get_pos_prev();
+	glm::vec3 this_stride = this_pos - this_pos_prev;
+
+	glm::mat4x4 this_stride_matrix = m_previous_state.translation_matrix;
+	for(unsigned int i=0; i<3; ++i)
+		this_stride_matrix[3][i] = this_pos_prev[i] + this_stride[i];
+
+	glm::vec3 other_pos = _other.get_pos();
+	glm::vec3 other_pos_prev = _other.get_pos_prev();
+	glm::vec3 other_stride = other_pos - other_pos_prev;
+
+	glm::mat4x4 other_stride_matrix = m_previous_state.translation_matrix;
+	for(unsigned int i=0; i<3; ++i)
+		other_stride_matrix[3][i] = other_pos_prev[i] + other_stride[i];
+
+	this_init_pm.update(this_stride_matrix, m_previous_state.rotation_matrix, m_previous_state.scale_matrix);
+	other_init_pm.update(other_stride_matrix, _other.m_previous_state.rotation_matrix, _other.m_previous_state.scale_matrix);
+
+	result = this_init_pm.is_intersecting_with_another_model(other_init_pm);
+	if(!result)
+		return result;
+	result.time_of_intersection_ratio = time_mid_point;
+	return result;*/
+
+	float diff = _max_ratio - _min_ratio;
+	float step_diff = diff / (float)m_precision_level;
+
+	float curr_time_point = _min_ratio;
+	while(curr_time_point <= _max_ratio)
+	{
+		Physical_Model_2D::Imprint this_impr = *m_physical_model_prev_state;
+
+		glm::mat4x4 this_tmftr = get_translation_matrix_for_time_ratio(curr_time_point);
+		glm::mat4x4 other_tmftr = _other.get_translation_matrix_for_time_ratio(curr_time_point);
+
+		this_impr.update(get_translation_matrix_for_time_ratio(curr_time_point), get_rotation_matrix_for_time_ratio(curr_time_point), get_scale_matrix_for_time_ratio(curr_time_point));
+		Physical_Model_2D::Imprint other_impr = *_other.m_physical_model_prev_state;
+		other_impr.update(_other.get_translation_matrix_for_time_ratio(curr_time_point), _other.get_rotation_matrix_for_time_ratio(curr_time_point), _other.get_scale_matrix_for_time_ratio(curr_time_point));
+		Geometry::Intersection_Data id = this_impr.imprints_intersect(other_impr);
+		if(id) { id.time_of_intersection_ratio = Math::floats_are_equal(curr_time_point, _min_ratio) ? curr_time_point : curr_time_point - step_diff; return id; }
+
+		curr_time_point += step_diff;
+	}
+
+	//minimal ratio check
+//	if(_level == 0)
 //	{
-//		result = get_precise_time_ratio_of_collision(_level + 1, _other, _min_ratio, time_mid_point);
-//		if(result)
-//			return result;
-
-//		result = get_precise_time_ratio_of_collision(_level + 1, _other, time_mid_point, _max_ratio);
-//		return result;
+//		Physical_Model_2D::Imprint this_mrc = *m_physical_model_prev_state;
+//		this_mrc.update(get_translation_matrix_for_time_ratio(_min_ratio), get_rotation_matrix_for_time_ratio(_min_ratio), get_scale_matrix_for_time_ratio(_min_ratio));
+//		Physical_Model_2D::Imprint other_mrc = *_other.m_physical_model_prev_state;
+//		other_mrc.update(_other.get_translation_matrix_for_time_ratio(_min_ratio), _other.get_rotation_matrix_for_time_ratio(_min_ratio), _other.get_scale_matrix_for_time_ratio(_min_ratio));
+//		Geometry::Intersection_Data id = this_mrc.imprints_intersect(other_mrc);
+//		if(id) { id.time_of_intersection_ratio = _min_ratio; return id; }
 //	}
 
-//	//if this is the maximum precision level
-//	Physical_Model_2D this_init_pm = *get_physical_model_prev_state();
-//	Physical_Model_2D other_init_pm = *_other.get_physical_model_prev_state();
-
-//	glm::vec3 this_pos = get_pos();
-//	glm::vec3 this_pos_prev = get_pos_prev();
-//	glm::vec3 this_stride = this_pos - this_pos_prev;
-
-//	glm::mat4x4 this_stride_matrix = m_previous_state.translation_matrix;
-//	for(unsigned int i=0; i<3; ++i)
-//		this_stride_matrix[3][i] = this_pos_prev[i] + this_stride[i];
-
-//	glm::vec3 other_pos = _other.get_pos();
-//	glm::vec3 other_pos_prev = _other.get_pos_prev();
-//	glm::vec3 other_stride = other_pos - other_pos_prev;
-
-//	glm::mat4x4 other_stride_matrix = m_previous_state.translation_matrix;
-//	for(unsigned int i=0; i<3; ++i)
-//		other_stride_matrix[3][i] = other_pos_prev[i] + other_stride[i];
-
-//	this_init_pm.update(this_stride_matrix, m_previous_state.rotation_matrix, m_previous_state.scale_matrix);
-//	other_init_pm.update(other_stride_matrix, _other.m_previous_state.rotation_matrix, _other.m_previous_state.scale_matrix);
-
-//	result = this_init_pm.is_intersecting_with_another_model(other_init_pm);
-//	if(!result)
-//		return result;
-//	result.time_of_intersection_ratio = time_mid_point;
-//	return result;
 	return Geometry::Intersection_Data();
 }
 
@@ -593,29 +614,32 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 		}
 	}
 
+	float min_ratio = 1.1f, max_ratio = -0.1f;
 
 	//	case in which both objects are moving and their paths intersects
-	float min_ratio = 1.1f, max_ratio = -0.1f;
-	for(unsigned int i=0; i<4; ++i)
+	if(!this_frame_is_static && !other_frame_is_static /*&& really_colliding*/)
 	{
-		for(unsigned int j=0; j<4; ++j)
+		for(unsigned int i=0; i<4; ++i)
 		{
-			Geometry::Intersection_Data id =
-					Geometry_2D::segments_intersect(this_segments[i].first, this_segments[i].second,
-					other_segments[j].first, other_segments[j].second);
-			if(id)
+			for(unsigned int j=0; j<4; ++j)
 			{
-				if(!Math::floats_are_equal(this_segments_lengths[i], 0.0f))
+				Geometry::Intersection_Data id =
+						Geometry_2D::segments_intersect(this_segments[i].first, this_segments[i].second,
+														other_segments[j].first, other_segments[j].second);
+				if(id)
 				{
-					float this_ratio = Math::get_distance(this_segments[i].first, id.point) / this_segments_lengths[i];
-					if(min_ratio > this_ratio) min_ratio = this_ratio;
-					if(max_ratio < this_ratio) max_ratio = this_ratio;
-				}
-				if(!Math::floats_are_equal(other_segments_lengths[i], 0.0f))
-				{
-					float other_ratio = Math::get_distance(other_segments[j].first, id.point) / other_segments_lengths[j];
-					if(min_ratio > other_ratio) min_ratio = other_ratio;
-					if(max_ratio < other_ratio) max_ratio = other_ratio;
+					if(!Math::floats_are_equal(this_segments_lengths[i], 0.0f))
+					{
+						float this_ratio = Math::get_distance(this_segments[i].first, id.point) / this_segments_lengths[i];
+						if(min_ratio > this_ratio) min_ratio = this_ratio;
+						if(max_ratio < this_ratio) max_ratio = this_ratio;
+					}
+					if(!Math::floats_are_equal(other_segments_lengths[i], 0.0f))
+					{
+						float other_ratio = Math::get_distance(other_segments[j].first, id.point) / other_segments_lengths[j];
+						if(min_ratio > other_ratio) min_ratio = other_ratio;
+						if(max_ratio < other_ratio) max_ratio = other_ratio;
+					}
 				}
 			}
 		}
@@ -629,11 +653,16 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 			result.time_of_intersection_ratio = min_ratio;
 			return result;
 		}
+		else
+		{
+			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(_other, min_ratio, max_ratio);
+			if(result) std::cout << "detected collision! precise collision time ratio: " << result.time_of_intersection_ratio << '\n';
+			return result;
+		}
 
 	}
 //	std::cout << min_ratio << ' ' << max_ratio << "\n";
 
-	//this lambda is wrong
 	auto is_in_bounds_of_segment_by_x = [](const std::pair<glm::vec3, glm::vec3>& _segment, const glm::vec3& _point)->bool{
 		bool is_first_on_the_left = _segment.first.x < _segment.second.x;
 		return is_first_on_the_left ? _segment.first.x <= _point.x && _segment.second.x >= _point.x
@@ -647,56 +676,60 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 		float left_of_shared_space = this_on_the_left ? _other.m_dynamic_rb.left : m_dynamic_rb.left;
 		float right_of_shared_space = this_on_the_left ? m_dynamic_rb.right : _other.m_dynamic_rb.right;
 
-		float local_ratio_1 = -0.1f, local_ratio_2 = -0.1f;
+		float temp_ratio_1 = -0.1f, temp_ratio_2 = -0.1f;
 
 		if(this_on_the_left)
 		{
-			local_ratio_1 = (left_of_shared_space - m_dynamic_rb.left) / (m_dynamic_rb.right - m_dynamic_rb.left);
-			local_ratio_2 = (_other.m_dynamic_rb.right - right_of_shared_space) / (_other.m_dynamic_rb.right - _other.m_dynamic_rb.left);
+			temp_ratio_1 = (left_of_shared_space - m_dynamic_rb.left) / (m_dynamic_rb.right - m_dynamic_rb.left);
+			temp_ratio_2 = (_other.m_dynamic_rb.right - right_of_shared_space) / (_other.m_dynamic_rb.right - _other.m_dynamic_rb.left);
 		}
 		else
 		{
-			local_ratio_1 = (left_of_shared_space - _other.m_dynamic_rb.left) / (_other.m_dynamic_rb.right - _other.m_dynamic_rb.left);
-			local_ratio_2 = (m_dynamic_rb.right - right_of_shared_space) / (m_dynamic_rb.right - m_dynamic_rb.left);
+			temp_ratio_1 = (left_of_shared_space - _other.m_dynamic_rb.left) / (_other.m_dynamic_rb.right - _other.m_dynamic_rb.left);
+			temp_ratio_2 = (m_dynamic_rb.right - right_of_shared_space) / (m_dynamic_rb.right - m_dynamic_rb.left);
 		}
 
-		if(local_ratio_1 > local_ratio_2)
-		{
-			float temp = local_ratio_1;
-			local_ratio_1 = local_ratio_2;
-			local_ratio_2 = temp;
-		}
+//		if(temp_ratio_1 > temp_ratio_2)
+//		{
+//			float temp = temp_ratio_1;
+//			temp_ratio_1 = temp_ratio_2;
+//			temp_ratio_2 = temp;
+//		}
 
-		if(local_ratio_1 >= 0.0f && local_ratio_1 <= 1.0f && local_ratio_1 < min_ratio
-				&& local_ratio_2 >= 0.0f && local_ratio_2 <= 1.0f && local_ratio_2 > max_ratio)
+//		if(local_ratio_1 >= 0.0f && local_ratio_1 <= 1.0f && local_ratio_1 < min_ratio
+//				&& local_ratio_2 >= 0.0f && local_ratio_2 <= 1.0f && local_ratio_2 > max_ratio)
+//		{
+//			min_ratio = local_ratio_1;
+//			max_ratio = local_ratio_2;
+//		}
+		if(temp_ratio_1 >= 0.0f && temp_ratio_1 <= 1.0f)
 		{
-			min_ratio = local_ratio_1;
-			max_ratio = local_ratio_2;
+			if(min_ratio > temp_ratio_1)
+				min_ratio = temp_ratio_1;
+			if(max_ratio < temp_ratio_1)
+				max_ratio = temp_ratio_1;
+		}
+		if(temp_ratio_2 >= 0.0f && temp_ratio_2 <= 1.0f)
+		{
+			if(min_ratio > temp_ratio_2)
+				min_ratio = temp_ratio_2;
+			if(max_ratio < temp_ratio_2)
+				max_ratio = temp_ratio_2;
 		}
 	}
 	if(max_ratio > 0.0f && max_ratio <= 1.0f && min_ratio < 1.0f && min_ratio >= 0.0f)
 	{
 		if(Math::floats_are_equal(min_ratio, max_ratio))
 		{
-			std::cout << min_ratio << ' ' << max_ratio << "\n";
-
-			Physical_Model_2D::Imprint this_state_at_ratio = *m_physical_model_prev_state;
-			this_state_at_ratio.update(get_translation_matrix_for_time_ratio(min_ratio), get_rotation_matrix_for_time_ratio(min_ratio), get_scale_matrix_for_time_ratio(min_ratio));
-			Physical_Model_2D::Imprint other_state_at_ratio = *_other.m_physical_model_prev_state;
-			other_state_at_ratio.update(_other.get_translation_matrix_for_time_ratio(min_ratio), _other.get_rotation_matrix_for_time_ratio(min_ratio), _other.get_scale_matrix_for_time_ratio(min_ratio));
-
-//			Geometry::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
-			Geometry::Intersection_Data result = this_state_at_ratio.imprints_intersect(other_state_at_ratio);
+			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(_other, min_ratio, 1.0f);
 			result.time_of_intersection_ratio = min_ratio;
+			if(!result)
+				std::cout << "shit\n";
 			return result;
 		}
 		else
 		{
-//			Geometry::Intersection_Data collided_before_movement = get_physical_model_prev_state()->is_intersecting_with_another_model(*_other.get_physical_model_prev_state());
-//			if(collided_before_movement)
-//				return collided_before_movement;
-//			Geometry::Intersection_Data collided_on_min_ratio =
-			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(0, (const Object_2D&)_other, min_ratio, max_ratio);
+			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(_other, min_ratio, max_ratio);
 			if(result) std::cout << "detected collision! precise collision time ratio: " << result.time_of_intersection_ratio << '\n';
 			return result;
 		}
@@ -709,7 +742,7 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 
 	//case in which one of the objects is static and other is dynamic
 	bool only_one_frame_is_static = (this_frame_is_static && !other_frame_is_static) || (!this_frame_is_static && other_frame_is_static);
-	if(only_one_frame_is_static && really_colliding)
+	if(only_one_frame_is_static /*&& really_colliding*/)
 	{
 		const Object_2D& static_object = this_frame_is_static ? *this : _other;
 		const Object_2D& dynamic_object = other_frame_is_static ? *this : _other;
@@ -767,26 +800,26 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 	{
 		if(Math::floats_are_equal(min_ratio, max_ratio))
 		{
-			Physical_Model_2D::Imprint this_state_at_ratio = *m_physical_model_prev_state;
-			this_state_at_ratio.update(get_translation_matrix_for_time_ratio(min_ratio), get_rotation_matrix_for_time_ratio(min_ratio), get_scale_matrix_for_time_ratio(min_ratio));
-			Physical_Model_2D::Imprint other_state_at_ratio = *_other.m_physical_model_prev_state;
-			other_state_at_ratio.update(_other.get_translation_matrix_for_time_ratio(min_ratio), _other.get_rotation_matrix_for_time_ratio(min_ratio), _other.get_scale_matrix_for_time_ratio(min_ratio));
+			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(_other, min_ratio, 1.0f);
 
-//			Geometry::Intersection_Data result = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
-			Geometry::Intersection_Data result = this_state_at_ratio.imprints_intersect(other_state_at_ratio);
 			result.time_of_intersection_ratio = min_ratio;
+			if(!result)
+				std::cout << "shit\n";
 			return result;
 		}
 		else
 		{
-//			Geometry::Intersection_Data collided_before_movement = get_physical_model_prev_state()->is_intersecting_with_another_model(*_other.get_physical_model_prev_state());
-//			if(collided_before_movement)
-//				return collided_before_movement;
-//			Geometry::Intersection_Data collided_on_min_ratio =
-			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(0, (const Object_2D&)_other, min_ratio, max_ratio);
+			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(_other, min_ratio, max_ratio);
 			if(result) std::cout << "detected collision! precise collision time ratio: " << result.time_of_intersection_ratio << '\n';
+			if(!result)
+			{
+				std::cout << "shit\n";
+				Geometry::Intersection_Data shit = get_precise_time_ratio_of_collision(_other, min_ratio, max_ratio);
+			}
 			return result;
 		}
+
+
 	}
 
 	if(really_colliding && this_segments_lengths[0] > 0.0f && other_segments_lengths[0] > 0.0f)
@@ -798,8 +831,6 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 		std::cout << "(1 is moving) collision should be here, but it's not detected!\n";
 	}
 
-//	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
-//	return m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
 	return really_colliding;
 }
 
