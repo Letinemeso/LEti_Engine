@@ -12,7 +12,7 @@
 
 namespace LEti
 {
-	class Space_Splitter_2D final
+	class Space_Splitter_2D final		//	TODO: try spatial hashing instead of a quad-tree
 	{
 	private:
 		Space_Splitter_2D() = delete;
