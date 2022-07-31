@@ -5,6 +5,30 @@ using namespace LEti;
 
 
 
+Physical_Model_2D::Rectangular_Border Physical_Model_2D::Rectangular_Border::operator&&(const Rectangular_Border& _other) const
+{
+	Rectangular_Border shared_space;
+
+	bool first_on_left = left < _other.left;
+	const Physical_Model_2D::Rectangular_Border& on_left = first_on_left ? *this : _other;
+	const Physical_Model_2D::Rectangular_Border& on_right = first_on_left ? _other : *this;
+	bool first_on_bottom = bottom < _other.bottom;
+	const Physical_Model_2D::Rectangular_Border& on_bottom = first_on_bottom ? *this : _other;
+	const Physical_Model_2D::Rectangular_Border& on_top = first_on_bottom ? _other : *this;
+
+	if(on_top.bottom > on_bottom.top || on_left.right < on_right.left)
+		return Rectangular_Border();
+
+	shared_space.left = on_right.left;
+	shared_space.right = on_left.right;
+	shared_space.top = on_bottom.top;
+	shared_space.bottom = on_top.bottom;
+
+	return shared_space;
+}
+
+
+
 
 Physical_Model_2D::Imprint::Imprint(const Geometry_2D::Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent)
 	: m_parent(_parent)
