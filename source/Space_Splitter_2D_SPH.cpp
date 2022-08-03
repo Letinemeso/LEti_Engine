@@ -14,6 +14,15 @@ std::list<Space_Splitter_2D_SPH::Collision_Data> Space_Splitter_2D_SPH::m_collis
 Space_Splitter_2D_SPH::Space_Border Space_Splitter_2D_SPH::m_space_borders;
 
 
+Space_Splitter_2D_SPH::Collision_Data::Collision_Data(const Object_2D* _first, const Object_2D* _second)
+{
+	ASSERT(_first == _second);
+	first = _first > _second ? _first : _second;
+	second = _first < _second ? _first : _second;
+}
+
+
+
 void Space_Splitter_2D_SPH::Collision_Data::update_collision_data()
 {
 	collision_data = first->is_colliding_with_other(*second);

@@ -1,5 +1,5 @@
-#ifndef __UTILITY
-#define __UTILITY
+#ifndef __MATH_STUFF
+#define __MATH_STUFF
 
 #include "../Debug.h"
 

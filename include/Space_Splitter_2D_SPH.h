@@ -18,7 +18,7 @@ namespace LEti
 		{
 			const Object_2D* first = nullptr, * second = nullptr;
 			Geometry::Intersection_Data collision_data;
-			Collision_Data(const Object_2D* _first, const Object_2D* _second) : first(_first), second(_second) {};
+			Collision_Data(const Object_2D* _first, const Object_2D* _second)/* : first(_first), second(_second) {}*/;
 			void update_collision_data();
 			bool operator==(const Collision_Data& _other) const { return (first == _other.first && second == _other.second) || (first == _other.second && second == _other.first); }
 			bool operator<(const Collision_Data& _other) const { return first < _other.first ? true : second < _other.second ? true : false; }
