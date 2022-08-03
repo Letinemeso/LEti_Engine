@@ -1,62 +1,64 @@
 #include "../include/Space_Splitter_2D.h"
 
+
 using namespace LEti;
 
 
 std::list<const Object_2D*> Space_Splitter_2D::m_registred_models;
-
-unsigned int Space_Splitter_2D::m_max_tree_depth = 4;
-LEti::Tree<Space_Splitter_2D::Area, 4> Space_Splitter_2D::m_quad_tree;
-
-std::list<Space_Splitter_2D::Collision_Data> Space_Splitter_2D::m_collisions;
+unsigned int Space_Splitter_2D::m_precision = 0;
+unsigned int Space_Splitter_2D::m_array_size = 0;
+std::list<const Object_2D*>** Space_Splitter_2D::m_array = nullptr;
+unsigned int Space_Splitter_2D::m_number_binary_length = 0;
 std::map<Space_Splitter_2D::Collision_Data, bool> Space_Splitter_2D::m_possible_collisions;
+std::list<Space_Splitter_2D::Collision_Data> Space_Splitter_2D::m_collisions;
+Space_Splitter_2D::Space_Border Space_Splitter_2D::m_space_borders;
 
-Timer Space_Splitter_2D::m_timer;
 
-
-
-bool Space_Splitter_2D::Area::rectangle_is_inside(const Physical_Model_2D::Rectangular_Border& _rectangle) const
+Space_Splitter_2D::Collision_Data::Collision_Data(const Object_2D* _first, const Object_2D* _second)
 {
-	bool result = true;
-
-	if(!right.inf) result = result && _rectangle.left <= right.value;
-	if(!left.inf) result = result && _rectangle.right >= left.value;
-	if(!top.inf) result = result && _rectangle.bottom <= top.value;
-	if(!bottom.inf) result = result && _rectangle.top >= bottom.value;
-
-	return result;
-}
-
-
-
-void Space_Splitter_2D::Area::split(LEti::Tree<Area, 4>::Iterator _it)
-{
-	glm::vec3 split_point;
-	split_point.x = (_it->right.value + _it->left.value) / 2.0f;
-	split_point.y = (_it->top.value + _it->bottom.value) / 2.0f;
-
-	_it.insert_into_availible_index({_it->left, split_point.x, _it->top, split_point.y});
-	_it.insert_into_availible_index({split_point.x, _it->right, _it->top, split_point.y});
-	_it.insert_into_availible_index({split_point.x, _it->right, split_point.y, _it->bottom});
-	_it.insert_into_availible_index({_it->left, split_point.x, split_point.y, _it->bottom});
+	ASSERT(_first == _second);
+	first = _first > _second ? _first : _second;
+	second = _first < _second ? _first : _second;
 }
 
 
 
 void Space_Splitter_2D::Collision_Data::update_collision_data()
 {
-	//	if(!_first->is_dynamic() && !_second->is_dynamic())
-	{
-		collision_data = first->is_colliding_with_other(*second);
-		return;
-	}
+	collision_data = first->is_colliding_with_other(*second);
 }
 
 
 
-void Space_Splitter_2D::set_max_tree_depth(unsigned int _max_depth)
+unsigned int Space_Splitter_2D::get_number_binary_length(unsigned int _number)
 {
-	m_max_tree_depth = _max_depth;
+	unsigned int result = 0;
+	for(unsigned int i=0; i<sizeof(_number) * 8; ++i)
+		if(_number & (1u << i))
+			result = i + 1;
+	return result;
+}
+
+
+
+void Space_Splitter_2D::set_precision(unsigned int _precision)
+{
+	ASSERT(_precision == 0);
+
+	if(m_array)
+	{
+		for(unsigned int i=0; i<m_array_size; ++i)
+			delete m_array[i];
+		delete[] m_array;
+		m_array = nullptr;
+	}
+
+	m_number_binary_length = get_number_binary_length(_precision);
+	m_precision = _precision;
+	m_array_size = ((m_precision + 1) << m_number_binary_length) | m_precision + 1;
+	m_array = new objects_list*[m_array_size];
+	for(unsigned int i=0; i<m_array_size; ++i)
+		m_array[i] = nullptr;
 }
 
 
@@ -86,134 +88,21 @@ void Space_Splitter_2D::unregister_object(const Object_2D *_model)
 
 
 
-void Space_Splitter_2D::split_space_recursive(LEti::Tree<Area, 4>::Iterator _it, unsigned int _level)
+void Space_Splitter_2D::update_border()
 {
-	const auto& objects = _it->objects;
-	if (objects.size() < 3 || _level > m_max_tree_depth) return;
-
-	_it->split(_it);
-
-	for(unsigned int i=0; i<4; ++i)
-	{
-		LEti::Tree<Area, 4>::Iterator next = _it;
-		next.descend(i);
-
-		std::list<const Object_2D*>::const_iterator point_it = objects.begin();
-		while(point_it != objects.end())
-		{
-			const Physical_Model_2D::Rectangular_Border& rb = (*point_it)->is_dynamic() ?
-						(*point_it)->get_dynamic_rb() :
-						(*point_it)->get_physical_model()->curr_rect_border();
-			if(next->rectangle_is_inside(rb))
-				next->objects.push_back(*point_it);
-
-			++point_it;
-		}
-
-		split_space_recursive(next, _level+1);
-	}
-}
-
-void Space_Splitter_2D::check_for_possible_collisions(LEti::Tree<Area, 4>::Iterator _it)
-{
-	LEti::Tree<Area, 4>::Iterator it = _it;
-
-	while(!it.end())
-	{
-		if(it->objects.size() == 2)
-		{
-			std::list<const Object_2D*>::iterator colliding_model = it->objects.begin();
-			std::list<const Object_2D*>::iterator next = colliding_model;
-			++next;
-			save_possible_collision(*colliding_model, *next);
-		}
-		else if(it.is_leaf() && it->objects.size() > 2)
-		{
-			std::list<const Object_2D*>::const_iterator colliding_model = it->objects.begin();
-			while(colliding_model != it->objects.end())
-			{
-				std::list<const Object_2D*>::const_iterator next = colliding_model;
-				++next;
-				while(next != it->objects.end())
-				{
-					save_possible_collision(*colliding_model, *next);
-					++next;
-				}
-				++colliding_model;
-			}
-		}
-		++it;
-	}
-	if(it->objects.size() == 2)
-	{
-		std::list<const Object_2D*>::iterator colliding_model = it->objects.begin();
-		std::list<const Object_2D*>::iterator next = colliding_model;
-		++next;
-		save_possible_collision(*colliding_model, *next);
-	}
-	else if(it.is_leaf() && it->objects.size() > 2)
-	{
-		std::list<const Object_2D*>::const_iterator colliding_model = it->objects.begin();
-		while(colliding_model != it->objects.end())
-		{
-			std::list<const Object_2D*>::const_iterator next = colliding_model;
-			++next;
-			while(next != it->objects.end())
-			{
-				save_possible_collision(*colliding_model, *next);
-				++next;
-			}
-			++colliding_model;
-		}
-	}
-}
-
-bool Space_Splitter_2D::possible_collision_is_already_saved(const Collision_Data &_cd)
-{
-	std::map<Collision_Data, bool>::iterator it = m_possible_collisions.find(_cd);
-	return it != m_possible_collisions.end();
-}
-
-void Space_Splitter_2D::save_possible_collision(const Object_2D *_first, const Object_2D *_second)
-{
-	Collision_Data cd(_first, _second);
-	if(!possible_collision_is_already_saved(cd))
-		m_possible_collisions.emplace(cd, false);
-}
-
-void Space_Splitter_2D::save_actual_collisions()
-{
-	std::map<Collision_Data, bool>::const_iterator it = m_possible_collisions.begin();
-	while(it != m_possible_collisions.end())
-	{
-		Collision_Data collision_data = it->first;
-		collision_data.update_collision_data();
-		if(collision_data.collision_data)
-			m_collisions.push_back(collision_data);
-		++it;
-	}
-
-}
-
-
-void Space_Splitter_2D::update()
-{
-//	m_timer.update();
-//	if(m_timer.is_active()) return;
-//	m_timer.start(0.05f);
-
-	m_possible_collisions.clear();
-	m_collisions.clear();
-
-	LEti::Tree<Area, 4>::Iterator it = m_quad_tree.create_iterator();
-	if(it.valid()) it.delete_branch();
-	it = m_quad_tree.create_iterator();
-
-	it.insert_into_availible_index({{}, {}, {}, {}});
-
 	if(m_registred_models.size() == 0) return;
 
 	std::list<const Object_2D*>::iterator model_it = m_registred_models.begin();
+
+	const Physical_Model_2D::Rectangular_Border& first_rb = (*model_it)->is_dynamic() ?
+				(*model_it)->get_dynamic_rb() :
+				(*model_it)->get_physical_model()->curr_rect_border();
+	float max_left = first_rb.left;
+	float max_right = first_rb.right;
+	float max_top = first_rb.top;
+	float max_bottom = first_rb.bottom;
+	++model_it;
+
 	while(model_it != m_registred_models.end())
 	{
 		if((*model_it)->get_collision_possibility() == false)
@@ -226,20 +115,137 @@ void Space_Splitter_2D::update()
 					(*model_it)->get_dynamic_rb() :
 					(*model_it)->get_physical_model()->curr_rect_border();
 
-		if(rb.left < it->left.value || it->left.inf) it->left = rb.left;
-		if(rb.right > it->right.value || it->right.inf) it->right = rb.right;
-		if(rb.top > it->top.value || it->top.inf) it->top = rb.top;
-		if(rb.bottom < it->bottom.value || it->bottom.inf) it->bottom = rb.bottom;
-
-		it->objects.push_back(*model_it);
+		if(rb.left < max_left) max_left = rb.left;
+		if(rb.right > max_right) max_right = rb.right;
+		if(rb.top > max_top) max_top = rb.top;
+		if(rb.bottom < max_bottom) max_bottom = rb.bottom;
 
 		++model_it;
 	}
 
-	split_space_recursive(it, 0);
+	m_space_borders.min_x = max_left;
+	m_space_borders.min_y = max_bottom;
+	m_space_borders.width = max_right - max_left;
+	m_space_borders.height= max_top - max_bottom;
+}
 
-	check_for_possible_collisions(it);
+void Space_Splitter_2D::reset_hash_array()
+{
+	ASSERT(m_array == nullptr);
 
+	for(unsigned int i=0; i<m_array_size; ++i)
+	{
+		if(m_array[i] != nullptr)
+		{
+			delete m_array[i];
+			m_array[i] = nullptr;
+		}
+	}
+}
+
+void Space_Splitter_2D::hash_objects()
+{
+	reset_hash_array();
+
+	objects_list::const_iterator model_it = m_registred_models.cbegin();
+	while(model_it != m_registred_models.end())
+	{
+		const Physical_Model_2D::Rectangular_Border& curr_rb = (*model_it)->is_dynamic() ?
+					(*model_it)->get_dynamic_rb() : (*model_it)->get_physical_model()->curr_rect_border();
+
+//		unsigned int min_index_x = (unsigned int)(m_space_borders.width / (curr_rb.left - m_space_borders.min_x));
+//		unsigned int max_index_x = (unsigned int)(m_space_borders.width / (curr_rb.right - m_space_borders.min_x));
+//		unsigned int min_index_y = (unsigned int)(m_space_borders.height / (curr_rb.bottom - m_space_borders.min_y));
+//		unsigned int max_index_y = (unsigned int)(m_space_borders.height / (curr_rb.top - m_space_borders.min_y));
+		unsigned int min_index_x = (unsigned int)((curr_rb.left - m_space_borders.min_x) / m_space_borders.width * 10);
+		unsigned int max_index_x = (unsigned int)((curr_rb.right - m_space_borders.min_x) / m_space_borders.width * 10);
+		unsigned int min_index_y = (unsigned int)((curr_rb.bottom - m_space_borders.min_y) / m_space_borders.height * 10);
+		unsigned int max_index_y = (unsigned int)((curr_rb.top - m_space_borders.min_y) / m_space_borders.height * 10);
+
+		for(unsigned int x = min_index_x; x <= max_index_x; ++x)
+		{
+			for(unsigned int y = min_index_y; y <= max_index_y; ++y)
+			{
+				unsigned int hash = (x << m_number_binary_length) | (y);
+
+				if(m_array[hash])
+				{
+					bool copy = false;
+					for(const Object_2D*& a : *(m_array[hash]))
+					{
+						if(a == *model_it)
+							copy = true;
+					}
+					if(!copy)
+						m_array[hash]->push_back(*model_it);
+				}
+				else
+				{
+					m_array[hash] = new objects_list;
+					m_array[hash]->push_back(*model_it);
+				}
+			}
+		}
+
+		++model_it;
+	}
+}
+
+
+
+void Space_Splitter_2D::check_for_possible_collisions()
+{
+	m_possible_collisions.clear();
+
+	for(unsigned int i=0; i<m_array_size; ++i)
+	{
+		if(m_array[i] == nullptr) continue;
+		const objects_list& curr_list = *(m_array[i]);
+		if(curr_list.size() < 2) continue;
+
+		objects_list::const_iterator first = curr_list.begin();
+		while(first != curr_list.end())
+		{
+			objects_list::const_iterator second = first;
+			++second;
+
+			while(second != curr_list.end())
+			{
+				Collision_Data cd(*first, *second);
+				if(m_possible_collisions.find(cd) == m_possible_collisions.end())
+					m_possible_collisions.emplace(cd, false);
+
+				++second;
+			}
+
+			++first;
+		}
+	}
+}
+
+void Space_Splitter_2D::save_actual_collisions()
+{
+	m_collisions.clear();
+
+	std::map<Collision_Data, bool>::iterator poss_col_it = m_possible_collisions.begin();
+
+	while(poss_col_it != m_possible_collisions.end())
+	{
+		Collision_Data cd = poss_col_it->first;
+		cd.update_collision_data();
+		if(cd.collision_data)
+			m_collisions.push_back(cd);
+		++poss_col_it;
+	}
+}
+
+
+
+void Space_Splitter_2D::update()
+{
+	update_border();
+	hash_objects();
+	check_for_possible_collisions();
 	save_actual_collisions();
 }
 
@@ -249,3 +255,41 @@ const std::list<Space_Splitter_2D::Collision_Data>& Space_Splitter_2D::get_colli
 {
 	return m_collisions;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
