@@ -198,7 +198,6 @@ const Physical_Model_2D::Rectangular_Border& Physical_Model_2D::curr_rect_border
 
 
 
-#include <iostream>
 Physical_Model_2D::Physical_Model_2D()
 {
 
