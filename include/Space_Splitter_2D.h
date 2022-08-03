@@ -18,7 +18,7 @@ namespace LEti
 		{
 			const Object_2D* first = nullptr, * second = nullptr;
 			Geometry::Intersection_Data collision_data;
-			Collision_Data(const Object_2D* _first, const Object_2D* _second)/* : first(_first), second(_second) {}*/;
+			Collision_Data(const Object_2D* _first, const Object_2D* _second);
 			void update_collision_data();
 			bool operator==(const Collision_Data& _other) const { return (first == _other.first && second == _other.second) || (first == _other.second && second == _other.first); }
 			bool operator<(const Collision_Data& _other) const { return first < _other.first ? true : second < _other.second ? true : false; }
@@ -50,6 +50,7 @@ namespace LEti
 		static void unregister_object(const Object_2D* _model);
 
 	private:
+		static unsigned int construct_hash(unsigned int _x, unsigned int _y);
 		static void update_border();
 		static void reset_hash_array();
 		static void hash_objects();
@@ -61,6 +62,8 @@ namespace LEti
 
 	public:
 		static const std::list<Collision_Data>& get_collisions();
+
+		static std::list<const Object_2D*> get_objects_encircling_point(const glm::vec3& _point);
 
 	};
 

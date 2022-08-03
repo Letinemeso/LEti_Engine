@@ -88,6 +88,11 @@ void Space_Splitter_2D::unregister_object(const Object_2D *_model)
 
 
 
+unsigned int Space_Splitter_2D::construct_hash(unsigned int _x, unsigned int _y)
+{
+	return (_x << m_number_binary_length) | (_y);
+}
+
 void Space_Splitter_2D::update_border()
 {
 	if(m_registred_models.size() == 0) return;
@@ -153,20 +158,16 @@ void Space_Splitter_2D::hash_objects()
 		const Physical_Model_2D::Rectangular_Border& curr_rb = (*model_it)->is_dynamic() ?
 					(*model_it)->get_dynamic_rb() : (*model_it)->get_physical_model()->curr_rect_border();
 
-//		unsigned int min_index_x = (unsigned int)(m_space_borders.width / (curr_rb.left - m_space_borders.min_x));
-//		unsigned int max_index_x = (unsigned int)(m_space_borders.width / (curr_rb.right - m_space_borders.min_x));
-//		unsigned int min_index_y = (unsigned int)(m_space_borders.height / (curr_rb.bottom - m_space_borders.min_y));
-//		unsigned int max_index_y = (unsigned int)(m_space_borders.height / (curr_rb.top - m_space_borders.min_y));
-		unsigned int min_index_x = (unsigned int)((curr_rb.left - m_space_borders.min_x) / m_space_borders.width * 10);
-		unsigned int max_index_x = (unsigned int)((curr_rb.right - m_space_borders.min_x) / m_space_borders.width * 10);
-		unsigned int min_index_y = (unsigned int)((curr_rb.bottom - m_space_borders.min_y) / m_space_borders.height * 10);
-		unsigned int max_index_y = (unsigned int)((curr_rb.top - m_space_borders.min_y) / m_space_borders.height * 10);
+		unsigned int min_index_x = (unsigned int)((curr_rb.left - m_space_borders.min_x) / m_space_borders.width * m_precision);
+		unsigned int max_index_x = (unsigned int)((curr_rb.right - m_space_borders.min_x) / m_space_borders.width * m_precision);
+		unsigned int min_index_y = (unsigned int)((curr_rb.bottom - m_space_borders.min_y) / m_space_borders.height * m_precision);
+		unsigned int max_index_y = (unsigned int)((curr_rb.top - m_space_borders.min_y) / m_space_borders.height * m_precision);
 
 		for(unsigned int x = min_index_x; x <= max_index_x; ++x)
 		{
 			for(unsigned int y = min_index_y; y <= max_index_y; ++y)
 			{
-				unsigned int hash = (x << m_number_binary_length) | (y);
+				unsigned int hash = construct_hash(x, y);
 
 				if(m_array[hash])
 				{
@@ -254,6 +255,40 @@ void Space_Splitter_2D::update()
 const std::list<Space_Splitter_2D::Collision_Data>& Space_Splitter_2D::get_collisions()
 {
 	return m_collisions;
+}
+
+
+std::list<const Object_2D*> Space_Splitter_2D::get_objects_encircling_point(const glm::vec3 &_point)
+{
+	std::list<const Object_2D*> result;
+
+	glm::vec3 point_with_offset = _point;
+	point_with_offset.x -= m_space_borders.min_x;
+	point_with_offset.y -= m_space_borders.min_y;
+
+	if(point_with_offset.x < 0.0f || point_with_offset.y < 0.0f || point_with_offset.x > m_space_borders.width || point_with_offset.y > m_space_borders.height)
+		return result;
+
+	unsigned int x = (unsigned int)(point_with_offset.x / m_space_borders.width * m_precision);
+	unsigned int y = (unsigned int)(point_with_offset.y / m_space_borders.height * m_precision);
+	unsigned int hash = construct_hash(x, y);
+
+	if(m_array[hash] == nullptr)
+		return result;
+
+	const objects_list& list = *(m_array[hash]);
+	objects_list::const_iterator it = list.cbegin();
+	while(it != list.end())
+	{
+		if((*it)->get_collision_possibility())
+		{
+			if((*it)->get_physical_model()->is_intersecting_with_point(_point))
+				result.push_back(*it);
+		}
+		++it;
+	}
+
+	return result;
 }
 
 
