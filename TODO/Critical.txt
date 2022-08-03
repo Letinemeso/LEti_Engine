@@ -1,0 +1,4 @@
+Space_Splitter_2D: заменить на Space_Splitter_2D_SPH
+
+Space_Splitter_2D_SPH: добавить возможность добавить "точку" и проверять пересечения объектов с ней 
+

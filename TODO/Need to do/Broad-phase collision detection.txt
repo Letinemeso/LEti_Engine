@@ -1,1 +1,0 @@
-1. реализовать spatial hashing вместо quad-tree
