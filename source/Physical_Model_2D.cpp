@@ -16,15 +16,28 @@ Physical_Model_2D::Rectangular_Border Physical_Model_2D::Rectangular_Border::ope
 	const Physical_Model_2D::Rectangular_Border& on_bottom = first_on_bottom ? *this : _other;
 	const Physical_Model_2D::Rectangular_Border& on_top = first_on_bottom ? _other : *this;
 
-	if(on_top.bottom > on_bottom.top || on_left.right < on_right.left)
-		return Rectangular_Border();
+//	if(on_top.bottom > on_bottom.top || on_left.right < on_right.left)
+//		return Rectangular_Border();
+//	if(right < _other.left || _other.right < left || top < _other.bottom || bottom > _other.top)
+//		return Rectangular_Border();
 
 	shared_space.left = on_right.left;
 	shared_space.right = on_left.right;
 	shared_space.top = on_bottom.top;
 	shared_space.bottom = on_top.bottom;
 
+	if(shared_space.left > shared_space.right || shared_space.top < shared_space.bottom)
+		return Rectangular_Border();
+
 	return shared_space;
+}
+
+bool Physical_Model_2D::Rectangular_Border::operator==(const Rectangular_Border &_other) const
+{
+	return	Math::floats_are_equal(left, _other.left) &&
+			Math::floats_are_equal(right, _other.right) &&
+			Math::floats_are_equal(top, _other.top) &&
+			Math::floats_are_equal(bottom, _other.bottom);
 }
 
 

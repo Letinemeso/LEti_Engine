@@ -428,12 +428,11 @@ void Object_2D::draw() const
 
 void Object_2D::update()
 {
-	Drawable_Object::update();
 	if(m_can_cause_collision)
 	{
 		if(is_dynamic())
 		{
-			get_physical_model_prev_state()->update_to_current_model_state();
+//			get_physical_model_prev_state()->update_to_current_model_state();
 			m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
 
 			const Physical_Model_2D::Rectangular_Border& prev_rb = get_physical_model_prev_state()->curr_rect_border(),
@@ -449,6 +448,13 @@ void Object_2D::update()
 			m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
 		}
 	}
+	Drawable_Object::update();
+}
+
+void Object_2D::update_previous_state()
+{
+	Drawable_Object::update_previous_state();
+	get_physical_model_prev_state()->update_to_current_model_state();
 }
 
 
@@ -530,6 +536,16 @@ Geometry::Intersection_Data Object_2D::get_precise_time_ratio_of_collision(const
 		curr_time_point += step_diff;
 	}
 
+	if(Math::floats_are_equal(_max_ratio, 1.0f))
+	{
+		Geometry::Intersection_Data id = _first.get_physical_model()->is_intersecting_with_another_model(*_second.get_physical_model());
+		if(id)
+		{
+			id.time_of_intersection_ratio = _max_ratio - step_diff;
+			return id;
+		}
+	}
+
 	return Geometry::Intersection_Data();
 }
 
@@ -604,18 +620,15 @@ Geometry::Intersection_Data Object_2D::collision__moving_vs_moving(const Object_
 		rewrite_min_max_ratio(tr_y_4);
 	}
 
+	if(1.0f - max_intersection_ratio < 0.05f)		//trying to compensate floats' calculations' faults
+		max_intersection_ratio = 1.0f;
+
 	if(min_intersection_ratio <= 1.0f && min_intersection_ratio >= 0.0f && max_intersection_ratio <= 1.0f && max_intersection_ratio >= 0.0f)
 	{
 		if(Math::floats_are_equal(min_intersection_ratio, max_intersection_ratio))
-		{
-			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, 1.0f, 10);
-			return result;
-		}
+			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, 1.0f, 10);
 		else
-		{
-			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, max_intersection_ratio, 10);
-			return result;
-		}
+			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, max_intersection_ratio, 10);
 	}
 
 	return Geometry::Intersection_Data();
@@ -695,15 +708,9 @@ Geometry::Intersection_Data Object_2D::collision__moving_vs_static(const Object_
 	if(min_intersection_ratio <= 1.0f && min_intersection_ratio >= 0.0f && max_intersection_ratio <= 1.0f && max_intersection_ratio >= 0.0f)
 	{
 		if(Math::floats_are_equal(min_intersection_ratio, max_intersection_ratio))
-		{
-			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(_moving, _static, min_intersection_ratio, 1.0f, 10);
-			return result;
-		}
+			return get_precise_time_ratio_of_collision(_moving, _static, min_intersection_ratio, 1.0f, 10);
 		else
-		{
-			Geometry::Intersection_Data result = get_precise_time_ratio_of_collision(_moving, _static, min_intersection_ratio, max_intersection_ratio, 10);
-			return result;
-		}
+			return get_precise_time_ratio_of_collision(_moving, _static, min_intersection_ratio, max_intersection_ratio, 10);
 	}
 
 	return Geometry::Intersection_Data();
@@ -719,11 +726,6 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 	if(!_other.m_can_cause_collision || !m_can_cause_collision)
 		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
 
-	//	TODO: remove this - only for testing purpose
-	auto really_colliding = m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
-	if(!really_colliding) return Geometry::Intersection_Data();
-	//
-
 	if(!_other.is_dynamic() && !is_dynamic())
 	{
 		return m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
@@ -732,39 +734,51 @@ Geometry::Intersection_Data Object_2D::is_colliding_with_other(const Object_2D& 
 	{
 		const Object_2D& dynamic_object = is_dynamic() ? *this : _other;
 		const Object_2D& static_object = is_dynamic() ? _other : *this;
-//		Physical_Model_2D::Rectangular_Border check = dynamic_object.m_dynamic_rb && static_object.get_physical_model()->curr_rect_border();
-//		if(check == Physical_Model_2D::Rectangular_Border())
-//			return Geometry::Intersection_Data();
+		Physical_Model_2D::Rectangular_Border check = dynamic_object.m_dynamic_rb && static_object.get_physical_model()->curr_rect_border();
+		if(check == Physical_Model_2D::Rectangular_Border())
+			return Geometry::Intersection_Data();
 		if(dynamic_object.moved_since_last_frame())
 		{
 			Geometry::Intersection_Data cd = collision__moving_vs_static(dynamic_object, static_object);
-			if(cd) return cd;
+			if(cd)
+				return cd;
 		}
 		return m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
 	}
-	else if(is_dynamic() && _other.is_dynamic())
+	else /*if(is_dynamic() && _other.is_dynamic())*/
 	{
-//		Physical_Model_2D::Rectangular_Border check = m_dynamic_rb && _other.m_dynamic_rb;
-//		if(check == Physical_Model_2D::Rectangular_Border())
-//			return Geometry::Intersection_Data();
+		Physical_Model_2D::Rectangular_Border check = m_dynamic_rb && _other.m_dynamic_rb;
+		if(check == Physical_Model_2D::Rectangular_Border())
+			return Geometry::Intersection_Data();
+
+		auto prev_state_cd = m_physical_model_prev_state->imprints_intersect(*_other.m_physical_model_prev_state);
+		if(prev_state_cd)
+		{
+			return prev_state_cd;
+		}
 
 		if(moved_since_last_frame() && _other.moved_since_last_frame())
 		{
 			Geometry::Intersection_Data cd = collision__moving_vs_moving(*this, _other);
-			if(cd) return cd;
+			if(cd)
+				return cd;
+			else
+				cd = collision__moving_vs_moving(*this, _other);
 		}
 		else if(moved_since_last_frame() ^ _other.moved_since_last_frame())
 		{
 			const Object_2D& static_object = moved_since_last_frame() ? *this : _other;
 			const Object_2D& dynamic_object = moved_since_last_frame() ? _other : *this;
 			Geometry::Intersection_Data cd = collision__moving_vs_static(dynamic_object, static_object);
-			if(cd) return cd;
+			if(cd)
+				return cd;
 		}
 		else
 		{
 			return m_physical_model->is_intersecting_with_another_model(*_other.get_physical_model());
 		}
 	}
+	return Geometry::Intersection_Data();
 }
 
 

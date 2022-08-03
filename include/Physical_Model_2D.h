@@ -22,7 +22,7 @@ namespace LEti
 			Rectangular_Border(const Rectangular_Border& _other) : left(_other.left), right(_other.right), top(_other.top), bottom(_other.bottom) { }
 			void operator=(const Rectangular_Border& _other) { left = _other.left; right = _other.right; top = _other.top; bottom = _other.bottom;  }
 			Rectangular_Border operator&&(const Rectangular_Border& _other) const;
-			bool operator==(const Rectangular_Border& _other) const { return Math::floats_are_equal(left, _other.left) && Math::floats_are_equal(right, _other.right) && Math::floats_are_equal(top, _other.top) && Math::floats_are_equal(bottom, _other.bottom); }
+			bool operator==(const Rectangular_Border& _other) const;
 		};
 
 	public:

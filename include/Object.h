@@ -102,7 +102,7 @@ namespace LEti {
 		void set_texture_coords(const float* _tc, unsigned int _tc_count);
 
 	public:
-		void update_previous_state();
+		virtual void update_previous_state();
 
 	public:
         virtual void draw() const override = 0;
@@ -164,8 +164,9 @@ namespace LEti {
 	    bool get_collision_possibility() const;
 
 	public:
-	    virtual void draw() const override;
-	    virtual void update() override;
+		virtual void draw() const override;
+		virtual void update() override;
+		virtual void update_previous_state() override;
 
 	protected:
 	    Physical_Model_2D* get_physical_model();
