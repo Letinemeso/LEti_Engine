@@ -2,24 +2,33 @@
 
 using namespace LEti;
 
-float Event_Controller::dt = 0.0f;
-std::chrono::time_point<std::chrono::steady_clock> Event_Controller::current_time_point = std::chrono::steady_clock::now();
-std::chrono::time_point<std::chrono::steady_clock> Event_Controller::prev_time_point = std::chrono::steady_clock::now();
+float Event_Controller::m_dt = 0.0f;
+float Event_Controller::m_max_dt = -1.0f;
+std::chrono::time_point<std::chrono::steady_clock> Event_Controller::m_current_time_point = std::chrono::steady_clock::now();
+std::chrono::time_point<std::chrono::steady_clock> Event_Controller::m_prev_time_point = std::chrono::steady_clock::now();
+
+
+void Event_Controller::set_max_dt(float _max_dt)
+{
+	m_max_dt = _max_dt;
+}
 
 
 
-//methods used in game cycle
 void Event_Controller::update()
 {
-	current_time_point = std::chrono::steady_clock::now();
-	dt = std::chrono::duration<float, std::ratio<1>>(current_time_point - prev_time_point).count();
+	m_current_time_point = std::chrono::steady_clock::now();
+	m_dt = std::chrono::duration<float, std::ratio<1>>(m_current_time_point - m_prev_time_point).count();
+	if(m_max_dt > 0.0f)
+		if(m_dt > m_max_dt)
+			m_dt = m_max_dt;
 
-	prev_time_point = current_time_point;
+	m_prev_time_point = m_current_time_point;
 }
 
 float Event_Controller::get_dt()
 {
-	return dt;
+	return m_dt;
 }
 
 

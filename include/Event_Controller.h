@@ -16,15 +16,19 @@ namespace LEti {
 	class Event_Controller final
 	{
 	private:
-		static float dt;
+		static float m_max_dt;
+		static float m_dt;
 
-		static std::chrono::time_point<std::chrono::steady_clock> current_time_point;
-		static std::chrono::time_point<std::chrono::steady_clock> prev_time_point;
+		static std::chrono::time_point<std::chrono::steady_clock> m_current_time_point;
+		static std::chrono::time_point<std::chrono::steady_clock> m_prev_time_point;
 
 	private:
 		Event_Controller() = delete;
 		Event_Controller(const LEti::Event_Controller&) = delete;
 		Event_Controller(Event_Controller&&) = delete;
+
+	public:
+		static void set_max_dt(float _max_dt);
 
 	public:
 		static void update();
