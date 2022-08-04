@@ -96,7 +96,7 @@ void Camera::set_look_direction(glm::vec3 _direction)
 
 void Camera::set_fov_and_max_distance(float _fov, float _max_distance)
 {
-	float window_aspect = (float)LEti::Event_Controller::get_window_data().width / (float)LEti::Event_Controller::get_window_data().height;
+	float window_aspect = (float)LEti::Window_Controller::get_window_data().width / (float)LEti::Window_Controller::get_window_data().height;
 	perspective_matrix = glm::perspective<float>(_fov, window_aspect, 0.0001f, _max_distance);
 	fov_set = true;
 }
@@ -106,8 +106,8 @@ void Camera::set_fov_and_max_distance(float _fov, float _max_distance)
 void Camera::setup_orthographic_matrix()
 {
 	orthographic_matrix = glm::ortho(
-		0.0f, (float)(LEti::Event_Controller::get_window_data().width),
-		0.0f, (float)(LEti::Event_Controller::get_window_data().height),
+		0.0f, (float)(LEti::Window_Controller::get_window_data().width),
+		0.0f, (float)(LEti::Window_Controller::get_window_data().height),
 		-1.0f, 1.0f
 	);
 	ortho_matrix_set = true;
@@ -124,11 +124,11 @@ void Camera::toggle_controll(bool _is_controllable)
 {
 	if (is_controllable != _is_controllable)
 	{
-		LEti::Event_Controller::set_cursor_pos(
-			LEti::Event_Controller::get_window_data().width / 2.0,
-			LEti::Event_Controller::get_window_data().height / 2.0
+		LEti::Window_Controller::set_cursor_pos(
+			LEti::Window_Controller::get_window_data().width / 2.0,
+			LEti::Window_Controller::get_window_data().height / 2.0
 		);
-		LEti::Event_Controller::update_cursor_stride();
+		LEti::Window_Controller::update_cursor_stride();
 	}
 
 	is_controllable = _is_controllable;
@@ -189,17 +189,17 @@ void Camera::control(bool _update_2d, bool _update_3d)
 		if (LEti::Event_Controller::is_key_down(controlls.movement_buttons.down))
 			position -= glm::vec3(0.0f, 1.0f, 0.0f) * controlls.movement_speed_scale * LEti::Event_Controller::get_dt();
 
-		LEti::Event_Controller::update_cursor_stride();
+		LEti::Window_Controller::update_cursor_stride();
 		look_angle_xz += additional_angle
-			* (LEti::Event_Controller::get_cursor_stride().x / LEti::Event_Controller::get_window_data().width)
+			* (LEti::Window_Controller::get_cursor_stride().x / LEti::Window_Controller::get_window_data().width)
 			* (controlls.sensitivity_scale >= 0.0f ? controlls.sensitivity_scale : 0.0f);
 		look_angle_y -= additional_angle
-			* (LEti::Event_Controller::get_cursor_stride().y / LEti::Event_Controller::get_window_data().height)
+			* (LEti::Window_Controller::get_cursor_stride().y / LEti::Window_Controller::get_window_data().height)
 			* (controlls.sensitivity_scale >= 0.0f ? controlls.sensitivity_scale : 0.0f);
 
-		LEti::Event_Controller::set_cursor_pos(
-			LEti::Event_Controller::get_window_data().width / 2.0,
-			LEti::Event_Controller::get_window_data().height / 2.0
+		LEti::Window_Controller::set_cursor_pos(
+			LEti::Window_Controller::get_window_data().width / 2.0,
+			LEti::Window_Controller::get_window_data().height / 2.0
 		);
 
 		while (look_angle_xz > Math::DOUBLE_PI)
