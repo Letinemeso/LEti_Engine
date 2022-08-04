@@ -237,7 +237,7 @@ Geometry::Intersection_Data Geometry_2D::lines_intersect(const Equasion_Data& _f
 			return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
 	}
 
-	if((_first.is_vertical() && !_second.is_vertical()) || (!_first.is_vertical() && _second.is_vertical()))
+	if(_first.is_vertical() ^ _second.is_vertical())
 	{
 		const Equasion_Data& vertical = _first.is_vertical() ? _first : _second;
 		const Equasion_Data& not_vertical = _first.is_vertical() ? _second : _first;
@@ -269,30 +269,90 @@ Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _po
 	if(!id)
 		return id;
 
-	float first_length = LEti::Math::get_distance(_point_11, _point_21);
-	float second_length = LEti::Math::get_distance(_point_12, _point_22);
+	const glm::vec3& first_higher = _point_11.y > _point_21.y ? _point_11 : _point_21;
+	const glm::vec3& first_lower = _point_11.y > _point_21.y ? _point_21 : _point_11;
+	const glm::vec3& second_higher = _point_12.y > _point_22.y ? _point_12 : _point_22;
+	const glm::vec3& second_lower = _point_12.y > _point_22.y ? _point_22 : _point_12;
 
-	//TODO: think about optimization: calculating vectors' lengths may be unnecessary
-	if ((LEti::Math::get_distance(id.point, _point_11) < first_length) &&
-			(LEti::Math::get_distance(id.point, _point_21) < first_length) &&
-			(LEti::Math::get_distance(id.point, _point_12) < second_length) &&
-			(LEti::Math::get_distance(id.point, _point_22) < second_length))
+	//	this is probably better than calculating segments' lengths several times per segments' pair
+	if(id.type == Geometry::Intersection_Data::Type::same_line)
 	{
-//		std::cout << "11 x: " << _point_11.x << "\ty: " << _point_11.y << '\n';
-//		std::cout << "21 x: " << _point_21.x << "\ty: " << _point_21.y << '\n';
-//		std::cout << "12 x: " << _point_12.x << "\ty: " << _point_12.y << '\n';
-//		std::cout << "22 x: " << _point_22.x << "\ty: " << _point_22.y << '\n';
-//		std::cout << "\n";
-//		std::cout << LEti::Math::get_distance(id.point, _point_11) << "\t" << first_length << '\n'
-//					<< LEti::Math::get_distance(id.point, _point_21) << "\t" << first_length << '\n'
-//					<< LEti::Math::get_distance(id.point, _point_12) << "\t" << second_length << '\n'
-//					<< LEti::Math::get_distance(id.point, _point_22) << "\t" << second_length << "\n\n";
-//		std::cout << "intersection point:\n\tx: " << id.point.x << "\ty: " << id.point.y << "\n\n";
+		if(first_eq.is_horisontal() && second_eq.is_horisontal())
+		{
+			if((_point_11.x <= _point_12.x && _point_11.x >= _point_22.x) || (_point_11.x >= _point_12.x && _point_11.x <= _point_22.x))
+			{
+				id.point = _point_11;
+				return id;
+			}
+			else if((_point_21.x <= _point_12.x && _point_21.x >= _point_22.x) || (_point_21.x >= _point_12.x && _point_21.x <= _point_22.x))
+			{
+				id.point = _point_21;
+				return id;
+			}
+			return Geometry::Intersection_Data();
+		}
 
-		return id;
+		if((first_eq.is_vertical() && second_eq.is_vertical()) || Math::floats_are_equal(first_eq.get_k(), second_eq.get_k()))
+		{
+			if(first_higher.y > second_higher.y)
+			{
+				if(second_higher.y >= first_lower.y)
+				{
+					id.point = first_lower;
+					return id;
+				}
+				else
+					return Geometry::Intersection_Data();
+			}
+			else if(first_higher.y < second_higher.y)
+			{
+				if(first_higher.y >= second_lower.y)
+				{
+					id.point = second_lower;
+					return id;
+				}
+				else
+					return Geometry::Intersection_Data();
+			}
+			return Geometry::Intersection_Data();
+		}
+
+		return Geometry::Intersection_Data();
 	}
 
-	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+	if(first_eq.is_horisontal() ^ first_eq.is_horisontal())
+	{
+		bool fh = first_eq.is_horisontal();	// fh - first horisontal
+		if(fh)
+		{
+			if(((id.point.x <= _point_11.x && id.point.y >= _point_21.x) || (id.point.x >= _point_11.x && id.point.y <= _point_21.x))
+					&& id.point.y <= second_higher.y && id.point.y >= second_lower.y)
+				return id;
+		}
+		else
+		{
+			if(((id.point.x <= _point_12.x && id.point.y >= _point_22.x) || (id.point.x >= _point_12.x && id.point.y <= _point_22.x))
+					&& id.point.y <= first_higher.y && id.point.y >= first_lower.y)
+				return id;
+		}
+		return Geometry::Intersection_Data();
+	}
+
+	if(id.point.y <= first_higher.y && id.point.y >= first_lower.y
+			&& id.point.y <= second_higher.y && id.point.y >= second_lower.y)
+		return id;
+
+//	float first_length = LEti::Math::get_distance(_point_11, _point_21);
+//	float second_length = LEti::Math::get_distance(_point_12, _point_22);
+
+//	//TODO: think about optimization: calculating vectors' lengths may be unnecessary
+//	if ((LEti::Math::get_distance(id.point, _point_11) < first_length) &&
+//			(LEti::Math::get_distance(id.point, _point_21) < first_length) &&
+//			(LEti::Math::get_distance(id.point, _point_12) < second_length) &&
+//			(LEti::Math::get_distance(id.point, _point_22) < second_length))
+//	{
+
+	return Geometry::Intersection_Data();
 }
 
 
