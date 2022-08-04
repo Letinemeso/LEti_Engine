@@ -320,18 +320,18 @@ Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _po
 		return Geometry::Intersection_Data();
 	}
 
-	if(first_eq.is_horisontal() ^ first_eq.is_horisontal())
+	if(first_eq.is_horisontal() ^ second_eq.is_horisontal())
 	{
 		bool fh = first_eq.is_horisontal();	// fh - first horisontal
 		if(fh)
 		{
-			if(((id.point.x <= _point_11.x && id.point.y >= _point_21.x) || (id.point.x >= _point_11.x && id.point.y <= _point_21.x))
+			if(((id.point.x <= _point_11.x && id.point.x >= _point_21.x) || (id.point.x >= _point_11.x && id.point.x <= _point_21.x))
 					&& id.point.y <= second_higher.y && id.point.y >= second_lower.y)
 				return id;
 		}
 		else
 		{
-			if(((id.point.x <= _point_12.x && id.point.y >= _point_22.x) || (id.point.x >= _point_12.x && id.point.y <= _point_22.x))
+			if(((id.point.x <= _point_12.x && id.point.x >= _point_22.x) || (id.point.x >= _point_12.x && id.point.x <= _point_22.x))
 					&& id.point.y <= first_higher.y && id.point.y >= first_lower.y)
 				return id;
 		}
