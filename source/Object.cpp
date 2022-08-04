@@ -561,6 +561,8 @@ Geometry::Intersection_Data Object_2D::collision__moving_vs_moving(const Object_
 	};
 
 	Physical_Model_2D::Rectangular_Border shared_space = _moving_1.get_dynamic_rb() && _moving_2.get_dynamic_rb();
+	float sp_w = shared_space.right - shared_space.left;
+	float sp_h = shared_space.top - shared_space.bottom;
 
 	bool first_on_left = _moving_1.m_dynamic_rb.left < _moving_2.m_dynamic_rb.left;
 	const Physical_Model_2D::Rectangular_Border& on_left = first_on_left ? _moving_1.m_dynamic_rb : _moving_2.m_dynamic_rb;
@@ -603,10 +605,14 @@ Geometry::Intersection_Data Object_2D::collision__moving_vs_moving(const Object_
 	}
 	else if(fully_inside_y)
 	{
-		rewrite_min_max_ratio(tr_x_1);
-		rewrite_min_max_ratio(tr_x_2);
-		rewrite_min_max_ratio(tr_x_3);
-		rewrite_min_max_ratio(tr_x_4);
+//		rewrite_min_max_ratio(tr_x_1);
+//		rewrite_min_max_ratio(tr_x_2);
+//		rewrite_min_max_ratio(tr_x_3);
+//		rewrite_min_max_ratio(tr_x_4);
+		rewrite_min_max_ratio((on_left_width - sp_w) / on_left_width);
+		rewrite_min_max_ratio(sp_w / on_left_width);
+		rewrite_min_max_ratio((on_right_width - sp_w) / on_right_width);
+		rewrite_min_max_ratio(sp_w / on_right_width);
 	}
 	else
 	{
@@ -625,10 +631,20 @@ Geometry::Intersection_Data Object_2D::collision__moving_vs_moving(const Object_
 
 	if(min_intersection_ratio <= 1.0f && min_intersection_ratio >= 0.0f && max_intersection_ratio <= 1.0f && max_intersection_ratio >= 0.0f)
 	{
-		if(Math::floats_are_equal(min_intersection_ratio, max_intersection_ratio))
-			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, 1.0f, 10);
-		else
-			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, max_intersection_ratio, 10);
+		std::cout << min_intersection_ratio << " " << max_intersection_ratio << '\n';
+//		if(Math::floats_are_equal(min_intersection_ratio, max_intersection_ratio))
+//			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, 1.0f, 10);
+//		else
+//			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, max_intersection_ratio, 10);
+
+		//	test
+
+		auto id = get_precise_time_ratio_of_collision(_moving_1, _moving_2, 0.0f, 1.0f, 100);
+
+		if(!(id.time_of_intersection_ratio >= min_intersection_ratio && id.time_of_intersection_ratio <= max_intersection_ratio))
+			std::cout << "ass\n";
+
+		return id;
 	}
 
 	return Geometry::Intersection_Data();

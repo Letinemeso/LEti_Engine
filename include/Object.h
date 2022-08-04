@@ -168,7 +168,7 @@ namespace LEti {
 		virtual void update() override;
 		virtual void update_previous_state() override;
 
-	protected:
+	public:
 	    Physical_Model_2D* get_physical_model();
 		Physical_Model_2D::Imprint* get_physical_model_prev_state();
 	public:
