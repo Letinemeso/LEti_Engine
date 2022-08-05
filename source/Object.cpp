@@ -514,6 +514,34 @@ void Object_2D::get_rect_border_segments(const Physical_Model_2D::Rectangular_Bo
 }
 
 
+struct Ratio
+{
+	float r[4];
+	Ratio(float _s1, float _s2, float _rt, float _row)
+	{
+		if(_s1 > _s2)
+		{
+			float temp = _s1;
+			_s1 = _s2;
+			_s2 = temp;
+		}
+		float width = _s2 - _s1;
+		float dist = _rt - _s1;
+
+		r[0] = (dist - _row) / width;
+		r[1] = (dist + _row) / width;
+		r[2] = (width - (dist - _row)) / width;
+		r[3] = (width - (dist + _row)) / width;
+
+		std::cout << "\t" << _s1 << " --- " << _rt << " --- " << _s2 << "\trow: " << _row << "\n";
+		for(unsigned int i=0; i<4; ++i)
+		{
+			std::cout << "\t:\t" << r[i] << "\n";
+		}
+	}
+};
+
+
 Geometry::Intersection_Data Object_2D::get_precise_time_ratio_of_collision(const Object_2D& _first, const Object_2D& _second, float _min_ratio, float _max_ratio, unsigned int _precision)
 {
 	ASSERT(!_first.m_can_cause_collision || !_second.m_can_cause_collision);
@@ -523,6 +551,8 @@ Geometry::Intersection_Data Object_2D::get_precise_time_ratio_of_collision(const
 	float diff = _max_ratio - _min_ratio;
 	float step_diff = diff / (float)_precision;
 
+	Geometry::Intersection_Data id;
+
 	float curr_time_point = _min_ratio;
 	while(curr_time_point <= _max_ratio)
 	{
@@ -530,37 +560,227 @@ Geometry::Intersection_Data Object_2D::get_precise_time_ratio_of_collision(const
 		this_impr.update(_first.get_translation_matrix_for_time_ratio(curr_time_point), _first.get_rotation_matrix_for_time_ratio(curr_time_point), _first.get_scale_matrix_for_time_ratio(curr_time_point));
 		Physical_Model_2D::Imprint other_impr = *_second.m_physical_model_prev_state;
 		other_impr.update(_second.get_translation_matrix_for_time_ratio(curr_time_point), _second.get_rotation_matrix_for_time_ratio(curr_time_point), _second.get_scale_matrix_for_time_ratio(curr_time_point));
-		Geometry::Intersection_Data id = this_impr.imprints_intersect(other_impr);
-		if(id) { id.time_of_intersection_ratio = Math::floats_are_equal(curr_time_point, _min_ratio) ? curr_time_point : curr_time_point - step_diff; return id; }
+		id = this_impr.imprints_intersect(other_impr);
+		if(id) break;
 
 		curr_time_point += step_diff;
 	}
 
-	if(Math::floats_are_equal(_max_ratio, 1.0f))
+	if(!id && Math::floats_are_equal(_max_ratio, 1.0f))
+		id = _first.get_physical_model()->is_intersecting_with_another_model(*_second.get_physical_model());
+
+	if(id)
 	{
-		Geometry::Intersection_Data id = _first.get_physical_model()->is_intersecting_with_another_model(*_second.get_physical_model());
-		if(id)
-		{
-			id.time_of_intersection_ratio = _max_ratio - step_diff;
-			return id;
-		}
+		id.time_of_intersection_ratio = curr_time_point - step_diff;
+		if(id.time_of_intersection_ratio < 0.0f) id.time_of_intersection_ratio = 0.0f;
 	}
+
+	return id;
+
+//	std::cout << "\nfound intersection!\nratio: " << id.time_of_intersection_ratio << "\n1 left:" << this_impr.curr_rect_border().left << "\t1 right: " << this_impr.curr_rect_border().right
+//			  << "\n2 left: " << other_impr.curr_rect_border().left << "\t2 right: " << other_impr.curr_rect_border().right << "\n\n";
+
+
+
 
 	return Geometry::Intersection_Data();
 }
 
+
+using float_pair = std::pair<float, float>;
+float_pair find_ratio(const Object_2D &_moving_1, const Object_2D &_moving_2)
+{
+	const Physical_Model_2D::Rectangular_Border& prv_rb_1 = _moving_1.get_physical_model_prev_state()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border& cur_rb_1 = _moving_1.get_physical_model()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border& prv_rb_2 = _moving_2.get_physical_model_prev_state()->curr_rect_border();
+	const Physical_Model_2D::Rectangular_Border& cur_rb_2 = _moving_2.get_physical_model()->curr_rect_border();
+
+	float_pair f{(prv_rb_1.right + prv_rb_1.left) / 2.0f, (cur_rb_1.right + cur_rb_1.left) / 2.0f};
+	float f_w = f.first > f.second ? f.first - f.second : f.second - f.first;
+	float f_ofs = (prv_rb_1.right - prv_rb_1.left) / 2.0f;
+	float_pair s{(prv_rb_2.right + prv_rb_2.left) / 2.0f, (cur_rb_2.right + cur_rb_2.left) / 2.0f};
+	float s_w = s.first > s.second ? s.first - s.second : s.second - s.first;
+	float s_ofs = (prv_rb_2.right - prv_rb_2.left) / 2.0f;
+
+	float dofs = f_ofs + s_ofs;
+
+	auto inbounds = [](float _left, float _right, float _num)->bool
+	{
+		if(_left > _right)
+		{
+			float temp = _right;
+			_right = _left;
+			_left = temp;
+		}
+
+		return _num <= _right && _num >= _left;
+	};
+
+	bool f_inbounds = inbounds(f.first, f.second, s.first) && inbounds(f.first, f.second, s.second);
+	bool s_inbounds = inbounds(s.first, s.second, f.first) && inbounds(s.first, s.second, f.second);
+
+	if(f_inbounds || s_inbounds)
+	{
+		//	one object's trajectory completely include other's
+
+		auto calculate_ratio = [](float _iw, const float_pair& _outside, float _ow, float _dofs)->float_pair
+		{
+			float ratio_to = _iw / 2.0f;
+			if(_outside.first > _outside.second) ratio_to = _ow - ratio_to;
+			return { (ratio_to + _dofs) / _ow, (ratio_to - _dofs) / _ow };
+		};
+
+		if(f_inbounds)
+			return calculate_ratio(f_w, s, s_w, dofs);
+		if(s_inbounds)
+			return calculate_ratio(s_w, f, f_w, dofs);
+	}
+	else if(inbounds(f.first, f.second, s.first) || inbounds(f.first, f.second, s.second))
+	{
+		//	trajectories have common part
+
+		float max_ratio = -0.1f;
+		float min_ratio = 1.1f;
+
+		/*auto rewrite = [&max_ratio, &min_ratio](const float_pair& _new)
+		{
+			if(_new.first <= 1.0f && _new.first >= 0.0f)
+			{
+				if(_new.first < min_ratio)
+					min_ratio = _new.first;
+				if(_new.first > max_ratio)
+					max_ratio = _new.first;
+			}
+			if(_new.second <= 1.0f && _new.second >= 0.0f)
+			{
+				if(_new.second < min_ratio)
+					min_ratio = _new.second;
+				if(_new.second > max_ratio)
+					max_ratio = _new.second;
+			}
+		};
+
+		auto calculate_ratio = [](const float_pair& _ratio_from, float _rf_w, float _dofs, float _to)->float_pair
+		{
+			float ratio_to = _to - ( _ratio_from.first < _ratio_from.second ? _ratio_from.first : _ratio_from.second );
+			if(_ratio_from.first > _ratio_from.second) ratio_to = _rf_w - ratio_to;
+
+			return { (ratio_to + _dofs) / _rf_w, (ratio_to - _dofs) / _rf_w };
+		};
+
+		if(inbounds(f.first, f.second, s.first))
+			rewrite(calculate_ratio(f, f_w, dofs, s.first));
+		if(inbounds(f.first, f.second, s.second))
+			rewrite(calculate_ratio(f, f_w, dofs, s.second));
+		if(inbounds(s.first, s.second, f.first))
+			rewrite(calculate_ratio(s, s_w, dofs, f.first));
+		if(inbounds(s.first, s.second, f.second))
+			rewrite(calculate_ratio(s, s_w, dofs, f.second));*/
+
+		bool first_on_left = f.first < s.first;
+
+		if(first_on_left)
+		{
+			min_ratio = (s.first - f.first - dofs) / (f_w + s_w);
+			max_ratio = (s.first - f.first + dofs) / (f_w + s_w);
+		}
+		else
+		{
+			min_ratio = (f.first - s.first - dofs) / (f_w + s_w);
+			max_ratio = (f.first - s.first + dofs) / (f_w + s_w);
+		}
+
+//		float max_ratio = ();
+//		float min_ratio = 1.1f;
+
+		return { min_ratio, max_ratio };
+
+	}
+	else if(!inbounds(f.first, f.second, s.first) && !inbounds(f.first, f.second, s.second))
+	{
+		//	trajectories does not have commot part, but objects may still intersect
+		float start_dist = f.first > s.first ? f.first - s.first : s.first - f.first;
+		float start1_end2_dist = f.first > s.second ? f.first - s.second : s.first - f.second;
+		float start2_end1_dist = s.first > f.second ? s.first - f.second : f.first - s.second;
+		float end_dist = f.second > s.second ? f.second - s.second : s.second - f.second;
+
+		auto calculate_ratio = [&](float _dist)->float
+		{
+			float dist_sum = f_w + s_w;
+			_dist = dofs - _dist;
+			float dist_ratio = (_dist / dist_sum) * f_w;
+			return 1 - (dist_ratio / f_w);
+		};
+
+		float min = 1.1f, max = -0.1f;
+		auto rewrite = [&min, &max](float _ratio)->void
+		{
+			if(_ratio <= 1.0f && _ratio >= 0.0f)
+			{
+				if(min > _ratio)
+					min = _ratio;
+				if(max < _ratio)
+					max = _ratio;
+			}
+		};
+
+		if(start_dist < dofs)
+		{
+			float ratio = calculate_ratio(start_dist);
+			rewrite(ratio);
+		}
+		if(start1_end2_dist < dofs)
+		{
+			float ratio = calculate_ratio(start1_end2_dist);
+			rewrite(ratio);
+		}
+		if(start2_end1_dist < dofs)
+		{
+			float ratio = calculate_ratio(start2_end1_dist);
+			rewrite(ratio);
+		}
+		if(end_dist < dofs)
+		{
+			float ratio = calculate_ratio(end_dist);
+			rewrite(ratio);
+		}
+
+		return { min, max };
+	}
+
+	return { -0.1f, 1.1f };
+}
+
+
 Geometry::Intersection_Data Object_2D::collision__moving_vs_moving(const Object_2D &_moving_1, const Object_2D &_moving_2)
 {
 	float min_intersection_ratio = 1.1f, max_intersection_ratio = -0.1f;
-	auto rewrite_min_max_ratio = [&min_intersection_ratio, &max_intersection_ratio](float _new)->void
+	auto rewrite_min_max_ratio = [&min_intersection_ratio, &max_intersection_ratio](float _ratio)->void
 	{
-		if(min_intersection_ratio > _new)
-			min_intersection_ratio = _new;
-		if(max_intersection_ratio < _new)
-			max_intersection_ratio = _new;
+		if(_ratio <= 1.0f && _ratio >= 0.0f)
+		{
+			if(min_intersection_ratio > _ratio)
+			{
+				min_intersection_ratio = _ratio;
+				std::cout << "rewriting min\n";
+			}
+			if(max_intersection_ratio < _ratio)
+			{
+				max_intersection_ratio = _ratio;
+				std::cout << "rewriting max\n";
+			}
+		}
 	};
 
-	Physical_Model_2D::Rectangular_Border shared_space = _moving_1.get_dynamic_rb() && _moving_2.get_dynamic_rb();
+	std::cout << "\n\n\nfinding ratios!\n\n";
+
+
+	float_pair pr = find_ratio(_moving_1, _moving_2);
+	rewrite_min_max_ratio(pr.first);
+	rewrite_min_max_ratio(pr.second);
+
+
+	/*Physical_Model_2D::Rectangular_Border shared_space = _moving_1.get_dynamic_rb() && _moving_2.get_dynamic_rb();
 	float sp_w = shared_space.right - shared_space.left;
 	float sp_h = shared_space.top - shared_space.bottom;
 
@@ -605,10 +825,6 @@ Geometry::Intersection_Data Object_2D::collision__moving_vs_moving(const Object_
 	}
 	else if(fully_inside_y)
 	{
-//		rewrite_min_max_ratio(tr_x_1);
-//		rewrite_min_max_ratio(tr_x_2);
-//		rewrite_min_max_ratio(tr_x_3);
-//		rewrite_min_max_ratio(tr_x_4);
 		rewrite_min_max_ratio((on_left_width - sp_w) / on_left_width);
 		rewrite_min_max_ratio(sp_w / on_left_width);
 		rewrite_min_max_ratio((on_right_width - sp_w) / on_right_width);
@@ -627,9 +843,9 @@ Geometry::Intersection_Data Object_2D::collision__moving_vs_moving(const Object_
 	}
 
 	if(1.0f - max_intersection_ratio < 0.05f)		//trying to compensate floats' calculations' faults
-		max_intersection_ratio = 1.0f;
+		max_intersection_ratio = 1.0f;*/
 
-	if(min_intersection_ratio <= 1.0f && min_intersection_ratio >= 0.0f && max_intersection_ratio <= 1.0f && max_intersection_ratio >= 0.0f)
+//	if(min_intersection_ratio <= 1.0f && min_intersection_ratio >= 0.0f && max_intersection_ratio <= 1.0f && max_intersection_ratio >= 0.0f)
 	{
 		std::cout << min_intersection_ratio << " " << max_intersection_ratio << '\n';
 //		if(Math::floats_are_equal(min_intersection_ratio, max_intersection_ratio))
@@ -641,11 +857,32 @@ Geometry::Intersection_Data Object_2D::collision__moving_vs_moving(const Object_
 
 		auto id = get_precise_time_ratio_of_collision(_moving_1, _moving_2, 0.0f, 1.0f, 100);
 
-		if(!(id.time_of_intersection_ratio >= min_intersection_ratio && id.time_of_intersection_ratio <= max_intersection_ratio))
-			std::cout << "ass\n";
+//		if(!(id.time_of_intersection_ratio >= (min_intersection_ratio + 0.005f) && id.time_of_intersection_ratio <= max_intersection_ratio))
+//		{
+//			std::cout << "ass\n";
+//			find_ratio(_moving_1, _moving_2);
+//		}
+//		else
+		if((min_intersection_ratio <= 1.0f && min_intersection_ratio >= 0.0f && max_intersection_ratio <= 1.0f && max_intersection_ratio >= 0.0f))
+		{
+			if(Math::floats_are_equal(min_intersection_ratio, max_intersection_ratio))
+				return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, 1.0f, 10);
+			else
+				return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, max_intersection_ratio, 10);
+		}
+		else
+		{
+			float real_ratio = id.time_of_intersection_ratio;
+			find_ratio(_moving_1, _moving_2);
+		}
 
 		return id;
 	}
+//	else
+//	if(!(min_intersection_ratio <= 1.0f && min_intersection_ratio >= 0.0f && max_intersection_ratio <= 1.0f && max_intersection_ratio >= 0.0f))
+//	{
+//		std::cout << "shit\n";
+//	}
 
 	return Geometry::Intersection_Data();
 }
