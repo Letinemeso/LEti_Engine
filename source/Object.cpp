@@ -432,7 +432,6 @@ void Object_2D::update()
 	{
 		if(is_dynamic())
 		{
-//			get_physical_model_prev_state()->update_to_current_model_state();
 			m_physical_model->update(m_translation_matrix, m_rotation_matrix, m_scale_matrix);
 
 			const Physical_Model_2D::Rectangular_Border& prev_rb = get_physical_model_prev_state()->curr_rect_border(),
