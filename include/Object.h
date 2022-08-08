@@ -80,7 +80,7 @@ namespace LEti {
 				{ translation_matrix = _translation_matrix; rotation_matrix = _rotation_matrix; scale_matrix = _scale_matrix; rotation_axis = _rotation_axis; rotation_angle = _rotation_angle; }
 		} m_previous_state;
 
-	protected:
+	public:
 		glm::mat4x4 get_translation_matrix_for_time_ratio(float _ratio) const;
 		glm::mat4x4 get_rotation_matrix_for_time_ratio(float _ratio) const;
 		glm::mat4x4 get_scale_matrix_for_time_ratio(float _ratio) const;
@@ -176,17 +176,14 @@ namespace LEti {
 		const Physical_Model_2D::Imprint* get_physical_model_prev_state() const;
 		const Physical_Model_2D::Rectangular_Border& get_dynamic_rb() const;
 
-	private:
-		static void get_object_trajectory(const Object_2D& _obj, std::pair<glm::vec3, glm::vec3>* _result_segments, float* _result_segments_lengths);
-		static void get_rect_border_segments(const Physical_Model_2D::Rectangular_Border& _rb, std::pair<glm::vec3, glm::vec3>* _result_segments);
+//	private:
+//		static Geometry::Intersection_Data get_precise_time_ratio_of_collision(const Object_2D& _first, const Object_2D& _second, float _min_ratio, float _max_ratio, unsigned int _precision);
+//		static Geometry::Intersection_Data collision__moving_vs_moving(const Object_2D& _moving_1, const Object_2D& _moving_2);
+//		static Geometry::Intersection_Data collision__moving_vs_static(const Object_2D& _moving, const Object_2D& _static);
+//		static Geometry::Intersection_Data collision__static_vs_static(const Object_2D& _moving, const Object_2D& _static);
 
-		static Geometry::Intersection_Data get_precise_time_ratio_of_collision(const Object_2D& _first, const Object_2D& _second, float _min_ratio, float _max_ratio, unsigned int _precision);
-		static Geometry::Intersection_Data collision__moving_vs_moving(const Object_2D& _moving_1, const Object_2D& _moving_2);
-		static Geometry::Intersection_Data collision__moving_vs_static(const Object_2D& _moving, const Object_2D& _static);
-		static Geometry::Intersection_Data collision__static_vs_static(const Object_2D& _moving, const Object_2D& _static);
-
-	public:
-	    Geometry::Intersection_Data is_colliding_with_other(const Object_2D& _other) const;
+//	public:
+//	    Geometry::Intersection_Data is_colliding_with_other(const Object_2D& _other) const;
 
 	};
 
