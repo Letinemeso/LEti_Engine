@@ -85,6 +85,10 @@ namespace LEti {
 		glm::mat4x4 get_rotation_matrix_for_time_ratio(float _ratio) const;
 		glm::mat4x4 get_scale_matrix_for_time_ratio(float _ratio) const;
 
+		glm::mat4x4 get_translation_matrix_diff_inversed_for_time_ratio(float _ratio) const;
+		glm::mat4x4 get_rotation_matrix_diff_inversed_for_time_ratio(float _ratio) const;
+		glm::mat4x4 get_scale_matrix_diff_inversed_for_time_ratio(float _ratio) const;
+
 	public:
 		Drawable_Object();
 		virtual ~Drawable_Object();

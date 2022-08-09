@@ -137,6 +137,11 @@ const Physical_Model_2D* Physical_Model_2D::Imprint::get_parent() const
 	return m_parent;
 }
 
+unsigned int Physical_Model_2D::Imprint::get_polygons_count() const
+{
+	return m_parent->get_polygons_count();
+}
+
 Geometry::Intersection_Data Physical_Model_2D::Imprint::imprints_intersect(const Imprint &_other) const
 {
 	ASSERT(!m_polygons || !_other.m_polygons);

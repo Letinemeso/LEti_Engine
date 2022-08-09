@@ -54,6 +54,7 @@ namespace LEti
 
 			const Geometry_2D::Polygon& operator[](unsigned int _index) const;
 			const Physical_Model_2D* get_parent() const;
+			unsigned int get_polygons_count() const;
 			Geometry::Intersection_Data imprints_intersect(const Imprint& _other) const;
 			const Rectangular_Border& curr_rect_border() const;
 

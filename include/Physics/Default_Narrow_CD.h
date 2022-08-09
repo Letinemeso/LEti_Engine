@@ -16,14 +16,8 @@ namespace LEti
 		unsigned int m_precision = 10;
 
 	private:
-		enum class Axis_To_Use
-		{
-			X = 0,
-			Y = 1
-		};
-
 		using float_pair = std::pair<float, float>;
-		float_pair find_ratio(const Object_2D &_moving_1, const Object_2D &_moving_2, Axis_To_Use _axis) const;
+		float_pair find_ratio(const Object_2D &_moving_1, const Object_2D &_moving_2) const;
 
 	private:
 		Geometry::Intersection_Data get_precise_time_ratio_of_collision(const Object_2D& _first, const Object_2D& _second, float _min_ratio, float _max_ratio) const;

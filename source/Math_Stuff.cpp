@@ -67,7 +67,7 @@ bool Math::beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& 
 
 bool Math::floats_are_equal(float _first, float _second)
 {
-	return fabs(fabs(_first)-fabs(_second)) < 0.0001f;
+	return fabs(_first-_second) < 0.0001f;
 }
 
 

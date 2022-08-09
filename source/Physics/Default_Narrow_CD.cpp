@@ -4,137 +4,75 @@ using namespace LEti;
 
 
 
-Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const Object_2D &_moving_1, const Object_2D &_moving_2, Axis_To_Use _axis) const
+Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const Object_2D &_moving_1, const Object_2D &_moving_2) const
 {
-	const Physical_Model_2D::Rectangular_Border& prv_rb_1 = _moving_1.get_physical_model_prev_state()->curr_rect_border();
-	const Physical_Model_2D::Rectangular_Border& cur_rb_1 = _moving_1.get_physical_model()->curr_rect_border();
-	const Physical_Model_2D::Rectangular_Border& prv_rb_2 = _moving_2.get_physical_model_prev_state()->curr_rect_border();
-	const Physical_Model_2D::Rectangular_Border& cur_rb_2 = _moving_2.get_physical_model()->curr_rect_border();
-
-	float_pair f;
-	float_pair s;
-	if(_axis == Axis_To_Use::X)
+	float min_intersection_ratio = 1.1f, max_intersection_ratio = -0.1f;
+	auto rewrite_min_max_ratio = [&min_intersection_ratio, &max_intersection_ratio](float _ratio)->void
 	{
-		f = {(prv_rb_1.right + prv_rb_1.left) / 2.0f, (cur_rb_1.right + cur_rb_1.left) / 2.0f};
-		s = {(prv_rb_2.right + prv_rb_2.left) / 2.0f, (cur_rb_2.right + cur_rb_2.left) / 2.0f};
-	}
-	else
-	{
-		f = {(prv_rb_1.top + prv_rb_1.bottom) / 2.0f, (cur_rb_1.top + cur_rb_1.bottom) / 2.0f};
-		s = {(prv_rb_2.top + prv_rb_2.bottom) / 2.0f, (cur_rb_2.top + cur_rb_2.bottom) / 2.0f};
-	}
-
-	float f_w = f.first > f.second ? f.first - f.second : f.second - f.first;
-	float f_ofs = (prv_rb_1.right - prv_rb_1.left) / 2.0f;
-	float s_w = s.first > s.second ? s.first - s.second : s.second - s.first;
-	float s_ofs = (prv_rb_2.right - prv_rb_2.left) / 2.0f;
-
-	float dofs = f_ofs + s_ofs;
-
-	auto inbounds = [](float _left, float _right, float _num)->bool
-	{
-		if(_left > _right)
+		if(_ratio <= 1.0f && _ratio >= 0.0f)
 		{
-			float temp = _right;
-			_right = _left;
-			_left = temp;
+			if(min_intersection_ratio > _ratio)
+				min_intersection_ratio = _ratio;
+			if(max_intersection_ratio < _ratio)
+				max_intersection_ratio = _ratio;
 		}
-
-		return _num <= _right && _num >= _left;
 	};
 
-	bool f_inbounds = inbounds(f.first, f.second, s.first) && inbounds(f.first, f.second, s.second);
-	bool s_inbounds = inbounds(s.first, s.second, f.first) && inbounds(s.first, s.second, f.second);
+	using segment = std::pair<glm::vec3, glm::vec3>;
 
-	if(f_inbounds || s_inbounds) //	one object's trajectory completely include other's
+	auto get_polygon_segment = [](const Geometry_2D::Polygon& _pol, unsigned int _ind)->segment
 	{
-		auto calculate_ratio = [](float _iw, const float_pair& _outside, float _ow, float _dofs)->float_pair
+		ASSERT(_ind > 2);
+
+		segment result;
+		if(_ind < 2)
 		{
-			float ratio_to = _iw / 2.0f;
-			if(_outside.first > _outside.second) ratio_to = _ow - ratio_to;
-			return { (ratio_to + _dofs) / _ow, (ratio_to - _dofs) / _ow };
-		};
-
-		if(f_inbounds)
-			return calculate_ratio(f_w, s, s_w, dofs);
-		if(s_inbounds)
-			return calculate_ratio(s_w, f, f_w, dofs);
-	}
-	else if(inbounds(f.first, f.second, s.first) || inbounds(f.first, f.second, s.second)) //	trajectories have common part
-	{
-		float max_ratio = -0.1f;
-		float min_ratio = 1.1f;
-
-		bool first_on_left = f.first < s.first;
-
-		if(first_on_left)
-		{
-			min_ratio = (s.first - f.first - dofs) / (f_w + s_w);
-			max_ratio = (s.first - f.first + dofs) / (f_w + s_w);
+			result.first = _pol[_ind];
+			result.second = _pol[_ind + 1];
 		}
 		else
 		{
-			min_ratio = (f.first - s.first - dofs) / (f_w + s_w);
-			max_ratio = (f.first - s.first + dofs) / (f_w + s_w);
+			result.first = _pol[_ind];
+			result.second = _pol[0];
 		}
-		return { min_ratio, max_ratio };
+		return result;
+	};
 
-	}
-	else if(!inbounds(f.first, f.second, s.first) && !inbounds(f.first, f.second, s.second)) //	trajectories does not have commot part, but objects may still intersect
+	const Physical_Model_2D::Imprint& ppm1 = *_moving_1.get_physical_model_prev_state();
+	Physical_Model_2D::Imprint ppm1_relative = ppm1;
+	glm::mat4x4 diff_pos = _moving_1.get_translation_matrix_for_time_ratio(1.0f) * _moving_2.get_translation_matrix_diff_inversed_for_time_ratio(1.0f);
+	glm::mat4x4 diff_rotation = _moving_1.get_rotation_matrix_for_time_ratio(1.0f) * _moving_2.get_rotation_matrix_diff_inversed_for_time_ratio(1.0f);
+	glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f) * _moving_2.get_scale_matrix_diff_inversed_for_time_ratio(1.0f);
+	ppm1_relative.update(diff_pos, diff_rotation, diff_scale);
+
+	const Physical_Model_2D::Imprint& ppm2 = *_moving_2.get_physical_model_prev_state();
+
+	for(unsigned int pol1=0; pol1<ppm1.get_polygons_count(); ++pol1)
 	{
-		float start_dist = f.first > s.first ? f.first - s.first : s.first - f.first;
-		float start1_end2_dist = f.first > s.second ? f.first - s.second : s.first - f.second;
-		float start2_end1_dist = s.first > f.second ? s.first - f.second : f.first - s.second;
-		float end_dist = f.second > s.second ? f.second - s.second : s.second - f.second;
-
-		auto calculate_ratio = [&](float _dist)->float
+		for(unsigned int seg1 = 0; seg1 < 3; ++seg1)
 		{
-			float dist_sum = f_w + s_w;
-			_dist = dofs - _dist;
-			float dist_ratio = (_dist / dist_sum) * f_w;
-			return 1 - (dist_ratio / f_w);
-		};
+			segment trajectory(ppm1[pol1][seg1], ppm1_relative[pol1][seg1]);
+			float distance = Math::get_distance(trajectory.first, trajectory.second);
 
-		float min = 1.1f, max = -0.1f;
-		auto rewrite = [&min, &max](float _ratio)->void
-		{
-			if(_ratio <= 1.0f && _ratio >= 0.0f)
+			for(unsigned int pol2 = 0; pol2 < ppm2.get_polygons_count(); ++pol2)
 			{
-				if(min > _ratio)
-					min = _ratio;
-				if(max < _ratio)
-					max = _ratio;
+				for(unsigned int seg2 = 0; seg2 < 3; ++seg2)
+				{
+					segment seg = get_polygon_segment(ppm2[pol2], seg2);
+					Geometry::Intersection_Data id = Geometry_2D::segments_intersect(trajectory.first, trajectory.second, seg.first, seg.second);
+					if(id)
+					{
+						float ratio = Math::get_distance(trajectory.first, id.point) / distance;
+						rewrite_min_max_ratio(ratio);
+					}
+				}
 			}
-		};
 
-		if(start_dist < dofs)
-		{
-			float ratio = calculate_ratio(start_dist);
-			rewrite(ratio);
 		}
-		if(start1_end2_dist < dofs)
-		{
-			float ratio = calculate_ratio(start1_end2_dist);
-			rewrite(ratio);
-		}
-		if(start2_end1_dist < dofs)
-		{
-			float ratio = calculate_ratio(start2_end1_dist);
-			rewrite(ratio);
-		}
-		if(end_dist < dofs)
-		{
-			float ratio = calculate_ratio(end_dist);
-			rewrite(ratio);
-		}
-
-		return { min, max };
 	}
 
-	return { -0.1f, 1.1f };
+	return {min_intersection_ratio, max_intersection_ratio};
 }
-
-
 
 Geometry::Intersection_Data Default_Narrow_CD::get_precise_time_ratio_of_collision(const Object_2D& _first, const Object_2D& _second, float _min_ratio, float _max_ratio) const
 {
@@ -182,57 +120,23 @@ Geometry::Intersection_Data Default_Narrow_CD::collision__moving_vs_moving(const
 		if(_ratio <= 1.0f && _ratio >= 0.0f)
 		{
 			if(min_intersection_ratio > _ratio)
-			{
 				min_intersection_ratio = _ratio;
-				std::cout << "rewriting min\n";
-			}
 			if(max_intersection_ratio < _ratio)
-			{
 				max_intersection_ratio = _ratio;
-				std::cout << "rewriting max\n";
-			}
 		}
 	};
 
-	float_pair rx = find_ratio(_moving_1, _moving_2, Axis_To_Use::X);
-	float_pair ry = find_ratio(_moving_1, _moving_2, Axis_To_Use::Y);
-
-	if(rx.first > rx.second)
-		std::swap(rx.first, rx.second);
-	if(ry.first > ry.second)
-		std::swap(ry.first, ry.second);
-
-	auto ratio_is_valid = [](float _ratio)->bool
-	{
-		return _ratio <= 1.0f && _ratio >= 0.0f;
-	};
-
-	bool rx_valid = ratio_is_valid(rx.first) && ratio_is_valid(rx.second);
-	bool ry_valid = ratio_is_valid(ry.first) && ratio_is_valid(ry.second);
-
-	if(!rx_valid)
-	{
-		rewrite_min_max_ratio(ry.first);
-		rewrite_min_max_ratio(ry.second);
-	}
-	else if(!ry_valid)
-	{
-		rewrite_min_max_ratio(rx.first);
-		rewrite_min_max_ratio(rx.second);
-	}
-	else if(rx.second - rx.first < ry.second - ry.first)
-	{
-		rewrite_min_max_ratio(rx.first);
-		rewrite_min_max_ratio(rx.second);
-	}
-	else
-	{
-		rewrite_min_max_ratio(ry.first);
-		rewrite_min_max_ratio(ry.second);
-	}
+	float_pair potential_ratio = find_ratio(_moving_1, _moving_2);
+	rewrite_min_max_ratio(potential_ratio.first);
+	rewrite_min_max_ratio(potential_ratio.second);
+	potential_ratio = find_ratio(_moving_2, _moving_1);
+	rewrite_min_max_ratio(potential_ratio.first);
+	rewrite_min_max_ratio(potential_ratio.second);
 
 	if((min_intersection_ratio <= 1.0f && min_intersection_ratio >= 0.0f && max_intersection_ratio <= 1.0f && max_intersection_ratio >= 0.0f))
 	{
+		auto test_id = get_precise_time_ratio_of_collision(_moving_1, _moving_2, 0.0f, 1.0f);
+
 		if(Math::floats_are_equal(min_intersection_ratio, max_intersection_ratio))
 			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, 1.0f);
 		else
@@ -245,73 +149,23 @@ Geometry::Intersection_Data Default_Narrow_CD::collision__moving_vs_moving(const
 Geometry::Intersection_Data Default_Narrow_CD::collision__moving_vs_static(const Object_2D& _moving, const Object_2D& _static) const
 {
 	float min_intersection_ratio = 1.1f, max_intersection_ratio = -0.1f;
-	auto rewrite_min_max_ratio = [&min_intersection_ratio, &max_intersection_ratio](float _new)->void
+	auto rewrite_min_max_ratio = [&min_intersection_ratio, &max_intersection_ratio](float _ratio)->void
 	{
-		if(min_intersection_ratio > _new)
-			min_intersection_ratio = _new;
-		if(max_intersection_ratio < _new)
-			max_intersection_ratio = _new;
+		if(_ratio <= 1.0f && _ratio >= 0.0f)
+		{
+			if(min_intersection_ratio > _ratio)
+				min_intersection_ratio = _ratio;
+			if(max_intersection_ratio < _ratio)
+				max_intersection_ratio = _ratio;
+		}
 	};
 
-	Physical_Model_2D::Rectangular_Border shared_space = _moving.get_dynamic_rb() && _static.get_physical_model()->curr_rect_border();
-
-	bool first_on_left = _moving.get_dynamic_rb().left < _static.get_physical_model()->curr_rect_border().left;
-	const Physical_Model_2D::Rectangular_Border& on_left = first_on_left ? _moving.get_dynamic_rb() : _static.get_physical_model()->curr_rect_border();
-	const Physical_Model_2D::Rectangular_Border& on_right = first_on_left ? _static.get_physical_model()->curr_rect_border() : _moving.get_dynamic_rb();
-	bool first_on_bottom = _moving.get_dynamic_rb().bottom < _static.get_physical_model()->curr_rect_border().bottom;
-	const Physical_Model_2D::Rectangular_Border& on_bottom = first_on_bottom ? _moving.get_dynamic_rb() : _static.get_physical_model()->curr_rect_border();
-	const Physical_Model_2D::Rectangular_Border& on_top = first_on_bottom ? _static.get_physical_model()->curr_rect_border() : _moving.get_dynamic_rb();
-
-	float on_left_width = on_left.right - on_left.left;
-	float on_right_width = on_right.right - on_right.left;
-	float on_top_height = on_top.top - on_top.bottom;
-	float on_bottom_height = on_bottom.top - on_bottom.bottom;
-
-	float tr_x_1 = (shared_space.left - on_left.left) / on_left_width;
-	float tr_x_2 = (on_right.right - shared_space.right) / on_right_width;
-	float tr_x_3 = (on_left.right - shared_space.left) / on_left_width;
-	float tr_x_4 = (shared_space.right - on_right.left) / on_right_width;
-
-	float tr_y_1 = (shared_space.bottom - on_bottom.bottom) / on_bottom_height;
-	float tr_y_2 = (on_top.top - shared_space.top) / on_top_height;
-	float tr_y_3 = (on_bottom.top - shared_space.bottom) / on_bottom_height;
-	float tr_y_4 = (shared_space.top - on_top.bottom) / on_top_height;
-
-	bool fully_inside_x = (shared_space.left <= on_left.left && shared_space.right >= on_left.right)
-			|| (shared_space.left <= on_right.left && shared_space.right >= on_right.right);
-	bool fully_inside_y = (shared_space.bottom <= on_left.bottom && shared_space.top >= on_left.top)
-			|| (shared_space.bottom <= on_right.bottom && shared_space.top >= on_right.top);
-
-	if(fully_inside_x && fully_inside_y)
-	{
-		min_intersection_ratio = 0.0f;
-		max_intersection_ratio = 1.0f;
-	}
-	else if(fully_inside_x)
-	{
-		rewrite_min_max_ratio(tr_y_1);
-		rewrite_min_max_ratio(tr_y_2);
-		rewrite_min_max_ratio(tr_y_3);
-		rewrite_min_max_ratio(tr_y_4);
-	}
-	else if(fully_inside_y)
-	{
-		rewrite_min_max_ratio(tr_x_1);
-		rewrite_min_max_ratio(tr_x_2);
-		rewrite_min_max_ratio(tr_x_3);
-		rewrite_min_max_ratio(tr_x_4);
-	}
-	else
-	{
-		rewrite_min_max_ratio(tr_x_1);
-		rewrite_min_max_ratio(tr_x_2);
-		rewrite_min_max_ratio(tr_x_3);
-		rewrite_min_max_ratio(tr_x_4);
-		rewrite_min_max_ratio(tr_y_1);
-		rewrite_min_max_ratio(tr_y_2);
-		rewrite_min_max_ratio(tr_y_3);
-		rewrite_min_max_ratio(tr_y_4);
-	}
+	float_pair potential_ratio = find_ratio(_moving, _static);
+	rewrite_min_max_ratio(potential_ratio.first);
+	rewrite_min_max_ratio(potential_ratio.second);
+	potential_ratio = find_ratio(_static, _moving);
+	rewrite_min_max_ratio(potential_ratio.first);
+	rewrite_min_max_ratio(potential_ratio.second);
 
 	if(min_intersection_ratio <= 1.0f && min_intersection_ratio >= 0.0f && max_intersection_ratio <= 1.0f && max_intersection_ratio >= 0.0f)
 	{
