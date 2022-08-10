@@ -74,8 +74,7 @@ glm::mat4x4 Drawable_Object::get_rotation_matrix_for_time_ratio(float _ratio) co
 {
 	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
 
-//	glm::vec3 axis_diff = m_previous_state.rotation_axis + ((m_rotation_axis - m_previous_state.rotation_axis) * _ratio);
-	glm::vec3 axis_diff = m_previous_state.rotation_axis + (m_rotation_axis * _ratio);
+	glm::vec3 axis_diff = m_previous_state.rotation_axis + ((m_rotation_axis - m_previous_state.rotation_axis) * _ratio);
 	Math::shrink_vector_to_1(axis_diff);
 
 	float angle_diff = m_previous_state.rotation_angle + ((m_rotation_angle - m_previous_state.rotation_angle) * _ratio);
@@ -124,12 +123,10 @@ glm::mat4x4 Drawable_Object::get_rotation_matrix_diff_inversed_for_time_ratio(fl
 {
 	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
 
-	glm::vec3 axis_diff = (m_previous_state.rotation_axis + (m_rotation_axis * _ratio));
-	Math::shrink_vector_to_1(axis_diff);
-
+	glm::vec3 axis_diff = m_previous_state.rotation_axis + ((m_rotation_axis - m_previous_state.rotation_axis) * _ratio);
 	float angle_diff = (m_rotation_angle - m_previous_state.rotation_angle) * _ratio;
 
-	return glm::rotate(-angle_diff, axis_diff);
+	return glm::rotate(-angle_diff, -axis_diff);	//	*kinda* working solution for (_ratio == 1.0f) (large calculation fault occurs sometimes (not this function's fault probably))
 }
 
 glm::mat4x4 Drawable_Object::get_scale_matrix_diff_inversed_for_time_ratio(float _ratio) const
