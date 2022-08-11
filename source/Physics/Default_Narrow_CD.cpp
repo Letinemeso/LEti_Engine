@@ -41,13 +41,48 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const Object_2D &_mo
 	const Physical_Model_2D::Imprint& ppm1 = *_moving_1.get_physical_model_prev_state();
 	Physical_Model_2D::Imprint ppm1_relative = ppm1;
 
-	glm::mat4x4 diff_pos = _moving_1.get_translation_matrix_for_time_ratio(1.0f) * _moving_2.get_translation_matrix_diff_inversed_for_time_ratio(1.0f);
-	glm::mat4x4 diff_rotation = _moving_1.get_rotation_matrix_for_time_ratio(1.0f) * _moving_2.get_rotation_matrix_diff_inversed_for_time_ratio(1.0f);
-	glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f) * _moving_2.get_scale_matrix_diff_inversed_for_time_ratio(1.0f);
+//	glm::vec3 diff_dist = (_moving_1.get_pos() - _moving_2.get_pos());
+//	glm::mat4x4 diff_dist_matrix{
+//		1.0f, 0.0f, 0.0f, 0.0f,
+//		0.0f, 1.0f, 0.0f, 0.0f,
+//		0.0f, 0.0f, 1.0f, 0.0f,
+//		diff_dist.x, diff_dist.y, 0.0f, 1.0f
+//	};
+//	glm::mat4x4 diff_pos = _moving_2.get_translation_matrix_for_time_ratio(1.0f) * diff_dist_matrix / _moving_2.get_translation_matrix_diff_inversed_for_time_ratio(1.0f);
+//	glm::mat4x4 diff_rotation = _moving_1.get_rotation_matrix_for_time_ratio(1.0f) * _moving_2.get_rotation_matrix_diff_inversed_for_time_ratio(1.0f);
+//	glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f) * _moving_2.get_scale_matrix_diff_inversed_for_time_ratio(1.0f);
+
+
+
+//	glm::mat4x4 fake_movement_matrix{
+//		1.0f, 0.0f, 0.0f, 0.0f,
+//		0.0f, 1.0f, 0.0f, 0.0f,
+//		0.0f, 0.0f, 1.0f, 0.0f,
+//		600.0f, 400.0f, 0.0f, 1.0f
+//	};
+	glm::mat4x4 fake_movement_matrix{
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+	glm::mat4x4 fake_default_matrix{
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+	glm::mat4x4 diff_pos = fake_movement_matrix * _moving_2.get_rotation_matrix_for_time_ratio(1.0f) * (_moving_2.get_translation_matrix_for_time_ratio(1.0f) / _moving_1.get_translation_matrix_for_time_ratio(1.0f));
+	glm::mat4x4 diff_rotation = fake_default_matrix / _moving_1.get_rotation_matrix_for_time_ratio(1.0f);
+	glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f)/* * _moving_2.get_scale_matrix_diff_inversed_for_time_ratio(1.0f)*/;
+
+//	LEti::Physical_Model_2D::Imprint initial_second_pm = *_moving_2.get_physical_model_prev_state();
+//	initial_second_pm.update(fake_movement_matrix, fake_default_matrix, _moving_2.get_scale_matrix_for_time_ratio(1.0f));
 
 	ppm1_relative.update(diff_pos, diff_rotation, diff_scale);
 
-	const Physical_Model_2D::Imprint& ppm2 = *_moving_2.get_physical_model_prev_state();
+	Physical_Model_2D::Imprint ppm2 = *_moving_2.get_physical_model_prev_state();
+	ppm2.update(fake_movement_matrix, fake_default_matrix, _moving_2.get_scale_matrix_for_time_ratio(1.0f));
 
 	for(unsigned int pol1=0; pol1<ppm1.get_polygons_count(); ++pol1)
 	{
