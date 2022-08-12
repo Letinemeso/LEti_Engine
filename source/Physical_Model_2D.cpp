@@ -114,6 +114,13 @@ void Physical_Model_2D::Imprint::update(const glm::mat4x4 &_translation, const g
 	update_rectangular_border();
 }
 
+void Physical_Model_2D::Imprint::update_with_single_matrix(const glm::mat4x4 _matrix)
+{
+	for(unsigned int i=0; i<m_polygons_count; ++i)
+		m_polygons[i].update_points_with_single_matrix(_matrix);
+	update_rectangular_border();
+}
+
 void Physical_Model_2D::Imprint::update_to_current_model_state()
 {
 	for(unsigned int i=0; i<m_polygons_count; ++i)

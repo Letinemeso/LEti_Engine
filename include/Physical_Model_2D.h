@@ -50,6 +50,7 @@ namespace LEti
 
 		public:
 			void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
+			void update_with_single_matrix(const glm::mat4x4 _matrix);
 			void update_to_current_model_state();
 
 			const Geometry_2D::Polygon& operator[](unsigned int _index) const;

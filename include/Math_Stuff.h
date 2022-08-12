@@ -82,6 +82,7 @@ namespace Geometry_2D {
 		void setup(const float* _raw_coords);
 		void setup(const Polygon& _other);
 		void update_points(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
+		void update_points_with_single_matrix(const glm::mat4x4& _matrix);
 
 	public:
 		Geometry::Intersection_Data point_belongs_to_triangle(const glm::vec3& _point) const;
