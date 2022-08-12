@@ -38,8 +38,8 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const Object_2D &_mo
 		return result;
 	};
 
-	Physical_Model_2D::Imprint ppm1 = *_moving_1.get_physical_model_prev_state();
-	Physical_Model_2D::Imprint ppm1_relative = ppm1;
+	Physical_Model_2D::Imprint ppm1_relative_prev = *_moving_1.get_physical_model_prev_state();
+	Physical_Model_2D::Imprint ppm1_relative = ppm1_relative_prev;
 
 	glm::mat4x4 fake_default_matrix{
 		1.0f, 0.0f, 0.0f, 0.0f,
@@ -48,7 +48,7 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const Object_2D &_mo
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
-	glm::vec3 pos_diff_vector_prev = _moving_2.get_pos_prev() - _moving_1.get_pos_prev();
+	glm::vec3 pos_diff_vector_prev = _moving_1.get_pos_prev() - _moving_2.get_pos_prev();
 	pos_diff_vector_prev = _moving_2.get_rotation_matrix_inversed_for_time_ratio(0.0f) * glm::vec4(pos_diff_vector_prev, 1.0f);
 
 	glm::mat4x4 diff_pos_prev = fake_default_matrix;
@@ -58,7 +58,7 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const Object_2D &_mo
 	glm::mat4x4 diff_scale_prev = _moving_1.get_scale_matrix_for_time_ratio(0.0f);
 
 
-	glm::vec3 pos_diff_vector = _moving_2.get_pos() - _moving_1.get_pos();
+	glm::vec3 pos_diff_vector = _moving_1.get_pos() - _moving_2.get_pos();
 	pos_diff_vector = _moving_2.get_rotation_matrix_inversed_for_time_ratio(1.0f) * glm::vec4(pos_diff_vector, 1.0f);
 
 	glm::mat4x4 diff_pos = fake_default_matrix;
@@ -67,17 +67,17 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const Object_2D &_mo
 	glm::mat4x4 diff_rotation = _moving_1.get_rotation_matrix_for_time_ratio(1.0f) / _moving_2.get_rotation_matrix_for_time_ratio(1.0f);
 	glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f) * (_moving_2.get_scale_matrix_for_time_ratio(1.0f) / _moving_2.get_scale_matrix_for_time_ratio(0.0f));
 
-	ppm1.update(diff_pos_prev, diff_rotation_prev, diff_scale_prev);
+	ppm1_relative_prev.update(diff_pos_prev, diff_rotation_prev, diff_scale_prev);
 	ppm1_relative.update(diff_pos, diff_rotation, diff_scale);
 
 	Physical_Model_2D::Imprint ppm2 = *_moving_2.get_physical_model_prev_state();
 	ppm2.update(fake_default_matrix, fake_default_matrix, _moving_2.get_scale_matrix_for_time_ratio(0.0f));
 
-	for(unsigned int pol1=0; pol1<ppm1.get_polygons_count(); ++pol1)
+	for(unsigned int pol1=0; pol1<ppm1_relative_prev.get_polygons_count(); ++pol1)
 	{
 		for(unsigned int seg1 = 0; seg1 < 3; ++seg1)
 		{
-			segment trajectory(ppm1[pol1][seg1], ppm1_relative[pol1][seg1]);
+			segment trajectory(ppm1_relative_prev[pol1][seg1], ppm1_relative[pol1][seg1]);
 			float distance = Math::get_distance(trajectory.first, trajectory.second);
 
 			for(unsigned int pol2 = 0; pol2 < ppm2.get_polygons_count(); ++pol2)
@@ -170,6 +170,35 @@ Geometry::Intersection_Data Default_Narrow_CD::collision__moving_vs_moving(const
 			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, 1.0f);
 		else
 			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, max_intersection_ratio);
+
+		/*min_intersection_ratio -= 0.02f;
+		max_intersection_ratio += 0.02f;
+
+		if(min_intersection_ratio < 0.0f) min_intersection_ratio = 0.0f;
+		if(max_intersection_ratio > 1.0f) max_intersection_ratio = 1.0f;
+
+		auto test_id = get_precise_time_ratio_of_collision(_moving_1, _moving_2, 0.0f, 1.0f);
+
+		if((test_id.time_of_intersection_ratio < min_intersection_ratio || test_id.time_of_intersection_ratio > max_intersection_ratio) && test_id)
+		{
+			std::cout << "found possible ratios:\tmin: " << min_intersection_ratio << "\tmax: " << max_intersection_ratio << "\nreal_ratio:\t" << test_id.time_of_intersection_ratio << "\n";
+		}
+
+		Geometry::Intersection_Data result_id;
+		if(Math::floats_are_equal(min_intersection_ratio, max_intersection_ratio))
+			result_id = get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, 1.0f);
+		else
+			result_id = get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, max_intersection_ratio);
+
+		if((test_id.time_of_intersection_ratio < min_intersection_ratio || test_id.time_of_intersection_ratio > max_intersection_ratio) && test_id)
+		{
+			std::cout << "actual found ratio:\t" << result_id.time_of_intersection_ratio << "\n\n";
+
+			find_ratio(_moving_1, _moving_2);
+			find_ratio(_moving_2, _moving_1);
+		}
+
+		return result_id;*/
 	}
 
 	return Geometry::Intersection_Data();
@@ -236,8 +265,7 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const Object_2D& 
 		if(dynamic_object.moved_since_last_frame())
 		{
 			Geometry::Intersection_Data cd = collision__moving_vs_static(dynamic_object, static_object);
-			if(cd)
-				return cd;
+			return cd;
 		}
 		return _first.get_physical_model()->is_intersecting_with_another_model(*_second.get_physical_model());
 	}
@@ -256,18 +284,14 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const Object_2D& 
 		if(_first.moved_since_last_frame() && _second.moved_since_last_frame())
 		{
 			Geometry::Intersection_Data cd = collision__moving_vs_moving(_first, _second);
-			if(cd)
-				return cd;
-			else
-				cd = collision__moving_vs_moving(_first, _second);
+			return cd;
 		}
 		else if(_first.moved_since_last_frame() ^ _second.moved_since_last_frame())
 		{
 			const Object_2D& static_object = _first.moved_since_last_frame() ? _first : _second;
 			const Object_2D& dynamic_object = _first.moved_since_last_frame() ? _second : _first;
 			Geometry::Intersection_Data cd = collision__moving_vs_static(dynamic_object, static_object);
-			if(cd)
-				return cd;
+			return cd;
 		}
 		else
 		{
