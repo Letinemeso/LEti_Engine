@@ -122,7 +122,7 @@ glm::mat4x4 Drawable_Object::get_rotation_matrix_inversed_for_time_ratio(float _
 
 	float angle_diff = m_previous_state.rotation_angle + ((m_rotation_angle - m_previous_state.rotation_angle) * _ratio);
 
-	return glm::rotate(angle_diff, -axis_diff);	//	*kinda* working solution for (_ratio == 1.0f) (large calculation fault occurs sometimes (not this function's fault probably))
+	return glm::rotate(angle_diff, -axis_diff);
 }
 
 glm::mat4x4 Drawable_Object::get_scale_matrix_inversed_for_time_ratio(float _ratio) const
@@ -278,6 +278,11 @@ void Drawable_Object::set_rotation_angle(float _angle)
 {
 	m_rotation_angle = _angle;
 
+	while(m_rotation_angle < 0.0f)
+		m_rotation_angle += Math::DOUBLE_PI;
+	while(m_rotation_angle > Math::DOUBLE_PI)
+		m_rotation_angle -= Math::DOUBLE_PI;
+
 	m_rotation_matrix = glm::rotate(m_rotation_angle, m_rotation_axis);
 }
 
@@ -295,10 +300,10 @@ void Drawable_Object::rotate(float _angle)
 {
 	m_rotation_angle += _angle;
 
-	if (m_rotation_angle >= 6.28318f)
-		m_rotation_angle -= 6.28318f;
-	if (m_rotation_angle <= -6.28318f)
-		m_rotation_angle += -6.28318f;
+	while(m_rotation_angle < 0.0f)
+		m_rotation_angle += Math::DOUBLE_PI;
+	while(m_rotation_angle > Math::DOUBLE_PI)
+		m_rotation_angle -= Math::DOUBLE_PI;
 
 	m_rotation_matrix = glm::rotate(m_rotation_angle, m_rotation_axis);
 }
