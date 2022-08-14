@@ -11,8 +11,8 @@
 #include "../OpenGL/GLM/mat4x4.hpp"
 #include "../OpenGL/GLM/gtx/transform.hpp"
 
-#include "../include/Physical_Model_2D.h"
-#include "../include/Physical_Model_3D.h"
+#include "../include/Physics/Physical_Model_2D.h"
+//#include "../include/Physical_Model_3D.h"
 
 
 namespace LEti {

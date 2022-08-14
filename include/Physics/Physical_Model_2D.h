@@ -1,13 +1,13 @@
 #ifndef __PHYSICAL_MODEL_2D
 #define __PHYSICAL_MODEL_2D
 
-#include "../OpenGL/GLM/vec3.hpp"
-#include "../OpenGL/GLM/mat4x4.hpp"
+#include "../../OpenGL/GLM/vec3.hpp"
+#include "../../OpenGL/GLM/mat4x4.hpp"
 
-#include "../include/Math_Stuff.h"
-#include "../include/Tree.h"
+#include "../../include/Math_Stuff.h"
+#include "../../include/Tree.h"
 
-#include "../Debug.h"
+#include "../../Debug.h"
 
 
 namespace LEti
@@ -56,7 +56,6 @@ namespace LEti
 			const Geometry_2D::Polygon& operator[](unsigned int _index) const;
 			const Physical_Model_2D* get_parent() const;
 			unsigned int get_polygons_count() const;
-			Geometry::Intersection_Data imprints_intersect(const Imprint& _other) const;
 			const Rectangular_Border& curr_rect_border() const;
 
 		};
@@ -89,12 +88,6 @@ namespace LEti
 		void copy_real_coordinates(const Physical_Model_2D& _other);
 
 		Imprint create_imprint() const;
-
-	public:
-		Geometry::Intersection_Data is_intersecting_with_point(const glm::vec3& _point) const;
-		Geometry::Intersection_Data is_intersecting_with_segment(const glm::vec3& _point_1, const glm::vec3& _point_2) const;
-		Geometry::Intersection_Data is_intersecting_with_another_model(const Physical_Model_2D& _other) const;
-		Geometry::Intersection_Data is_intersecting_with_another_model(const Physical_Model_2D::Imprint& _other) const;
 
 	public:
 		unsigned int get_polygons_count() const;

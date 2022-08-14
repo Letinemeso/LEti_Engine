@@ -113,18 +113,18 @@ Geometry::Intersection_Data Default_Narrow_CD::get_precise_time_ratio_of_collisi
 	float curr_time_point = _min_ratio;
 	while(curr_time_point <= _max_ratio)
 	{
-		Physical_Model_2D::Imprint this_impr = *_first.get_physical_model_prev_state();
-		this_impr.update(_first.get_translation_matrix_for_time_ratio(curr_time_point), _first.get_rotation_matrix_for_time_ratio(curr_time_point), _first.get_scale_matrix_for_time_ratio(curr_time_point));
-		Physical_Model_2D::Imprint other_impr = *_second.get_physical_model_prev_state();
-		other_impr.update(_second.get_translation_matrix_for_time_ratio(curr_time_point), _second.get_rotation_matrix_for_time_ratio(curr_time_point), _second.get_scale_matrix_for_time_ratio(curr_time_point));
-		id = this_impr.imprints_intersect(other_impr);
+		Physical_Model_2D::Imprint first_impr = *_first.get_physical_model_prev_state();
+		first_impr.update(_first.get_translation_matrix_for_time_ratio(curr_time_point), _first.get_rotation_matrix_for_time_ratio(curr_time_point), _first.get_scale_matrix_for_time_ratio(curr_time_point));
+		Physical_Model_2D::Imprint second_impr = *_second.get_physical_model_prev_state();
+		second_impr.update(_second.get_translation_matrix_for_time_ratio(curr_time_point), _second.get_rotation_matrix_for_time_ratio(curr_time_point), _second.get_scale_matrix_for_time_ratio(curr_time_point));
+		id = m_narrowest_phase->collision__model_vs_model(first_impr, second_impr);
 		if(id) break;
 
 		curr_time_point += step_diff;
 	}
 
 	if(!id && Math::floats_are_equal(_max_ratio, 1.0f))
-		id = _first.get_physical_model()->is_intersecting_with_another_model(*_second.get_physical_model());
+		id = m_narrowest_phase->collision__model_vs_model(*_first.get_physical_model(), *_second.get_physical_model());
 
 	if(id)
 	{
@@ -238,7 +238,7 @@ Geometry::Intersection_Data Default_Narrow_CD::collision__moving_vs_static(const
 
 Geometry::Intersection_Data Default_Narrow_CD::collision__static_vs_point(const Object_2D &_static, const glm::vec3 &_point) const
 {
-	return _static.get_physical_model()->is_intersecting_with_point(_point);
+	return m_narrowest_phase->collision__model_vs_point(*_static.get_physical_model(), _point);
 }
 
 
@@ -253,7 +253,7 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const Object_2D& 
 
 	if(!_second.is_dynamic() && !_first.is_dynamic())
 	{
-		return _first.get_physical_model()->is_intersecting_with_another_model(*_second.get_physical_model());
+		m_narrowest_phase->collision__model_vs_model(*_first.get_physical_model(), *_second.get_physical_model());
 	}
 	else if(_first.is_dynamic() ^ _second.is_dynamic())
 	{
@@ -262,12 +262,15 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const Object_2D& 
 		Physical_Model_2D::Rectangular_Border check = dynamic_object.get_dynamic_rb() && static_object.get_physical_model()->curr_rect_border();
 		if(check == Physical_Model_2D::Rectangular_Border())
 			return Geometry::Intersection_Data();
+
+		Geometry::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(*dynamic_object.get_physical_model_prev_state(), *static_object.get_physical_model());
+		if(prev_state_cd)
+			return prev_state_cd;
+
 		if(dynamic_object.moved_since_last_frame())
-		{
-			Geometry::Intersection_Data cd = collision__moving_vs_static(dynamic_object, static_object);
-			return cd;
-		}
-		return _first.get_physical_model()->is_intersecting_with_another_model(*_second.get_physical_model());
+			return collision__moving_vs_static(dynamic_object, static_object);
+
+		m_narrowest_phase->collision__model_vs_model(*_first.get_physical_model(), *_second.get_physical_model());
 	}
 	else /*if(is_dynamic() && _other.is_dynamic())*/
 	{
@@ -275,16 +278,13 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const Object_2D& 
 		if(check == Physical_Model_2D::Rectangular_Border())
 			return Geometry::Intersection_Data();
 
-		auto prev_state_cd = _first.get_physical_model_prev_state()->imprints_intersect(*_second.get_physical_model_prev_state());
+		Geometry::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(*_first.get_physical_model_prev_state(), *_second.get_physical_model_prev_state());
 		if(prev_state_cd)
-		{
 			return prev_state_cd;
-		}
 
 		if(_first.moved_since_last_frame() && _second.moved_since_last_frame())
 		{
-			Geometry::Intersection_Data cd = collision__moving_vs_moving(_first, _second);
-			return cd;
+			return collision__moving_vs_moving(_first, _second);
 		}
 		else if(_first.moved_since_last_frame() ^ _second.moved_since_last_frame())
 		{
@@ -292,10 +292,6 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const Object_2D& 
 			const Object_2D& dynamic_object = _first.moved_since_last_frame() ? _second : _first;
 			Geometry::Intersection_Data cd = collision__moving_vs_static(dynamic_object, static_object);
 			return cd;
-		}
-		else
-		{
-			return _first.get_physical_model()->is_intersecting_with_another_model(*_second.get_physical_model());
 		}
 	}
 	return Geometry::Intersection_Data();

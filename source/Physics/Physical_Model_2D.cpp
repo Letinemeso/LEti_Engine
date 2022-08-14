@@ -1,4 +1,4 @@
-#include "../include/Physical_Model_2D.h"
+#include "../../include/Physics/Physical_Model_2D.h"
 
 using namespace LEti;
 
@@ -15,11 +15,6 @@ Physical_Model_2D::Rectangular_Border Physical_Model_2D::Rectangular_Border::ope
 	bool first_on_bottom = bottom < _other.bottom;
 	const Physical_Model_2D::Rectangular_Border& on_bottom = first_on_bottom ? *this : _other;
 	const Physical_Model_2D::Rectangular_Border& on_top = first_on_bottom ? _other : *this;
-
-//	if(on_top.bottom > on_bottom.top || on_left.right < on_right.left)
-//		return Rectangular_Border();
-//	if(right < _other.left || _other.right < left || top < _other.bottom || bottom > _other.top)
-//		return Rectangular_Border();
 
 	shared_space.left = on_right.left;
 	shared_space.right = on_left.right;
@@ -149,30 +144,6 @@ unsigned int Physical_Model_2D::Imprint::get_polygons_count() const
 	return m_parent->get_polygons_count();
 }
 
-Geometry::Intersection_Data Physical_Model_2D::Imprint::imprints_intersect(const Imprint &_other) const
-{
-	ASSERT(!m_polygons || !_other.m_polygons);
-
-	for (unsigned int i = 0; i < m_polygons_count; ++i)
-	{
-		for (unsigned int j = 0; j < _other.m_polygons_count; ++j)
-		{
-			Geometry::Intersection_Data id = m_polygons[i].intersects_with_another_polygon(_other.m_polygons[j]);
-			if (id) return id;
-		}
-	}
-	for (unsigned int i = 0; i < _other.m_polygons_count; ++i)
-	{
-		for (unsigned int j = 0; j < m_polygons_count; ++j)
-		{
-			Geometry::Intersection_Data id = _other.m_polygons[i].intersects_with_another_polygon(m_polygons[j]);
-			if (id) return id;
-		}
-	}
-
-	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
-}
-
 const Physical_Model_2D::Rectangular_Border& Physical_Model_2D::Imprint::curr_rect_border() const
 {
 	return m_rect_border;
@@ -274,77 +245,6 @@ void Physical_Model_2D::copy_real_coordinates(const Physical_Model_2D &_other)
 Physical_Model_2D::Imprint Physical_Model_2D::create_imprint() const
 {
 	return Imprint(m_polygons, m_polygons_count, this);
-}
-
-
-
-Geometry::Intersection_Data Physical_Model_2D::is_intersecting_with_point(const glm::vec3& _point) const
-{
-	ASSERT(!m_polygons);
-
-	for (unsigned int i = 0; i < m_polygons_count; ++i)
-		if (m_polygons[i].point_belongs_to_triangle(_point)) return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::intersection);
-	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
-}
-
-Geometry::Intersection_Data Physical_Model_2D::is_intersecting_with_segment(const glm::vec3& _point_1, const glm::vec3& _point_2) const
-{
-	ASSERT(!m_polygons);
-
-	for (unsigned int i = 0; i < m_polygons_count; ++i)
-	{
-		Geometry::Intersection_Data id = m_polygons[i].segment_intersecting_polygon(_point_1, _point_2);
-		if (id) return id;
-	}
-	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
-}
-
-Geometry::Intersection_Data Physical_Model_2D::is_intersecting_with_another_model(const Physical_Model_2D& _other) const
-{
-	ASSERT(!m_polygons || !_other.m_polygons);
-
-	for (unsigned int i = 0; i < m_polygons_count; ++i)
-	{
-		for (unsigned int j = 0; j < _other.m_polygons_count; ++j)
-		{
-			Geometry::Intersection_Data id = m_polygons[i].intersects_with_another_polygon(_other.m_polygons[j]);
-			if (id) return id;
-		}
-	}
-	for (unsigned int i = 0; i < _other.m_polygons_count; ++i)
-	{
-		for (unsigned int j = 0; j < m_polygons_count; ++j)
-		{
-			Geometry::Intersection_Data id = _other.m_polygons[i].intersects_with_another_polygon(m_polygons[j]);
-			if (id) return id;
-		}
-	}
-
-	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
-}
-
-Geometry::Intersection_Data Physical_Model_2D::is_intersecting_with_another_model(const Physical_Model_2D::Imprint &_other) const
-{
-	ASSERT(!m_polygons || !_other.m_polygons);
-
-	for (unsigned int i = 0; i < m_polygons_count; ++i)
-	{
-		for (unsigned int j = 0; j < _other.m_polygons_count; ++j)
-		{
-			Geometry::Intersection_Data id = m_polygons[i].intersects_with_another_polygon(_other.m_polygons[j]);
-			if (id) return id;
-		}
-	}
-	for (unsigned int i = 0; i < _other.m_polygons_count; ++i)
-	{
-		for (unsigned int j = 0; j < m_polygons_count; ++j)
-		{
-			Geometry::Intersection_Data id = _other.m_polygons[i].intersects_with_another_polygon(m_polygons[j]);
-			if (id) return id;
-		}
-	}
-
-	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
 }
 
 
