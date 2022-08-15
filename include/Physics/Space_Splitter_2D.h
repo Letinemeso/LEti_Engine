@@ -7,7 +7,6 @@
 #include "../../include/Object.h"
 
 #include "../../include/Physics/Broad_Phase_Interface.h"
-#include "../../include/Physics/Middle_Phase_Interface.h"
 #include "../../include/Physics/Narrow_Phase_Interface.h"
 
 
@@ -28,21 +27,17 @@ namespace LEti
 
 	private:
 		static Broad_Phase_Interface* m_broad_phase;
-		static Middle_Phase_Interface* m_middle_phase;
 		static Narrow_Phase_Interface* m_narrow_phase;
 
 	public:
 		template<typename Broad_Phase_Implementation>
 		static void set_broad_phase();
-		template<typename Middle_Phase_Implementation>
-		static void set_middle_phase();
 		template<typename Narrow_Phase_Implementation>
 		static void set_narrow_phase();
 		template<typename Narrowest_Phase_Implementation>
 		static void set_narrowest_phase();
 
 		static Broad_Phase_Interface* get_broad_phase();
-		static Middle_Phase_Interface* get_middle_phase();
 		static Narrow_Phase_Interface* get_narrow_phase();
 
 	public:
@@ -66,13 +61,6 @@ namespace LEti
 	{
 		delete m_broad_phase;
 		m_broad_phase = new Broad_Phase_Implementation;
-	}
-
-	template<typename Middle_Phase_Implementation>
-	void Space_Splitter_2D::set_middle_phase()
-	{
-		delete m_middle_phase;
-		m_middle_phase = new Middle_Phase_Implementation;
 	}
 
 	template<typename Narrow_Phase_Implementation>

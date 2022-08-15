@@ -8,7 +8,6 @@ std::list<const Object_2D*> Space_Splitter_2D::m_registred_models;
 std::list<const glm::vec3*> Space_Splitter_2D::m_registred_points;
 
 Broad_Phase_Interface* Space_Splitter_2D::m_broad_phase = nullptr;
-Middle_Phase_Interface* Space_Splitter_2D::m_middle_phase = nullptr;
 Narrow_Phase_Interface* Space_Splitter_2D::m_narrow_phase = nullptr;
 
 
@@ -44,11 +43,6 @@ void Space_Splitter_2D::debug_assert_if_point_copy_found(const glm::vec3 *_point
 Broad_Phase_Interface* Space_Splitter_2D::get_broad_phase()
 {
 	return m_broad_phase;
-}
-
-Middle_Phase_Interface* Space_Splitter_2D::get_middle_phase()
-{
-	return m_middle_phase;
 }
 
 Narrow_Phase_Interface* Space_Splitter_2D::get_narrow_phase()
@@ -104,9 +98,6 @@ void Space_Splitter_2D::update()
 
 	std::list<Broad_Phase_Interface::Colliding_Pair> possible_collisions__models = m_broad_phase->get_possible_collisions__models();
 	std::list<Broad_Phase_Interface::Colliding_Point_And_Object> possible_collisions__points = m_broad_phase->get_possible_collisions__points();
-
-	if(m_middle_phase)
-		m_middle_phase->update(possible_collisions__models, possible_collisions__points);
 
 	m_narrow_phase->update(possible_collisions__models, possible_collisions__points);
 
