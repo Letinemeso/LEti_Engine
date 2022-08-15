@@ -157,7 +157,7 @@ namespace LEti {
 	    bool m_can_cause_collision = false;
 		Physical_Model_2D* m_physical_model = nullptr;
 		Physical_Model_2D::Imprint* m_physical_model_prev_state = nullptr;
-	    Physical_Model_2D::Rectangular_Border m_dynamic_rb;
+		Geometry_2D::Rectangular_Border m_dynamic_rb;
 		bool m_is_dynamic = false;
 
 	public:
@@ -178,7 +178,7 @@ namespace LEti {
 	public:
 	    const Physical_Model_2D* get_physical_model() const;
 		const Physical_Model_2D::Imprint* get_physical_model_prev_state() const;
-		const Physical_Model_2D::Rectangular_Border& get_dynamic_rb() const;
+		const Geometry_2D::Rectangular_Border& get_dynamic_rb() const;
 
 //	private:
 //		static Geometry::Intersection_Data get_precise_time_ratio_of_collision(const Object_2D& _first, const Object_2D& _second, float _min_ratio, float _max_ratio, unsigned int _precision);

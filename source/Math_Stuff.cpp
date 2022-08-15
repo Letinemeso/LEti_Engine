@@ -203,6 +203,114 @@ glm::vec3& Geometry_2D::Polygon::operator[](unsigned int _index)
 	return m_actual_C;
 }
 
+
+
+
+Geometry_2D::Rectangular_Border::Rectangular_Border()
+{
+
+}
+
+void Geometry_2D::Rectangular_Border::operator=(const Rectangular_Border& _other)
+{
+	left = _other.left;
+	right = _other.right;
+	top = _other.top;
+	bottom = _other.bottom;
+}
+
+
+Geometry_2D::Rectangular_Border& Geometry_2D::Rectangular_Border::consider_point(const glm::vec3 &_point)
+{
+	if((*this) == Rectangular_Border())
+	{
+		left = _point.x;
+		right = _point.x;
+		top = _point.y;
+		bottom = _point.y;
+	}
+	else
+	{
+		if(left > _point.x) left = _point.x;
+		if(right < _point.x) right = _point.x;
+		if(top < _point.y) top = _point.y;
+		if(bottom > _point.y) bottom = _point.y;
+	}
+
+	return *this;
+}
+
+
+glm::vec3 Geometry_2D::Rectangular_Border::right_top() const
+{
+	return {right, top, 0.0f};
+}
+
+glm::vec3 Geometry_2D::Rectangular_Border::left_top() const
+{
+	return {left, top, 0.0f};
+}
+
+glm::vec3 Geometry_2D::Rectangular_Border::left_bottom() const
+{
+	return {left, bottom, 0.0f};
+}
+
+glm::vec3 Geometry_2D::Rectangular_Border::right_bottom() const
+{
+	return {right, bottom, 0.0f};
+}
+
+
+Geometry_2D::Rectangular_Border Geometry_2D::Rectangular_Border::operator&&(const Rectangular_Border &_other) const
+{
+	Rectangular_Border shared_space;
+
+	bool first_on_left = left < _other.left;
+	const Rectangular_Border& on_left = first_on_left ? *this : _other;
+	const Rectangular_Border& on_right = first_on_left ? _other : *this;
+	bool first_on_bottom = bottom < _other.bottom;
+	const Rectangular_Border& on_bottom = first_on_bottom ? *this : _other;
+	const Rectangular_Border& on_top = first_on_bottom ? _other : *this;
+
+	shared_space.left = on_right.left;
+	shared_space.right = on_left.right;
+	shared_space.top = on_bottom.top;
+	shared_space.bottom = on_top.bottom;
+
+	if(shared_space.left > shared_space.right || shared_space.top < shared_space.bottom)
+		return Rectangular_Border();
+
+	return shared_space;
+}
+
+bool Geometry_2D::Rectangular_Border::operator==(const Rectangular_Border &_other) const
+{
+	return	Math::floats_are_equal(left, _other.left) &&
+			Math::floats_are_equal(right, _other.right) &&
+			Math::floats_are_equal(top, _other.top) &&
+			Math::floats_are_equal(bottom, _other.bottom);
+}
+
+Geometry_2D::Rectangular_Border::operator bool() const
+{
+	bool result =	Math::floats_are_equal(left, 0.0f) &&
+					Math::floats_are_equal(right, 0.0f) &&
+					Math::floats_are_equal(top, 0.0f) &&
+					Math::floats_are_equal(bottom, 0.0f);
+	if(!result)
+	{
+		result  =	Math::floats_are_equal(left, right) &&
+					Math::floats_are_equal(bottom, top);
+	}
+
+	return !result;
+}
+
+
+
+
+
 Geometry_2D::Equasion_Data::Equasion_Data(const glm::vec3& _point_1, const glm::vec3& _point_2)
 {
 	glm::vec3 substr = _point_1 - _point_2;
@@ -348,16 +456,6 @@ Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _po
 	if(id.point.y <= first_higher.y && id.point.y >= first_lower.y
 			&& id.point.y <= second_higher.y && id.point.y >= second_lower.y)
 		return id;
-
-//	float first_length = LEti::Math::get_distance(_point_11, _point_21);
-//	float second_length = LEti::Math::get_distance(_point_12, _point_22);
-
-//	//TODO: think about optimization: calculating vectors' lengths may be unnecessary
-//	if ((LEti::Math::get_distance(id.point, _point_11) < first_length) &&
-//			(LEti::Math::get_distance(id.point, _point_21) < first_length) &&
-//			(LEti::Math::get_distance(id.point, _point_12) < second_length) &&
-//			(LEti::Math::get_distance(id.point, _point_22) < second_length))
-//	{
 
 	return Geometry::Intersection_Data();
 }

@@ -97,6 +97,28 @@ namespace Geometry_2D {
 
 	};
 
+	class Rectangular_Border
+	{
+	public:
+		float left = 0.0f, right = 0.0f, top = 0.0f, bottom = 0.0f;
+
+	public:
+		Rectangular_Border();
+		void operator=(const Rectangular_Border& _other);
+
+		Rectangular_Border& consider_point(const glm::vec3& _point);
+
+		glm::vec3 right_top() const;
+		glm::vec3 left_top() const;
+		glm::vec3 left_bottom() const;
+		glm::vec3 right_bottom() const;
+
+		Rectangular_Border operator&&(const Rectangular_Border& _other) const;
+		bool operator==(const Rectangular_Border& _other) const;
+		operator bool() const;
+
+	};
+
 	class Equasion_Data
 	{
 	private:

@@ -3,41 +3,6 @@
 using namespace LEti;
 
 
-
-
-Physical_Model_2D::Rectangular_Border Physical_Model_2D::Rectangular_Border::operator&&(const Rectangular_Border& _other) const
-{
-	Rectangular_Border shared_space;
-
-	bool first_on_left = left < _other.left;
-	const Physical_Model_2D::Rectangular_Border& on_left = first_on_left ? *this : _other;
-	const Physical_Model_2D::Rectangular_Border& on_right = first_on_left ? _other : *this;
-	bool first_on_bottom = bottom < _other.bottom;
-	const Physical_Model_2D::Rectangular_Border& on_bottom = first_on_bottom ? *this : _other;
-	const Physical_Model_2D::Rectangular_Border& on_top = first_on_bottom ? _other : *this;
-
-	shared_space.left = on_right.left;
-	shared_space.right = on_left.right;
-	shared_space.top = on_bottom.top;
-	shared_space.bottom = on_top.bottom;
-
-	if(shared_space.left > shared_space.right || shared_space.top < shared_space.bottom)
-		return Rectangular_Border();
-
-	return shared_space;
-}
-
-bool Physical_Model_2D::Rectangular_Border::operator==(const Rectangular_Border &_other) const
-{
-	return	Math::floats_are_equal(left, _other.left) &&
-			Math::floats_are_equal(right, _other.right) &&
-			Math::floats_are_equal(top, _other.top) &&
-			Math::floats_are_equal(bottom, _other.bottom);
-}
-
-
-
-
 Physical_Model_2D::Imprint::Imprint(const Geometry_2D::Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent)
 	: m_parent(_parent)
 {
@@ -144,7 +109,7 @@ unsigned int Physical_Model_2D::Imprint::get_polygons_count() const
 	return m_parent->get_polygons_count();
 }
 
-const Physical_Model_2D::Rectangular_Border& Physical_Model_2D::Imprint::curr_rect_border() const
+const Geometry_2D::Rectangular_Border& Physical_Model_2D::Imprint::curr_rect_border() const
 {
 	return m_rect_border;
 }
@@ -174,7 +139,7 @@ void Physical_Model_2D::update_rectangular_border()
 
 
 
-const Physical_Model_2D::Rectangular_Border& Physical_Model_2D::curr_rect_border() const
+const Geometry_2D::Rectangular_Border& Physical_Model_2D::curr_rect_border() const
 {
 	return m_current_border;
 }

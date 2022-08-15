@@ -15,17 +15,6 @@ namespace LEti
 	class Physical_Model_2D
 	{
 	public:
-		struct Rectangular_Border
-		{
-			float left = 0.0f, right = 0.0f, top = 0.0f, bottom = 0.0f;
-			Rectangular_Border() : left(0.0f), right(0.0f), top(0.0f), bottom(0.0f) { }
-			Rectangular_Border(const Rectangular_Border& _other) : left(_other.left), right(_other.right), top(_other.top), bottom(_other.bottom) { }
-			void operator=(const Rectangular_Border& _other) { left = _other.left; right = _other.right; top = _other.top; bottom = _other.bottom;  }
-			Rectangular_Border operator&&(const Rectangular_Border& _other) const;
-			bool operator==(const Rectangular_Border& _other) const;
-		};
-
-	public:
 		class Imprint final
 		{
 		private:
@@ -35,7 +24,7 @@ namespace LEti
 		private:
 			Geometry_2D::Polygon* m_polygons = nullptr;
 			unsigned int m_polygons_count = 0;
-			Rectangular_Border m_rect_border;
+			Geometry_2D::Rectangular_Border m_rect_border;
 
 		private:
 			Imprint(const Geometry_2D::Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent);
@@ -56,7 +45,7 @@ namespace LEti
 			const Geometry_2D::Polygon& operator[](unsigned int _index) const;
 			const Physical_Model_2D* get_parent() const;
 			unsigned int get_polygons_count() const;
-			const Rectangular_Border& curr_rect_border() const;
+			const Geometry_2D::Rectangular_Border& curr_rect_border() const;
 
 		};
 
@@ -68,13 +57,13 @@ namespace LEti
 		unsigned int m_polygons_count = 0;
 
 	private:
-		Rectangular_Border m_current_border;
+		Geometry_2D::Rectangular_Border m_current_border;
 
 	private:
 		void update_rectangular_border();
 
 	public:
-		const Rectangular_Border& curr_rect_border() const;
+		const Geometry_2D::Rectangular_Border& curr_rect_border() const;
 
 	public:
 		Physical_Model_2D();

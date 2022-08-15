@@ -259,8 +259,7 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const Object_2D& 
 	{
 		const Object_2D& dynamic_object = _first.is_dynamic() ? _first : _second;
 		const Object_2D& static_object = _first.is_dynamic() ? _second : _first;
-		Physical_Model_2D::Rectangular_Border check = dynamic_object.get_dynamic_rb() && static_object.get_physical_model()->curr_rect_border();
-		if(check == Physical_Model_2D::Rectangular_Border())
+		if((dynamic_object.get_dynamic_rb() && static_object.get_physical_model()->curr_rect_border()))
 			return Geometry::Intersection_Data();
 
 		Geometry::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(*dynamic_object.get_physical_model_prev_state(), *static_object.get_physical_model());
@@ -274,8 +273,7 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const Object_2D& 
 	}
 	else /*if(is_dynamic() && _other.is_dynamic())*/
 	{
-		Physical_Model_2D::Rectangular_Border check = _first.get_dynamic_rb() && _second.get_dynamic_rb();
-		if(check == Physical_Model_2D::Rectangular_Border())
+		if(!(_first.get_dynamic_rb() && _second.get_dynamic_rb()))
 			return Geometry::Intersection_Data();
 
 		Geometry::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(*_first.get_physical_model_prev_state(), *_second.get_physical_model_prev_state());

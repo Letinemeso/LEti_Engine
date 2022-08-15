@@ -25,7 +25,7 @@ void Space_Hasher_2D::update_border(const objects_list& _registred_objects)
 
 	std::list<const Object_2D*>::const_iterator model_it = _registred_objects.begin();
 
-	const Physical_Model_2D::Rectangular_Border& first_rb = (*model_it)->is_dynamic() ?
+	const Geometry_2D::Rectangular_Border& first_rb = (*model_it)->is_dynamic() ?
 				(*model_it)->get_dynamic_rb() :
 				(*model_it)->get_physical_model()->curr_rect_border();
 	float max_left = first_rb.left;
@@ -42,7 +42,7 @@ void Space_Hasher_2D::update_border(const objects_list& _registred_objects)
 			continue;
 		}
 
-		const Physical_Model_2D::Rectangular_Border& rb = (*model_it)->is_dynamic() ?
+		const Geometry_2D::Rectangular_Border& rb = (*model_it)->is_dynamic() ?
 					(*model_it)->get_dynamic_rb() :
 					(*model_it)->get_physical_model()->curr_rect_border();
 
@@ -79,7 +79,7 @@ void Space_Hasher_2D::hash_objects(const objects_list& _registred_objects)
 	objects_list::const_iterator model_it = _registred_objects.cbegin();
 	while(model_it != _registred_objects.end())
 	{
-		const Physical_Model_2D::Rectangular_Border& curr_rb = (*model_it)->is_dynamic() ?
+		const Geometry_2D::Rectangular_Border& curr_rb = (*model_it)->is_dynamic() ?
 					(*model_it)->get_dynamic_rb() : (*model_it)->get_physical_model()->curr_rect_border();
 
 		unsigned int min_index_x = (unsigned int)((curr_rb.left - m_space_borders.min_x) / m_space_borders.width * m_precision);
