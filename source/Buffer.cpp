@@ -15,6 +15,11 @@ float Buffer::float_container::operator*() const
 	return buffer_data[last_requested_index];
 }
 
+Buffer::float_container::operator float() const
+{
+	return buffer_data[last_requested_index];
+}
+
 
 
 Buffer::Buffer()

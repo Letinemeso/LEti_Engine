@@ -22,6 +22,7 @@ namespace LEti {
 		public:
 			void operator=(float _f);
 			float operator*() const;
+			operator float() const;
 		};
 		float_container fc;
 
