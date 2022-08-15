@@ -146,6 +146,14 @@ Geometry::Intersection_Data Geometry_2D::Polygon::point_belongs_to_triangle(cons
 
 Geometry::Intersection_Data Geometry_2D::Polygon::segment_intersecting_polygon(const glm::vec3 &_point_1, const glm::vec3 &_point_2) const
 {
+	Rectangular_Border segment_rb;
+	segment_rb.consider_point(_point_1).consider_point(_point_2);
+	Rectangular_Border polygon_rb;
+	polygon_rb.consider_point(m_actual_A).consider_point(m_actual_B).consider_point(m_actual_C);
+
+	if(!(segment_rb && polygon_rb))
+		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+
 	Geometry::Intersection_Data _0 = Geometry_2D::segments_intersect(m_actual_A, m_actual_B, _point_1, _point_2);
 	if(_0)
 		return _0;
@@ -160,6 +168,14 @@ Geometry::Intersection_Data Geometry_2D::Polygon::segment_intersecting_polygon(c
 
 Geometry::Intersection_Data Geometry_2D::Polygon::intersects_with_another_polygon(const Polygon& _other) const
 {
+	Rectangular_Border this_rb;
+	this_rb.consider_point(m_actual_A).consider_point(m_actual_B).consider_point(m_actual_C);
+	Rectangular_Border other_rb;
+	other_rb.consider_point(_other.m_actual_A).consider_point(_other.m_actual_B).consider_point(_other.m_actual_C);
+
+	if(!(this_rb && other_rb))
+		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+
 	Geometry::Intersection_Data _0 = segment_intersecting_polygon(_other.m_actual_A, _other.m_actual_B);
 	if(_0)
 		return _0;
