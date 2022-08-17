@@ -175,19 +175,9 @@ namespace LEti {
 	public:
 	    Physical_Model_2D* get_physical_model();
 		Physical_Model_2D::Imprint* get_physical_model_prev_state();
-	public:
 	    const Physical_Model_2D* get_physical_model() const;
 		const Physical_Model_2D::Imprint* get_physical_model_prev_state() const;
 		const Geometry_2D::Rectangular_Border& get_dynamic_rb() const;
-
-//	private:
-//		static Geometry::Intersection_Data get_precise_time_ratio_of_collision(const Object_2D& _first, const Object_2D& _second, float _min_ratio, float _max_ratio, unsigned int _precision);
-//		static Geometry::Intersection_Data collision__moving_vs_moving(const Object_2D& _moving_1, const Object_2D& _moving_2);
-//		static Geometry::Intersection_Data collision__moving_vs_static(const Object_2D& _moving, const Object_2D& _static);
-//		static Geometry::Intersection_Data collision__static_vs_static(const Object_2D& _moving, const Object_2D& _static);
-
-//	public:
-//	    Geometry::Intersection_Data is_colliding_with_other(const Object_2D& _other) const;
 
 	};
 
