@@ -85,13 +85,13 @@ const Default_Draw_Module_2D* Object_2D::draw_module() const
 
 void Object_2D::create_physics_module()
 {
-	remove_draw_module();
-	m_draw_module = new Default_Draw_Module_2D;
+	remove_physics_module();
+	m_physics_module = new Default_Physics_Module_2D;
 }
 
 void Object_2D::remove_physics_module()
 {
-	delete m_draw_module;
+	delete m_physics_module;
 }
 
 Default_Physics_Module_2D* Object_2D::physics_module()

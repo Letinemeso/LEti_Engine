@@ -13,7 +13,7 @@ namespace TEST {
 
 	public:
 		Physics_Module_Base();
-		~Physics_Module_Base();
+		virtual ~Physics_Module_Base();
 
 	public:
 		virtual void update_previous_state() = 0;

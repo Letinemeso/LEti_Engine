@@ -14,6 +14,11 @@ Default_Draw_Module_2D::Default_Draw_Module_2D() : Draw_Module_Base()
 	m_texture.vertex_array = &m_vertex_array;
 }
 
+Default_Draw_Module_2D::~Default_Draw_Module_2D()
+{
+	glDeleteVertexArrays(1, &m_vertex_array);
+}
+
 
 
 void Default_Draw_Module_2D::init_texture(const char *_picture_name, const float *const tex_coords, unsigned int _tex_coords_count)
