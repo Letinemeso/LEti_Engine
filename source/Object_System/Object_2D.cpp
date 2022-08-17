@@ -103,3 +103,21 @@ const Default_Physics_Module_2D* Object_2D::physics_module() const
 {
 	return m_physics_module;
 }
+
+
+
+void Object_2D::update(float _ratio)
+{
+	if(!m_physics_module) return;
+
+	Transformation_Data gtd = get_global_transformation();
+	m_physics_module->update(gtd.translation_matrix, gtd.rotation_matrix, gtd.scale_matrix);
+}
+
+void Object_2D::draw() const
+{
+	if(!m_draw_module) return;
+
+	Transformation_Data gtd = get_global_transformation();
+	m_draw_module->draw(gtd.translation_matrix, gtd.rotation_matrix, gtd.scale_matrix);
+}

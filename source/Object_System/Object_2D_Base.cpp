@@ -136,6 +136,25 @@ float Object_2D_Base::get_rotation_angle_prev() const
 }
 
 
+
+Object_2D_Base::Transformation_Data Object_2D_Base::get_global_transformation() const
+{
+	Transformation_Data result = m_current_state;
+
+	if(m_parent)
+	{
+		Transformation_Data parent_global_transformation = m_parent->get_global_transformation();
+
+		result.translation_matrix *= parent_global_transformation.translation_matrix;
+		result.rotation_matrix *= parent_global_transformation.rotation_matrix;
+		result.scale_matrix *= parent_global_transformation.scale_matrix;
+	}
+
+	return result;
+}
+
+
+
 bool Object_2D_Base::moved_since_last_frame() const
 {
 	for(unsigned int x=0; x<4; ++x)

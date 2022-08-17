@@ -15,6 +15,9 @@ namespace TEST {
 	class Object_2D_Base : public Object_Base
 	{
 	protected:
+		Object_2D_Base* m_parent = nullptr;
+
+	protected:
 		struct Transformation_Data
 		{
 			glm::mat4x4 translation_matrix, rotation_matrix, scale_matrix;
@@ -57,6 +60,10 @@ namespace TEST {
 		glm::vec3 get_rotation_axis_prev() const;
 		float get_rotation_angle_prev() const;
 
+	public:
+		Transformation_Data get_global_transformation() const;
+
+	public:
 		bool moved_since_last_frame() const;
 
 	};

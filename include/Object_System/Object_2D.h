@@ -34,6 +34,7 @@ namespace TEST {
 		const Default_Physics_Module_2D* physics_module() const;
 
 	public:
+		void update_prev_state();
 		void update(float _ratio = 1.0f) override;
 		void draw() const override;
 
