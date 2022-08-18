@@ -36,6 +36,20 @@ void Default_Draw_Module_2D::init_vertices(const float *const _coords, unsigned 
 }
 
 
+void Default_Draw_Module_2D::set_texture(const char* _name)
+{
+	glBindVertexArray(m_vertex_array);
+	m_texture.set_picture(_name);
+}
+
+void Default_Draw_Module_2D::set_texture_coords(const float* _tc, unsigned int _tc_count)
+{
+	glBindVertexArray(m_vertex_array);
+	m_texture.set_texture_coords(_tc, _tc_count);
+	m_texture.setup_buffer(1, 2);
+}
+
+
 
 void Default_Draw_Module_2D::draw(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 _scale) const
 {

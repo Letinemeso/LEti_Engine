@@ -31,6 +31,9 @@ namespace TEST {
 		void init_texture(const char* _picture_name, const float* const tex_coords, unsigned int _tex_coords_count);
 		void init_vertices(const float* const _coords, unsigned int _coords_count);
 
+		void set_texture(const char* _name);
+		void set_texture_coords(const float* _tc, unsigned int _tc_count);
+
 	public:
 		void draw(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4 _scale) const override;
 

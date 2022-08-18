@@ -60,11 +60,22 @@ namespace TEST {
 		glm::vec3 get_rotation_axis_prev() const;
 		float get_rotation_angle_prev() const;
 
+		glm::mat4x4 get_translation_matrix_for_time_ratio(float _ratio) const;
+		glm::mat4x4 get_rotation_matrix_for_time_ratio(float _ratio) const;
+		glm::mat4x4 get_scale_matrix_for_time_ratio(float _ratio) const;
+
+		glm::mat4x4 get_translation_matrix_inversed_for_time_ratio(float _ratio) const;
+		glm::mat4x4 get_rotation_matrix_inversed_for_time_ratio(float _ratio) const;
+		glm::mat4x4 get_scale_matrix_inversed_for_time_ratio(float _ratio) const;
+
 	public:
 		Transformation_Data get_global_transformation() const;
 
 	public:
 		bool moved_since_last_frame() const;
+
+	public:
+		virtual void update_previous_state();
 
 	};
 

@@ -106,6 +106,15 @@ const Default_Physics_Module_2D* Object_2D::physics_module() const
 
 
 
+void Object_2D::update_previous_state()
+{
+	Object_2D_Base::update_previous_state();
+
+	if(!m_physics_module) return;
+
+	m_physics_module->update_previous_state();
+}
+
 void Object_2D::update(float _ratio)
 {
 	if(!m_physics_module) return;

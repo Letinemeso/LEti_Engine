@@ -4,7 +4,8 @@
 #include "../../Debug.h"
 
 #include <list>
-#include "../../include/Object.h"
+//#include "../../include/Object.h"
+#include <include/Object_System/Object_2D.h>
 
 #include "../../include/Physics/Broad_Phase_Interface.h"
 #include "../../include/Physics/Narrow_Phase_Interface.h"
@@ -18,11 +19,11 @@ namespace LEti
 		Space_Splitter_2D() = delete;
 
 	private:
-		static std::list<const Object_2D*> m_registred_models;
+		static std::list<const TEST::Object_2D*> m_registred_models;
 		static std::list<const glm::vec3*> m_registred_points;
 
 	private:
-		static void debug_assert_if_model_copy_found(const Object_2D *_model, bool _reverse);
+		static void debug_assert_if_model_copy_found(const TEST::Object_2D *_model, bool _reverse);
 		static void debug_assert_if_point_copy_found(const glm::vec3* _point, bool _reverse);
 
 	private:
@@ -41,8 +42,8 @@ namespace LEti
 		static Narrow_Phase_Interface* get_narrow_phase();
 
 	public:
-		static void register_object(const Object_2D* _model);
-		static void unregister_object(const Object_2D* _model);
+		static void register_object(const TEST::Object_2D* _model);
+		static void unregister_object(const TEST::Object_2D* _model);
 		static void register_point(const glm::vec3* _point);
 		static void unregister_point(const glm::vec3* _point);
 
