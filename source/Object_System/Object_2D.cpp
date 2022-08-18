@@ -92,6 +92,7 @@ void Object_2D::create_physics_module()
 void Object_2D::remove_physics_module()
 {
 	delete m_physics_module;
+	m_physics_module = nullptr;
 }
 
 Default_Physics_Module_2D* Object_2D::physics_module()

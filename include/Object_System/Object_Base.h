@@ -8,7 +8,7 @@ namespace TEST {
 	{
 	public:
 		Object_Base() { }
-		~Object_Base() { }
+		virtual ~Object_Base() { }
 
 	public:
 		virtual void update(float _ratio = 1.0f) = 0;
