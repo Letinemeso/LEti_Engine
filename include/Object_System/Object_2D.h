@@ -7,11 +7,11 @@
 #include "Modules/Default_Physics_Module_2D.h"
 
 
-namespace TEST {
+namespace LEti {
 
 	class Object_2D : public Object_2D_Base
 	{
-	private:
+	protected:
 		Default_Draw_Module_2D* m_draw_module = nullptr;
 		Default_Physics_Module_2D* m_physics_module = nullptr;
 
@@ -20,15 +20,15 @@ namespace TEST {
 		~Object_2D();
 
 	public:
-		void init(const char* _object_name);
+		virtual void init(const char* _object_name);
 
 	public:
-		void create_draw_module();
+		virtual void create_draw_module();
 		void remove_draw_module();
 		Default_Draw_Module_2D* draw_module();
 		const Default_Draw_Module_2D* draw_module() const;
 
-		void create_physics_module();
+		virtual void create_physics_module();
 		void remove_physics_module();
 		Default_Physics_Module_2D* physics_module();
 		const Default_Physics_Module_2D* physics_module() const;

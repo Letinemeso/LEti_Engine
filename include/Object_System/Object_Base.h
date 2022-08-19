@@ -2,7 +2,7 @@
 #define __OBJECT_BASE
 
 
-namespace TEST {
+namespace LEti {
 
 	class Object_Base
 	{

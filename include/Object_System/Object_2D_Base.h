@@ -10,7 +10,7 @@
 #include <OpenGL/GLM/gtx/transform.hpp>
 
 
-namespace TEST {
+namespace LEti {
 
 	class Object_2D_Base : public Object_Base
 	{

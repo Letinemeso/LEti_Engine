@@ -4,7 +4,7 @@
 #include <OpenGL/GLM/mat4x4.hpp>
 
 
-namespace TEST {
+namespace LEti {
 
 	class Draw_Module_Base
 	{

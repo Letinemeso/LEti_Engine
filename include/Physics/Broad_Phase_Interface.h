@@ -13,13 +13,13 @@ namespace LEti
 	class Broad_Phase_Interface
 	{
 	public:
-		using objects_list = std::list<const TEST::Object_2D*>;
+		using objects_list = std::list<const LEti::Object_2D*>;
 		using points_list = std::list<const glm::vec3*>;
 
 		struct Colliding_Pair
 		{
-			const TEST::Object_2D* first = nullptr, * second = nullptr;
-			Colliding_Pair(const TEST::Object_2D* _first, const TEST::Object_2D* _second) : first(_first), second(_second) { ASSERT(first == second); if(second > first) { const TEST::Object_2D* temp = first; first = second; second = temp; } }
+			const LEti::Object_2D* first = nullptr, * second = nullptr;
+			Colliding_Pair(const LEti::Object_2D* _first, const LEti::Object_2D* _second) : first(_first), second(_second) { ASSERT(first == second); if(second > first) { const LEti::Object_2D* temp = first; first = second; second = temp; } }
 			bool operator==(const Colliding_Pair& _other) const { return (first == _other.first && second == _other.second) || (first == _other.second && second == _other.first); }
 			bool operator<(const Colliding_Pair& _other) const { return first < _other.first ? true : second < _other.second ? true : false; }
 			bool operator>(const Colliding_Pair& _other) const { return !(*this < _other); }
@@ -28,9 +28,9 @@ namespace LEti
 
 		struct Colliding_Point_And_Object
 		{
-			const TEST::Object_2D* object = nullptr;
+			const LEti::Object_2D* object = nullptr;
 			const glm::vec3* point = nullptr;
-			Colliding_Point_And_Object(const TEST::Object_2D* _object, const glm::vec3* _point) : object(_object), point(_point) {  }
+			Colliding_Point_And_Object(const LEti::Object_2D* _object, const glm::vec3* _point) : object(_object), point(_point) {  }
 			bool operator==(const Colliding_Point_And_Object& _other) const { return object == _other.object && point == _other.point; }
 			bool operator<(const Colliding_Point_And_Object& _other) const { return object < _other.object; }
 			bool operator>(const Colliding_Point_And_Object& _other) const { return !(*this < _other); }

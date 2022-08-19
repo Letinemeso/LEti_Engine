@@ -11,11 +11,11 @@
 #include "Draw_Module_Base.h"
 
 
-namespace TEST {
+namespace LEti {
 
 	class Default_Draw_Module_2D : public Draw_Module_Base
 	{
-	private:
+	protected:
 		bool m_visible = true;
 
 		unsigned int m_vertex_array = 0;

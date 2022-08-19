@@ -4,7 +4,7 @@
 using namespace LEti;
 
 
-std::list<const TEST::Object_2D*> Space_Splitter_2D::m_registred_models;
+std::list<const LEti::Object_2D*> Space_Splitter_2D::m_registred_models;
 std::list<const glm::vec3*> Space_Splitter_2D::m_registred_points;
 
 Broad_Phase_Interface* Space_Splitter_2D::m_broad_phase = nullptr;
@@ -12,9 +12,9 @@ Narrow_Phase_Interface* Space_Splitter_2D::m_narrow_phase = nullptr;
 
 
 
-void Space_Splitter_2D::debug_assert_if_model_copy_found(const TEST::Object_2D *_model, bool _reverse)
+void Space_Splitter_2D::debug_assert_if_model_copy_found(const LEti::Object_2D *_model, bool _reverse)
 {
-	std::list<const TEST::Object_2D*>::iterator check = m_registred_models.begin();
+	std::list<const LEti::Object_2D*>::iterator check = m_registred_models.begin();
 	while(check != m_registred_models.end())
 	{
 		if(!_reverse)
@@ -52,15 +52,15 @@ Narrow_Phase_Interface* Space_Splitter_2D::get_narrow_phase()
 
 
 
-void Space_Splitter_2D::register_object(const TEST::Object_2D *_model)
+void Space_Splitter_2D::register_object(const LEti::Object_2D *_model)
 {
 	DEBUG_FUNC_2ARG(debug_assert_if_model_copy_found, _model, false);
 	m_registred_models.push_back(_model);
 }
 
-void Space_Splitter_2D::unregister_object(const TEST::Object_2D *_model)
+void Space_Splitter_2D::unregister_object(const LEti::Object_2D *_model)
 {
-	std::list<const TEST::Object_2D*>::iterator it = m_registred_models.begin();
+	std::list<const LEti::Object_2D*>::iterator it = m_registred_models.begin();
 	while(it != m_registred_models.end())
 	{
 		if(*it == _model) break;

@@ -23,7 +23,7 @@ void Space_Hasher_2D::update_border(const objects_list& _registred_objects)
 {
 	if(_registred_objects.size() == 0) return;
 
-	std::list<const TEST::Object_2D*>::const_iterator model_it = _registred_objects.begin();
+	std::list<const LEti::Object_2D*>::const_iterator model_it = _registred_objects.begin();
 
 	const Geometry_2D::Rectangular_Border& first_rb = (*model_it)->physics_module()->is_dynamic() ?
 				(*model_it)->physics_module()->get_dynamic_rb() :
@@ -96,7 +96,7 @@ void Space_Hasher_2D::hash_objects(const objects_list& _registred_objects)
 				if(m_array[hash])
 				{
 					bool copy = false;
-					for(const TEST::Object_2D*& a : *(m_array[hash]))
+					for(const LEti::Object_2D*& a : *(m_array[hash]))
 					{
 						if(a == *model_it)
 							copy = true;

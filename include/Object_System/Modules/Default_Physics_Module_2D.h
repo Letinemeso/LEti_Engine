@@ -6,7 +6,7 @@
 #include "../../Physics/Physical_Model_2D.h"
 
 
-namespace TEST {
+namespace LEti {
 
 	class Default_Physics_Module_2D : public Physics_Module_Base
 	{

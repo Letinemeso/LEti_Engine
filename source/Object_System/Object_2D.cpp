@@ -1,6 +1,6 @@
 #include <include/Object_System/Object_2D.h>
 
-using namespace TEST;
+using namespace LEti;
 
 
 Object_2D::Object_2D() : Object_2D_Base()

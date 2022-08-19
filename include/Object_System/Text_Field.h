@@ -1,7 +1,10 @@
 #ifndef __TEXT_FIELD
 #define __TEXT_FIELD
 
-#include "../include/Object.h"
+//#include "../include/Object.h"
+#include <include/Object_System/Object_2D.h>
+
+#include <string>
 
 namespace std
 {
@@ -10,7 +13,7 @@ namespace std
 
 namespace LEti
 {
-    class Text_Field : public Object_2D
+	class Text_Field : public Object_2D
 	{
 	private:
 		const std::unsigned_string* sequence = nullptr;

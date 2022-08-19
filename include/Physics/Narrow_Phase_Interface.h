@@ -22,17 +22,17 @@ namespace LEti
 	public:
 		struct Collision_Data__Models
 		{
-			const TEST::Object_2D* first = nullptr, * second = nullptr;
+			const LEti::Object_2D* first = nullptr, * second = nullptr;
 			Geometry::Intersection_Data collision_data;
-			Collision_Data__Models(const TEST::Object_2D* _first, const TEST::Object_2D* _second) : first(_first), second(_second) { ASSERT(_first == _second); }
+			Collision_Data__Models(const LEti::Object_2D* _first, const LEti::Object_2D* _second) : first(_first), second(_second) { ASSERT(_first == _second); }
 		};
 		using Collision_Data_List__Models = std::list<Collision_Data__Models>;
 		struct Collision_Data__Points
 		{
-			const TEST::Object_2D* object = nullptr;
+			const LEti::Object_2D* object = nullptr;
 			const glm::vec3* point = nullptr;
 			Geometry::Intersection_Data collision_data;
-			Collision_Data__Points(const TEST::Object_2D* _object, const glm::vec3* _point) : object(_object), point(_point) { }
+			Collision_Data__Points(const LEti::Object_2D* _object, const glm::vec3* _point) : object(_object), point(_point) { }
 		};
 		using Collision_Data_List__Points = std::list<Collision_Data__Points>;
 

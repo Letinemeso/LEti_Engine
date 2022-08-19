@@ -1,6 +1,6 @@
 #include "../../../include/Object_System/Modules/Default_Physics_Module_2D.h"
 
-using namespace TEST;
+using namespace LEti;
 
 
 Default_Physics_Module_2D::Default_Physics_Module_2D()
