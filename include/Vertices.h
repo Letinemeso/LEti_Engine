@@ -17,7 +17,7 @@ namespace LEti {
 		Vertices() : LEti::Buffer() {}
 		~Vertices();
 
-		void load(const float* const _coords, unsigned int _count);
+                void init(const float* const _coords, unsigned int _count);
 
 	public:
 		unsigned int get_vertices_count() const;

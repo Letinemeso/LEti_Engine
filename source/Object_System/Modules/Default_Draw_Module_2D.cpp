@@ -31,7 +31,7 @@ void Default_Draw_Module_2D::init_texture(const char *_picture_name, const float
 void Default_Draw_Module_2D::init_vertices(const float *const _coords, unsigned int _coords_count)
 {
 	glBindVertexArray(m_vertex_array);
-	m_vertices.load(_coords, _coords_count);
+	m_vertices.init(_coords, _coords_count);
 	m_vertices.setup_buffer(0, 3);		//TODO: this data shpuld not be hard-coded. it should be stored in LEti::Shader (probably)
 }
 
