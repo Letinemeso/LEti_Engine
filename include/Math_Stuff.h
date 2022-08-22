@@ -75,6 +75,7 @@ namespace Geometry_2D {
 	private:
 		const float* m_raw_coords = nullptr;
 		glm::vec3 m_actual_A, m_actual_B, m_actual_C;
+		glm::vec3 m_center_of_mass_raw, m_center_of_mass;
 
 	public:
 		Polygon();
@@ -94,6 +95,8 @@ namespace Geometry_2D {
 	public:
 		const glm::vec3& operator[](unsigned int _index) const;
 		glm::vec3& operator[](unsigned int _index);
+		const glm::vec3& center_of_mass() const;
+		const glm::vec3& center_of_mass_raw() const;
 
 	};
 

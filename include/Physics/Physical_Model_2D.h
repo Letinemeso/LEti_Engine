@@ -26,6 +26,8 @@ namespace LEti
 			unsigned int m_polygons_count = 0;
 			Geometry_2D::Rectangular_Border m_rect_border;
 
+			glm::vec3 m_center_of_mass_raw, m_center_of_mass;
+
 		private:
 			Imprint(const Geometry_2D::Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent);
 
@@ -39,13 +41,14 @@ namespace LEti
 
 		public:
 			void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
-			void update_with_single_matrix(const glm::mat4x4 _matrix);
+			void update_with_single_matrix(const glm::mat4x4& _matrix);
 			void update_to_current_model_state();
 
 			const Geometry_2D::Polygon& operator[](unsigned int _index) const;
 			const Physical_Model_2D* get_parent() const;
 			unsigned int get_polygons_count() const;
 			const Geometry_2D::Rectangular_Border& curr_rect_border() const;
+			const glm::vec3& center_of_mass() const;
 
 		};
 
@@ -55,6 +58,8 @@ namespace LEti
 
 		Geometry_2D::Polygon* m_polygons = nullptr;
 		unsigned int m_polygons_count = 0;
+
+		glm::vec3 m_center_of_mass_raw, m_center_of_mass;
 
 	private:
 		Geometry_2D::Rectangular_Border m_current_border;
@@ -67,7 +72,6 @@ namespace LEti
 
 	public:
 		Physical_Model_2D();
-		Physical_Model_2D(const float* _raw_coords, unsigned int _raw_coords_count);
 		Physical_Model_2D(const Physical_Model_2D& _other);
 		void setup(const float* _raw_coords, unsigned int _raw_coords_count);
 
@@ -81,6 +85,7 @@ namespace LEti
 	public:
 		unsigned int get_polygons_count() const;
 		const Geometry_2D::Polygon& operator[](unsigned int _index) const;
+		const glm::vec3& center_of_mass() const;
 
 	};
 }

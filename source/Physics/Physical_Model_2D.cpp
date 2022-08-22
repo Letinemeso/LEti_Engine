@@ -11,6 +11,8 @@ Physical_Model_2D::Imprint::Imprint(const Geometry_2D::Polygon* _polygons, unsig
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].setup(_polygons[i]);
 	m_rect_border = _parent->curr_rect_border();
+	m_center_of_mass_raw = _parent->m_center_of_mass_raw;
+	m_center_of_mass = _parent->m_center_of_mass;
 }
 
 
@@ -25,6 +27,8 @@ Physical_Model_2D::Imprint::Imprint(Imprint&& _other)
 	m_parent = _other.m_parent;
 	_other.m_parent = nullptr;
 	m_rect_border = _other.m_rect_border;
+	m_center_of_mass_raw = _other.m_center_of_mass_raw;
+	m_center_of_mass = _other.m_center_of_mass;
 }
 
 Physical_Model_2D::Imprint::Imprint(const Imprint& _other)
@@ -35,6 +39,8 @@ Physical_Model_2D::Imprint::Imprint(const Imprint& _other)
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].setup(_other.m_polygons[i]);
 	m_rect_border = _other.m_rect_border;
+	m_center_of_mass_raw = _other.m_center_of_mass_raw;
+	m_center_of_mass = _other.m_center_of_mass;
 }
 
 Physical_Model_2D::Imprint::~Imprint()
@@ -69,13 +75,20 @@ void Physical_Model_2D::Imprint::update_rectangular_border()
 
 void Physical_Model_2D::Imprint::update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)
 {
-	for(unsigned int i=0; i<m_polygons_count; ++i)
-		m_polygons[i].update_points(_translation, _rotation, _scale);
-	update_rectangular_border();
+	ASSERT(!m_polygons);
+
+	glm::mat4x4 result_matrix = _translation * _rotation * _scale;
+
+	for (unsigned int i = 0; i < m_polygons_count; ++i)
+		m_polygons[i].update_points_with_single_matrix(result_matrix);
+
+	m_center_of_mass = result_matrix * glm::vec4(m_center_of_mass_raw, 1.0f);
 }
 
-void Physical_Model_2D::Imprint::update_with_single_matrix(const glm::mat4x4 _matrix)
+void Physical_Model_2D::Imprint::update_with_single_matrix(const glm::mat4x4& _matrix)
 {
+	ASSERT(!m_polygons);
+
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].update_points_with_single_matrix(_matrix);
 	update_rectangular_border();
@@ -83,12 +96,16 @@ void Physical_Model_2D::Imprint::update_with_single_matrix(const glm::mat4x4 _ma
 
 void Physical_Model_2D::Imprint::update_to_current_model_state()
 {
+	ASSERT(!m_polygons);
+
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 	{
 		for(unsigned int vert=0; vert<3; ++vert)
 			m_polygons[i][vert] = m_parent->m_polygons[i][vert];
 	}
 	m_rect_border = m_parent->curr_rect_border();
+
+	m_center_of_mass = m_parent->m_center_of_mass;
 }
 
 
@@ -112,6 +129,11 @@ unsigned int Physical_Model_2D::Imprint::get_polygons_count() const
 const Geometry_2D::Rectangular_Border& Physical_Model_2D::Imprint::curr_rect_border() const
 {
 	return m_rect_border;
+}
+
+const glm::vec3& Physical_Model_2D::Imprint::center_of_mass() const
+{
+	return m_center_of_mass;
 }
 
 
@@ -151,11 +173,6 @@ Physical_Model_2D::Physical_Model_2D()
 
 }
 
-Physical_Model_2D::Physical_Model_2D(const float* _raw_coords, unsigned int _raw_coords_count)
-{
-	setup(_raw_coords, _raw_coords_count);
-}
-
 Physical_Model_2D::Physical_Model_2D(const Physical_Model_2D& _other)
 {
 	setup(_other.m_raw_coords, _other.m_raw_coords_count);
@@ -177,6 +194,11 @@ void Physical_Model_2D::setup(const float* _raw_coords, unsigned int _raw_coords
 	m_polygons = new Geometry_2D::Polygon[m_polygons_count];
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
 		m_polygons[i].setup(&m_raw_coords[i * 9]);
+
+	m_center_of_mass_raw = {0.0f, 0.0f, 0.0f};
+	for(unsigned int i=0; i < m_polygons_count; ++i)
+		m_center_of_mass_raw += m_polygons[i].center_of_mass_raw();
+	m_center_of_mass_raw /= (float)m_polygons_count;
 }
 
 Physical_Model_2D::~Physical_Model_2D()
@@ -190,8 +212,12 @@ void Physical_Model_2D::update(const glm::mat4x4& _translation, const glm::mat4x
 {
 	ASSERT(!m_polygons);
 
+	glm::mat4x4 result_matrix = _translation * _rotation * _scale;
+
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
-		m_polygons[i].update_points(_translation, _rotation, _scale);
+		m_polygons[i].update_points_with_single_matrix(result_matrix);
+
+	m_center_of_mass = result_matrix * glm::vec4(m_center_of_mass_raw, 1.0f);
 
 	update_rectangular_border();
 }
@@ -204,6 +230,8 @@ void Physical_Model_2D::copy_real_coordinates(const Physical_Model_2D &_other)
 			m_polygons[i][points_i] = _other.m_polygons[i][points_i];
 	}
 	m_current_border = _other.m_current_border;
+	m_center_of_mass_raw = _other.m_center_of_mass_raw;
+	m_center_of_mass = _other.m_center_of_mass;
 }
 
 
@@ -224,5 +252,10 @@ const Geometry_2D::Polygon& Physical_Model_2D::operator[](unsigned int _index) c
 	ASSERT(!m_polygons || _index >= m_polygons_count);
 
 	return m_polygons[_index];
+}
+
+const glm::vec3& Physical_Model_2D::center_of_mass() const
+{
+	return m_center_of_mass;
 }
 

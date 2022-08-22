@@ -24,7 +24,8 @@ void Default_Physics_Module_2D::init(const float *_coords, unsigned int _coords_
 	delete m_physical_model_prev_state;
 	m_physical_model_prev_state = nullptr;
 
-	m_physical_model = new LEti::Physical_Model_2D(_coords, _coords_count);
+	m_physical_model = new LEti::Physical_Model_2D();
+	m_physical_model->setup(_coords, _coords_count);
 	m_physical_model_prev_state = new LEti::Physical_Model_2D::Imprint(m_physical_model->create_imprint());
 }
 
