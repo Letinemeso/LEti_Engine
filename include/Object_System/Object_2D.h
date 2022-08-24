@@ -34,6 +34,7 @@ namespace LEti {
 		const Default_Physics_Module_2D* physics_module() const;
 
 	public:
+		virtual void revert_to_previous_state();
 		void update_previous_state() override;
 		void update(float _ratio = 1.0f) override;
 		void draw() const override;
