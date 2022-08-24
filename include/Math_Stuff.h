@@ -23,6 +23,8 @@ namespace Math {
 
 	void shrink_vector_to_1(glm::vec3& _vec);
 
+	void extend_vector_to_length(glm::vec3& _vec, float _length);
+
 	float get_distance(const glm::vec3& _first, const glm::vec3& _second);
 
     glm::vec3 normalize(const glm::vec3& _first, const glm::vec3& _second);

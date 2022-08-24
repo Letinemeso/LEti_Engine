@@ -20,6 +20,12 @@ void Math::shrink_vector_to_1(glm::vec3& _vec)
 	_vec /= vec_length;
 }
 
+void Math::extend_vector_to_length(glm::vec3& _vec, float _length)
+{
+	shrink_vector_to_1(_vec);
+	_vec *= _length;
+}
+
 float Math::get_distance(const glm::vec3& _first, const glm::vec3& _second)
 {
 	if (_first == _second)

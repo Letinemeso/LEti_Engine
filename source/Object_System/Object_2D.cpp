@@ -110,7 +110,6 @@ const Default_Physics_Module_2D* Object_2D::physics_module() const
 void Object_2D::revert_to_previous_state()
 {
 	m_current_state = m_previous_state;
-	Object_2D::update();
 }
 
 void Object_2D::update_previous_state()
