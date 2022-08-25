@@ -5,6 +5,7 @@
 
 #include "../OpenGL/GLM/vec3.hpp"
 #include "../OpenGL/GLM/mat4x4.hpp"
+#include <OpenGL/GLM/gtx/transform.hpp>
 
 #include <cmath>
 #include <utility>
@@ -53,14 +54,15 @@ namespace Geometry {
 		};
 		Type type = Type::none;
 		glm::vec3 point{0.0f, 0.0f, 0.0f};
+		glm::vec3 first_normal{0.0f, 0.0f, 0.0f}, second_normal{0.0f, 0.0f, 0.0f};
 		float time_of_intersection_ratio = 1.0f;
 
 		Intersection_Data() { }
 		Intersection_Data(Type _type) : type(_type) { }
 		Intersection_Data(Type _type, const glm::vec3& _point) : type(_type), point(_point) { }
-		Intersection_Data(const Intersection_Data& _other) : type(_other.type), point(_other.point), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
-		Intersection_Data(Intersection_Data&& _other) : type(_other.type), point(_other.point), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
-		void operator=(const Intersection_Data& _other) { type = _other.type; point = _other.point; time_of_intersection_ratio = _other.time_of_intersection_ratio; }
+		Intersection_Data(const Intersection_Data& _other) : type(_other.type), point(_other.point), first_normal(_other.first_normal), second_normal(_other.second_normal), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
+		Intersection_Data(Intersection_Data&& _other) : type(_other.type), point(_other.point), first_normal(_other.first_normal), second_normal(_other.second_normal), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
+		void operator=(const Intersection_Data& _other) { type = _other.type; point = _other.point; time_of_intersection_ratio = _other.time_of_intersection_ratio; first_normal = _other.first_normal; second_normal = _other.second_normal; }
 		operator bool() { return type != Type::none; }
 	};
 

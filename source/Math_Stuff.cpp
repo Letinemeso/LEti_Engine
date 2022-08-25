@@ -170,16 +170,34 @@ Geometry::Intersection_Data Geometry_2D::Polygon::segment_intersecting_polygon(c
 	if(!(segment_rb && polygon_rb))
 		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
 
-	Geometry::Intersection_Data _0 = Geometry_2D::segments_intersect(m_actual_A, m_actual_B, _point_1, _point_2);
-	if(_0)
-		return _0;
-	Geometry::Intersection_Data _1 = Geometry_2D::segments_intersect(m_actual_B, m_actual_C, _point_1, _point_2);
-	if(_1)
-		return _1;
-	Geometry::Intersection_Data _2 = Geometry_2D::segments_intersect(m_actual_C, m_actual_A, _point_1, _point_2);
-	if(_2)
-		return _2;
-	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+	unsigned int found_intersections = 0;
+
+	Geometry::Intersection_Data result_id;
+	Geometry::Intersection_Data ids[3];
+
+	ids[0] = Geometry_2D::segments_intersect(m_actual_A, m_actual_B, _point_1, _point_2);
+	ids[1] = Geometry_2D::segments_intersect(m_actual_B, m_actual_C, _point_1, _point_2);
+	ids[2] = Geometry_2D::segments_intersect(m_actual_C, m_actual_A, _point_1, _point_2);
+	for(unsigned int i=0; i<3; ++i)
+	{
+		if(ids[i])
+		{
+			++found_intersections;
+			result_id.first_normal += ids[i].first_normal;
+			result_id.second_normal += ids[i].second_normal;
+			result_id.point += ids[i].point;
+		}
+	}
+
+	if(found_intersections == 0)
+		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+
+	result_id.type = Geometry::Intersection_Data::Type::intersection;
+	LEti::Math::shrink_vector_to_1(result_id.first_normal);
+	LEti::Math::shrink_vector_to_1(result_id.second_normal);
+	result_id.point /= (float)found_intersections;
+
+	return result_id;
 }
 
 Geometry::Intersection_Data Geometry_2D::Polygon::intersects_with_another_polygon(const Polygon& _other) const
@@ -192,20 +210,41 @@ Geometry::Intersection_Data Geometry_2D::Polygon::intersects_with_another_polygo
 	if(!(this_rb && other_rb))
 		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
 
-	Geometry::Intersection_Data _0 = segment_intersecting_polygon(_other.m_actual_A, _other.m_actual_B);
-	if(_0)
-		return _0;
-	Geometry::Intersection_Data _1 = segment_intersecting_polygon(_other.m_actual_B, _other.m_actual_C);
-	if(_1)
-		return _1;
-	Geometry::Intersection_Data _2 = segment_intersecting_polygon(_other.m_actual_C, _other.m_actual_A);
-	if(_2)
-		return _2;
+	unsigned int found_intersections = 0;
+	Geometry::Intersection_Data result_id;
+	Geometry::Intersection_Data ids[3];
+
+	ids[0] = segment_intersecting_polygon(_other.m_actual_A, _other.m_actual_B);
+	ids[1] = segment_intersecting_polygon(_other.m_actual_B, _other.m_actual_C);
+	ids[2] = segment_intersecting_polygon(_other.m_actual_C, _other.m_actual_A);
+	for(unsigned int i=0; i<3; ++i)
+	{
+		if(ids[i])
+		{
+			++found_intersections;
+			result_id.first_normal += ids[i].first_normal;
+			result_id.second_normal += ids[i].second_normal;
+			result_id.point += ids[i].point;
+		}
+	}
+
+	if(found_intersections != 0)
+	{
+		result_id.type = Geometry::Intersection_Data::Type::intersection;
+		LEti::Math::shrink_vector_to_1(result_id.first_normal);
+		LEti::Math::shrink_vector_to_1(result_id.second_normal);
+		result_id.point /= (float)found_intersections;
+
+		return result_id;
+	}
+
 	Geometry::Intersection_Data _3 = point_belongs_to_triangle(_other.m_actual_A);
 	Geometry::Intersection_Data _4 = point_belongs_to_triangle(_other.m_actual_B);
 	Geometry::Intersection_Data _5 = point_belongs_to_triangle(_other.m_actual_C);
 	if(_3 && _4 && _5)
 		return _3;
+	else
+		ASSERT(_3 || _4 || _5);
 	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
 }
 
@@ -437,16 +476,11 @@ Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _po
 		if(first_eq.is_horisontal() && second_eq.is_horisontal())
 		{
 			if((_point_11.x <= _point_12.x && _point_11.x >= _point_22.x) || (_point_11.x >= _point_12.x && _point_11.x <= _point_22.x))
-			{
 				id.point = _point_11;
-				return id;
-			}
 			else if((_point_21.x <= _point_12.x && _point_21.x >= _point_22.x) || (_point_21.x >= _point_12.x && _point_21.x <= _point_22.x))
-			{
 				id.point = _point_21;
-				return id;
-			}
-			return Geometry::Intersection_Data();
+			else
+				return Geometry::Intersection_Data();
 		}
 
 		if((first_eq.is_vertical() && second_eq.is_vertical()) || Math::floats_are_equal(first_eq.get_k(), second_eq.get_k()))
@@ -454,52 +488,53 @@ Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _po
 			if(first_higher.y > second_higher.y)
 			{
 				if(second_higher.y >= first_lower.y)
-				{
 					id.point = first_lower;
-					return id;
-				}
 				else
 					return Geometry::Intersection_Data();
 			}
 			else if(first_higher.y < second_higher.y)
 			{
 				if(first_higher.y >= second_lower.y)
-				{
 					id.point = second_lower;
-					return id;
-				}
 				else
 					return Geometry::Intersection_Data();
 			}
-			return Geometry::Intersection_Data();
+			else
+				return Geometry::Intersection_Data();
 		}
 
 		return Geometry::Intersection_Data();
 	}
-
-	if(first_eq.is_horisontal() ^ second_eq.is_horisontal())
+	else if(first_eq.is_horisontal() ^ second_eq.is_horisontal())
 	{
 		bool fh = first_eq.is_horisontal();	// fh - first horisontal
 		if(fh)
 		{
-			if(((id.point.x <= _point_11.x && id.point.x >= _point_21.x) || (id.point.x >= _point_11.x && id.point.x <= _point_21.x))
-					&& id.point.y <= second_higher.y && id.point.y >= second_lower.y)
-				return id;
+			if(!(((id.point.x <= _point_11.x && id.point.x >= _point_21.x) || (id.point.x >= _point_11.x && id.point.x <= _point_21.x))
+					&& id.point.y <= second_higher.y && id.point.y >= second_lower.y))
+				return Geometry::Intersection_Data();
 		}
 		else
 		{
-			if(((id.point.x <= _point_12.x && id.point.x >= _point_22.x) || (id.point.x >= _point_12.x && id.point.x <= _point_22.x))
-					&& id.point.y <= first_higher.y && id.point.y >= first_lower.y)
-				return id;
+			if(!(((id.point.x <= _point_12.x && id.point.x >= _point_22.x) || (id.point.x >= _point_12.x && id.point.x <= _point_22.x))
+					&& id.point.y <= first_higher.y && id.point.y >= first_lower.y))
+				return Geometry::Intersection_Data();
 		}
+	}
+	else if(!(id.point.y <= first_higher.y && id.point.y >= first_lower.y
+			&& id.point.y <= second_higher.y && id.point.y >= second_lower.y))
+	{
 		return Geometry::Intersection_Data();
 	}
 
-	if(id.point.y <= first_higher.y && id.point.y >= first_lower.y
-			&& id.point.y <= second_higher.y && id.point.y >= second_lower.y)
-		return id;
+	glm::mat4x4 rotation_matrix = glm::rotate(-LEti::Math::HALF_PI, glm::vec3(0.0f, 0.0f, 1.0f));
+	id.first_normal = rotation_matrix * glm::vec4(_point_21 - _point_11, 1.0f);
+	id.second_normal = rotation_matrix * glm::vec4(_point_22 - _point_12, 1.0f);
 
-	return Geometry::Intersection_Data();
+	LEti::Math::shrink_vector_to_1(id.first_normal);
+	LEti::Math::shrink_vector_to_1(id.second_normal);
+
+	return id;
 }
 
 
