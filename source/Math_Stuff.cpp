@@ -71,9 +71,9 @@ bool Math::beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& 
 	return divident < 0.0f; // angles cos must be negative
 }
 
-bool Math::floats_are_equal(float _first, float _second)
+bool Math::floats_are_equal(float _first, float _second, float _precision)
 {
-	return fabs(_first-_second) < 0.0001f;
+	return fabs(_first-_second) < _precision;
 }
 
 
@@ -151,9 +151,6 @@ Geometry::Intersection_Data Geometry_2D::Polygon::point_belongs_to_triangle(cons
 	bool BC_right_side = BC_eq.is_vertical() ? ( m_actual_C.y < m_actual_B.y ? _point.x >= m_actual_B.x : _point.x <= m_actual_B.x ) : ( BC_eq.goes_left() ? BC_y_proj > _point.y : BC_y_proj < _point.y );
 	bool CA_right_side = CA_eq.is_vertical() ? ( m_actual_A.y < m_actual_C.y ? _point.x >= m_actual_C.x : _point.x <= m_actual_C.x ) : ( CA_eq.goes_left() ? CA_y_proj > _point.y : CA_y_proj < _point.y );
 
-	//	return (AB_goes_left() ? AB_y_proj < _point.y : AB_y_proj > _point.y) &&
-	//		(BC_goes_left() ? BC_y_proj < _point.y : BC_y_proj > _point.y) &&
-	//		(CA_goes_left() ? CA_y_proj < _point.y : CA_y_proj > _point.y);
 	if (AB_right_side && BC_right_side && CA_right_side)
 		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::intersection, _point);
 	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
@@ -521,8 +518,10 @@ Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _po
 				return Geometry::Intersection_Data();
 		}
 	}
-	else if(!(id.point.y <= first_higher.y && id.point.y >= first_lower.y
-			&& id.point.y <= second_higher.y && id.point.y >= second_lower.y))
+	else if(!((id.point.y < first_higher.y || Math::floats_are_equal(id.point.y, first_higher.y))
+			&& (id.point.y > first_lower.y || Math::floats_are_equal(id.point.y, first_lower.y))
+			&& (id.point.y < second_higher.y || Math::floats_are_equal(id.point.y, second_higher.y))
+			&& (id.point.y > second_lower.y || Math::floats_are_equal(id.point.y, second_lower.y))))
 	{
 		return Geometry::Intersection_Data();
 	}

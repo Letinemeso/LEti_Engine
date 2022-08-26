@@ -38,7 +38,7 @@ namespace Math {
 
     bool beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& _second);
 
-	bool floats_are_equal(float _first, float _second);
+	bool floats_are_equal(float _first, float _second, float _precision = 0.0001f);
 
 }	/*Math*/
 
