@@ -53,7 +53,9 @@ bool Math::is_digit(char _c)
 
 float Math::angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& _second)
 {
-	ASSERT(vector_length(_first) == 0 ||  vector_length(_second) == 0);
+//	ASSERT(vector_length(_first) == 0 ||  vector_length(_second) == 0);
+	if(vector_length(_first) == 0 ||  vector_length(_second) == 0)
+		return 0.0f;
 
 	//  (_first * _second) / (|_first| * |_second|)
 	float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
@@ -159,14 +161,6 @@ Geometry::Intersection_Data Geometry_2D::Polygon::point_belongs_to_triangle(cons
 
 Geometry::Intersection_Data Geometry_2D::Polygon::segment_intersecting_polygon(const glm::vec3 &_point_1, const glm::vec3 &_point_2) const
 {
-	Rectangular_Border segment_rb;
-	segment_rb.consider_point(_point_1).consider_point(_point_2);
-	Rectangular_Border polygon_rb;
-	polygon_rb.consider_point(m_actual_A).consider_point(m_actual_B).consider_point(m_actual_C);
-
-	if(!(segment_rb && polygon_rb))
-		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
-
 	unsigned int found_intersections = 0;
 
 	Geometry::Intersection_Data result_id;
@@ -241,7 +235,7 @@ Geometry::Intersection_Data Geometry_2D::Polygon::intersects_with_another_polygo
 	if(_3 && _4 && _5)
 		return _3;
 	else
-		ASSERT(_3 || _4 || _5);
+		{ASSERT(_3 || _4 || _5);}
 	return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
 }
 
@@ -467,7 +461,6 @@ Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _po
 	const glm::vec3& second_higher = _point_12.y > _point_22.y ? _point_12 : _point_22;
 	const glm::vec3& second_lower = _point_12.y > _point_22.y ? _point_22 : _point_12;
 
-	//	this is probably better than calculating segments' lengths several times per segments' pair
 	if(id.type == Geometry::Intersection_Data::Type::same_line)
 	{
 		if(first_eq.is_horisontal() && second_eq.is_horisontal())
@@ -526,7 +519,9 @@ Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _po
 		return Geometry::Intersection_Data();
 	}
 
-	glm::mat4x4 rotation_matrix = glm::rotate(-LEti::Math::HALF_PI, glm::vec3(0.0f, 0.0f, 1.0f));
+	float angle = LEti::Math::HALF_PI + LEti::Math::PI;
+	glm::vec3 axis{0.0f, 0.0f, 1.0f};
+	glm::mat4x4 rotation_matrix = glm::rotate(angle, axis);	//rotate vector to find it's normal
 	id.first_normal = rotation_matrix * glm::vec4(_point_21 - _point_11, 1.0f);
 	id.second_normal = rotation_matrix * glm::vec4(_point_22 - _point_12, 1.0f);
 
