@@ -519,7 +519,7 @@ Geometry::Intersection_Data Geometry_2D::segments_intersect(const glm::vec3& _po
 		return Geometry::Intersection_Data();
 	}
 
-	float angle = LEti::Math::HALF_PI + LEti::Math::PI;
+	float angle = -LEti::Math::HALF_PI;
 	glm::vec3 axis{0.0f, 0.0f, 1.0f};
 	glm::mat4x4 rotation_matrix = glm::rotate(angle, axis);	//rotate vector to find it's normal
 	id.first_normal = rotation_matrix * glm::vec4(_point_21 - _point_11, 1.0f);
