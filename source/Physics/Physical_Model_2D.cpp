@@ -3,11 +3,11 @@
 using namespace LEti;
 
 
-Physical_Model_2D::Imprint::Imprint(const Geometry_2D::Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent)
+Physical_Model_2D::Imprint::Imprint(const Geometry::Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent)
 	: m_parent(_parent)
 {
 	m_polygons_count = _polygons_count;
-	m_polygons = new Geometry_2D::Polygon[m_polygons_count];
+	m_polygons = new Geometry::Polygon[m_polygons_count];
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].setup(_polygons[i]);
 	m_rect_border = _parent->curr_rect_border();
@@ -35,7 +35,7 @@ Physical_Model_2D::Imprint::Imprint(const Imprint& _other)
 	: m_parent(_other.m_parent)
 {
 	m_polygons_count = _other.m_polygons_count;
-	m_polygons = new Geometry_2D::Polygon[m_polygons_count];
+	m_polygons = new Geometry::Polygon[m_polygons_count];
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].setup(_other.m_polygons[i]);
 	m_rect_border = _other.m_rect_border;
@@ -109,7 +109,7 @@ void Physical_Model_2D::Imprint::update_to_current_model_state()
 }
 
 
-const Geometry_2D::Polygon& Physical_Model_2D::Imprint::operator[](unsigned int _index) const
+const Geometry::Polygon& Physical_Model_2D::Imprint::operator[](unsigned int _index) const
 {
 	ASSERT(_index >= m_polygons_count);
 
@@ -191,7 +191,7 @@ void Physical_Model_2D::setup(const float* _raw_coords, unsigned int _raw_coords
 	delete[] m_polygons;
 
 	m_polygons_count = m_raw_coords_count / 9;
-	m_polygons = new Geometry_2D::Polygon[m_polygons_count];
+	m_polygons = new Geometry::Polygon[m_polygons_count];
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
 		m_polygons[i].setup(&m_raw_coords[i * 9]);
 
@@ -247,7 +247,7 @@ unsigned int Physical_Model_2D::get_polygons_count() const
 	return m_polygons_count;
 }
 
-const Geometry_2D::Polygon& Physical_Model_2D::operator[](unsigned int _index) const
+const Geometry::Polygon& Physical_Model_2D::operator[](unsigned int _index) const
 {
 	ASSERT(!m_polygons || _index >= m_polygons_count);
 

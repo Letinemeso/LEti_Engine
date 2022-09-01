@@ -28,7 +28,7 @@ namespace Math {
 
 	float get_distance(const glm::vec3& _first, const glm::vec3& _second);
 
-    glm::vec3 normalize(const glm::vec3& _first, const glm::vec3& _second);
+	glm::vec3 normalize(const glm::vec3& _first, const glm::vec3& _second);
 
     float mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third);
 
@@ -44,31 +44,37 @@ namespace Math {
 
 namespace Geometry {
 
-	struct Intersection_Data
+	struct Segment
+	{
+		glm::vec3 start, end;
+		Segment() { }
+		Segment(const glm::vec3& _start, const glm::vec3& _end) : start(_start), end(_end) { }
+		Segment(const Segment& _other) : start(_other.start), end(_other.end) { }
+		glm::vec3 direction_vector() const { return end - start; }
+	};
+
+	struct Simple_Intersection_Data
 	{
 		enum class Type
 		{
 			none = 0,
-			intersection,
-			same_line
+			same_line,
+			intersection
 		};
-		Type type = Type::none;
-		glm::vec3 point{0.0f, 0.0f, 0.0f};
-		glm::vec3 first_normal{0.0f, 0.0f, 0.0f}, second_normal{0.0f, 0.0f, 0.0f};
-		float time_of_intersection_ratio = 1.0f;
 
-		Intersection_Data() { }
-		Intersection_Data(Type _type) : type(_type) { }
-		Intersection_Data(Type _type, const glm::vec3& _point) : type(_type), point(_point) { }
-		Intersection_Data(const Intersection_Data& _other) : type(_other.type), point(_other.point), first_normal(_other.first_normal), second_normal(_other.second_normal), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
-		Intersection_Data(Intersection_Data&& _other) : type(_other.type), point(_other.point), first_normal(_other.first_normal), second_normal(_other.second_normal), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
-		void operator=(const Intersection_Data& _other) { type = _other.type; point = _other.point; time_of_intersection_ratio = _other.time_of_intersection_ratio; first_normal = _other.first_normal; second_normal = _other.second_normal; }
-		operator bool() { return type != Type::none; }
+		Type type = Type::none;
+		glm::vec3 point;
+		Segment first, second;
+
+		Simple_Intersection_Data() { }
+		Simple_Intersection_Data(Type _type) : type(_type) { }
+		Simple_Intersection_Data(Type _type, const glm::vec3& _point) : type(_type), point(_point) { }
+		Simple_Intersection_Data(const Segment& _first, const Segment& _second, const glm::vec3& _point, Type _type = Type::none) : type(_type), point(_point), first(_first), second(_second) {  }
+		operator bool(){ return type != Type::none; }
+
 	};
 
-}
-
-namespace Geometry_2D {
+	std::pair<glm::vec3, glm::vec3> get_segments_normals(const Segment& _first, const Segment& _second);
 
 	class Polygon
 	{
@@ -90,19 +96,16 @@ namespace Geometry_2D {
 		void update_points_with_single_matrix(const glm::mat4x4& _matrix);
 
 	public:
-		Geometry::Intersection_Data point_belongs_to_triangle(const glm::vec3& _point) const;
-
-	public:
-		Geometry::Intersection_Data segment_intersecting_polygon(const glm::vec3& _point_1, const glm::vec3& _point_2) const;
-		Geometry::Intersection_Data intersects_with_another_polygon(const Polygon& _other) const;
-
-	public:
 		const glm::vec3& operator[](unsigned int _index) const;
 		glm::vec3& operator[](unsigned int _index);
 		const glm::vec3& center_of_mass() const;
 		const glm::vec3& center_of_mass_raw() const;
 
 	};
+
+}
+
+namespace Geometry_2D {
 
 	class Rectangular_Border
 	{
@@ -156,9 +159,9 @@ namespace Geometry_2D {
 	};
 
 
-	Geometry::Intersection_Data lines_intersect(const Equasion_Data& _first, const Equasion_Data& _second);
+	Geometry::Simple_Intersection_Data lines_intersect(const Equasion_Data& _first, const Equasion_Data& _second);
 
-	Geometry::Intersection_Data segments_intersect(const glm::vec3& _point_11, const glm::vec3& _point_21, const glm::vec3& _point_12, const glm::vec3& _point_22);
+	Geometry::Simple_Intersection_Data segments_intersect(const Geometry::Segment& _first, const Geometry::Segment& _second);
 
 }	/*Geometry_2D*/
 

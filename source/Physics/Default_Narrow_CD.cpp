@@ -18,24 +18,16 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const LEti::Object_2
 		}
 	};
 
-	using segment = std::pair<glm::vec3, glm::vec3>;
+	using Segment = Geometry::Segment;
 
-	auto get_polygon_segment = [](const Geometry_2D::Polygon& _pol, unsigned int _ind)->segment
+	auto get_polygon_Segment = [](const Geometry::Polygon& _pol, unsigned int _ind)->Segment
 	{
 		ASSERT(_ind > 2);
 
-		segment result;
 		if(_ind < 2)
-		{
-			result.first = _pol[_ind];
-			result.second = _pol[_ind + 1];
-		}
+			return {_pol[_ind], _pol[_ind + 1]};
 		else
-		{
-			result.first = _pol[_ind];
-			result.second = _pol[0];
-		}
-		return result;
+			return {_pol[_ind], _pol[0]};
 	};
 
 	Physical_Model_2D::Imprint ppm1_relative_prev = *_moving_1.physics_module()->get_physical_model_prev_state();
@@ -77,18 +69,18 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const LEti::Object_2
 	{
 		for(unsigned int seg1 = 0; seg1 < 3; ++seg1)
 		{
-			segment trajectory(ppm1_relative_prev[pol1][seg1], ppm1_relative[pol1][seg1]);
-			float distance = Math::get_distance(trajectory.first, trajectory.second);
+			Segment trajectory(ppm1_relative_prev[pol1][seg1], ppm1_relative[pol1][seg1]);
+			float distance = Math::get_distance(trajectory.start, trajectory.end);
 
 			for(unsigned int pol2 = 0; pol2 < ppm2.get_polygons_count(); ++pol2)
 			{
 				for(unsigned int seg2 = 0; seg2 < 3; ++seg2)
 				{
-					segment seg = get_polygon_segment(ppm2[pol2], seg2);
-					Geometry::Intersection_Data id = Geometry_2D::segments_intersect(trajectory.first, trajectory.second, seg.first, seg.second);
+					Segment seg = get_polygon_Segment(ppm2[pol2], seg2);
+					Geometry::Simple_Intersection_Data id = Geometry_2D::segments_intersect({trajectory.start, trajectory.end}, {seg.start, seg.end});
 					if(id)
 					{
-						float ratio = Math::get_distance(trajectory.first, id.point) / distance;
+						float ratio = Math::get_distance(trajectory.start, id.point) / distance;
 						rewrite_min_max_ratio(ratio);
 					}
 				}
@@ -99,7 +91,7 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const LEti::Object_2
 	return {min_intersection_ratio, max_intersection_ratio};
 }
 
-Geometry::Intersection_Data Default_Narrow_CD::get_precise_time_ratio_of_collision(const LEti::Object_2D& _first, const LEti::Object_2D& _second, float _min_ratio, float _max_ratio) const
+Physical_Model_2D::Intersection_Data Default_Narrow_CD::get_precise_time_ratio_of_collision(const LEti::Object_2D& _first, const LEti::Object_2D& _second, float _min_ratio, float _max_ratio) const
 {
 	ASSERT(!_first.physics_module()->can_collide() || !_second.physics_module()->can_collide());
 	ASSERT(!_first.physics_module()->is_dynamic() && !_second.physics_module()->is_dynamic());
@@ -108,7 +100,7 @@ Geometry::Intersection_Data Default_Narrow_CD::get_precise_time_ratio_of_collisi
 	float diff = _max_ratio - _min_ratio;
 	float step_diff = diff / (float)m_precision;
 
-	Geometry::Intersection_Data id;
+	Physical_Model_2D::Intersection_Data id;
 
 	float curr_time_point = _min_ratio;
 	while(curr_time_point <= _max_ratio)
@@ -133,11 +125,9 @@ Geometry::Intersection_Data Default_Narrow_CD::get_precise_time_ratio_of_collisi
 	}
 
 	return id;
-
-	return Geometry::Intersection_Data();
 }
 
-Geometry::Intersection_Data Default_Narrow_CD::collision__moving_vs_moving(const LEti::Object_2D &_moving_1, const LEti::Object_2D &_moving_2) const
+Physical_Model_2D::Intersection_Data Default_Narrow_CD::collision__moving_vs_moving(const LEti::Object_2D &_moving_1, const LEti::Object_2D &_moving_2) const
 {
 	float min_intersection_ratio = 1.1f, max_intersection_ratio = -0.1f;
 	auto rewrite_min_max_ratio = [&min_intersection_ratio, &max_intersection_ratio](float _ratio)->void
@@ -170,41 +160,12 @@ Geometry::Intersection_Data Default_Narrow_CD::collision__moving_vs_moving(const
 			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, 1.0f);
 		else
 			return get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, max_intersection_ratio);
-
-		/*min_intersection_ratio -= 0.02f;
-		max_intersection_ratio += 0.02f;
-
-		if(min_intersection_ratio < 0.0f) min_intersection_ratio = 0.0f;
-		if(max_intersection_ratio > 1.0f) max_intersection_ratio = 1.0f;
-
-		auto test_id = get_precise_time_ratio_of_collision(_moving_1, _moving_2, 0.0f, 1.0f);
-
-		if((test_id.time_of_intersection_ratio < min_intersection_ratio || test_id.time_of_intersection_ratio > max_intersection_ratio) && test_id)
-		{
-			std::cout << "found possible ratios:\tmin: " << min_intersection_ratio << "\tmax: " << max_intersection_ratio << "\nreal_ratio:\t" << test_id.time_of_intersection_ratio << "\n";
-		}
-
-		Geometry::Intersection_Data result_id;
-		if(Math::floats_are_equal(min_intersection_ratio, max_intersection_ratio))
-			result_id = get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, 1.0f);
-		else
-			result_id = get_precise_time_ratio_of_collision(_moving_1, _moving_2, min_intersection_ratio, max_intersection_ratio);
-
-		if((test_id.time_of_intersection_ratio < min_intersection_ratio || test_id.time_of_intersection_ratio > max_intersection_ratio) && test_id)
-		{
-			std::cout << "actual found ratio:\t" << result_id.time_of_intersection_ratio << "\n\n";
-
-			find_ratio(_moving_1, _moving_2);
-			find_ratio(_moving_2, _moving_1);
-		}
-
-		return result_id;*/
 	}
 
-	return Geometry::Intersection_Data();
+	return Physical_Model_2D::Intersection_Data();
 }
 
-Geometry::Intersection_Data Default_Narrow_CD::collision__moving_vs_static(const LEti::Object_2D& _moving, const LEti::Object_2D& _static) const
+Physical_Model_2D::Intersection_Data Default_Narrow_CD::collision__moving_vs_static(const LEti::Object_2D& _moving, const LEti::Object_2D& _static) const
 {
 	float min_intersection_ratio = 1.1f, max_intersection_ratio = -0.1f;
 	auto rewrite_min_max_ratio = [&min_intersection_ratio, &max_intersection_ratio](float _ratio)->void
@@ -233,22 +194,22 @@ Geometry::Intersection_Data Default_Narrow_CD::collision__moving_vs_static(const
 			return get_precise_time_ratio_of_collision(_moving, _static, min_intersection_ratio, max_intersection_ratio);
 	}
 
-	return Geometry::Intersection_Data();
+	return Physical_Model_2D::Intersection_Data();
 }
 
-Geometry::Intersection_Data Default_Narrow_CD::collision__static_vs_point(const LEti::Object_2D &_static, const glm::vec3 &_point) const
+Geometry::Simple_Intersection_Data Default_Narrow_CD::collision__static_vs_point(const LEti::Object_2D &_static, const glm::vec3 &_point) const
 {
 	return m_narrowest_phase->collision__model_vs_point(*_static.physics_module()->get_physical_model(), _point);
 }
 
 
 
-Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const LEti::Object_2D& _first, const LEti::Object_2D& _second) const
+Physical_Model_2D::Intersection_Data Default_Narrow_CD::objects_collide(const LEti::Object_2D& _first, const LEti::Object_2D& _second) const
 {
 	ASSERT(!_first.physics_module() || !_second.physics_module());
 
 	if(!_second.physics_module()->can_collide() || !_first.physics_module()->can_collide())
-		return Geometry::Intersection_Data(Geometry::Intersection_Data::Type::none);
+		return Physical_Model_2D::Intersection_Data();
 
 	if(!_second.physics_module()->is_dynamic() && !_first.physics_module()->is_dynamic())
 	{
@@ -259,9 +220,9 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const LEti::Objec
 		const LEti::Object_2D& dynamic_object = _first.physics_module()->is_dynamic() ? _first : _second;
 		const LEti::Object_2D& static_object = _first.physics_module()->is_dynamic() ? _second : _first;
 		if((dynamic_object.physics_module()->get_dynamic_rb() && static_object.physics_module()->get_physical_model()->curr_rect_border()))
-			return Geometry::Intersection_Data();
+			return Physical_Model_2D::Intersection_Data();
 
-		Geometry::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(*dynamic_object.physics_module()->get_physical_model_prev_state(), *static_object.physics_module()->get_physical_model());
+		Physical_Model_2D::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(*dynamic_object.physics_module()->get_physical_model_prev_state(), *static_object.physics_module()->get_physical_model());
 		if(prev_state_cd)
 			return prev_state_cd;
 
@@ -273,9 +234,9 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const LEti::Objec
 	else /*if(is_dynamic() && _other.is_dynamic())*/
 	{
 		if(!(_first.physics_module()->get_dynamic_rb() && _second.physics_module()->get_dynamic_rb()))
-			return Geometry::Intersection_Data();
+			return Physical_Model_2D::Intersection_Data();
 
-		Geometry::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model_prev_state(), *_second.physics_module()->get_physical_model_prev_state());
+		Physical_Model_2D::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model_prev_state(), *_second.physics_module()->get_physical_model_prev_state());
 		if(prev_state_cd)
 			return prev_state_cd;
 
@@ -287,11 +248,11 @@ Geometry::Intersection_Data Default_Narrow_CD::objects_collide(const LEti::Objec
 		{
 			const LEti::Object_2D& static_object = _first.moved_since_last_frame() ? _first : _second;
 			const LEti::Object_2D& dynamic_object = _first.moved_since_last_frame() ? _second : _first;
-			Geometry::Intersection_Data cd = collision__moving_vs_static(dynamic_object, static_object);
+			Physical_Model_2D::Intersection_Data cd = collision__moving_vs_static(dynamic_object, static_object);
 			return cd;
 		}
 	}
-	return Geometry::Intersection_Data();
+	return Physical_Model_2D::Intersection_Data();
 }
 
 
@@ -304,10 +265,14 @@ void Default_Narrow_CD::update(const Broad_Phase_Interface::Colliding_Pair_List 
 	Broad_Phase_Interface::Colliding_Pair_List::const_iterator itm = _possible_collisions__models.cbegin();
 	while(itm != _possible_collisions__models.cend())
 	{
-		Collision_Data__Models cd(itm->first, itm->second);
-		cd.collision_data = objects_collide(*cd.first, *cd.second);
-		if(cd.collision_data)
-			m_collisions__models.push_back(cd);
+		Physical_Model_2D::Intersection_Data id = objects_collide(*itm->first, *itm->second);
+		if(id)
+		{
+			id.first = itm->first;
+			id.second = itm->second;
+//			std::swap(id.first_normal, id.second_normal);
+			m_collisions__models.push_back(id);
+		}
 
 		++itm;
 	}
@@ -315,10 +280,15 @@ void Default_Narrow_CD::update(const Broad_Phase_Interface::Colliding_Pair_List 
 	Broad_Phase_Interface::Colliding_Point_And_Object_List::const_iterator itp = _possible_collisions__points.cbegin();
 	while(itp != _possible_collisions__points.cend())
 	{
-		Collision_Data__Points cd(itp->object, itp->point);
-		cd.collision_data = collision__static_vs_point(*cd.object, *cd.point);
-		if(cd.collision_data)
-			m_collisions__points.push_back(cd);
+		Geometry::Simple_Intersection_Data id = collision__static_vs_point(*itp->object, *itp->point);
+		if(id)
+		{
+			Physical_Model_2D::Intersection_Data result(Physical_Model_2D::Intersection_Data::Type::intersection);
+			result.first = itp->object;
+			result.second = nullptr;
+			result.point = *itp->point;
+			m_collisions__points.push_back(result);
+		}
 
 		++itp;
 	}
