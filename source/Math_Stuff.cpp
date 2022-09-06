@@ -63,6 +63,25 @@ float Math::angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& 
 	return divident / divider;
 }
 
+float Math::angle_sin_between_vectors(const glm::vec3& _first, const glm::vec3& _second)
+{
+	ASSERT(vector_length(_first) == 0 ||  vector_length(_second) == 0);
+	if(vector_length(_first) == 0 ||  vector_length(_second) == 0)
+		return 0.0f;
+
+	//  (_first * _second) / (|_first| * |_second|)
+	float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
+	float divider = vector_length(_first) * vector_length(_second);
+	float cos = divident / divider;
+
+	return sin_or_cos_from_opposite(cos);
+}
+
+float Math::sin_or_cos_from_opposite(float _cos_or_sin)
+{
+	return sqrt(1 - (_cos_or_sin * _cos_or_sin));
+}
+
 bool Math::beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& _second)
 {
 	ASSERT(vector_length(_first) == 0 ||  vector_length(_second) == 0);

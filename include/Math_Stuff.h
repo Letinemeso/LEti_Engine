@@ -36,6 +36,10 @@ namespace Math {
 
     float angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& _second);
 
+	float angle_sin_between_vectors(const glm::vec3& _first, const glm::vec3& _second);
+
+	float sin_or_cos_from_opposite(float _cos_or_sin);
+
     bool beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& _second);
 
 	bool floats_are_equal(float _first, float _second, float _precision = 0.0001f);

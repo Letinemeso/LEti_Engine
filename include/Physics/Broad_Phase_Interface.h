@@ -19,9 +19,16 @@ namespace LEti
 		struct Colliding_Pair
 		{
 			const LEti::Object_2D* first = nullptr, * second = nullptr;
-			Colliding_Pair(const LEti::Object_2D* _first, const LEti::Object_2D* _second) : first(_first), second(_second) { ASSERT(first == second); if(second > first) { const LEti::Object_2D* temp = first; first = second; second = temp; } }
+			Colliding_Pair(const LEti::Object_2D* _first, const LEti::Object_2D* _second) : first(_first), second(_second) { ASSERT(first == second); /*if(second > first) { const LEti::Object_2D* temp = first; first = second; second = temp; } */}
 			bool operator==(const Colliding_Pair& _other) const { return (first == _other.first && second == _other.second) || (first == _other.second && second == _other.first); }
-			bool operator<(const Colliding_Pair& _other) const { return first < _other.first ? true : second < _other.second ? true : false; }
+			bool operator<(const Colliding_Pair& _other) const
+			{
+				const LEti::Object_2D* f_bigger = first > second ? first : second;
+				const LEti::Object_2D* f_lesser = first > second ? second : first;
+				const LEti::Object_2D* s_bigger = _other.first > _other.second ? _other.first : _other.second;
+				const LEti::Object_2D* s_lesser = _other.first > _other.second ? _other.second : _other.first;
+				return f_bigger < s_bigger ? true : f_lesser < s_lesser ? true : false;
+			}
 			bool operator>(const Colliding_Pair& _other) const { return !(*this < _other); }
 		};
 		using Colliding_Pair_List = std::list<Colliding_Pair>;

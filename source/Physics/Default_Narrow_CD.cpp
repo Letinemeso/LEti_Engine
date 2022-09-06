@@ -211,9 +211,11 @@ Physical_Model_2D::Intersection_Data Default_Narrow_CD::objects_collide(const LE
 	if(!_second.physics_module()->can_collide() || !_first.physics_module()->can_collide())
 		return Physical_Model_2D::Intersection_Data();
 
+	Physical_Model_2D::Intersection_Data result_id;
+
 	if(!_second.physics_module()->is_dynamic() && !_first.physics_module()->is_dynamic())
 	{
-		m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model(), *_second.physics_module()->get_physical_model());
+		return m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model(), *_second.physics_module()->get_physical_model());
 	}
 	else if(_first.physics_module()->is_dynamic() ^ _second.physics_module()->is_dynamic())
 	{
@@ -229,7 +231,7 @@ Physical_Model_2D::Intersection_Data Default_Narrow_CD::objects_collide(const LE
 		if(dynamic_object.moved_since_last_frame())
 			return collision__moving_vs_static(dynamic_object, static_object);
 
-		m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model(), *_second.physics_module()->get_physical_model());
+		return m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model(), *_second.physics_module()->get_physical_model());
 	}
 	else /*if(is_dynamic() && _other.is_dynamic())*/
 	{
@@ -240,17 +242,10 @@ Physical_Model_2D::Intersection_Data Default_Narrow_CD::objects_collide(const LE
 		if(prev_state_cd)
 			return prev_state_cd;
 
-		if(_first.moved_since_last_frame() && _second.moved_since_last_frame())
-		{
+		if(_first.moved_since_last_frame() || _second.moved_since_last_frame())
 			return collision__moving_vs_moving(_first, _second);
-		}
-		else if(_first.moved_since_last_frame() ^ _second.moved_since_last_frame())
-		{
-			const LEti::Object_2D& static_object = _first.moved_since_last_frame() ? _first : _second;
-			const LEti::Object_2D& dynamic_object = _first.moved_since_last_frame() ? _second : _first;
-			Physical_Model_2D::Intersection_Data cd = collision__moving_vs_static(dynamic_object, static_object);
-			return cd;
-		}
+		else
+			return m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model(), *_second.physics_module()->get_physical_model());
 	}
 	return Physical_Model_2D::Intersection_Data();
 }
@@ -268,6 +263,8 @@ void Default_Narrow_CD::update(const Broad_Phase_Interface::Colliding_Pair_List 
 		Physical_Model_2D::Intersection_Data id = objects_collide(*itm->first, *itm->second);
 		if(id)
 		{
+//			id.first = itm->first < itm->second ? itm->first : itm->second;
+//			id.second = itm->first < itm->second ? itm->second : itm->first;
 			id.first = itm->first;
 			id.second = itm->second;
 //			std::swap(id.first_normal, id.second_normal);
