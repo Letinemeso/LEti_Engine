@@ -51,6 +51,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::intersection__polygon
 		{
 			++found_intersections;
 			std::pair<glm::vec3, glm::vec3> normals = Geometry::get_segments_normals(ids[i].first, ids[i].second);
+			LOG("temp_log_level", "1: " + std::to_string(normals.first.x) + ", " + std::to_string(normals.first.y) + "\t2: " + std::to_string(normals.second.x) + ", " + std::to_string(normals.second.y));
 			result_id.first_normal += normals.first;
 			result_id.second_normal += normals.second;
 			result_id.point += ids[i].point;
@@ -185,6 +186,11 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		LEti::Math::shrink_vector_to_1(result_id.first_normal);
 		LEti::Math::shrink_vector_to_1(result_id.second_normal);
 
+		if(Math::vector_length(result_id.first_normal) < 0.01f)
+			result_id.first_normal = -result_id.second_normal;
+		if(Math::vector_length(result_id.second_normal) < 0.01f)
+			result_id.second_normal = -result_id.first_normal;
+
 		return result_id;
 	}
 
@@ -209,6 +215,11 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.point /= (float)found_intersections;
 		LEti::Math::shrink_vector_to_1(result_id.first_normal);
 		LEti::Math::shrink_vector_to_1(result_id.second_normal);
+
+		if(Math::vector_length(result_id.first_normal) < 0.01f)
+			result_id.first_normal = -result_id.second_normal;
+		if(Math::vector_length(result_id.second_normal) < 0.01f)
+			result_id.second_normal = -result_id.first_normal;
 
 		return result_id;
 	}
@@ -243,6 +254,11 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		LEti::Math::shrink_vector_to_1(result_id.first_normal);
 		LEti::Math::shrink_vector_to_1(result_id.second_normal);
 
+		if(Math::vector_length(result_id.first_normal) < 0.01f)
+			result_id.first_normal = -result_id.second_normal;
+		if(Math::vector_length(result_id.second_normal) < 0.01f)
+			result_id.second_normal = -result_id.first_normal;
+
 		return result_id;
 	}
 
@@ -267,6 +283,11 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.point /= (float)found_intersections;
 		LEti::Math::shrink_vector_to_1(result_id.first_normal);
 		LEti::Math::shrink_vector_to_1(result_id.second_normal);
+
+		if(Math::vector_length(result_id.first_normal) < 0.01f)
+			result_id.first_normal = -result_id.second_normal;
+		if(Math::vector_length(result_id.second_normal) < 0.01f)
+			result_id.second_normal = -result_id.first_normal;
 
 		return result_id;
 	}
@@ -301,6 +322,11 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		LEti::Math::shrink_vector_to_1(result_id.first_normal);
 		LEti::Math::shrink_vector_to_1(result_id.second_normal);
 
+		if(Math::vector_length(result_id.first_normal) < 0.01f)
+			result_id.first_normal = -result_id.second_normal;
+		if(Math::vector_length(result_id.second_normal) < 0.01f)
+			result_id.second_normal = -result_id.first_normal;
+
 		return result_id;
 	}
 
@@ -325,6 +351,11 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.point /= (float)found_intersections;
 		LEti::Math::shrink_vector_to_1(result_id.first_normal);
 		LEti::Math::shrink_vector_to_1(result_id.second_normal);
+
+		if(Math::vector_length(result_id.first_normal) < 0.01f)
+			result_id.first_normal = -result_id.second_normal;
+		if(Math::vector_length(result_id.second_normal) < 0.01f)
+			result_id.second_normal = -result_id.first_normal;
 
 		return result_id;
 	}
@@ -359,6 +390,11 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		LEti::Math::shrink_vector_to_1(result_id.first_normal);
 		LEti::Math::shrink_vector_to_1(result_id.second_normal);
 
+		if(Math::vector_length(result_id.first_normal) < 0.01f)
+			result_id.first_normal = -result_id.second_normal;
+		if(Math::vector_length(result_id.second_normal) < 0.01f)
+			result_id.second_normal = -result_id.first_normal;
+
 		return result_id;
 	}
 
@@ -383,6 +419,11 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.point /= (float)found_intersections;
 		LEti::Math::shrink_vector_to_1(result_id.first_normal);
 		LEti::Math::shrink_vector_to_1(result_id.second_normal);
+
+		if(Math::vector_length(result_id.first_normal) < 0.01f)
+			result_id.first_normal = -result_id.second_normal;
+		if(Math::vector_length(result_id.second_normal) < 0.01f)
+			result_id.second_normal = -result_id.first_normal;
 
 		return result_id;
 	}

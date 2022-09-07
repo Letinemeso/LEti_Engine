@@ -53,11 +53,10 @@ bool Math::is_digit(char _c)
 
 float Math::angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& _second)
 {
-//	ASSERT(vector_length(_first) == 0 ||  vector_length(_second) == 0);
+	ASSERT(vector_length(_first) == 0 ||  vector_length(_second) == 0);
 	if(vector_length(_first) == 0 ||  vector_length(_second) == 0)
 		return 0.0f;
 
-	//  (_first * _second) / (|_first| * |_second|)
 	float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
 	float divider = vector_length(_first) * vector_length(_second);
 	return divident / divider;
@@ -65,16 +64,7 @@ float Math::angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& 
 
 float Math::angle_sin_between_vectors(const glm::vec3& _first, const glm::vec3& _second)
 {
-	ASSERT(vector_length(_first) == 0 ||  vector_length(_second) == 0);
-	if(vector_length(_first) == 0 ||  vector_length(_second) == 0)
-		return 0.0f;
-
-	//  (_first * _second) / (|_first| * |_second|)
-	float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
-	float divider = vector_length(_first) * vector_length(_second);
-	float cos = divident / divider;
-
-	return sin_or_cos_from_opposite(cos);
+	return sin_or_cos_from_opposite(angle_cos_between_vectors(_first, _second));
 }
 
 float Math::sin_or_cos_from_opposite(float _cos_or_sin)
@@ -86,7 +76,6 @@ bool Math::beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& 
 {
 	ASSERT(vector_length(_first) == 0 ||  vector_length(_second) == 0);
 
-	//  (_first * _second) / (|_first| * |_second|)
 	float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
 
 	return divident < 0.0f; // angles cos must be negative
@@ -457,15 +446,6 @@ Geometry::Simple_Intersection_Data Geometry_2D::segments_intersect(const Geometr
 	{
 		return Geometry::Simple_Intersection_Data();
 	}
-
-//	float angle = -LEti::Math::HALF_PI;
-//	glm::vec3 axis{0.0f, 0.0f, 1.0f};
-//	glm::mat4x4 rotation_matrix = glm::rotate(angle, axis);
-//	id.first_normal = rotation_matrix * glm::vec4(_second.start - _first.start, 1.0f);
-//	id.second_normal = rotation_matrix * glm::vec4(_second.end - _first.end, 1.0f);
-
-//	LEti::Math::shrink_vector_to_1(id.first_normal);
-//	LEti::Math::shrink_vector_to_1(id.second_normal);
 
 	id.first = _first;
 	id.second = _second;

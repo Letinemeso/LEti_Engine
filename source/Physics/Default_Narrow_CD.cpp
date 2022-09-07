@@ -123,7 +123,6 @@ Physical_Model_2D::Intersection_Data Default_Narrow_CD::get_precise_time_ratio_o
 		id.time_of_intersection_ratio = curr_time_point - step_diff;
 		if(id.time_of_intersection_ratio < 0.0f) id.time_of_intersection_ratio = 0.0f;
 	}
-
 	return id;
 }
 
