@@ -57,7 +57,13 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const LEti::Object_2
 	diff_pos[3][0] += pos_diff_vector[0];
 	diff_pos[3][1] += pos_diff_vector[1];
 	glm::mat4x4 diff_rotation = _moving_1.get_rotation_matrix_for_time_ratio(1.0f) / _moving_2.get_rotation_matrix_for_time_ratio(1.0f);
-	glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f) * (_moving_2.get_scale_matrix_for_time_ratio(1.0f) / _moving_2.get_scale_matrix_for_time_ratio(0.0f));
+
+	glm::vec3 m2_scale_diff_vec = _moving_2.get_scale() - _moving_2.get_scale_prev();
+	glm::mat4x4 m2_scale_diff_matrix = fake_default_matrix;
+	for(unsigned int i=0; i<3; ++i)
+		m2_scale_diff_matrix[i][i] += m2_scale_diff_vec[i];
+
+	glm::mat4x4 diff_scale = _moving_1.get_scale_matrix_for_time_ratio(1.0f) * m2_scale_diff_matrix;
 
 	ppm1_relative_prev.update(diff_pos_prev, diff_rotation_prev, diff_scale_prev);
 	ppm1_relative.update(diff_pos, diff_rotation, diff_scale);
