@@ -89,6 +89,7 @@ namespace LEti
 		unsigned int m_polygons_count = 0;
 
 		glm::vec3 m_center_of_mass_raw, m_center_of_mass;
+		float m_moment_of_inertia = 0.0f;
 
 	private:
 		Geometry_2D::Rectangular_Border m_current_border;
@@ -115,6 +116,7 @@ namespace LEti
 		unsigned int get_polygons_count() const;
 		const Geometry::Polygon& operator[](unsigned int _index) const;
 		const glm::vec3& center_of_mass() const;
+		float moment_of_inertia() const;
 
 	};
 }
