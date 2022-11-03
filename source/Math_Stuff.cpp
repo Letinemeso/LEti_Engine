@@ -38,6 +38,11 @@ glm::vec3 Math::normalize(const glm::vec3& _first, const glm::vec3& _second)
 	return {_first.y * _second.z - _second.y * _first.z, -(_first.x * _second.z - _second.x * _first.z), _first.x * _second.y - _second.x * _first.y};
 }
 
+float Math::dot_product(const glm::vec3& _first, const glm::vec3& _second)
+{
+	return vector_length(_first) * vector_length(_second) * angle_cos_between_vectors(_first, _second);
+}
+
 float Math::mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third)
 {
 	return (_first.x * _second.y * _third.z) + (_first.y * _second.z * _third.x) + (_first.z * _second.x * _third.y)

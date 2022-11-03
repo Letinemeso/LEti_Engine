@@ -30,6 +30,8 @@ namespace Math {
 
 	glm::vec3 normalize(const glm::vec3& _first, const glm::vec3& _second);
 
+	float dot_product(const glm::vec3& _first, const glm::vec3& _second);
+
     float mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third);
 
 	bool is_digit(char _c);

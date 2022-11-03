@@ -6,12 +6,6 @@ Build/
 *.pro
 *.pro.user
 *.gch
-<<<<<<< Updated upstream
 Makefile*
 .qmake*
 object_script*
-
-=======
-*.qmake*
-Makefile*
->>>>>>> Stashed changes
