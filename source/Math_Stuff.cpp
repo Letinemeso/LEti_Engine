@@ -43,6 +43,13 @@ float Math::dot_product(const glm::vec3& _first, const glm::vec3& _second)
 	return vector_length(_first) * vector_length(_second) * angle_cos_between_vectors(_first, _second);
 }
 
+glm::vec3 Math::rotate_vector(const glm::vec3& _vector, const glm::vec3& _axis, float _angle)
+{
+	glm::mat4x4 rotation_matrix = glm::rotate(_angle, _axis);
+
+	return rotation_matrix * glm::vec4(_vector, 1.0f);
+}
+
 float Math::mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third)
 {
 	return (_first.x * _second.y * _third.z) + (_first.y * _second.z * _third.x) + (_first.z * _second.x * _third.y)
