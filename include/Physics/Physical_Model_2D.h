@@ -5,7 +5,6 @@
 #include "../../OpenGL/GLM/mat4x4.hpp"
 
 #include "../../include/Math_Stuff.h"
-#include "../../include/Tree.h"
 
 #include "../../Debug.h"
 
@@ -96,6 +95,7 @@ namespace LEti
 
 	private:
 		void update_rectangular_border();
+		void update_moment_of_inertia();
 
 	public:
 		const Geometry_2D::Rectangular_Border& curr_rect_border() const;
