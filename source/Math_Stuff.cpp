@@ -45,7 +45,7 @@ float Math::dot_product(const glm::vec3& _first, const glm::vec3& _second)
 
 float Math::cross_product(const glm::vec3& _first, const glm::vec3& _second)
 {
-	return vector_length(_first) * vector_length(_second) * angle_sin_between_vectors(_first, _second);
+	return normalize(_first, _second).z;
 }
 
 glm::vec3 Math::rotate_vector(const glm::vec3& _vector, const glm::vec3& _axis, float _angle)
