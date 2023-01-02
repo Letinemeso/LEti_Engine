@@ -14,7 +14,7 @@ unsigned int Shader::program = 0;
 
 void Shader::get_shader_source(const char* _path, char*& _result_buffer, unsigned int* _result_size)
 {
-	std::ifstream file(_path, std::ios::in);
+    std::ifstream file(_path, std::ios::binary);
 
     ASSERT(!file.is_open());
 
@@ -28,8 +28,15 @@ void Shader::get_shader_source(const char* _path, char*& _result_buffer, unsigne
 
 	file.seekg(0, std::ios::beg);
 
+    std::string test;
+
 	for (unsigned int i = 0; i < size; ++i)
-		_result_buffer[i] = file.get();
+    {
+        _result_buffer[i] = file.get();
+        test += _result_buffer[i];
+        if(_result_buffer[i] == 0)
+            test += "";
+    }
 
 	file.close();
 }
