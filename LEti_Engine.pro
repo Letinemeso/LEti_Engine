@@ -3,13 +3,25 @@ CONFIG += staticlib
 CONFIG -= app_bundle
 CONFIG -= qt
 
-LIBS += -lopengl32 \
-    -luser32 \
-    -lgdi32 \
-    -lshell32 \
-    -ldl
+build_pass:CONFIG(debug, debug|release) {
+unix: {
+    LIBS += "../LEti-engine/OpenGL/Linux/lib/libglfw3.a"
+    LIBS += "../LEti-engine/OpenGL/Linux/lib/libGLEW.a"
 
-INCLUDEPATH += "OpenGL_v2/include/"
+    INCLUDEPATH += "OpenGL/Linux/include/"
+}
+else: {
+    LIBS += "../LEti-engine/OpenGL/Windows_x64_mingw/lib/libglfw3.a"
+    LIBS += "../LEti-engine/OpenGL/Windows_x64_mingw/lib/libglew32.a"
+
+    LIBS += -lopengl32 \
+        -luser32 \
+        -lgdi32 \
+        -lshell32
+
+    INCLUDEPATH += "OpenGL/Windows_x64_mingw/include/"
+}
+}
 
 DISTFILES += \
     resources/font/bgr.png \
