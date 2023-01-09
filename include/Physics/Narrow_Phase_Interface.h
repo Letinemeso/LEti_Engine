@@ -2,7 +2,7 @@
 #define __NARROW_PHASE_INTERFACE
 
 //#include "../../include/Object.h"
-#include <include/Object_System/Object_2D.h>
+#include <Object_System/Object_2D.h>
 
 #include "Broad_Phase_Interface.h"
 #include "Narrowest_Phase_Interface.h"

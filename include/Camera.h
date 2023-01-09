@@ -2,7 +2,7 @@
 #define __CAMERA
 
 #include "../OpenGL/GLM/vec3.hpp"
-#include "../OpenGL/GLM/mat4x4.hpp"
+#include "mat4x4.hpp"
 #include "../OpenGL/GLM/gtx/transform.hpp"
 
 #include "../include/Shader.h"

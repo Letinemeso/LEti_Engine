@@ -1,7 +1,7 @@
 #ifndef DRAW_MODULE_BASE_H
 #define DRAW_MODULE_BASE_H
 
-#include <OpenGL/GLM/mat4x4.hpp>
+#include <mat4x4.hpp>
 
 
 namespace LEti {

@@ -3,9 +3,9 @@
 
 #include "../Debug.h"
 
-#include "../OpenGL/GLM/vec3.hpp"
-#include "../OpenGL/GLM/mat4x4.hpp"
-#include <OpenGL/GLM/gtx/transform.hpp>
+#include "vec3.hpp"
+#include "mat4x4.hpp"
+#include <gtx/transform.hpp>
 
 #include <cmath>
 #include <utility>

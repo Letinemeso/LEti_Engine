@@ -3,11 +3,11 @@
 
 #include "Object_Base.h"
 
-#include <include/Math_Stuff.h>
+#include <Math_Stuff.h>
 
-#include <OpenGL/GLM/mat4x4.hpp>
-#include <OpenGL/GLM/vec3.hpp>
-#include <OpenGL/GLM/gtx/transform.hpp>
+#include <mat4x4.hpp>
+#include <vec3.hpp>
+#include <gtx/transform.hpp>
 
 
 namespace LEti {

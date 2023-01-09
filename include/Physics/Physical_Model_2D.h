@@ -1,8 +1,8 @@
 #ifndef __PHYSICAL_MODEL_2D
 #define __PHYSICAL_MODEL_2D
 
-#include "../../OpenGL/GLM/vec3.hpp"
-#include "../../OpenGL/GLM/mat4x4.hpp"
+#include "vec3.hpp"
+#include "mat4x4.hpp"
 
 #include "../../include/Math_Stuff.h"
 

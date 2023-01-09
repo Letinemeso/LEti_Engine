@@ -5,7 +5,7 @@
 #include "../include/Texture.h"
 
 #include "glew.h"
-#include "../OpenGL/GLM/mat4x4.hpp"
+#include "mat4x4.hpp"
 
 #include <iostream>
 #include <fstream>

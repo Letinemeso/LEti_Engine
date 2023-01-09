@@ -3,25 +3,34 @@ CONFIG += staticlib
 CONFIG -= app_bundle
 CONFIG -= qt
 
-build_pass:CONFIG(debug, debug|release) {
-unix: {
-    LIBS += "../LEti-engine/OpenGL/Linux/lib/libglfw3.a"
-    LIBS += "../LEti-engine/OpenGL/Linux/lib/libGLEW.a"
+DEFINES += LINUX
 
-    INCLUDEPATH += "OpenGL/Linux/include/"
+unix {
+    LIBS += "../LEti_Engine/libLEti_Engine.a"
+
+    LIBS += "../../LEti_Engine/OpenGL/Linux/lib/libglfw3.a"
+    LIBS += "../../LEti_Engine/OpenGL/Linux/lib/libGLEW.a"
+
+    LIBS += -lpthread -lm -lz -lGL -lX11 -lXext -lXfixes -ldl
+
+    INCLUDEPATH += "../LEti_Engine/OpenGL/Linux/include/"
 }
-else: {
+
+
+win32 {
     LIBS += "../LEti-engine/OpenGL/Windows_x64_mingw/lib/libglfw3.a"
     LIBS += "../LEti-engine/OpenGL/Windows_x64_mingw/lib/libglew32.a"
 
     LIBS += -lopengl32 \
-        -luser32 \
-        -lgdi32 \
-        -lshell32
+	-luser32 \
+	-lgdi32 \
+	-lshell32
 
     INCLUDEPATH += "OpenGL/Windows_x64_mingw/include/"
 }
-}
+
+INCLUDEPATH += "../LEti_Engine/OpenGL/GLM"
+INCLUDEPATH += "../LEti_Engine/include/"
 
 DISTFILES += \
     resources/font/bgr.png \
@@ -49,7 +58,7 @@ HEADERS += \
     include/Object_System/Modules/Default_Physics_Module_2D.h \
     include/Object_System/Modules/Draw_Module_Base.h \
     include/Object_System/Modules/Physics_Module_Base.h \
-    include/Object_System/Object_2D.h \
+    Object_System/Object_2D.h \
     include/Object_System/Object_2D_Base.h \
     include/Object_System/Object_Base.h \
     include/Object_System/Text_Field.h \

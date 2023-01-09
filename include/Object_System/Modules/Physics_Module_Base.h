@@ -1,7 +1,7 @@
 #ifndef __PHYSICS_MODULE_BASE
 #define __PHYSICS_MODULE_BASE
 
-#include <OpenGL/GLM/mat4x4.hpp>
+#include <mat4x4.hpp>
 
 
 namespace LEti {
