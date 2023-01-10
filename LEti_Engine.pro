@@ -6,8 +6,6 @@ CONFIG -= qt
 DEFINES += LINUX
 
 unix {
-    LIBS += "../LEti_Engine/libLEti_Engine.a"
-
     LIBS += "../../LEti_Engine/OpenGL/Linux/lib/libglfw3.a"
     LIBS += "../../LEti_Engine/OpenGL/Linux/lib/libGLEW.a"
 
@@ -18,15 +16,15 @@ unix {
 
 
 win32 {
-    LIBS += "../LEti-engine/OpenGL/Windows_x64_mingw/lib/libglfw3.a"
-    LIBS += "../LEti-engine/OpenGL/Windows_x64_mingw/lib/libglew32.a"
+    LIBS += "../LEti_Engine/OpenGL/Windows_x64_mingw/lib/libglfw3.a"
+    LIBS += "../LEti_Engine/OpenGL/Windows_x64_mingw/lib/libglew32.a"
 
     LIBS += -lopengl32 \
 	-luser32 \
 	-lgdi32 \
 	-lshell32
 
-    INCLUDEPATH += "OpenGL/Windows_x64_mingw/include/"
+    INCLUDEPATH += "../LEti_Engine/OpenGL/Windows_x64_mingw/include/"
 }
 
 INCLUDEPATH += "../LEti_Engine/OpenGL/GLM"
