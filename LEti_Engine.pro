@@ -56,8 +56,7 @@ HEADERS += \
     include/Object_System/Modules/Default_Physics_Module_2D.h \
     include/Object_System/Modules/Draw_Module_Base.h \
     include/Object_System/Modules/Physics_Module_Base.h \
-    Object_System/Object_2D.h \
-    include/Object_System/Object_2D_Base.h \
+    include/Object_System/Object_2D.h \
     include/Object_System/Object_Base.h \
     include/Object_System/Text_Field.h \
     include/Physics/Broad_Phase_Interface.h \
@@ -91,7 +90,6 @@ SOURCES += \
     source/Object_System/Modules/Draw_Module_Base.cpp \
     source/Object_System/Modules/Physics_Module_Base.cpp \
     source/Object_System/Object_2D.cpp \
-    source/Object_System/Object_2D_Base.cpp \
     source/Object_System/Object_Base.cpp \
     source/Object_System/Text_Field.cpp \
     source/Physics/Broad_Phase_Interface.cpp \

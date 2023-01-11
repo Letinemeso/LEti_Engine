@@ -165,14 +165,6 @@ void Physical_Model_2D::update_moment_of_inertia()
 
 	float m_mass = 1.0f;
 
-//	m_moment_of_inertia = 0.0f;
-//	for(unsigned int i=0; i<m_polygons_count; ++i)
-//	{
-//		float distance = LEti::Math::vector_length(m_center_of_mass_raw - m_polygons[i].center_of_mass_raw());
-//		m_moment_of_inertia += distance * distance * mass_divided;
-//	}
-//	m_moment_of_inertia /= m_polygons_count;
-
 	m_moment_of_inertia = 0.0f;
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 	{
@@ -250,10 +242,6 @@ void Physical_Model_2D::update(const glm::mat4x4& _translation, const glm::mat4x
 		m_polygons[i].update_points_with_single_matrix(result_matrix);
 
 	m_center_of_mass = result_matrix * glm::vec4(m_center_of_mass_raw, 1.0f);
-//	m_moment_of_inertia = 0.0f;
-//	for(unsigned int i=0; i<m_polygons_count; ++i)
-//		m_moment_of_inertia += pow(LEti::Math::vector_length(m_center_of_mass - m_polygons[i].center_of_mass()), 2.0f);
-//	m_moment_of_inertia /= (float)m_polygons_count;
 
 	update_moment_of_inertia();
 
