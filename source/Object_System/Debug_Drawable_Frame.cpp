@@ -65,26 +65,10 @@ void Debug_Drawable_Frame::create_draw_module()
 
 
 
-//void Debug_Drawable_Frame::draw() const
-//{
-//	if (!get_visible()) return;
-
-//	ASSERT(m_vertex_array == 0 || m_vertices.get_vertices_count() == 0 || m_texture.size() == 0);
-
-//	glm::mat4x4 result_matrix = m_translation_matrix * m_rotation_matrix * m_scale_matrix;
-//	LEti::Shader::set_transform_matrix(result_matrix);
-
-//	glBindVertexArray(m_vertex_array);
-
-//	LEti::Shader::set_texture(m_texture);
-
-//	glDrawArrays(GL_LINES, 0, m_vertices.get_vertices_count());
-
-//	glBindVertexArray(0);
-//}
-
-void Debug_Drawable_Frame::update(float /*_ratio*/)
+void Debug_Drawable_Frame::update(float _ratio)
 {
+	Object_2D::update(_ratio);
+
 	if(!m_changes_were_made) return;
 
 	unsigned int total_coords_count = m_sequence.size() * 6;

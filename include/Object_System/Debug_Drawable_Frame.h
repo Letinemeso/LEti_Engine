@@ -33,7 +33,6 @@ namespace LEti {
 		void create_draw_module() override;
 
 	public:
-//		void draw() const override;
 		void update(float _ratio = 1.0f) override;
 	};
 
