@@ -181,7 +181,7 @@ void EIPF::set_start_pos(unsigned int _x, unsigned int _y)
 
 bool& EIPF::field_element(unsigned int _x, unsigned int _y)
 {
-	ASSERT(out_of_bounds({ (int)_x, (int)_y }));
+	L_ASSERT(!(out_of_bounds({ (int)_x, (int)_y })));
 	return m_occupied[_x][_y];
 }
 
@@ -189,7 +189,7 @@ bool& EIPF::field_element(unsigned int _x, unsigned int _y)
 
 void EIPF::build_path()
 {
-	ASSERT(out_of_bounds(m_current_pos) || out_of_bounds(m_destination) || !m_occupied);
+	L_ASSERT(!(out_of_bounds(m_current_pos) || out_of_bounds(m_destination) || !m_occupied));
 
 	auto iter = m_tree.create_iterator();
 	if (iter.valid()) iter.delete_branch();
@@ -225,7 +225,7 @@ void EIPF::build_path()
 
 std::pair<int, int> EIPF::get_next_step() const
 {
-	ASSERT(out_of_bounds(m_current_pos) || out_of_bounds(m_destination) || !m_occupied);
+	L_ASSERT(!(out_of_bounds(m_current_pos) || out_of_bounds(m_destination) || !m_occupied));
 
 	auto iter = m_path_end;
 	if (!iter.valid()) return { -1, -1 };
@@ -240,7 +240,7 @@ std::pair<int, int> EIPF::get_next_step() const
 
 std::vector<std::pair<int, int>> EIPF::get_full_path() const
 {
-	ASSERT(out_of_bounds(m_current_pos) || out_of_bounds(m_destination) || !m_occupied);
+	L_ASSERT(!(out_of_bounds(m_current_pos) || out_of_bounds(m_destination) || !m_occupied));
 
 	std::vector<std::pair<int, int>> result;
 	if (m_steps_count == 0) return result;

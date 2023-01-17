@@ -47,10 +47,10 @@
 		#endif
 		#define DEBUG_FUNC_2ARG(func, arg1, arg2) func(arg1, arg2)
 
-		#ifdef ASSERT
-			#undef ASSERT
+		#ifdef L_ASSERT
+			#undef L_ASSERT
 		#endif
-		#define ASSERT(condition) if(condition) { int a = 1; a /= 0; } 1 == 1
+		#define L_ASSERT(condition) if(!(condition)) { int a = 1; a /= 0; } 1 == 1
 
 
 	#else	//LETI_DEBUG == true
@@ -84,10 +84,10 @@
 		#endif
 		#define DEBUG_FUNC_2ARG(func, arg1, arg2) 
 
-		#ifdef ASSERT
-			#undef ASSERT
+		#ifdef L_ASSERT
+			#undef L_ASSERT
 		#endif
-		#define ASSERT(condition)
+		#define L_ASSERT(condition)
 	#endif	//LETI_DEBUG == true
 #endif	//LETI_DEBUG 
 

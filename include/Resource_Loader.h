@@ -86,7 +86,7 @@ namespace LEti {
     void Resource_Loader::assign(std::pair<const T*, unsigned int>& _result, const char* _object_name, const char* _variable_name)
     {
         std::map<std::string, object_data>::iterator objects_it = m_objects.find(_object_name);
-        ASSERT(objects_it == m_objects.end());
+		L_ASSERT(!(objects_it == m_objects.end()));
         std::map<std::string, parsed_value>::iterator vars_it = objects_it->second.variables.find(_variable_name);
         if(vars_it == objects_it->second.variables.end())
         {
@@ -103,7 +103,7 @@ namespace LEti {
     void Resource_Loader::assign(const T* _result, const char* _object_name, const char* _variable_name)
     {
         std::map<std::string, object_data>::iterator objects_it = m_objects.find(_object_name);
-        ASSERT(objects_it == m_objects.end());
+		L_ASSERT(!(objects_it == m_objects.end()));
         std::map<std::string, parsed_value>::iterator vars_it = objects_it->second.variables.find(_variable_name);
         if(vars_it == objects_it->second.variables.end())
         {
@@ -118,7 +118,7 @@ namespace LEti {
 	std::pair<const T* const, unsigned int> Resource_Loader::get_data(const char* _object_name, const char* _variable_name)
     {
         std::map<std::string, object_data>::iterator objects_it = m_objects.find(_object_name);
-        ASSERT(objects_it == m_objects.end());
+		L_ASSERT(!(objects_it == m_objects.end()));
         std::map<std::string, parsed_value>::iterator vars_it = objects_it->second.variables.find(_variable_name);
         if(vars_it == objects_it->second.variables.end()) return {nullptr, 0};
 

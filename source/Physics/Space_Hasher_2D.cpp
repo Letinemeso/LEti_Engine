@@ -62,7 +62,7 @@ void Space_Hasher_2D::update_border(const objects_list& _registred_objects)
 
 void Space_Hasher_2D::reset_hash_array()
 {
-	ASSERT(m_array == nullptr);
+	L_ASSERT(!(m_array == nullptr));
 
 	for(unsigned int i=0; i<m_array_size; ++i)
 	{
@@ -206,7 +206,7 @@ Space_Hasher_2D::~Space_Hasher_2D()
 
 void Space_Hasher_2D::set_precision(unsigned int _precision)
 {
-	ASSERT(_precision == 0);
+	L_ASSERT(!(_precision == 0));
 
 	if(m_array)
 	{

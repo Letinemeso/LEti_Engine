@@ -33,7 +33,7 @@ void Default_Physics_Module_2D::init(const float *_coords, unsigned int _coords_
 
 void Default_Physics_Module_2D::update_previous_state()
 {
-	ASSERT(!m_physical_model || !m_physical_model_prev_state);
+	L_ASSERT(!(!m_physical_model || !m_physical_model_prev_state));
 
 	if(!m_can_collide || !m_is_dynamic) return;
 
@@ -42,7 +42,7 @@ void Default_Physics_Module_2D::update_previous_state()
 
 void Default_Physics_Module_2D::update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)
 {
-	ASSERT(!m_physical_model || !m_physical_model_prev_state);
+	L_ASSERT(!(!m_physical_model || !m_physical_model_prev_state));
 
 	if(!m_can_collide) return;
 

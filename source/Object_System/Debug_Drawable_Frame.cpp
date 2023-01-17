@@ -7,7 +7,7 @@ void Debug_Line_Draw_Module::draw(const glm::mat4x4 &_translation, const glm::ma
 {
 	if (!m_visible) return;
 
-	ASSERT(m_vertex_array == 0 || m_vertices.get_vertices_count() == 0 || m_texture.size() == 0);
+	L_ASSERT(!(m_vertex_array == 0 || m_vertices.get_vertices_count() == 0 || m_texture.size() == 0));
 
 	LEti::Camera::use_2d();
 

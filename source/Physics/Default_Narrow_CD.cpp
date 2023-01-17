@@ -22,7 +22,7 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const LEti::Object_2
 
 	auto get_polygon_Segment = [](const Geometry::Polygon& _pol, unsigned int _ind)->Segment
 	{
-		ASSERT(_ind > 2);
+		L_ASSERT(!(_ind > 2));
 
 		if(_ind < 2)
 			return {_pol[_ind], _pol[_ind + 1]};
@@ -99,9 +99,9 @@ Default_Narrow_CD::float_pair Default_Narrow_CD::find_ratio(const LEti::Object_2
 
 Physical_Model_2D::Intersection_Data Default_Narrow_CD::get_precise_time_ratio_of_collision(const LEti::Object_2D& _first, const LEti::Object_2D& _second, float _min_ratio, float _max_ratio) const
 {
-	ASSERT(!_first.physics_module()->can_collide() || !_second.physics_module()->can_collide());
-	ASSERT(!_first.physics_module()->is_dynamic() && !_second.physics_module()->is_dynamic());
-	ASSERT(_min_ratio < 0.0f || _max_ratio < 0.0f || _min_ratio > 1.0f || _max_ratio > 1.0f);
+	L_ASSERT(!(!_first.physics_module()->can_collide() || !_second.physics_module()->can_collide()));
+	L_ASSERT(!(!_first.physics_module()->is_dynamic() && !_second.physics_module()->is_dynamic()));
+	L_ASSERT(!(_min_ratio < 0.0f || _max_ratio < 0.0f || _min_ratio > 1.0f || _max_ratio > 1.0f));
 
 	float diff = _max_ratio - _min_ratio;
 	float step_diff = diff / (float)m_precision;
@@ -211,7 +211,7 @@ Geometry::Simple_Intersection_Data Default_Narrow_CD::collision__static_vs_point
 
 Physical_Model_2D::Intersection_Data Default_Narrow_CD::objects_collide(const LEti::Object_2D& _first, const LEti::Object_2D& _second) const
 {
-	ASSERT(!_first.physics_module() || !_second.physics_module());
+	L_ASSERT(!(!_first.physics_module() || !_second.physics_module()));
 
 	if(!_second.physics_module()->can_collide() || !_first.physics_module()->can_collide())
 		return Physical_Model_2D::Intersection_Data();

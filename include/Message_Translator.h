@@ -88,7 +88,7 @@ namespace LEti {
     template <typename msg_type>
     void Message_Translator::register_message_type()
     {
-        ASSERT(m_subscribers.find(msg_type::type()) != m_subscribers.end());
+		L_ASSERT(!(m_subscribers.find(msg_type::type()) != m_subscribers.end()));
 
         m_subscribers.emplace(msg_type::type(), std::vector<func_wrapper_interface*>());
     }
@@ -97,7 +97,7 @@ namespace LEti {
     void Message_Translator::unregister_message_type()
     {
         std::map<std::string, std::vector<func_wrapper_interface*>>::iterator check = m_subscribers.find(msg_type::type());
-        ASSERT(check == m_subscribers.end());
+		L_ASSERT(!(check == m_subscribers.end()));
 
         for(unsigned int i=0; i<check->second.size(); ++i)
             delete check->second[i];
@@ -108,7 +108,7 @@ namespace LEti {
     Message_Translator::subscriber_handle Message_Translator::subscribe(func_type _func)
     {
         std::map<std::string, std::vector<func_wrapper_interface*>>::iterator check = m_subscribers.find(msg_type::type());
-        ASSERT(check == m_subscribers.end());
+		L_ASSERT(!(check == m_subscribers.end()));
 
         check->second.push_back(new static_func_wrapper<msg_type, func_type>(_func));
 
@@ -124,7 +124,7 @@ namespace LEti {
     Message_Translator::subscriber_handle Message_Translator::subscribe(obj_type* _obj_ptr, func_type _func)
     {
         std::map<std::string, std::vector<func_wrapper_interface*>>::iterator check = m_subscribers.find(msg_type::type());
-        ASSERT(check == m_subscribers.end());
+		L_ASSERT(!(check == m_subscribers.end()));
 
         check->second.push_back(new member_func_wrapper<msg_type, obj_type, func_type>(_obj_ptr, _func));
 
@@ -140,7 +140,7 @@ namespace LEti {
     void Message_Translator::publish(const msg_type& _message)
     {
         std::map<std::string, std::vector<func_wrapper_interface*>>::iterator subscribers = m_subscribers.find(_message.type());
-        ASSERT(subscribers == m_subscribers.end());
+		L_ASSERT(!(subscribers == m_subscribers.end()));
 
         for(unsigned int i=0; i<subscribers->second.size(); ++i)
             subscribers->second[i]->call((void*)&_message);

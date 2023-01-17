@@ -178,7 +178,7 @@ namespace LEti {
 	template<typename Stored_Type, unsigned int _cpn>
 	void Tree<Stored_Type, _cpn>::Node::insert_after(const Stored_Type& _new_data, unsigned int _child_index)
 	{
-		ASSERT(_child_index >= _cpn);
+		L_ASSERT(!(_child_index >= _cpn));
 		Node* pnext = child[_child_index];
 		child[_child_index] = new Node(_new_data);
 		child[_child_index]->parent = this;
@@ -192,7 +192,7 @@ namespace LEti {
 	template<typename Stored_Type, unsigned int _cpn>
 	void Tree<Stored_Type, _cpn>::Node::insert_after(Stored_Type&& _new_data, unsigned int _child_index)
 	{
-		ASSERT(_child_index >= _cpn);
+		L_ASSERT(!(_child_index >= _cpn));
 		Node* pnext = child[_child_index];
 		child[_child_index] = new Node(std::move(_new_data));
 		child[_child_index]->parent = this;
@@ -222,7 +222,7 @@ namespace LEti {
 	template<typename Stored_Type, unsigned int _cpn>
 	unsigned int Tree<Stored_Type, _cpn>::Iterator_Imlementation::get_child_index()
 	{
-		ASSERT(!valid());
+		L_ASSERT(!(!valid()));
 		if (!node->parent) return _cpn;
 		for (unsigned int i = 0; i < _cpn; ++i)
 			if (node->parent->child[i] == node) return i;
@@ -309,7 +309,7 @@ namespace LEti {
 	template<typename Stored_Type, unsigned int _cpn>
 	void Tree<Stored_Type, _cpn>::Iterator_Imlementation::delete_branch()
 	{
-		ASSERT(!*head || !node);
+		L_ASSERT(!(!*head || !node));
 
 		unsigned int ind = get_child_index();
 
@@ -331,8 +331,8 @@ namespace LEti {
 	template<typename Stored_Type, unsigned int _cpn>
 	unsigned int Tree<Stored_Type, _cpn>::Iterator_Imlementation::ascend()
 	{
-		ASSERT(!head);
-		ASSERT(!node->parent);
+		L_ASSERT(!(!head));
+		L_ASSERT(!(!node->parent));
         unsigned int prev_child_index = get_child_index();
 		node = node->parent;
         return prev_child_index;
@@ -341,10 +341,10 @@ namespace LEti {
 	template<typename Stored_Type, unsigned int _cpn>
 	void Tree<Stored_Type, _cpn>::Iterator_Imlementation::descend(unsigned int _ci)
 	{
-		ASSERT(!head);
-		ASSERT(_ci >= _cpn);
-		ASSERT(!node);
-		ASSERT(node->child[_ci] == nullptr);
+		L_ASSERT(!(!head));
+		L_ASSERT(!(_ci >= _cpn));
+		L_ASSERT(!(!node));
+		L_ASSERT(!(node->child[_ci] == nullptr));
 		node = node->child[_ci];
 	}
 
@@ -352,8 +352,8 @@ namespace LEti {
 	template<typename Stored_Type, unsigned int _cpn>
 	void Tree<Stored_Type, _cpn>::Iterator_Imlementation::operator++()
 	{
-		ASSERT(!*head);
-		ASSERT(!node);
+		L_ASSERT(!(!*head));
+		L_ASSERT(!(!node));
 
 		for (unsigned int i = 0; i < _cpn; ++i)
 		{
@@ -389,8 +389,8 @@ namespace LEti {
 	template<typename Stored_Type, unsigned int _cpn>
 	void Tree<Stored_Type, _cpn>::Iterator_Imlementation::operator--()
 	{
-		ASSERT(!*head);
-		ASSERT(!node);
+		L_ASSERT(!(!*head));
+		L_ASSERT(!(!node));
 
 		Node* tptr = node;
 		Node* tptr_p = tptr->parent;
@@ -430,14 +430,14 @@ namespace LEti {
 	template<typename Stored_Type, unsigned int _cpn>
 	bool Tree<Stored_Type, _cpn>::Iterator_Imlementation::begin() const
 	{
-		ASSERT(!valid());
+		L_ASSERT(!(!valid()));
 		return node->parent == nullptr;
 	}
 
 	template<typename Stored_Type, unsigned int _cpn>
 	bool Tree<Stored_Type, _cpn>::Iterator_Imlementation::end() const
 	{
-		ASSERT(!valid());
+		L_ASSERT(!(!valid()));
 
 		if (node->parent == nullptr || node->parent->child[_cpn - 1] == node)
 		{
@@ -468,7 +468,7 @@ namespace LEti {
 	template<typename Stored_Type, unsigned int _cpn>
 	bool Tree<Stored_Type, _cpn>::Iterator_Imlementation::is_leaf() const
 	{
-		ASSERT(!valid());
+		L_ASSERT(!(!valid()));
 
 		for(unsigned int i=0; i<_cpn; ++i)
 			if(node->child[i]) return false;

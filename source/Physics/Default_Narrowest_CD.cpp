@@ -112,7 +112,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::intersection__polygon
 	if(_3 && _4 && _5)
 		return Physical_Model_2D::Intersection_Data(Physical_Model_2D::Intersection_Data::Type::intersection, glm::vec3(_3+_4+_5)/3.0f);
 	else
-		{ASSERT(_3 || _4 || _5);}
+		{L_ASSERT(!(_3 || _4 || _5));}
 	return Physical_Model_2D::Intersection_Data();
 }
 

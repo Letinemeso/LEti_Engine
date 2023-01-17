@@ -139,7 +139,7 @@ float Object_2D::get_rotation_angle_prev() const
 
 glm::mat4x4 Object_2D::get_translation_matrix_for_time_ratio(float _ratio) const
 {
-	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
+	L_ASSERT(!(_ratio < 0.0f || _ratio > 1.0f));
 
 	glm::vec3 curr_pos = get_pos();
 	glm::vec3 prev_pos = get_pos_prev();
@@ -154,7 +154,7 @@ glm::mat4x4 Object_2D::get_translation_matrix_for_time_ratio(float _ratio) const
 
 glm::mat4x4 Object_2D::get_rotation_matrix_for_time_ratio(float _ratio) const
 {
-	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
+	L_ASSERT(!(_ratio < 0.0f || _ratio > 1.0f));
 
 	glm::vec3 axis_diff = m_previous_state.rotation_axis + ((m_current_state.rotation_axis - m_previous_state.rotation_axis) * _ratio);
 	LEti::Math::shrink_vector_to_1(axis_diff);
@@ -166,7 +166,7 @@ glm::mat4x4 Object_2D::get_rotation_matrix_for_time_ratio(float _ratio) const
 
 glm::mat4x4 Object_2D::get_scale_matrix_for_time_ratio(float _ratio) const
 {
-	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
+	L_ASSERT(!(_ratio < 0.0f || _ratio > 1.0f));
 
 	glm::vec3 curr_scale = get_scale();
 	glm::vec3 prev_scale = get_scale_prev();
@@ -182,7 +182,7 @@ glm::mat4x4 Object_2D::get_scale_matrix_for_time_ratio(float _ratio) const
 
 glm::mat4x4 Object_2D::get_translation_matrix_inversed_for_time_ratio(float _ratio) const
 {
-	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
+	L_ASSERT(!(_ratio < 0.0f || _ratio > 1.0f));
 
 	glm::vec3 curr_scale = get_scale();
 	glm::vec3 prev_scale = get_scale_prev();
@@ -197,7 +197,7 @@ glm::mat4x4 Object_2D::get_translation_matrix_inversed_for_time_ratio(float _rat
 
 glm::mat4x4 Object_2D::get_rotation_matrix_inversed_for_time_ratio(float _ratio) const
 {
-	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
+	L_ASSERT(!(_ratio < 0.0f || _ratio > 1.0f));
 
 	glm::vec3 axis_diff = m_previous_state.rotation_axis + ((m_current_state.rotation_axis - m_previous_state.rotation_axis) * _ratio);
 	LEti::Math::shrink_vector_to_1(axis_diff);
@@ -209,7 +209,7 @@ glm::mat4x4 Object_2D::get_rotation_matrix_inversed_for_time_ratio(float _ratio)
 
 glm::mat4x4 Object_2D::get_scale_matrix_inversed_for_time_ratio(float _ratio) const
 {
-	ASSERT(_ratio < 0.0f || _ratio > 1.0f);
+	L_ASSERT(!(_ratio < 0.0f || _ratio > 1.0f));
 
 	glm::vec3 curr_scale = get_scale();
 	glm::vec3 prev_scale = get_scale_prev();
@@ -254,19 +254,19 @@ void Object_2D::init(const char *_object_name)
 	remove_physics_module();
 
 	auto translation = LEti::Resource_Loader::get_data<float>(_object_name, "position");
-	ASSERT(translation.second != 3);
+	L_ASSERT(!(translation.second != 3));
 	set_pos({translation.first[0], translation.first[1], translation.first[2]});
 
 	auto scale = LEti::Resource_Loader::get_data<float>(_object_name, "scale");
-	ASSERT(scale.second != 3);
+	L_ASSERT(!(scale.second != 3));
 	set_scale({scale.first[0], scale.first[1], scale.first[2]});
 
 	auto raxis = LEti::Resource_Loader::get_data<float>(_object_name, "rotation_axis");
-	ASSERT(raxis.second != 3);
+	L_ASSERT(!(raxis.second != 3));
 	set_rotation_axis({raxis.first[0], raxis.first[1], raxis.first[2]});
 
 	auto rangle = LEti::Resource_Loader::get_data<float>(_object_name, "rotation_angle");
-	ASSERT(rangle.second != 1);
+	L_ASSERT(!(rangle.second != 1));
 	set_rotation_angle(*rangle.first);
 
 	std::pair<const float*, unsigned int> tcoords;

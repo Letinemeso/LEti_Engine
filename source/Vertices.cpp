@@ -12,7 +12,7 @@ Vertices::~Vertices()
 
 void Vertices::init(const float* const _coords, unsigned int _count)
 {
-	ASSERT(_coords == nullptr || _count == 0);
+	L_ASSERT(!(_coords == nullptr || _count == 0));
 
 	free_memory();
 	allocate_memory(_count);
@@ -23,7 +23,7 @@ void Vertices::init(const float* const _coords, unsigned int _count)
 
 unsigned int Vertices::get_vertices_count() const
 {
-	ASSERT(buffer_size == 0);
+	L_ASSERT(!(buffer_size == 0));
 
 	return buffer_size / 3;
 }

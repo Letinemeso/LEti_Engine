@@ -15,12 +15,12 @@ void Physical_Model_3D::Pyramid::Polygon::setup(const float* _raw_coords)
 {
 	m_raw_coords = _raw_coords;
 
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 }
 
 void Physical_Model_3D::Pyramid::Polygon::update_points(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale)
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	glm::mat4x4 result_matrix = _translation * _rotation * _scale;
 	m_actual_A = result_matrix * glm::vec4(m_raw_coords[0], m_raw_coords[1], m_raw_coords[2], 1.0f);
@@ -32,7 +32,7 @@ void Physical_Model_3D::Pyramid::Polygon::update_points(const glm::mat4x4& _tran
 
 glm::vec3 Physical_Model_3D::Pyramid::Polygon::get_normal() const
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	glm::vec3 AB = m_actual_B - m_actual_A;
 	glm::vec3 AC = m_actual_C - m_actual_A;
@@ -42,7 +42,7 @@ glm::vec3 Physical_Model_3D::Pyramid::Polygon::get_normal() const
 
 Physical_Model_3D::Pyramid::Polygon::Plane_Equasion_Data Physical_Model_3D::Pyramid::Polygon::get_equasion() const
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	glm::vec3 normal = get_normal();
 
@@ -57,7 +57,7 @@ Physical_Model_3D::Pyramid::Polygon::Plane_Equasion_Data Physical_Model_3D::Pyra
 
 bool Physical_Model_3D::Pyramid::Polygon::point_belongs_to_triangle(const glm::vec3& _point) const
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	glm::vec3 normal = get_normal();
 
@@ -74,7 +74,7 @@ bool Physical_Model_3D::Pyramid::Polygon::point_belongs_to_triangle(const glm::v
 
 glm::vec3 Physical_Model_3D::Pyramid::Polygon::get_intersection_point(const glm::vec3& _start, const glm::vec3& _direction) const
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	Plane_Equasion_Data ped = get_equasion();
 
@@ -87,7 +87,7 @@ glm::vec3 Physical_Model_3D::Pyramid::Polygon::get_intersection_point(const glm:
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::Polygon::beam_intersecting_polygon(const glm::vec3& _beam_pos, const glm::vec3& _beam_direction) const
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	glm::vec3 intersection_point = get_intersection_point(_beam_pos, _beam_direction);
 
@@ -102,7 +102,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::Polygon:
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::Polygon::segment_intersecting_polygon(const glm::vec3 &_beam_pos, const glm::vec3 &_beam_direction) const
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	glm::vec3 intersection_point = get_intersection_point(_beam_pos, _beam_direction);
 	glm::vec3 ip_direction = intersection_point - _beam_pos;
@@ -122,7 +122,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::Polygon:
 
 bool Physical_Model_3D::Pyramid::Polygon::point_is_on_the_right(const glm::vec3& _point) const
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	Plane_Equasion_Data ped = get_equasion();
 	float result = ped.x_part * _point.x + ped.y_part * _point.y + ped.z_part * _point.z + ped.constant_part;
@@ -153,7 +153,7 @@ const glm::vec3& Physical_Model_3D::Pyramid::Polygon::C() const
 
 const glm::vec3& Physical_Model_3D::Pyramid::Polygon::operator[](unsigned int _index) const
 {
-	ASSERT(_index >=3);
+	L_ASSERT(!(_index >=3);
 	switch (_index)
 	{
 	case 0: return m_actual_A;
@@ -176,7 +176,7 @@ void Physical_Model_3D::Pyramid::setup(const float* _raw_coords)
 {
 	m_raw_coords = _raw_coords;
 
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	for (unsigned int i = 0; i < 4; ++i)
 		m_polygons[i].setup(_raw_coords + (9 * i));
@@ -184,7 +184,7 @@ void Physical_Model_3D::Pyramid::setup(const float* _raw_coords)
 
 void Physical_Model_3D::Pyramid::update_polygons(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale)
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	for (unsigned int i = 0; i < 4; ++i)
 		m_polygons[i].update_points(_translation, _rotation, _scale);
@@ -194,7 +194,7 @@ void Physical_Model_3D::Pyramid::update_polygons(const glm::mat4x4& _translation
 
 bool Physical_Model_3D::Pyramid::point_belongs_to_pyramid(const glm::vec3& _point) const
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	for (unsigned int i = 0; i < 4; ++i)
         if (m_polygons[i].point_is_on_the_right(_point)) return false;
@@ -203,7 +203,7 @@ bool Physical_Model_3D::Pyramid::point_belongs_to_pyramid(const glm::vec3& _poin
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::is_intersecting_with_beam(const glm::vec3 &_start, const glm::vec3 &_direction) const
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	for(unsigned int i=0; i<4; ++i)
     {
@@ -215,7 +215,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::is_inter
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::is_intersecting_with_segment(const glm::vec3 &_start, const glm::vec3 &_direction) const
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords);
 
 	for(unsigned int i=0; i<4; ++i)
     {
@@ -229,7 +229,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::Pyramid::is_inter
 
 const Physical_Model_3D::Pyramid::Polygon& Physical_Model_3D::Pyramid::operator[](unsigned int _index) const
 {
-	ASSERT(!m_raw_coords || _index > 3);
+	L_ASSERT(!(!m_raw_coords || _index > 3);
 
 	return m_polygons[_index];
 }
@@ -271,7 +271,7 @@ Physical_Model_3D::~Physical_Model_3D()
 
 void Physical_Model_3D::update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale)
 {
-	ASSERT(!m_raw_coords || !m_pyramids);
+	L_ASSERT(!(!m_raw_coords || !m_pyramids);
 
 	for (unsigned int i = 0; i < m_pyramids_count; ++i)
 		m_pyramids[i].update_polygons(_translation, _rotation, _scale);
@@ -281,7 +281,7 @@ void Physical_Model_3D::update(const glm::mat4x4& _translation, const glm::mat4x
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_with_point(const glm::vec3& _point) const
 {
-	ASSERT(!m_raw_coords || !m_pyramids);
+	L_ASSERT(!(!m_raw_coords || !m_pyramids);
 
 	for (unsigned int i = 0; i < m_pyramids_count; ++i)
         if (m_pyramids[i].point_belongs_to_pyramid(_point)) return Intersection_Data(Intersection_Data::Type::inside);
@@ -290,7 +290,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_with_beam(const glm::vec3 &_start, const glm::vec3 &_direction) const
 {
-	ASSERT(!m_raw_coords || !m_pyramids);
+	L_ASSERT(!(!m_raw_coords || !m_pyramids);
 
 	for (unsigned int i = 0; i < m_pyramids_count; ++i)
     {
@@ -302,7 +302,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
 
 Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_with_segment(const glm::vec3 &_start, const glm::vec3 &_direction) const
 {
-	ASSERT(!m_raw_coords || !m_pyramids);
+	L_ASSERT(!(!m_raw_coords || !m_pyramids);
 
 	for (unsigned int i = 0; i < m_pyramids_count; ++i)
     {
@@ -316,7 +316,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
 {
 	const Physical_Model_3D& other = (Physical_Model_3D&)_other;
 
-	ASSERT(!m_raw_coords || !m_pyramids || !other.m_raw_coords || !other.m_pyramids);
+	L_ASSERT(!(!m_raw_coords || !m_pyramids || !other.m_raw_coords || !other.m_pyramids);
 
 	for(unsigned int pyr = 0; pyr < m_pyramids_count; ++pyr)
 	{
@@ -377,7 +377,7 @@ Physical_Model_Interface::Intersection_Data Physical_Model_3D::is_intersecting_w
 
 Physical_Model_3D::Volumetric_Rectangular_Border Physical_Model_3D::construct_volumetric_rectangular_border() const
 {
-	ASSERT(!m_raw_coords || !m_pyramids);
+	L_ASSERT(!(!m_raw_coords || !m_pyramids);
 
 	Volumetric_Rectangular_Border result;
 
@@ -414,7 +414,7 @@ unsigned int Physical_Model_3D::get_pyramids_count() const
 
 const Physical_Model_3D::Pyramid& Physical_Model_3D::operator[](unsigned int _index) const
 {
-	ASSERT(!m_raw_coords || !m_pyramids || _index >= m_pyramids_count);
+	L_ASSERT(!(!m_raw_coords || !m_pyramids || _index >= m_pyramids_count);
 	return m_pyramids[_index];
 }
 */

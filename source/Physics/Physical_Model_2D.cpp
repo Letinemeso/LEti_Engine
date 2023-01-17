@@ -52,7 +52,7 @@ Physical_Model_2D::Imprint::~Imprint()
 
 void Physical_Model_2D::Imprint::update_rectangular_border()
 {
-	ASSERT(!m_polygons);
+	L_ASSERT(!(!m_polygons));
 
 	m_rect_border.left = m_polygons[0][0].x;
 	m_rect_border.right = m_polygons[0][0].x;
@@ -75,7 +75,7 @@ void Physical_Model_2D::Imprint::update_rectangular_border()
 
 void Physical_Model_2D::Imprint::update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)
 {
-	ASSERT(!m_polygons);
+	L_ASSERT(!(!m_polygons));
 
 	glm::mat4x4 result_matrix = _translation * _rotation * _scale;
 
@@ -87,7 +87,7 @@ void Physical_Model_2D::Imprint::update(const glm::mat4x4 &_translation, const g
 
 void Physical_Model_2D::Imprint::update_with_single_matrix(const glm::mat4x4& _matrix)
 {
-	ASSERT(!m_polygons);
+	L_ASSERT(!(!m_polygons));
 
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].update_points_with_single_matrix(_matrix);
@@ -96,7 +96,7 @@ void Physical_Model_2D::Imprint::update_with_single_matrix(const glm::mat4x4& _m
 
 void Physical_Model_2D::Imprint::update_to_current_model_state()
 {
-	ASSERT(!m_polygons);
+	L_ASSERT(!(!m_polygons));
 
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 	{
@@ -111,7 +111,7 @@ void Physical_Model_2D::Imprint::update_to_current_model_state()
 
 const Geometry::Polygon& Physical_Model_2D::Imprint::operator[](unsigned int _index) const
 {
-	ASSERT(_index >= m_polygons_count);
+	L_ASSERT(!(_index >= m_polygons_count));
 
 	return m_polygons[_index];
 }
@@ -140,7 +140,7 @@ const glm::vec3& Physical_Model_2D::Imprint::center_of_mass() const
 
 void Physical_Model_2D::update_rectangular_border()
 {
-	ASSERT(!m_polygons);
+	L_ASSERT(!(!m_polygons));
 
 	m_current_border.left = m_polygons[0][0].x;
 	m_current_border.right = m_polygons[0][0].x;
@@ -161,7 +161,7 @@ void Physical_Model_2D::update_rectangular_border()
 
 void Physical_Model_2D::update_moment_of_inertia()
 {
-	ASSERT(!m_polygons);
+	L_ASSERT(!(!m_polygons));
 
 	float m_mass = 1.0f;
 
@@ -234,7 +234,7 @@ Physical_Model_2D::~Physical_Model_2D()
 
 void Physical_Model_2D::update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale)
 {
-	ASSERT(!m_polygons);
+	L_ASSERT(!(!m_polygons));
 
 	glm::mat4x4 result_matrix = _translation * _rotation * _scale;
 
@@ -275,7 +275,7 @@ unsigned int Physical_Model_2D::get_polygons_count() const
 
 const Geometry::Polygon& Physical_Model_2D::operator[](unsigned int _index) const
 {
-	ASSERT(!m_polygons || _index >= m_polygons_count);
+	L_ASSERT(!(!m_polygons || _index >= m_polygons_count));
 
 	return m_polygons[_index];
 }

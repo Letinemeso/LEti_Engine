@@ -18,11 +18,11 @@ void Space_Splitter_2D::debug_assert_if_model_copy_found(const LEti::Object_2D *
 	while(check != m_registred_models.end())
 	{
 		if(!_reverse)
-			ASSERT(*check == _model);
+			L_ASSERT(!(*check == _model));
 		++check;
 	}
 	if(_reverse)
-		ASSERT(true);
+		L_ASSERT(!(true));
 }
 
 void Space_Splitter_2D::debug_assert_if_point_copy_found(const glm::vec3 *_point, bool _reverse)
@@ -31,11 +31,11 @@ void Space_Splitter_2D::debug_assert_if_point_copy_found(const glm::vec3 *_point
 	while(check != m_registred_points.end())
 	{
 		if(!_reverse)
-			ASSERT(*check == _point);
+			L_ASSERT(!(*check == _point));
 		++check;
 	}
 	if(_reverse)
-		ASSERT(true);
+		L_ASSERT(!(true));
 }
 
 
@@ -66,7 +66,7 @@ void Space_Splitter_2D::unregister_object(const LEti::Object_2D *_model)
 		if(*it == _model) break;
 		++it;
 	}
-	ASSERT(it == m_registred_models.end());
+	L_ASSERT(!(it == m_registred_models.end()));
 	m_registred_models.erase(it);
 }
 
@@ -84,7 +84,7 @@ void Space_Splitter_2D::unregister_point(const glm::vec3 *_point)
 		if(*it == _point) break;
 		++it;
 	}
-	ASSERT(it == m_registred_points.end());
+	L_ASSERT(!(it == m_registred_points.end()));
 	m_registred_points.erase(it);
 }
 
@@ -92,7 +92,7 @@ void Space_Splitter_2D::unregister_point(const glm::vec3 *_point)
 
 void Space_Splitter_2D::update()
 {
-	ASSERT(!m_broad_phase || !m_narrow_phase);
+	L_ASSERT(!(!m_broad_phase || !m_narrow_phase));
 
 	m_broad_phase->update(m_registred_models, m_registred_points);
 
@@ -108,13 +108,13 @@ void Space_Splitter_2D::update()
 
 const Narrow_Phase_Interface::Collision_Data_List__Models& Space_Splitter_2D::get_collisions__models()
 {
-	ASSERT(!m_broad_phase || !m_narrow_phase);
+	L_ASSERT(!(!m_broad_phase || !m_narrow_phase));
 	return m_narrow_phase->get_collisions__models();
 }
 
 const Narrow_Phase_Interface::Collision_Data_List__Points& Space_Splitter_2D::get_collisions__points()
 {
-	ASSERT(!m_broad_phase || !m_narrow_phase);
+	L_ASSERT(!(!m_broad_phase || !m_narrow_phase));
 	return m_narrow_phase->get_collisions__points();
 }
 

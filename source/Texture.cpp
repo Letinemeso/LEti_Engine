@@ -65,6 +65,6 @@ const std::string& Texture::get_current_picture_name() const
 
 void Texture::use() const
 {
-	ASSERT(texture_object == 0 || buffer_size == 0 || buffer == 0 || buffer_data == 0);
+	L_ASSERT(!(texture_object == 0 || buffer_size == 0 || buffer == 0 || buffer_data == 0));
 	glBindTexture(GL_TEXTURE_2D, texture_object);
 }

@@ -19,20 +19,20 @@ void Text_Field::init(const char* _object_name)
 
 	sequence = LEti::Resource_Loader::get_data<std::unsigned_string>(_object_name, "sequence").first;
 	text_tex_coords = LEti::Resource_Loader::get_data<float>(_object_name, "texture_coordinates");
-	ASSERT(text_tex_coords.second < sequence->size()* tcpc);
+	L_ASSERT(!(text_tex_coords.second < sequence->size()* tcpc));
 	for (unsigned int i = 0; i < sequence->size(); ++i)
 	{
 		unsigned char current_char = (*sequence)[i];
-		ASSERT(sequence_map.find(current_char) != sequence_map.end());
+		L_ASSERT(!(sequence_map.find(current_char) != sequence_map.end()));
 		sequence_map.emplace(current_char, &(text_tex_coords.first[tcpc * i]));
 	}
 
 	auto position = LEti::Resource_Loader::get_data<float>(_object_name, "position");
-	ASSERT(position.second != 2);
+	L_ASSERT(!(position.second != 2));
 	set_pos({position.first[0], position.first[1], 0.0f});
 
 	auto size = LEti::Resource_Loader::get_data<float>(_object_name, "size");
-	ASSERT(size.second != 2);
+	L_ASSERT(!(size.second != 2));
 	width = size.first[0]; height = size.first[1];
 }
 
@@ -48,7 +48,7 @@ void Text_Field::set_text(const char* _text)
 	for (unsigned int i = 0; i < text.size(); ++i)
 	{
 		const float* ptr = sequence_map.at(text[i]);
-		ASSERT(ptr == nullptr);
+		L_ASSERT(!(ptr == nullptr));
 
 		for (unsigned int j = 0; j < tcpc; ++j)
 			temp_coords[i * tcpc + j] = ptr[j];

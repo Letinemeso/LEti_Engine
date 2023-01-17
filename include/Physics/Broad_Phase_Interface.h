@@ -19,7 +19,7 @@ namespace LEti
 		struct Colliding_Pair
 		{
 			const LEti::Object_2D* first = nullptr, * second = nullptr;
-			Colliding_Pair(const LEti::Object_2D* _first, const LEti::Object_2D* _second) : first(_first), second(_second) { ASSERT(first == second); /*if(second > first) { const LEti::Object_2D* temp = first; first = second; second = temp; } */}
+			Colliding_Pair(const LEti::Object_2D* _first, const LEti::Object_2D* _second) : first(_first), second(_second) { L_ASSERT(!(first == second)); /*if(second > first) { const LEti::Object_2D* temp = first; first = second; second = temp; } */}
 			bool operator==(const Colliding_Pair& _other) const { return (first == _other.first && second == _other.second) || (first == _other.second && second == _other.first); }
 			bool operator<(const Colliding_Pair& _other) const
 			{

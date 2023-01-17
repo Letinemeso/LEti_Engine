@@ -65,7 +65,7 @@ void Camera::set_position(const glm::vec3& _pos)
 void Camera::set_look_direction(glm::vec3 _direction)
 {
 	float vector_length = Math::vector_length(_direction);
-	ASSERT(vector_length < 0.000001f);
+	L_ASSERT(!(vector_length < 0.000001f));
 	if(vector_length < 0.99999 || vector_length > 1.0f)
 		_direction /= vector_length;
 
@@ -156,7 +156,7 @@ void Camera::control(bool _update_2d, bool _update_3d)
 {
 	if (_update_3d)
 	{
-		ASSERT(!pos_set || !look_direction_set || !fov_set);
+		L_ASSERT(!(!pos_set || !look_direction_set || !fov_set));
 
 		glm::vec3 movement_vec(0.0f, 0.0f, 0.0f);
 
@@ -217,7 +217,7 @@ void Camera::control(bool _update_2d, bool _update_3d)
 	}
 	if (_update_2d)
 	{
-		ASSERT(!ortho_matrix_set);
+		L_ASSERT(!(!ortho_matrix_set));
 
 
 	}
@@ -232,14 +232,14 @@ void Camera::update(bool _update_2d, bool _update_3d)
 
 void Camera::use_3d()
 {
-	ASSERT(!pos_set || !look_direction_set || !fov_set);
+	L_ASSERT(!(!pos_set || !look_direction_set || !fov_set));
 
 	LEti::Shader::set_projection_matrix(result_camera_matrix);
 }
 
 void Camera::use_2d()
 {
-	ASSERT(!ortho_matrix_set);
+	L_ASSERT(!(!ortho_matrix_set));
 
 	LEti::Shader::set_projection_matrix(orthographic_matrix);
 }

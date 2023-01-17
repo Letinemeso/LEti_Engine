@@ -74,7 +74,7 @@ namespace LEti
 	template<typename Narrowest_Phase_Implementation>
 	void Space_Splitter_2D::set_narrowest_phase()
 	{
-		ASSERT(!m_narrow_phase);
+		L_ASSERT(!(!m_narrow_phase));
 		m_narrow_phase->set_narrowest_phase<Narrowest_Phase_Implementation>();
 	}
 

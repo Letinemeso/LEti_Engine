@@ -16,7 +16,7 @@ void Shader::get_shader_source(const char* _path, char*& _result_buffer, unsigne
 {
     std::ifstream file(_path, std::ios::binary);
 
-    ASSERT(!file.is_open());
+	L_ASSERT(!(!file.is_open()));
 
 	file.seekg(0, std::ios::end);
 	unsigned int size = file.tellg();
@@ -54,7 +54,7 @@ void Shader::shader_debug(unsigned int _shader)
 		std::cout << log << "\n";
 		valid = false;
 		
-		ASSERT(true);
+		L_ASSERT(!(true));
 	}
 }
 
@@ -71,7 +71,7 @@ void Shader::program_debug(unsigned int _program)
 		std::cout << log << "\n";
 		valid = false;
 		
-		ASSERT(true);
+		L_ASSERT(!(true));
 	}
 }
 
@@ -141,7 +141,7 @@ bool Shader::is_valid()
 void Shader::set_projection_matrix(glm::mat4x4& _matrix)
 {
 	int location = glGetUniformLocation(program, projection_matrix_uniform_name.c_str());
-	ASSERT(location == -1);
+	L_ASSERT(!(location == -1));
 
 	glUniformMatrix4fv(location, 1, false, &_matrix[0][0]);
 }
@@ -149,7 +149,7 @@ void Shader::set_projection_matrix(glm::mat4x4& _matrix)
 void Shader::set_transform_matrix(glm::mat4x4& _matrix)
 {
 	int location = glGetUniformLocation(program, transform_matrix_uniform_name.c_str());
-	ASSERT(location == -1);
+	L_ASSERT(!(location == -1));
 
 	glUniformMatrix4fv(location, 1, false, &_matrix[0][0]);
 }
@@ -157,7 +157,7 @@ void Shader::set_transform_matrix(glm::mat4x4& _matrix)
 void Shader::set_texture(const LEti::Texture& _texture)
 {
 	int location = glGetUniformLocation(program, texture_uniform_name.c_str());
-	ASSERT(location == -1);
+	L_ASSERT(!(location == -1));
 	
 	glUniform1i(location, 0);
 

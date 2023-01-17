@@ -9,7 +9,7 @@ Picture LEti::load_picture(const char* _path)
     Picture result;
     stbi_set_flip_vertically_on_load(true);
     result.m_picture_data = stbi_load(_path, &result.m_width, &result.m_height, nullptr, 4);
-    ASSERT(!result.m_picture_data);
+	L_ASSERT(!(!result.m_picture_data));
     return result;
 }
 

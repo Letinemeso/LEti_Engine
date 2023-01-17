@@ -36,7 +36,7 @@ Buffer::~Buffer()
 
 void Buffer::allocate_memory(unsigned int _size)
 {
-	ASSERT(_size == 0 || vertex_array == nullptr);
+	L_ASSERT(!(_size == 0 || vertex_array == nullptr));
 
 	free_memory();
 
@@ -65,7 +65,7 @@ void Buffer::free_memory()
 
 void Buffer::resize(unsigned int _new_size)
 {
-	ASSERT(_new_size == 0 || vertex_array == nullptr);
+	L_ASSERT(!(_new_size == 0 || vertex_array == nullptr));
 	glBindVertexArray(*vertex_array);
 
 	float* tempf = new float[_new_size];
@@ -97,7 +97,7 @@ void Buffer::resize(unsigned int _new_size)
 
 void Buffer::copy_array(const float* _data, unsigned int _count, unsigned int _offset)
 {
-	ASSERT(_offset + _count > buffer_size || _data == nullptr || _count == 0 || vertex_array == nullptr);
+	L_ASSERT(!(_offset + _count > buffer_size || _data == nullptr || _count == 0 || vertex_array == nullptr));
 
 	for(unsigned int i=0; i<_count; ++i)
 		buffer_data[i + _offset] = _data[i];
@@ -112,7 +112,7 @@ void Buffer::copy_array(const float* _data, unsigned int _count, unsigned int _o
 
 void Buffer::setup_buffer(unsigned int _attrib_index, unsigned int _floats_per_vertex)
 {
-	ASSERT(buffer == 0 || buffer_size == 0 || buffer_data == nullptr || vertex_array == nullptr);
+	L_ASSERT(!(buffer == 0 || buffer_size == 0 || buffer_data == nullptr || vertex_array == nullptr));
 
 	glBindVertexArray(*vertex_array);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
@@ -123,14 +123,14 @@ void Buffer::setup_buffer(unsigned int _attrib_index, unsigned int _floats_per_v
 
 Buffer::float_container& Buffer::operator[](unsigned int _index)
 {
-	ASSERT(_index >= buffer_size);
+	L_ASSERT(!(_index >= buffer_size));
 	fc.last_requested_index = _index;
 	return fc;
 }
 
 float Buffer::operator[](unsigned int _index) const
 {
-	ASSERT(_index >= buffer_size);
+	L_ASSERT(!(_index >= buffer_size));
 	return buffer_data[_index];
 }
 
@@ -145,6 +145,6 @@ unsigned int Buffer::size() const
 
 void Buffer::bind() const
 {
-	ASSERT(buffer == 0 || buffer_size == 0 || buffer_data == nullptr || vertex_array == nullptr);
+	L_ASSERT(!(buffer == 0 || buffer_size == 0 || buffer_data == nullptr || vertex_array == nullptr));
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 }

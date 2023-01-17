@@ -25,19 +25,19 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 	{
 		if (_source[i] == '|')
 		{
-			ASSERT(is_parsing_var_type || is_parsing_var_count || is_parsing_var);
+			L_ASSERT(!(is_parsing_var_type || is_parsing_var_count || is_parsing_var));
 			switch_state(is_parsing_var_name);
 			if (is_parsing_var_name == false)
-				ASSERT(name.size() == 0);
+				L_ASSERT(!(name.size() == 0));
 		}
 		else if (_source[i] == '\"')
 		{
-			ASSERT(is_parsing_var_type || is_parsing_var_count || is_parsing_var_name);
+			L_ASSERT(!(is_parsing_var_type || is_parsing_var_count || is_parsing_var_name));
 			switch_state(is_parsing_var);
 			if (is_parsing_var == false)
 			{
-				ASSERT(str_value.size() == 0);
-				ASSERT(var_values_left == 0);
+				L_ASSERT(!(str_value.size() == 0));
+				L_ASSERT(!(var_values_left == 0));
 
                 const Type_Handler& handler = m_type_handlers.at(result.type);
                 unsigned int index = result.values_count - var_values_left;
@@ -49,12 +49,12 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 		}
 		else if (_source[i] == '<')
 		{
-			ASSERT(is_parsing_var || is_parsing_var_count || is_parsing_var_name);
+			L_ASSERT(!(is_parsing_var || is_parsing_var_count || is_parsing_var_name));
 			switch_state(is_parsing_var_type);
 		}
 		else if (_source[i] == '[')
 		{
-			ASSERT(is_parsing_var_type || is_parsing_var || is_parsing_var_name);
+			L_ASSERT(!(is_parsing_var_type || is_parsing_var || is_parsing_var_name));
 			switch_state(is_parsing_var_count);
 		}
 		else if (is_parsing_var_name)
@@ -65,10 +65,10 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 		{
 			if (_source[i] == ']')
 			{
-				ASSERT(str_value.size() == 0);
+				L_ASSERT(!(str_value.size() == 0));
 				switch_state(is_parsing_var_count);
 				result.values_count = std::stoi(str_value);
-				ASSERT(result.values_count == 0);
+				L_ASSERT(!(result.values_count == 0));
 				var_values_left = result.values_count;
 				str_value.clear();
 
@@ -77,7 +77,7 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 			}
 			else if (Math::is_digit(_source[i]))
 				str_value += _source[i];
-			else ASSERT(false);
+			else L_ASSERT(!(false));
 		}
 		else if (is_parsing_var_type)
 		{
@@ -93,7 +93,7 @@ void Resource_Loader::load_variables(const std::string& _source, const char* _na
 			str_value += _source[i];
 		}
 
-		ASSERT((_source[i] == '\n' || i + 1 == _source.size()) && (is_parsing_var_name || is_parsing_var_type || is_parsing_var || var_values_left > 0));
+		L_ASSERT(!((_source[i] == '\n' || i + 1 == _source.size()) && (is_parsing_var_name || is_parsing_var_type || is_parsing_var || var_values_left > 0)));
 
 		if (_source[i] == '\n' || i + 1 == _source.size())
 		{
@@ -126,7 +126,7 @@ void Resource_Loader::init()
                     [](void*& _arr, unsigned int _index, const std::string& _str_var)
                     {
                         for(unsigned int i=0; i<_str_var.size(); ++i)
-							ASSERT(!Math::is_digit(_str_var[i]) && _str_var[i] != '-' && _str_var[i] != '.');
+							L_ASSERT(!(!Math::is_digit(_str_var[i]) && _str_var[i] != '-' && _str_var[i] != '.'));
                         float* f_arr = (float*)_arr;
                         f_arr[_index] = stof(_str_var);
                     }
@@ -147,7 +147,7 @@ void Resource_Loader::init()
                     [](void*& _arr, unsigned int _index, const std::string& _str_var)
                     {
                         for(unsigned int i=0; i<_str_var.size(); ++i)
-							ASSERT(!Math::is_digit(_str_var[i]) && _str_var[i] != '-');
+							L_ASSERT(!(!Math::is_digit(_str_var[i]) && _str_var[i] != '-'));
                         int* f_arr = (int*)_arr;
                         f_arr[_index] = stoi(_str_var);
                     }
@@ -196,7 +196,7 @@ void Resource_Loader::init()
 void Resource_Loader::register_type(const std::string &_typename, alloc_fptr _allocate_func, free_fptr _free_func, parse_fptr _parse_func)
 {
     std::map<std::string, Type_Handler>::iterator check = m_type_handlers.find(_typename);
-    ASSERT(check != m_type_handlers.end());
+	L_ASSERT(!(check != m_type_handlers.end()));
 
     m_type_handlers.emplace(_typename, Type_Handler(_allocate_func, _free_func, _parse_func));
 }
@@ -204,7 +204,7 @@ void Resource_Loader::register_type(const std::string &_typename, alloc_fptr _al
 void Resource_Loader::unregister_type(const std::string &_typename)
 {
     std::map<std::string, Type_Handler>::iterator it = m_type_handlers.find(_typename);
-    ASSERT(it == m_type_handlers.end());
+	L_ASSERT(!(it == m_type_handlers.end()));
 
     m_type_handlers.erase(it);
 }
@@ -214,7 +214,7 @@ void Resource_Loader::unregister_type(const std::string &_typename)
 void Resource_Loader::load_object(const char* _name, const char* _path)
 {
 	std::ifstream file(_path, std::ios::in);
-	ASSERT(!file.is_open());
+	L_ASSERT(!(!file.is_open()));
 
 	file.seekg(0, std::ios::end);
 	unsigned int size = file.tellg();
@@ -236,7 +236,7 @@ void Resource_Loader::load_object(const char* _name, const char* _path)
 void Resource_Loader::delete_object(const char* _name)
 {
     std::map<std::string, object_data>::iterator it = m_objects.find(_name);
-    ASSERT(it == m_objects.end());
+	L_ASSERT(!(it == m_objects.end()));
     std::map<std::string, parsed_value>::iterator pv_it = it->second.variables.begin();
     while (pv_it != it->second.variables.end())
     {
@@ -250,7 +250,7 @@ void Resource_Loader::delete_object(const char* _name)
 void Resource_Loader::delete_picture(const char *_name)
 {
     std::map<std::string, Picture>::iterator it = m_pictures.find(_name);
-    ASSERT(it == m_pictures.end());
+	L_ASSERT(!(it == m_pictures.end()));
     m_pictures.erase(it);
 }
 
@@ -264,7 +264,7 @@ void Resource_Loader::clear_pictures()
 const Picture& Resource_Loader::get_picture(const char *_name)
 {
     std::map<std::string, Picture>::iterator it = m_pictures.find(_name);
-    ASSERT(it == m_pictures.end());
+	L_ASSERT(!(it == m_pictures.end()));
 
     return it->second;
 }

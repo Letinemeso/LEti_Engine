@@ -70,7 +70,7 @@ bool Math::is_digit(char _c)
 
 float Math::angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& _second)
 {
-	ASSERT(vector_length(_first) == 0 ||  vector_length(_second) == 0);
+	L_ASSERT(!(vector_length(_first) == 0 ||  vector_length(_second) == 0));
 	if(vector_length(_first) == 0 ||  vector_length(_second) == 0)
 		return 0.0f;
 
@@ -91,7 +91,7 @@ float Math::sin_or_cos_from_opposite(float _cos_or_sin)
 
 bool Math::beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& _second)
 {
-	ASSERT(vector_length(_first) == 0 ||  vector_length(_second) == 0);
+	L_ASSERT(!(vector_length(_first) == 0 ||  vector_length(_second) == 0));
 
 	float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
 
@@ -150,7 +150,7 @@ void Geometry::Polygon::setup(const float *_raw_coords)
 		sum += glm::vec3(_raw_coords[i*3 + 0], _raw_coords[i * 3 + 1], _raw_coords[i * 3 + 2]);
 	m_center_of_mass_raw = sum / 3.0f;
 
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords));
 }
 
 void Geometry::Polygon::setup(const Polygon& _other)
@@ -165,7 +165,7 @@ void Geometry::Polygon::setup(const Polygon& _other)
 
 void Geometry::Polygon::update_points(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords));
 
 	glm::mat4x4 result_matrix = _translation * _rotation * _scale;
 	update_points_with_single_matrix(result_matrix);
@@ -173,7 +173,7 @@ void Geometry::Polygon::update_points(const glm::mat4x4 &_translation, const glm
 
 void Geometry::Polygon::update_points_with_single_matrix(const glm::mat4x4 &_matrix)
 {
-	ASSERT(!m_raw_coords);
+	L_ASSERT(!(!m_raw_coords));
 
 	m_actual_A = _matrix * glm::vec4(m_raw_coords[0], m_raw_coords[1], m_raw_coords[2], 1.0f);
 	m_actual_B = _matrix * glm::vec4(m_raw_coords[3], m_raw_coords[4], m_raw_coords[5], 1.0f);
@@ -184,7 +184,7 @@ void Geometry::Polygon::update_points_with_single_matrix(const glm::mat4x4 &_mat
 
 const glm::vec3& Geometry::Polygon::operator[](unsigned int _index) const
 {
-	ASSERT(_index > 2);
+	L_ASSERT(!(_index > 2));
 	switch(_index)
 	{
 	case 0 : return m_actual_A;
@@ -196,7 +196,7 @@ const glm::vec3& Geometry::Polygon::operator[](unsigned int _index) const
 
 glm::vec3& Geometry::Polygon::operator[](unsigned int _index)
 {
-	ASSERT(_index > 2);
+	L_ASSERT(!(_index > 2));
 	switch(_index)
 	{
 	case 0 : return m_actual_A;
