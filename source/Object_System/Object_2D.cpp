@@ -2,6 +2,29 @@
 
 using namespace LEti;
 
+#include "MDL_Reader.h"
+
+INIT_FIELDS(Object_2D_Stub, LV::Variable_Base)
+
+ADD_FIELD(glm::vec3, position)
+ADD_FIELD(glm::vec3, scale)
+ADD_FIELD(glm::vec3, rotation_axis)
+ADD_FIELD(float, rotation_angle)
+
+ADD_FIELD(std::string, texture_name)
+
+ADD_FIELD(unsigned int, tcoords_count)
+ADD_FIELD(float*, tcoords)
+
+ADD_FIELD(unsigned int, coords_count)
+ADD_FIELD(float*, coords)
+
+ADD_FIELD(unsigned int, phys_coords_count)
+ADD_FIELD(float*, phys_coords)
+
+FIELDS_END
+
+
 
 Object_2D::Object_2D() : Object_Base()
 {
@@ -287,6 +310,33 @@ void Object_2D::init(const char *_object_name)
 	{
 		create_physics_module();
 		m_physics_module->init(physical_model_data.first, physical_model_data.second);
+	}
+}
+
+void Object_2D::init(const LV::Variable_Base& _stub)
+{
+	remove_draw_module();
+	remove_physics_module();
+
+	const Object_2D_Stub* stub = LV::cast_variable<Object_2D_Stub>(&_stub);
+	L_ASSERT(stub);
+
+	set_pos(stub->position);
+	set_scale(stub->scale);
+	set_rotation_axis(stub->rotation_axis);
+	set_rotation_angle(stub->rotation_angle);
+
+	if(stub->tcoords && stub->coords)
+	{
+		create_draw_module();
+		m_draw_module->init_texture(stub->texture_name.c_str(), stub->tcoords, stub->tcoords_count);
+		m_draw_module->init_vertices(stub->coords, stub->coords_count);
+	}
+
+	if(stub->phys_coords)
+	{
+		create_physics_module();
+		m_physics_module->init(stub->phys_coords, stub->phys_coords_count);
 	}
 }
 

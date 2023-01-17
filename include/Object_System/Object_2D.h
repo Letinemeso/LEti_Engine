@@ -6,8 +6,32 @@
 #include "Modules/Default_Draw_Module_2D.h"
 #include "Modules/Default_Physics_Module_2D.h"
 
+#include "Variable_Base.h"
 
-namespace LEti {
+
+namespace LEti
+{
+
+class Object_2D_Stub : public LV::Variable_Base
+{
+public:
+	DECLARE_VARIABLE;
+
+public:
+	glm::vec3 position, scale, rotation_axis;
+	float rotation_angle;
+
+	std::string texture_name;
+
+	unsigned int tcoords_count = 0;
+	float* tcoords = nullptr;
+
+	unsigned int coords_count = 0;
+	float* coords = nullptr;
+
+	unsigned int phys_coords_count = 0;
+	float* phys_coords = nullptr;
+};
 
 class Object_2D : public Object_Base
 {
@@ -38,6 +62,7 @@ public:
 
 public:
 	virtual void init(const char* _object_name);
+	virtual void init(const LV::Variable_Base& _stub);
 
 public:
 	void set_pos(const glm::vec3& _position);

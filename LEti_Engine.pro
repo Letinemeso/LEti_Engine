@@ -30,6 +30,7 @@ win32 {
 INCLUDEPATH += "../LEti_Engine/OpenGL/GLM"
 INCLUDEPATH += "../LEti_Engine/include/"
 
+INCLUDEPATH += "../L_Variable/include/"
 INCLUDEPATH += "../Utility/include/"
 
 
