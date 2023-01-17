@@ -1,7 +1,7 @@
 #ifndef __VERTICES
 #define __VERTICES
 
-#include "../Debug.h"
+#include "Debug/Debug.h"
 #include "../include/Buffer.h"
 
 #include "glew.h"

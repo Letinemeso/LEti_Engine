@@ -4,7 +4,7 @@
 #include <cmath>
 #include <vector>
 
-#include "../Debug.h"
+#include "Debug/Debug.h"
 
 #include "Tree.h"
 

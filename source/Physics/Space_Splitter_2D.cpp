@@ -54,7 +54,7 @@ Narrow_Phase_Interface* Space_Splitter_2D::get_narrow_phase()
 
 void Space_Splitter_2D::register_object(const LEti::Object_2D *_model)
 {
-	DEBUG_FUNC_2ARG(debug_assert_if_model_copy_found, _model, false);
+	L_DEBUG_FUNC_2ARG(debug_assert_if_model_copy_found, _model, false);
 	m_registred_models.push_back(_model);
 }
 
@@ -72,7 +72,7 @@ void Space_Splitter_2D::unregister_object(const LEti::Object_2D *_model)
 
 void Space_Splitter_2D::register_point(const glm::vec3 *_point)
 {
-	DEBUG_FUNC_2ARG(debug_assert_if_point_copy_found, _point, false);
+	L_DEBUG_FUNC_2ARG(debug_assert_if_point_copy_found, _point, false);
 	m_registred_points.push_back(_point);
 }
 

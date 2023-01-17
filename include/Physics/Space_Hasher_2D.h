@@ -3,7 +3,7 @@
 
 #include "../../include/Physics/Broad_Phase_Interface.h"
 
-#include "../../Debug.h"
+#include "Debug/Debug.h"
 
 namespace LEti
 {

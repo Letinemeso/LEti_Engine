@@ -6,7 +6,7 @@
 
 #include "../../include/Math_Stuff.h"
 
-#include "../../Debug.h"
+#include "Debug/Debug.h"
 
 
 namespace LEti

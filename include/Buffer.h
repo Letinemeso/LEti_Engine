@@ -3,7 +3,7 @@
 
 #include "glew.h"
 
-#include "../Debug.h"
+#include "Debug/Debug.h"
 
 
 namespace LEti {

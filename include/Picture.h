@@ -1,7 +1,7 @@
 #ifndef __PICTURE
 #define __PICTURE
 
-#include "../Debug.h"
+#include "Debug/Debug.h"
 
 
 namespace LEti {

@@ -95,12 +95,12 @@ void Shader::init_shader(const char* _v_path, const char* _f_path)
 	get_shader_source(_v_path, buffer, &size);
 	glShaderSource(vertex_shader, 1, &buffer, 0);
 	glCompileShader(vertex_shader);
-	DEBUG_FUNC_1ARG(shader_debug, vertex_shader);
+	L_DEBUG_FUNC_1ARG(shader_debug, vertex_shader);
 	delete buffer;
 	get_shader_source(_f_path, buffer, &size);
 	glShaderSource(fragment_shader, 1, &buffer, 0);
 	glCompileShader(fragment_shader);
-	DEBUG_FUNC_1ARG(shader_debug, fragment_shader);
+	L_DEBUG_FUNC_1ARG(shader_debug, fragment_shader);
 	delete buffer;
 
 
@@ -108,7 +108,7 @@ void Shader::init_shader(const char* _v_path, const char* _f_path)
 	glAttachShader(program, fragment_shader);
 
 	glLinkProgram(program);
-	DEBUG_FUNC_1ARG(program_debug, program);
+	L_DEBUG_FUNC_1ARG(program_debug, program);
 	glUseProgram(program);
 
 	initialized = true;

@@ -4,7 +4,7 @@
 #include "glew.h"
 #include "glfw3.h"
 
-#include "../Debug.h"
+#include "Debug/Debug.h"
 
 #include "../include/Window_Controller.h"
 

@@ -30,6 +30,9 @@ win32 {
 INCLUDEPATH += "../LEti_Engine/OpenGL/GLM"
 INCLUDEPATH += "../LEti_Engine/include/"
 
+INCLUDEPATH += "../Utility/include/"
+
+
 DISTFILES += \
     resources/font/bgr.png \
     resources/font/font.png \
@@ -44,7 +47,6 @@ DISTFILES += \
     resources/vertex_shader.shader
 
 HEADERS += \
-    Debug.h \
     include/Buffer.h \
     include/Camera.h \
     include/EIPF.h \
@@ -78,7 +80,6 @@ HEADERS += \
     include/Window_Controller.h
 
 SOURCES += \
-    Debug.cpp \
     source/Buffer.cpp \
     source/Camera.cpp \
     source/EIPF.cpp \

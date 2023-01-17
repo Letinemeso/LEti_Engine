@@ -1,7 +1,7 @@
 #ifndef __MATH_STUFF
 #define __MATH_STUFF
 
-#include "../Debug.h"
+#include "Debug/Debug.h"
 
 #include "vec3.hpp"
 #include "mat4x4.hpp"
