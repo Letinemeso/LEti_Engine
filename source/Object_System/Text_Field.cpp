@@ -6,34 +6,52 @@ using namespace LEti;
 constexpr unsigned int tcpc = 12, cpc = 18;		//texture coordinates per character, coordinates per character
 
 
+
+INIT_FIELDS(Text_Field_Stub, LV::Variable_Base)
+
+ADD_FIELD(std::string, font_texture)
+ADD_FIELD(unsigned int, tcoords_count)
+ADD_FIELD(float*, tcoords)
+ADD_FIELD(glm::vec3, position)
+ADD_FIELD(float, width)
+ADD_FIELD(float, height)
+ADD_FIELD(std::string, sequence)
+
+FIELDS_END
+
+
+
 Text_Field::Text_Field() : Object_2D()
 {
-//	set_is_3d(false);
+
 }
 
-void Text_Field::init(const char* _object_name)
+void Text_Field::init(const LV::Variable_Base &_stub)
 {
+	const Text_Field_Stub* stub = LV::cast_variable<Text_Field_Stub>(&_stub);
+	L_ASSERT(stub);
+
+	remove_draw_module();
+	remove_physics_module();
+
+	sequence = *(std::unsigned_string*)&stub->sequence;
+
 	create_draw_module();
+	draw_module()->set_texture(stub->font_texture.c_str());
+	text_tex_coords.first = stub->tcoords;
+	text_tex_coords.second = stub->tcoords_count;
 
-	draw_module()->set_texture(LEti::Resource_Loader::get_data<std::string>(_object_name, "font").first->c_str());
-
-	sequence = LEti::Resource_Loader::get_data<std::unsigned_string>(_object_name, "sequence").first;
-	text_tex_coords = LEti::Resource_Loader::get_data<float>(_object_name, "texture_coordinates");
-	L_ASSERT(!(text_tex_coords.second < sequence->size()* tcpc));
-	for (unsigned int i = 0; i < sequence->size(); ++i)
+	L_ASSERT(!(text_tex_coords.second < sequence.size()* tcpc));
+	for (unsigned int i = 0; i < sequence.size(); ++i)
 	{
-		unsigned char current_char = (*sequence)[i];
+		unsigned char current_char = sequence[i];
 		L_ASSERT(!(sequence_map.find(current_char) != sequence_map.end()));
 		sequence_map.emplace(current_char, &(text_tex_coords.first[tcpc * i]));
 	}
 
-	auto position = LEti::Resource_Loader::get_data<float>(_object_name, "position");
-	L_ASSERT(!(position.second != 2));
-	set_pos({position.first[0], position.first[1], 0.0f});
-
-	auto size = LEti::Resource_Loader::get_data<float>(_object_name, "size");
-	L_ASSERT(!(size.second != 2));
-	width = size.first[0]; height = size.first[1];
+	set_pos(stub->position);
+	width = stub->width;
+	height = stub->height;
 }
 
 

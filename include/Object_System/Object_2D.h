@@ -61,7 +61,7 @@ public:
 	~Object_2D();
 
 public:
-	virtual void init(const char* _object_name);
+//	virtual void init(const char* _object_name);
 	virtual void init(const LV::Variable_Base& _stub);
 
 public:
