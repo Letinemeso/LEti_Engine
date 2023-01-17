@@ -49,10 +49,8 @@ DISTFILES += \
 HEADERS += \
     include/Buffer.h \
     include/Camera.h \
-    include/EIPF.h \
     include/Event_Controller.h \
     include/Math_Stuff.h \
-    include/Message_Translator.h \
     include/Object_System/Debug_Drawable_Frame.h \
     include/Object_System/Modules/Default_Draw_Module_2D.h \
     include/Object_System/Modules/Default_Physics_Module_2D.h \
@@ -75,14 +73,12 @@ HEADERS += \
     include/Shader.h \
     include/Texture.h \
     include/Timer.h \
-    include/Tree.h \
     include/Vertices.h \
     include/Window_Controller.h
 
 SOURCES += \
     source/Buffer.cpp \
     source/Camera.cpp \
-    source/EIPF.cpp \
     source/Event_Controller.cpp \
     source/Math_Stuff.cpp \
     source/Object_System/Debug_Drawable_Frame.cpp \
@@ -107,6 +103,5 @@ SOURCES += \
     source/Shader.cpp \
     source/Texture.cpp \
     source/Timer.cpp \
-    source/Tree.cpp \
     source/Vertices.cpp \
     source/Window_Controller.cpp
