@@ -7,25 +7,24 @@ Texture::Texture()
 
 }
 
-Texture::Texture(const char* _picture_name, float* _tex_coords, unsigned int _tex_coords_count)
+Texture::Texture(const Picture* _picture, float* _tex_coords, unsigned int _tex_coords_count)
 {
-	init(_picture_name, _tex_coords, _tex_coords_count);
+	init(_picture, _tex_coords, _tex_coords_count);
 }
 
 
 
-void Texture::init(const char* _picture_name, const float* const _tex_coords, unsigned int _tex_coords_count)
+void Texture::init(const Picture* _picture, const float* const _tex_coords, unsigned int _tex_coords_count)
 {
-	set_picture(_picture_name);
+	set_picture(_picture);
 	set_texture_coords(_tex_coords, _tex_coords_count);
 }
 
-void Texture::set_picture(const char* _picture_name)
+void Texture::set_picture(const Picture* _picture)
 {
 	glDeleteTextures(1, &texture_object);
 
-	m_picture_name = _picture_name;
-	m_picture = &LEti::Resource_Loader::get_picture(_picture_name);
+	m_picture = _picture;
 
 	glGenTextures(1, &texture_object);
 	glBindTexture(GL_TEXTURE_2D, texture_object);
@@ -51,14 +50,9 @@ Texture::~Texture()
 
 
 
-const Picture& Texture::get_current_picture() const
+const Picture* Texture::get_picture() const
 {
-	return *m_picture;
-}
-
-const std::string& Texture::get_current_picture_name() const
-{
-	return m_picture_name;
+	return m_picture;
 }
 
 

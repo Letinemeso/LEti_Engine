@@ -4,12 +4,19 @@
 
 using namespace LEti;
 
-Picture LEti::load_picture(const char* _path)
+Picture* LEti::load_picture(const char* _path)
 {
-    Picture result;
     stbi_set_flip_vertically_on_load(true);
-    result.m_picture_data = stbi_load(_path, &result.m_width, &result.m_height, nullptr, 4);
-	L_ASSERT(!(!result.m_picture_data));
+
+	int width, height;
+	unsigned char* picture_data = stbi_load(_path, &width, &height, nullptr, 4);
+	L_ASSERT(picture_data);
+
+	Picture* result = new Picture;
+	result->m_picture_data = picture_data;
+	result->m_width = width;
+	result->m_height = height;
+
     return result;
 }
 

@@ -287,7 +287,7 @@ void Object_2D::init(const LV::Variable_Base& _stub)
 	if(stub->tcoords && stub->coords)
 	{
 		create_draw_module();
-		m_draw_module->init_texture(stub->texture_name.c_str(), stub->tcoords, stub->tcoords_count);
+		m_draw_module->init_texture(Picture_Manager::get_picture(stub->texture_name), stub->tcoords, stub->tcoords_count);
 		m_draw_module->init_vertices(stub->coords, stub->coords_count);
 	}
 

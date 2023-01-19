@@ -21,10 +21,10 @@ Default_Draw_Module_2D::~Default_Draw_Module_2D()
 
 
 
-void Default_Draw_Module_2D::init_texture(const char *_picture_name, const float *const tex_coords, unsigned int _tex_coords_count)
+void Default_Draw_Module_2D::init_texture(const Picture* _picture, const float *const tex_coords, unsigned int _tex_coords_count)
 {
 	glBindVertexArray(m_vertex_array);
-	m_texture.init(_picture_name, tex_coords, _tex_coords_count);
+	m_texture.init(_picture, tex_coords, _tex_coords_count);
 	m_texture.setup_buffer(1, 2);		//TODO: this data shpuld not be hard-coded. it should be stored in LEti::Shader (probably)
 }
 
@@ -36,10 +36,10 @@ void Default_Draw_Module_2D::init_vertices(const float *const _coords, unsigned 
 }
 
 
-void Default_Draw_Module_2D::set_texture(const char* _name)
+void Default_Draw_Module_2D::set_texture(const Picture* _picture)
 {
 	glBindVertexArray(m_vertex_array);
-	m_texture.set_picture(_name);
+	m_texture.set_picture(_picture);
 }
 
 void Default_Draw_Module_2D::set_texture_coords(const float* _tc, unsigned int _tc_count)

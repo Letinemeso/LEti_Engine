@@ -70,7 +70,7 @@ HEADERS += \
     include/Physics/Space_Hasher_2D.h \
     include/Physics/Space_Splitter_2D.h \
     include/Picture.h \
-    include/Resource_Loader.h \
+    include/Picture_Manager.h \
     include/Shader.h \
     include/Texture.h \
     include/Timer.h \
@@ -100,7 +100,7 @@ SOURCES += \
     source/Physics/Space_Hasher_2D.cpp \
     source/Physics/Space_Splitter_2D.cpp \
     source/Picture.cpp \
-    source/Resource_Loader.cpp \
+    source/Picture_Manager.cpp \
     source/Shader.cpp \
     source/Texture.cpp \
     source/Timer.cpp \

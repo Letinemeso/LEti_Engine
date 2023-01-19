@@ -37,7 +37,7 @@ void Text_Field::init(const LV::Variable_Base &_stub)
 	sequence = *(std::unsigned_string*)&stub->sequence;
 
 	create_draw_module();
-	draw_module()->set_texture(stub->font_texture.c_str());
+	draw_module()->set_texture(Picture_Manager::get_picture(stub->font_texture));
 	text_tex_coords.first = stub->tcoords;
 	text_tex_coords.second = stub->tcoords_count;
 

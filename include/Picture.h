@@ -14,7 +14,7 @@ namespace LEti {
 
     private:
         Picture() {}
-        friend Picture load_picture(const char* _path);
+		friend Picture* load_picture(const char* _path);
 
     public:
         Picture(Picture&& _from);
@@ -27,7 +27,7 @@ namespace LEti {
 
     };
 
-    Picture load_picture(const char* _path);
+	Picture* load_picture(const char* _path);
 
 } /*LEti*/
 

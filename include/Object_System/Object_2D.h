@@ -1,12 +1,13 @@
 #ifndef __OBJECT_2D
 #define __OBJECT_2D
 
-#include "Object_Base.h"
+#include "Variable_Base.h"
 
+#include "Object_Base.h"
 #include "Modules/Default_Draw_Module_2D.h"
 #include "Modules/Default_Physics_Module_2D.h"
+#include "Picture_Manager.h"
 
-#include "Variable_Base.h"
 
 
 namespace LEti
