@@ -26,19 +26,19 @@ namespace LEti
 			};
 			Type type = Type::none;
 			glm::vec3 point{0.0f, 0.0f, 0.0f};
-			glm::vec3 first_normal{0.0f, 0.0f, 0.0f}, second_normal{0.0f, 0.0f, 0.0f};
+			glm::vec3 normal{0.0f, 0.0f, 0.0f};
 			const Object_2D* first = nullptr, *second = nullptr;
 			float time_of_intersection_ratio = 1.0f;
 
 			Intersection_Data() { }
 			Intersection_Data(Type _type) : type(_type) { }
 			Intersection_Data(Type _type, const glm::vec3& _point) : type(_type), point(_point) { }
-			Intersection_Data(const Intersection_Data& _other) : type(_other.type), point(_other.point), first_normal(_other.first_normal), second_normal(_other.second_normal),
+			Intersection_Data(const Intersection_Data& _other) : type(_other.type), point(_other.point), normal(_other.normal),
 				first(_other.first), second(_other.second), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
-			Intersection_Data(Intersection_Data&& _other) : type(_other.type), point(_other.point), first_normal(_other.first_normal), second_normal(_other.second_normal),
+			Intersection_Data(Intersection_Data&& _other) : type(_other.type), point(_other.point), normal(_other.normal),
 				first(_other.first), second(_other.second), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
 			void operator=(const Intersection_Data& _other) { type = _other.type; point = _other.point; time_of_intersection_ratio = _other.time_of_intersection_ratio;
-															  first_normal = _other.first_normal; second_normal = _other.second_normal; first = _other.first; second = _other.second; }
+															  normal = _other.normal; first = _other.first; second = _other.second; }
 			operator bool() { return type != Type::none; }
 		};
 

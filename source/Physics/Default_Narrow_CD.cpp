@@ -268,11 +268,8 @@ void Default_Narrow_CD::update(const Broad_Phase_Interface::Colliding_Pair_List 
 		Physical_Model_2D::Intersection_Data id = objects_collide(*itm->first, *itm->second);
 		if(id)
 		{
-//			id.first = itm->first < itm->second ? itm->first : itm->second;
-//			id.second = itm->first < itm->second ? itm->second : itm->first;
 			id.first = itm->first;
 			id.second = itm->second;
-//			std::swap(id.first_normal, id.second_normal);
 			m_collisions__models.push_back(id);
 		}
 
