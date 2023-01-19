@@ -177,7 +177,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		L_ASSERT(Math::vector_length(result_id.normal) > 0.0f);
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -203,7 +203,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		L_ASSERT(Math::vector_length(result_id.normal) > 0.0f);
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -237,7 +237,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		L_ASSERT(Math::vector_length(result_id.normal) > 0.0f);
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -263,7 +263,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		L_ASSERT(Math::vector_length(result_id.normal) > 0.0f);
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -297,7 +297,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		L_ASSERT(Math::vector_length(result_id.normal) > 0.0f);
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -323,7 +323,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		L_ASSERT(Math::vector_length(result_id.normal) > 0.0f);
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -357,7 +357,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		L_ASSERT(Math::vector_length(result_id.normal) > 0.0f);
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -383,7 +383,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		L_ASSERT(Math::vector_length(result_id.normal) > 0.0f);
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 

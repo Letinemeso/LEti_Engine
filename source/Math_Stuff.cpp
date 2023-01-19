@@ -40,7 +40,11 @@ glm::vec3 Math::normalize(const glm::vec3& _first, const glm::vec3& _second)
 
 float Math::dot_product(const glm::vec3& _first, const glm::vec3& _second)
 {
-	return vector_length(_first) * vector_length(_second) * angle_cos_between_vectors(_first, _second);
+	float length1 = vector_length(_first);
+	float length2 = vector_length(_second);
+	if(length1 < 0.0001f || length2 < 0.0001f)
+		return 0.0f;
+	return length1 * length2 * angle_cos_between_vectors(_first, _second);
 }
 
 float Math::cross_product(const glm::vec3& _first, const glm::vec3& _second)
