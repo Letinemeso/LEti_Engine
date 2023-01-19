@@ -57,6 +57,13 @@ Debug_Drawable_Frame& Debug_Drawable_Frame::clear_sequence()
 
 
 
+void Debug_Drawable_Frame::init(const LV::Variable_Base &_stub)
+{
+	Object_2D::init(_stub);
+}
+
+
+
 void Debug_Drawable_Frame::create_draw_module()
 {
 	remove_draw_module();

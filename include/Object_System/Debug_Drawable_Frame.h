@@ -30,6 +30,9 @@ namespace LEti {
 		Debug_Drawable_Frame& clear_sequence();
 
 	public:
+		void init(const LV::Variable_Base &_stub) override;
+
+	public:
 		void create_draw_module() override;
 
 	public:
