@@ -268,6 +268,11 @@ Physical_Model_2D::Imprint Physical_Model_2D::create_imprint() const
 
 
 
+const Geometry::Polygon* Physical_Model_2D::get_polygons() const
+{
+	return m_polygons;
+}
+
 unsigned int Physical_Model_2D::get_polygons_count() const
 {
 	return m_polygons_count;

@@ -67,6 +67,7 @@ HEADERS += \
     include/Physics/Narrowest_Phase_Interface.h \
     include/Physics/Physical_Model_2D.h \
     include/Physics/Physical_Model_3D.h \
+    include/Physics/SAT_Narrowest_CD.h \
     include/Physics/Space_Hasher_2D.h \
     include/Physics/Space_Splitter_2D.h \
     include/Picture.h \
@@ -97,6 +98,7 @@ SOURCES += \
     source/Physics/Narrowest_Phase_Interface.cpp \
     source/Physics/Physical_Model_2D.cpp \
     source/Physics/Physical_Model_3D.cpp \
+    source/Physics/SAT_Narrowest_CD.cpp \
     source/Physics/Space_Hasher_2D.cpp \
     source/Physics/Space_Splitter_2D.cpp \
     source/Picture.cpp \

@@ -107,6 +107,11 @@ bool Math::floats_are_equal(float _first, float _second, float _precision)
 	return fabs(_first-_second) < _precision;
 }
 
+bool Math::vecs_are_equal(const glm::vec3& _first, const glm::vec3& _second)
+{
+	return floats_are_equal(_first.x, _second.x) && floats_are_equal(_first.y, _second.y) && floats_are_equal(_first.z, _second.z);
+}
+
 
 //	LEti::Geometry (generic geometry functions and easy-to-use structures)
 
@@ -188,26 +193,26 @@ void Geometry::Polygon::update_points_with_single_matrix(const glm::mat4x4 &_mat
 
 const glm::vec3& Geometry::Polygon::operator[](unsigned int _index) const
 {
-	L_ASSERT(!(_index > 2));
+//	L_ASSERT(!(_index > 2));
 	switch(_index)
 	{
 	case 0 : return m_actual_A;
 	case 1: return m_actual_B;
 	case 2: return m_actual_C;
 	}
-	return m_actual_C;
+	return m_actual_A;	//will be useful for "for" loops ([i], [i + 1])
 }
 
 glm::vec3& Geometry::Polygon::operator[](unsigned int _index)
 {
-	L_ASSERT(!(_index > 2));
+//	L_ASSERT(!(_index > 2));
 	switch(_index)
 	{
 	case 0 : return m_actual_A;
 	case 1: return m_actual_B;
 	case 2: return m_actual_C;
 	}
-	return m_actual_C;
+	return m_actual_A;	//will be useful for "for" loops ([i], [i + 1])
 }
 
 const glm::vec3& Geometry::Polygon::center_of_mass() const
@@ -472,6 +477,53 @@ Geometry::Simple_Intersection_Data Geometry_2D::segments_intersect(const Geometr
 	id.second = _second;
 
 	return id;
+}
+
+float Geometry_2D::point_to_axis_projection(const glm::vec3& _point, const glm::vec3& _axis)
+{
+	return Math::dot_product(_point, _axis);
+}
+
+float Geometry_2D::point_to_segment_distance(const glm::vec3& _point, const glm::vec3& _seg_start, const glm::vec3& _seg_end)
+{
+	glm::vec3 seg_perp = _seg_end - _seg_start;
+	float x = seg_perp.x;
+	seg_perp.x = -seg_perp.y;
+	seg_perp.y = x;
+	seg_perp -= _point;
+
+	Equasion_Data eq_1(_seg_start, _seg_end);
+	Equasion_Data eq_2({0.0f, 0.0f, 0.0f}, seg_perp);
+
+	glm::vec3 itsc_point = Geometry_2D::lines_intersect(eq_1, eq_2).point;
+
+	float y = eq_1.solve_by_x(itsc_point.x);
+
+	float max_y = 0.0f;
+	float min_y = 0.0f;
+
+	if(_seg_start.y > _seg_end.y)
+	{
+		max_y = _seg_start.y;
+		min_y = _seg_end.y;
+	}
+	else
+	{
+		max_y = _seg_end.y;
+		min_y = _seg_start.y;
+	}
+
+	if(y < min_y || y > max_y)
+		return -1.0f;
+
+	return Math::vector_length(itsc_point - _point);
+}
+
+void Geometry_2D::rotate_perpendicular_ccw(glm::vec3& _vec)
+{
+	float x = _vec.x;
+	_vec.x = -_vec.y;
+	_vec.y = x;
 }
 
 

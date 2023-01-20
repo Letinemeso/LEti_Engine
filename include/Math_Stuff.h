@@ -48,7 +48,9 @@ namespace Math {
 
     bool beams_cross_at_right_angle(const glm::vec3& _first, const glm::vec3& _second);
 
-    bool floats_are_equal(float _first, float _second, float _precision = 0.0001f);
+	bool floats_are_equal(float _first, float _second, float _precision = 0.0001f);
+
+	bool vecs_are_equal(const glm::vec3& _first, const glm::vec3& _second);
 
 }	/*Math*/
 
@@ -172,6 +174,12 @@ namespace Geometry_2D {
 	Geometry::Simple_Intersection_Data lines_intersect(const Equasion_Data& _first, const Equasion_Data& _second);
 
 	Geometry::Simple_Intersection_Data segments_intersect(const Geometry::Segment& _first, const Geometry::Segment& _second);
+
+	float point_to_axis_projection(const glm::vec3& _point, const glm::vec3& _axis);
+
+	float point_to_segment_distance(const glm::vec3& _point, const glm::vec3& _seg_start, const glm::vec3& _seg_end);
+
+	void rotate_perpendicular_ccw(glm::vec3& _vec);
 
 }	/*Geometry_2D*/
 

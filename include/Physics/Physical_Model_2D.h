@@ -4,6 +4,8 @@
 #include "vec3.hpp"
 #include "mat4x4.hpp"
 
+#include "Data_Structures/List.h"
+
 #include "../../include/Math_Stuff.h"
 
 #include "Debug/Debug.h"
@@ -25,20 +27,22 @@ namespace LEti
 				same_line
 			};
 			Type type = Type::none;
-			glm::vec3 point{0.0f, 0.0f, 0.0f};
+			glm::vec3 point{0.0f, 0.0f, 0.0f};	//	TODO: make this shit return only "points" \|/
 			glm::vec3 normal{0.0f, 0.0f, 0.0f};
 			const Object_2D* first = nullptr, *second = nullptr;
 			float time_of_intersection_ratio = 1.0f;
+
+			LDS::List<glm::vec3> points;
 
 			Intersection_Data() { }
 			Intersection_Data(Type _type) : type(_type) { }
 			Intersection_Data(Type _type, const glm::vec3& _point) : type(_type), point(_point) { }
 			Intersection_Data(const Intersection_Data& _other) : type(_other.type), point(_other.point), normal(_other.normal),
-				first(_other.first), second(_other.second), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
+				first(_other.first), second(_other.second), time_of_intersection_ratio(_other.time_of_intersection_ratio), points(_other.points) { }
 			Intersection_Data(Intersection_Data&& _other) : type(_other.type), point(_other.point), normal(_other.normal),
-				first(_other.first), second(_other.second), time_of_intersection_ratio(_other.time_of_intersection_ratio) { }
+				first(_other.first), second(_other.second), time_of_intersection_ratio(_other.time_of_intersection_ratio), points(_other.points) { }
 			void operator=(const Intersection_Data& _other) { type = _other.type; point = _other.point; time_of_intersection_ratio = _other.time_of_intersection_ratio;
-															  normal = _other.normal; first = _other.first; second = _other.second; }
+															  normal = _other.normal; first = _other.first; second = _other.second; points = _other.points; }
 			operator bool() { return type != Type::none; }
 		};
 
@@ -74,6 +78,7 @@ namespace LEti
 
 			const Geometry::Polygon& operator[](unsigned int _index) const;
 			const Physical_Model_2D* get_parent() const;
+			inline const Geometry::Polygon* get_polygons() const { return m_polygons; }
 			unsigned int get_polygons_count() const;
 			const Geometry_2D::Rectangular_Border& curr_rect_border() const;
 			const glm::vec3& center_of_mass() const;
@@ -113,6 +118,7 @@ namespace LEti
 		Imprint create_imprint() const;
 
 	public:
+		const Geometry::Polygon* get_polygons() const;
 		unsigned int get_polygons_count() const;
 		const Geometry::Polygon& operator[](unsigned int _index) const;
 		const glm::vec3& center_of_mass() const;
