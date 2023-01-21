@@ -120,6 +120,37 @@ LDS::List<glm::vec3> SAT_Narrowest_CD::M_points_of_contact(const Geometry::Polyg
 		}
 	}
 
+	for(unsigned int i=0; i<_s_count; ++i)
+	{
+		const Pol& cur_pol = _s_pols[i];
+
+		for(unsigned int j=0; j<3; ++j)
+		{
+			const glm::vec3& cur_point = cur_pol[j];
+
+			for(unsigned int f_pol_i = 0; f_pol_i < _f_count; ++f_pol_i)
+			{
+				float min = M_smallest_point_to_polygon_distance(cur_point, _f_pols[f_pol_i]);
+
+				if(min < 0.0f)
+					continue;
+
+				if(min_dist < 0.0f || min_dist > min)
+				{
+					result.clear();
+					min_dist = min;
+					result.push_back(cur_point);
+				}
+				else if(Math::floats_are_equal(min_dist, min))
+				{
+					if(point_already_counted(cur_point))
+						continue;
+					result.push_back(cur_point);
+				}
+			}
+		}
+	}
+
 	return result;
 }
 
@@ -157,16 +188,16 @@ Geometry::Simple_Intersection_Data SAT_Narrowest_CD::collision__model_vs_point(c
 }
 
 
-Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D &_1, const Physical_Model_2D &_2) const
+Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Geometry::Polygon* _pols_1, unsigned int _pols_amount_1, const Geometry::Polygon* _pols_2, unsigned int _pols_amount_2) const
 {
 	Physical_Model_2D::Intersection_Data result(Physical_Model_2D::Intersection_Data::Type::intersection);
 
 	Intersection_Data f_id;
-	for(unsigned int i=0; i<_1.get_polygons_count(); ++i)
+	for(unsigned int i=0; i<_pols_amount_1; ++i)
 	{
-		for(unsigned int j=0; j<_2.get_polygons_count(); ++j)
+		for(unsigned int j=0; j<_pols_amount_2; ++j)
 		{
-			Intersection_Data id = M_polygons_collision(_1[i], _2[j]);
+			Intersection_Data id = M_polygons_collision(_pols_1[i], _pols_2[j]);
 
 			if(!id.intersection)
 				continue;
@@ -180,11 +211,11 @@ Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model
 		return {};
 
 	Intersection_Data s_id;
-	for(unsigned int i=0; i<_2.get_polygons_count(); ++i)
+	for(unsigned int i=0; i<_pols_amount_2; ++i)
 	{
-		for(unsigned int j=0; j<_1.get_polygons_count(); ++j)
+		for(unsigned int j=0; j<_pols_amount_1; ++j)
 		{
-			Intersection_Data id = M_polygons_collision(_2[i], _1[j]);
+			Intersection_Data id = M_polygons_collision(_pols_2[i], _pols_1[j]);
 
 			if(!id.intersection)
 				continue;
@@ -203,166 +234,7 @@ Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model
 	result.normal = f_id.min_dist_axis;
 	LEti::Math::shrink_vector_to_1(result.normal);
 
-	result.points = M_points_of_contact(_1.get_polygons(), _1.get_polygons_count(), _2.get_polygons(), _2.get_polygons_count());
-	if(result.points.size() == 0)
-		return {};
-
-	return result;
-}
-
-Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D::Imprint& _1, const Physical_Model_2D::Imprint& _2) const
-{
-	Physical_Model_2D::Intersection_Data result(Physical_Model_2D::Intersection_Data::Type::intersection);
-
-	Intersection_Data f_id;
-	for(unsigned int i=0; i<_1.get_polygons_count(); ++i)
-	{
-		for(unsigned int j=0; j<_2.get_polygons_count(); ++j)
-		{
-			Intersection_Data id = M_polygons_collision(_1[i], _2[j]);
-
-			if(!id.intersection)
-				continue;
-
-			if(f_id.min_dist < 0.0f || f_id.min_dist > id.min_dist)
-				f_id = id;
-		}
-	}
-
-	if(!f_id.intersection)
-		return {};
-
-	Intersection_Data s_id;
-	for(unsigned int i=0; i<_2.get_polygons_count(); ++i)
-	{
-		for(unsigned int j=0; j<_1.get_polygons_count(); ++j)
-		{
-			Intersection_Data id = M_polygons_collision(_2[i], _1[j]);
-
-			if(!id.intersection)
-				continue;
-
-			if(s_id.min_dist < 0.0f || s_id.min_dist > id.min_dist)
-				s_id = id;
-		}
-	}
-
-	if(!s_id.intersection)
-		return {};
-
-	if(s_id.min_dist < f_id.min_dist)
-		f_id = s_id;
-
-	result.normal = f_id.min_dist_axis;
-	LEti::Math::shrink_vector_to_1(result.normal);
-
-	result.points = M_points_of_contact(_1.get_polygons(), _1.get_polygons_count(), _2.get_polygons(), _2.get_polygons_count());
-	if(result.points.size() == 0)
-		return {};
-
-	return result;
-}
-
-Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D::Imprint& _1, const Physical_Model_2D& _2) const
-{
-	Physical_Model_2D::Intersection_Data result(Physical_Model_2D::Intersection_Data::Type::intersection);
-
-	Intersection_Data f_id;
-	for(unsigned int i=0; i<_1.get_polygons_count(); ++i)
-	{
-		for(unsigned int j=0; j<_2.get_polygons_count(); ++j)
-		{
-			Intersection_Data id = M_polygons_collision(_1[i], _2[j]);
-
-			if(!id.intersection)
-				continue;
-
-			if(f_id.min_dist < 0.0f || f_id.min_dist > id.min_dist)
-				f_id = id;
-		}
-	}
-
-	if(!f_id.intersection)
-		return {};
-
-	Intersection_Data s_id;
-	for(unsigned int i=0; i<_2.get_polygons_count(); ++i)
-	{
-		for(unsigned int j=0; j<_1.get_polygons_count(); ++j)
-		{
-			Intersection_Data id = M_polygons_collision(_2[i], _1[j]);
-
-			if(!id.intersection)
-				continue;
-
-			if(s_id.min_dist < 0.0f || s_id.min_dist > id.min_dist)
-				s_id = id;
-		}
-	}
-
-	if(!s_id.intersection)
-		return {};
-
-	if(s_id.min_dist < f_id.min_dist)
-		f_id = s_id;
-
-	result.normal = f_id.min_dist_axis;
-	LEti::Math::shrink_vector_to_1(result.normal);
-
-	result.points = M_points_of_contact(_1.get_polygons(), _1.get_polygons_count(), _2.get_polygons(), _2.get_polygons_count());
-	if(result.points.size() == 0)
-		return {};
-
-	return result;
-}
-
-Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D& _1, const Physical_Model_2D::Imprint& _2) const
-{
-	Physical_Model_2D::Intersection_Data result(Physical_Model_2D::Intersection_Data::Type::intersection);
-
-	Intersection_Data f_id;
-	for(unsigned int i=0; i<_1.get_polygons_count(); ++i)
-	{
-		for(unsigned int j=0; j<_2.get_polygons_count(); ++j)
-		{
-			Intersection_Data id = M_polygons_collision(_1[i], _2[j]);
-
-			if(!id.intersection)
-				continue;
-
-			if(f_id.min_dist < 0.0f || f_id.min_dist > id.min_dist)
-				f_id = id;
-		}
-	}
-
-	if(!f_id.intersection)
-		return {};
-
-	Intersection_Data s_id;
-	for(unsigned int i=0; i<_2.get_polygons_count(); ++i)
-	{
-		for(unsigned int j=0; j<_1.get_polygons_count(); ++j)
-		{
-			Intersection_Data id = M_polygons_collision(_2[i], _1[j]);
-
-			if(!id.intersection)
-				continue;
-
-			if(s_id.min_dist < 0.0f || s_id.min_dist > id.min_dist)
-				s_id = id;
-		}
-	}
-
-	if(!s_id.intersection)
-		return {};
-
-	if(s_id.min_dist < f_id.min_dist)
-		f_id = s_id;
-
-	result.normal = f_id.min_dist_axis;
-	LEti::Math::shrink_vector_to_1(result.normal);
-
-	result.points = M_points_of_contact(_1.get_polygons(), _1.get_polygons_count(), _2.get_polygons(), _2.get_polygons_count());
+	result.points = M_points_of_contact(_pols_1, _pols_amount_1, _pols_2, _pols_amount_2);
 	if(result.points.size() == 0)
 		return {};
 

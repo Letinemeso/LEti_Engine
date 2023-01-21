@@ -115,14 +115,15 @@ Physical_Model_2D::Intersection_Data Default_Narrow_CD::get_precise_time_ratio_o
 		first_impr.update(_first.get_translation_matrix_for_time_ratio(curr_time_point), _first.get_rotation_matrix_for_time_ratio(curr_time_point), _first.get_scale_matrix_for_time_ratio(curr_time_point));
 		Physical_Model_2D::Imprint second_impr = *_second.physics_module()->get_physical_model_prev_state();
 		second_impr.update(_second.get_translation_matrix_for_time_ratio(curr_time_point), _second.get_rotation_matrix_for_time_ratio(curr_time_point), _second.get_scale_matrix_for_time_ratio(curr_time_point));
-		id = m_narrowest_phase->collision__model_vs_model(first_impr, second_impr);
+		id = m_narrowest_phase->collision__model_vs_model(first_impr.get_polygons(), first_impr.get_polygons_count(), second_impr.get_polygons(), second_impr.get_polygons_count());
 		if(id) break;
 
 		curr_time_point += step_diff;
 	}
 
 	if(!id && Math::floats_are_equal(_max_ratio, 1.0f))
-		id = m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model(), *_second.physics_module()->get_physical_model());
+		id = m_narrowest_phase->collision__model_vs_model(_first.physics_module()->get_physical_model()->get_polygons(), _first.physics_module()->get_physical_model()->get_polygons_count(),
+														  _second.physics_module()->get_physical_model()->get_polygons(), _second.physics_module()->get_physical_model()->get_polygons_count());
 
 	if(id)
 	{
@@ -220,7 +221,8 @@ Physical_Model_2D::Intersection_Data Default_Narrow_CD::objects_collide(const LE
 
 	if(!_second.physics_module()->is_dynamic() && !_first.physics_module()->is_dynamic())
 	{
-		return m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model(), *_second.physics_module()->get_physical_model());
+		return m_narrowest_phase->collision__model_vs_model(_first.physics_module()->get_physical_model()->get_polygons(), _first.physics_module()->get_physical_model()->get_polygons_count(),
+														  _second.physics_module()->get_physical_model()->get_polygons(), _second.physics_module()->get_physical_model()->get_polygons_count());
 	}
 	else if(_first.physics_module()->is_dynamic() ^ _second.physics_module()->is_dynamic())
 	{
@@ -229,28 +231,32 @@ Physical_Model_2D::Intersection_Data Default_Narrow_CD::objects_collide(const LE
 		if((dynamic_object.physics_module()->get_dynamic_rb() && static_object.physics_module()->get_physical_model()->curr_rect_border()))
 			return Physical_Model_2D::Intersection_Data();
 
-		Physical_Model_2D::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(*dynamic_object.physics_module()->get_physical_model_prev_state(), *static_object.physics_module()->get_physical_model());
-		if(prev_state_cd)
-			return prev_state_cd;
+//		Physical_Model_2D::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(dynamic_object.physics_module()->get_physical_model_prev_state()->get_polygons(), dynamic_object.physics_module()->get_physical_model_prev_state()->get_polygons_count(),
+//																										  static_object.physics_module()->get_physical_model_prev_state()->get_polygons(), static_object.physics_module()->get_physical_model_prev_state()->get_polygons_count());
+//		if(prev_state_cd)
+//			return prev_state_cd;
 
 		if(dynamic_object.moved_since_last_frame())
 			return collision__moving_vs_static(dynamic_object, static_object);
 
-		return m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model(), *_second.physics_module()->get_physical_model());
+		return m_narrowest_phase->collision__model_vs_model(_first.physics_module()->get_physical_model()->get_polygons(), _first.physics_module()->get_physical_model()->get_polygons_count(),
+														  _second.physics_module()->get_physical_model()->get_polygons(), _second.physics_module()->get_physical_model()->get_polygons_count());
 	}
 	else /*if(is_dynamic() && _other.is_dynamic())*/
 	{
 		if(!(_first.physics_module()->get_dynamic_rb() && _second.physics_module()->get_dynamic_rb()))
 			return Physical_Model_2D::Intersection_Data();
 
-		Physical_Model_2D::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model_prev_state(), *_second.physics_module()->get_physical_model_prev_state());
-		if(prev_state_cd)
-			return prev_state_cd;
+//		Physical_Model_2D::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(_first.physics_module()->get_physical_model_prev_state()->get_polygons(), _first.physics_module()->get_physical_model_prev_state()->get_polygons_count(),
+//																  _second.physics_module()->get_physical_model_prev_state()->get_polygons(), _second.physics_module()->get_physical_model_prev_state()->get_polygons_count());
+//		if(prev_state_cd)
+//			return prev_state_cd;
 
 		if(_first.moved_since_last_frame() || _second.moved_since_last_frame())
 			return collision__moving_vs_moving(_first, _second);
 		else
-			return m_narrowest_phase->collision__model_vs_model(*_first.physics_module()->get_physical_model(), *_second.physics_module()->get_physical_model());
+			return m_narrowest_phase->collision__model_vs_model(_first.physics_module()->get_physical_model()->get_polygons(), _first.physics_module()->get_physical_model()->get_polygons_count(),
+															  _second.physics_module()->get_physical_model()->get_polygons(), _second.physics_module()->get_physical_model()->get_polygons_count());
 	}
 	return Physical_Model_2D::Intersection_Data();
 }

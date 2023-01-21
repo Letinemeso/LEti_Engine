@@ -22,10 +22,12 @@ namespace LEti {
 	public:
 		Geometry::Simple_Intersection_Data collision__model_vs_point(const Physical_Model_2D& _model, const glm::vec3& _point) const override;
 
-		Physical_Model_2D::Intersection_Data collision__model_vs_model(const Physical_Model_2D& _1, const Physical_Model_2D& _2) const override;
-		Physical_Model_2D::Intersection_Data collision__model_vs_model(const Physical_Model_2D::Imprint& _1, const Physical_Model_2D::Imprint& _2) const override;
-		Physical_Model_2D::Intersection_Data collision__model_vs_model(const Physical_Model_2D::Imprint& _impr, const Physical_Model_2D& _model) const override;
-		Physical_Model_2D::Intersection_Data collision__model_vs_model(const Physical_Model_2D& _model, const Physical_Model_2D::Imprint& _impr) const override;
+//		Physical_Model_2D::Intersection_Data collision__model_vs_model(const Physical_Model_2D& _1, const Physical_Model_2D& _2) const override;
+//		Physical_Model_2D::Intersection_Data collision__model_vs_model(const Physical_Model_2D::Imprint& _1, const Physical_Model_2D::Imprint& _2) const override;
+//		Physical_Model_2D::Intersection_Data collision__model_vs_model(const Physical_Model_2D::Imprint& _impr, const Physical_Model_2D& _model) const override;
+//		Physical_Model_2D::Intersection_Data collision__model_vs_model(const Physical_Model_2D& _model, const Physical_Model_2D::Imprint& _impr) const override;
+
+		Physical_Model_2D::Intersection_Data collision__model_vs_model(const Geometry::Polygon* _pols_1, unsigned int _pols_amount_1, const Geometry::Polygon* _pols_2, unsigned int _pols_amount_2) const override;
 
 	};
 

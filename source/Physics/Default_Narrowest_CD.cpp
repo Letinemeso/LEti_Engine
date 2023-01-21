@@ -153,6 +153,67 @@ Geometry::Simple_Intersection_Data Default_Narrowest_CD::collision__model_vs_poi
 }
 
 
+Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Geometry::Polygon* _pols_1, unsigned int _pols_amount_1, const Geometry::Polygon* _pols_2, unsigned int _pols_amount_2) const
+{
+	Physical_Model_2D::Intersection_Data result_id;
+	unsigned int found_intersections = 0;
+
+	for (unsigned int i = 0; i < _pols_amount_1; ++i)
+	{
+		for (unsigned int j = 0; j < _pols_amount_2; ++j)
+		{
+			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_pols_1[i], _pols_2[j]);
+			if (id)
+			{
+				++found_intersections;
+				result_id.normal += id.normal;
+				result_id.point += id.point;
+			}
+		}
+	}
+
+	if(found_intersections != 0)
+	{
+		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.point /= (float)found_intersections;
+
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+
+		LEti::Math::shrink_vector_to_1(result_id.normal);
+
+		return result_id;
+	}
+
+	for (unsigned int i = 0; i < _pols_amount_2; ++i)
+	{
+		for (unsigned int j = 0; j < _pols_amount_1; ++j)
+		{
+			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_pols_1[j], _pols_2[i]);
+			if (id)
+			{
+				++found_intersections;
+				result_id.normal += id.normal;
+				result_id.point += id.point;
+			}
+		}
+	}
+
+	if(found_intersections != 0)
+	{
+		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.point /= (float)found_intersections;
+
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+
+		LEti::Math::shrink_vector_to_1(result_id.normal);
+
+		return result_id;
+	}
+
+	return Physical_Model_2D::Intersection_Data();
+}
+
+/*
 Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D& _1, const Physical_Model_2D& _2) const
 {
 	Physical_Model_2D::Intersection_Data result_id;
@@ -392,5 +453,5 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	return Physical_Model_2D::Intersection_Data();
 }
-
+*/
 

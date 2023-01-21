@@ -490,14 +490,41 @@ float Geometry_2D::point_to_segment_distance(const glm::vec3& _point, const glm:
 	float x = seg_perp.x;
 	seg_perp.x = -seg_perp.y;
 	seg_perp.y = x;
-	seg_perp -= _point;
+	seg_perp += _point;
 
 	Equasion_Data eq_1(_seg_start, _seg_end);
-	Equasion_Data eq_2({0.0f, 0.0f, 0.0f}, seg_perp);
+	Equasion_Data eq_2(_point, seg_perp);
 
 	glm::vec3 itsc_point = Geometry_2D::lines_intersect(eq_1, eq_2).point;
 
+	if(eq_1.is_horisontal())
+	{
+		float max_x = 0.0f;
+		float min_x = 0.0f;
+
+		if(_seg_start.x > _seg_end.x)
+		{
+			max_x = _seg_start.x;
+			min_x = _seg_end.x;
+		}
+		else
+		{
+			max_x = _seg_end.x;
+			min_x = _seg_start.x;
+		}
+
+		if(itsc_point.x < min_x || itsc_point.x > max_x)
+			return -1.0f;
+		return Math::vector_length(itsc_point - _point);
+	}
+
 	float y = eq_1.solve_by_x(itsc_point.x);
+	if(eq_1.is_vertical())
+	{
+		if(!Math::floats_are_equal(eq_1.get_x_if_vertical(), itsc_point.x))
+			return -1.0f;
+		y = itsc_point.y;
+	}
 
 	float max_y = 0.0f;
 	float min_y = 0.0f;
