@@ -1,7 +1,7 @@
 #ifndef __TEXTURE
 #define __TEXTURE
 
-#include "Debug/Debug.h"
+#include "L_Debug/L_Debug.h"
 #include "../include/Buffer.h"
 #include "../include/Picture.h"
 

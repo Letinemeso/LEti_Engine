@@ -8,7 +8,7 @@
 
 #include "../../include/Math_Stuff.h"
 
-#include "Debug/Debug.h"
+#include "L_Debug/L_Debug.h"
 
 
 namespace LEti

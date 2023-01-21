@@ -5,7 +5,7 @@
 
 #include "Variable_Base.h"
 
-#include "Debug/Debug.h"
+#include "L_Debug/L_Debug.h"
 #include "Picture.h"
 
 

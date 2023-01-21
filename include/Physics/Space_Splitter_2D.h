@@ -1,7 +1,7 @@
 #ifndef __SPACE_SPLITTER_2D
 #define __SPACE_SPLITTER_2D
 
-#include "Debug/Debug.h"
+#include "L_Debug/L_Debug.h"
 
 #include <list>
 //#include "../../include/Object.h"

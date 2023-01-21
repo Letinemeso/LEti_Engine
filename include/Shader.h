@@ -1,7 +1,7 @@
 #ifndef __SHADER
 #define __SHADER
 
-#include "Debug/Debug.h"
+#include "L_Debug/L_Debug.h"
 #include "../include/Texture.h"
 
 #include "glew.h"
