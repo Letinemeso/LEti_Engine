@@ -39,7 +39,7 @@ SAT_Narrowest_CD::Intersection_Data SAT_Narrowest_CD::M_polygons_collision(const
 		mm_pair f = M_get_minmax_projections(axis, _first);
 		mm_pair s = M_get_minmax_projections(axis, _second);
 
-		if(f.first > s.second || s.first > s.second)
+		if(f.first > s.second || s.first > f.second)
 			return Intersection_Data();
 
 		result.intersection = true;
