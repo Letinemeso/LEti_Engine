@@ -22,6 +22,8 @@ ADD_FIELD(float*, coords)
 ADD_FIELD(unsigned int, phys_coords_count)
 ADD_FIELD(float*, phys_coords)
 
+ADD_FIELD(bool*, collision_permissions)
+
 FIELDS_END
 
 
@@ -294,7 +296,7 @@ void Object_2D::init(const LV::Variable_Base& _stub)
 	if(stub->phys_coords)
 	{
 		create_physics_module();
-		m_physics_module->init(stub->phys_coords, stub->phys_coords_count);
+		m_physics_module->init(stub->phys_coords, stub->phys_coords_count, stub->collision_permissions);
 	}
 }
 

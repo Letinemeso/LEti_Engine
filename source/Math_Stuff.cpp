@@ -143,6 +143,7 @@ Geometry::Polygon::Polygon()
 Geometry::Polygon::Polygon(const Polygon& _other)
 {
 	m_raw_coords = _other.m_raw_coords;
+	m_segment_can_collide = _other.m_segment_can_collide;
 	m_actual_A = _other.m_actual_A;
 	m_actual_B = _other.m_actual_B;
 	m_actual_C = _other.m_actual_C;
@@ -150,21 +151,23 @@ Geometry::Polygon::Polygon(const Polygon& _other)
 	m_center_of_mass = _other.m_center_of_mass;
 }
 
-void Geometry::Polygon::setup(const float *_raw_coords)
+void Geometry::Polygon::setup(const float *_raw_coords, const bool* _segment_can_collide)
 {
 	m_raw_coords = _raw_coords;
+	m_segment_can_collide = _segment_can_collide;
 
 	glm::vec3 sum{0.0f, 0.0f, 0.0f};
 	for(unsigned int i=0; i<3; ++i)
-		sum += glm::vec3(_raw_coords[i*3 + 0], _raw_coords[i * 3 + 1], _raw_coords[i * 3 + 2]);
+		sum += glm::vec3(_raw_coords[i * 3], _raw_coords[i * 3 + 1], _raw_coords[i * 3 + 2]);
 	m_center_of_mass_raw = sum / 3.0f;
 
-	L_ASSERT(!(!m_raw_coords));
+	L_ASSERT(m_raw_coords && m_segment_can_collide);
 }
 
 void Geometry::Polygon::setup(const Polygon& _other)
 {
 	m_raw_coords = _other.m_raw_coords;
+	m_segment_can_collide = _other.m_segment_can_collide;
 	m_actual_A = _other.m_actual_A;
 	m_actual_B = _other.m_actual_B;
 	m_actual_C = _other.m_actual_C;
@@ -213,6 +216,13 @@ glm::vec3& Geometry::Polygon::operator[](unsigned int _index)
 	case 2: return m_actual_C;
 	}
 	return m_actual_A;	//will be useful for "for" loops ([i], [i + 1])
+}
+
+bool Geometry::Polygon::segment_can_collide(unsigned int _index) const
+{
+	L_ASSERT(_index < 3);
+
+	return m_segment_can_collide[_index];
 }
 
 const glm::vec3& Geometry::Polygon::center_of_mass() const

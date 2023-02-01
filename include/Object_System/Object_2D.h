@@ -32,6 +32,8 @@ public:
 
 	unsigned int phys_coords_count = 0;
 	float* phys_coords = nullptr;
+
+	bool* collision_permissions = nullptr;
 };
 
 class Object_2D : public Object_Base

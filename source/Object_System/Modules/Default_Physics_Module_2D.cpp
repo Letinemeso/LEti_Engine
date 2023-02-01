@@ -16,7 +16,7 @@ Default_Physics_Module_2D::~Default_Physics_Module_2D()
 
 
 
-void Default_Physics_Module_2D::init(const float *_coords, unsigned int _coords_count)
+void Default_Physics_Module_2D::init(const float *_coords, unsigned int _coords_count, const bool* _collision_permissions)
 {
 	m_can_collide = true;
 	delete m_physical_model;
@@ -25,7 +25,7 @@ void Default_Physics_Module_2D::init(const float *_coords, unsigned int _coords_
 	m_physical_model_prev_state = nullptr;
 
 	m_physical_model = new LEti::Physical_Model_2D();
-	m_physical_model->setup(_coords, _coords_count);
+	m_physical_model->setup(_coords, _coords_count, _collision_permissions);
 	m_physical_model_prev_state = new LEti::Physical_Model_2D::Imprint(m_physical_model->create_imprint());
 }
 

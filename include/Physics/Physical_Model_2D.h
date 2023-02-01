@@ -89,6 +89,8 @@ namespace LEti
 		float* m_raw_coords = nullptr;
 		unsigned int m_raw_coords_count = 0;
 
+		bool* m_collision_permissions = nullptr;
+
 		Geometry::Polygon* m_polygons = nullptr;
 		unsigned int m_polygons_count = 0;
 
@@ -108,7 +110,7 @@ namespace LEti
 	public:
 		Physical_Model_2D();
 		Physical_Model_2D(const Physical_Model_2D& _other);
-		void setup(const float* _raw_coords, unsigned int _raw_coords_count);
+		void setup(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions);
 
 		~Physical_Model_2D();
 

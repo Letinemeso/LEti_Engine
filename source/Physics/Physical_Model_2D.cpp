@@ -192,11 +192,11 @@ Physical_Model_2D::Physical_Model_2D()
 
 Physical_Model_2D::Physical_Model_2D(const Physical_Model_2D& _other)
 {
-	setup(_other.m_raw_coords, _other.m_raw_coords_count);
+	setup(_other.m_raw_coords, _other.m_raw_coords_count, _other.m_collision_permissions);
 	copy_real_coordinates(_other);
 }
 
-void Physical_Model_2D::setup(const float* _raw_coords, unsigned int _raw_coords_count)
+void Physical_Model_2D::setup(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions)
 {
 	delete[] m_raw_coords;
 
@@ -205,22 +205,23 @@ void Physical_Model_2D::setup(const float* _raw_coords, unsigned int _raw_coords
 	for (unsigned int i = 0; i < m_raw_coords_count; ++i)
 		m_raw_coords[i] = _raw_coords[i];
 
+	delete[] m_collision_permissions;
+
+	m_collision_permissions = new bool[m_raw_coords_count / 3];
+	for(unsigned int i=0; i<m_raw_coords_count / 3; ++i)
+		m_collision_permissions[i] = _collision_permissions[i];
+
 	delete[] m_polygons;
 
 	m_polygons_count = m_raw_coords_count / 9;
 	m_polygons = new Geometry::Polygon[m_polygons_count];
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
-		m_polygons[i].setup(&m_raw_coords[i * 9]);
+		m_polygons[i].setup(&m_raw_coords[i * 9], &m_collision_permissions[i * 3]);
 
 	m_center_of_mass_raw = {0.0f, 0.0f, 0.0f};
 	for(unsigned int i=0; i < m_polygons_count; ++i)
 		m_center_of_mass_raw += m_polygons[i].center_of_mass_raw();
 	m_center_of_mass_raw /= (float)m_polygons_count;
-
-//	m_moment_of_inertia = 0.0f;
-//	for(unsigned int i=0; i<m_polygons_count; ++i)
-//		m_moment_of_inertia += pow(LEti::Math::vector_length(m_center_of_mass_raw - m_polygons[i].center_of_mass_raw()), 2.0f);
-//	m_moment_of_inertia /= (float)m_polygons_count;
 
 	update_moment_of_inertia();
 }

@@ -29,6 +29,9 @@ SAT_Narrowest_CD::Intersection_Data SAT_Narrowest_CD::M_polygons_collision(const
 
 	for(unsigned int i=0; i<3; ++i)
 	{
+		if(_first.segment_can_collide(i) == false)
+			continue;
+
 		glm::vec3 axis = _first[i + 1] - _first[i];
 		Math::shrink_vector_to_1(axis);
 		Geometry_2D::rotate_perpendicular_ccw(axis);

@@ -99,10 +99,12 @@ namespace Geometry {
 		glm::vec3 m_actual_A, m_actual_B, m_actual_C;
 		glm::vec3 m_center_of_mass_raw, m_center_of_mass;
 
+		const bool* m_segment_can_collide = nullptr;
+
 	public:
 		Polygon();
 		Polygon(const Polygon& _other);
-		void setup(const float* _raw_coords);
+		void setup(const float* _raw_coords, const bool* _segment_can_collide);
 		void setup(const Polygon& _other);
 		void update_points(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
 		void update_points_with_single_matrix(const glm::mat4x4& _matrix);
@@ -110,6 +112,7 @@ namespace Geometry {
 	public:
 		const glm::vec3& operator[](unsigned int _index) const;
 		glm::vec3& operator[](unsigned int _index);
+		bool segment_can_collide(unsigned int _index) const;
 		const glm::vec3& center_of_mass() const;
 		const glm::vec3& center_of_mass_raw() const;
 

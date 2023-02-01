@@ -21,7 +21,7 @@ namespace LEti {
 		Default_Physics_Module_2D();
 		~Default_Physics_Module_2D();
 
-		void init(const float* _coords, unsigned int _coords_count);
+		void init(const float* _coords, unsigned int _coords_count, const bool* _collision_permissions);
 
 	public:
 		void update_previous_state() override;
