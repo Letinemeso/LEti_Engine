@@ -66,6 +66,9 @@ float SAT_Narrowest_CD::M_smallest_point_to_polygon_distance(const glm::vec3 &_p
 
 	for(unsigned int i=0; i<3; ++i)
 	{
+		if(_pol.segment_can_collide(i) == false)
+			continue;
+
 		float min = Geometry_2D::point_to_segment_distance(_point, _pol[i], _pol[i + 1]);
 
 		if(min < 0.0f)

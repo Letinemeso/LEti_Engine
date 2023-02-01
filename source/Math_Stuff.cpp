@@ -550,7 +550,7 @@ float Geometry_2D::point_to_segment_distance(const glm::vec3& _point, const glm:
 		min_y = _seg_start.y;
 	}
 
-	if(y < min_y || y > max_y)
+	if((y < min_y && !Math::floats_are_equal(y, min_y, 0.01f)) || (y > max_y && !Math::floats_are_equal(y, max_y, 0.01f)))
 		return -1.0f;
 
 	return Math::vector_length(itsc_point - _point);
