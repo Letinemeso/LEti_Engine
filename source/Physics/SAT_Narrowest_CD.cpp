@@ -235,7 +235,10 @@ Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model
 		return {};
 
 	if(s_id.min_dist < f_id.min_dist)
+	{
 		f_id = s_id;
+		f_id.min_dist_axis *= -1;
+	}
 
 	result.normal = f_id.min_dist_axis;
 	LEti::Math::shrink_vector_to_1(result.normal);
@@ -243,6 +246,8 @@ Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model
 	result.points = M_points_of_contact(_pols_1, _pols_amount_1, _pols_2, _pols_amount_2);
 	if(result.points.size() == 0)
 		return {};
+
+	result.depth = f_id.min_dist;
 
 	return result;
 }
