@@ -1,7 +1,6 @@
 #ifndef __DEBUG_DRAWABLE_FRAME
 #define __DEBUG_DRAWABLE_FRAME
 
-//#include "../include/Object.h"
 #include <Object_System/Object_2D.h>
 
 #include <vector>
