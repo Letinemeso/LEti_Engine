@@ -1,14 +1,18 @@
 #include "../../include/Physics/Collision_Detector_2D.h"
 
-
 using namespace LEti;
 
 
-std::list<const LEti::Object_2D*> Collision_Detector_2D::m_registred_models;
-std::list<const glm::vec3*> Collision_Detector_2D::m_registred_points;
+Collision_Detector_2D::Collision_Detector_2D()
+{
 
-Broad_Phase_Interface* Collision_Detector_2D::m_broad_phase = nullptr;
-Narrow_Phase_Interface* Collision_Detector_2D::m_narrow_phase = nullptr;
+}
+
+Collision_Detector_2D::~Collision_Detector_2D()
+{
+	delete m_broad_phase;
+	delete m_narrow_phase;
+}
 
 
 
@@ -18,11 +22,11 @@ void Collision_Detector_2D::debug_assert_if_model_copy_found(const LEti::Object_
 	while(check != m_registred_models.end())
 	{
 		if(!_reverse)
-			L_ASSERT(!(*check == _model));
+		{ L_ASSERT(!(*check == _model)); }
 		++check;
 	}
-	if(_reverse)
-		L_ASSERT(!(true));
+
+	L_ASSERT(!_reverse);
 }
 
 void Collision_Detector_2D::debug_assert_if_point_copy_found(const glm::vec3 *_point, bool _reverse)
@@ -31,23 +35,33 @@ void Collision_Detector_2D::debug_assert_if_point_copy_found(const glm::vec3 *_p
 	while(check != m_registred_points.end())
 	{
 		if(!_reverse)
-			L_ASSERT(!(*check == _point));
+			{ L_ASSERT(!(*check == _point)); }
 		++check;
 	}
-	if(_reverse)
-		L_ASSERT(!(true));
+
+	L_ASSERT(!_reverse);
 }
 
 
 
-Broad_Phase_Interface* Collision_Detector_2D::get_broad_phase()
+void Collision_Detector_2D::set_broad_phase(Broad_Phase_Interface* _broad_phase_impl, unsigned int _precision)
 {
-	return m_broad_phase;
+	delete m_broad_phase;
+	m_broad_phase = _broad_phase_impl;
+	m_broad_phase->set_precision(_precision);
 }
 
-Narrow_Phase_Interface* Collision_Detector_2D::get_narrow_phase()
+void Collision_Detector_2D::set_narrow_phase(Narrow_Phase_Interface* _narrow_phase_impl, unsigned int _precision)
 {
-	return m_narrow_phase;
+	delete m_narrow_phase;
+	m_narrow_phase = _narrow_phase_impl;
+	m_narrow_phase->set_precision(_precision);
+}
+
+void Collision_Detector_2D::set_narrowest_phase(Narrowest_Phase_Interface* _narrowest_phase_impl)
+{
+	L_ASSERT(m_narrow_phase);
+	m_narrow_phase->set_narrowest_phase(_narrowest_phase_impl);
 }
 
 
@@ -66,7 +80,7 @@ void Collision_Detector_2D::unregister_object(const LEti::Object_2D *_model)
 		if(*it == _model) break;
 		++it;
 	}
-	L_ASSERT(!(it == m_registred_models.end()));
+	L_ASSERT(it != m_registred_models.end());
 	m_registred_models.erase(it);
 }
 
@@ -100,8 +114,6 @@ void Collision_Detector_2D::update()
 	std::list<Broad_Phase_Interface::Colliding_Point_And_Object> possible_collisions__points = m_broad_phase->get_possible_collisions__points();
 
 	m_narrow_phase->update(possible_collisions__models, possible_collisions__points);
-
-//	save_actual_collisions();
 }
 
 

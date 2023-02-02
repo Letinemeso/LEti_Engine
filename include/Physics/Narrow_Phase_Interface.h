@@ -16,8 +16,7 @@ namespace LEti
 		Narrowest_Phase_Interface* m_narrowest_phase = nullptr;
 
 	public:
-		template<typename Narrowest_Phase_Implementation>
-		void set_narrowest_phase();
+		void set_narrowest_phase(Narrowest_Phase_Interface* _narrowest_phase_impl);
 
 	public:
 		using Collision_Data_List__Models = std::list<Physical_Model_2D::Intersection_Data>;
@@ -35,14 +34,6 @@ namespace LEti
 		virtual void set_precision(unsigned int _precision) = 0;
 
 	};
-
-
-	template<typename Narrowest_Phase_Implementation>
-	void Narrow_Phase_Interface::set_narrowest_phase()
-	{
-		delete m_narrowest_phase;
-		m_narrowest_phase = new Narrowest_Phase_Implementation;
-	}
 
 }
 

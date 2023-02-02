@@ -13,70 +13,43 @@
 
 namespace LEti
 {
-	class Collision_Detector_2D final		//	TODO: try spatial hashing instead of a quad-tree
+	class Collision_Detector_2D
 	{
-	private:
-		Collision_Detector_2D() = delete;
-
-	private:
-		static std::list<const LEti::Object_2D*> m_registred_models;
-		static std::list<const glm::vec3*> m_registred_points;
+	public:
+		Collision_Detector_2D();
+		virtual ~Collision_Detector_2D();
 
 	private:
-		static void debug_assert_if_model_copy_found(const LEti::Object_2D *_model, bool _reverse);
-		static void debug_assert_if_point_copy_found(const glm::vec3* _point, bool _reverse);
+		std::list<const LEti::Object_2D*> m_registred_models;
+		std::list<const glm::vec3*> m_registred_points;
 
 	private:
-		static Broad_Phase_Interface* m_broad_phase;
-		static Narrow_Phase_Interface* m_narrow_phase;
+		void debug_assert_if_model_copy_found(const LEti::Object_2D *_model, bool _reverse);
+		void debug_assert_if_point_copy_found(const glm::vec3* _point, bool _reverse);
+
+	private:
+		Broad_Phase_Interface* m_broad_phase = nullptr;
+		Narrow_Phase_Interface* m_narrow_phase = nullptr;
 
 	public:
-		template<typename Broad_Phase_Implementation>
-		static void set_broad_phase();
-		template<typename Narrow_Phase_Implementation>
-		static void set_narrow_phase();
-		template<typename Narrowest_Phase_Implementation>
-		static void set_narrowest_phase();
-
-		static Broad_Phase_Interface* get_broad_phase();
-		static Narrow_Phase_Interface* get_narrow_phase();
+		void set_broad_phase(Broad_Phase_Interface* _broad_phase_impl, unsigned int _precision);
+		void set_narrow_phase(Narrow_Phase_Interface* _narrow_phase_impl, unsigned int _precision);
+		void set_narrowest_phase(Narrowest_Phase_Interface* _narrowest_phase_impl);
 
 	public:
-		static void register_object(const LEti::Object_2D* _model);
-		static void unregister_object(const LEti::Object_2D* _model);
-		static void register_point(const glm::vec3* _point);
-		static void unregister_point(const glm::vec3* _point);
+		void register_object(const LEti::Object_2D* _model);
+		void unregister_object(const LEti::Object_2D* _model);
+		void register_point(const glm::vec3* _point);
+		void unregister_point(const glm::vec3* _point);
 
 	public:
-		static void update();
+		void update();
 
 	public:
-		static const Narrow_Phase_Interface::Collision_Data_List__Models& get_collisions__models();
-		static const Narrow_Phase_Interface::Collision_Data_List__Points& get_collisions__points();
+		const Narrow_Phase_Interface::Collision_Data_List__Models& get_collisions__models();
+		const Narrow_Phase_Interface::Collision_Data_List__Points& get_collisions__points();
 
 	};
-
-
-	template<typename Broad_Phase_Implementation>
-	void Collision_Detector_2D::set_broad_phase()
-	{
-		delete m_broad_phase;
-		m_broad_phase = new Broad_Phase_Implementation;
-	}
-
-	template<typename Narrow_Phase_Implementation>
-	void Collision_Detector_2D::set_narrow_phase()
-	{
-		delete m_narrow_phase;
-		m_narrow_phase = new Narrow_Phase_Implementation;
-	}
-
-	template<typename Narrowest_Phase_Implementation>
-	void Collision_Detector_2D::set_narrowest_phase()
-	{
-		L_ASSERT(!(!m_narrow_phase));
-		m_narrow_phase->set_narrowest_phase<Narrowest_Phase_Implementation>();
-	}
 
 }	/*LEti*/
 
