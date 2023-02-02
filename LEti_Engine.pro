@@ -49,7 +49,7 @@ DISTFILES += \
 
 HEADERS += \
     include/Buffer.h \
-    include/Camera.h \
+    include/Camera_2D.h \
     include/Event_Controller.h \
     include/Math_Stuff.h \
     include/Object_System/Debug_Drawable_Frame.h \
@@ -80,7 +80,7 @@ HEADERS += \
 
 SOURCES += \
     source/Buffer.cpp \
-    source/Camera.cpp \
+    source/Camera_2D.cpp \
     source/Event_Controller.cpp \
     source/Math_Stuff.cpp \
     source/Object_System/Debug_Drawable_Frame.cpp \

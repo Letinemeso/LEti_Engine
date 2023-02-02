@@ -6,7 +6,7 @@
 #include "../../Texture.h"
 #include "../../Vertices.h"
 #include "../../Shader.h"
-#include <Camera.h>
+#include <Camera_2D.h>
 
 #include "Draw_Module_Base.h"
 

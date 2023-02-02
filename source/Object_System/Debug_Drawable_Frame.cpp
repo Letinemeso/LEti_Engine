@@ -9,7 +9,7 @@ void Debug_Line_Draw_Module::draw(const glm::mat4x4 &_translation, const glm::ma
 
 	L_ASSERT(!(m_vertex_array == 0 || m_vertices.get_vertices_count() == 0 || m_texture.size() == 0));
 
-	LEti::Camera::use_2d();
+	LEti::Camera_2D::use();
 
 	glm::mat4x4 result_matrix = _translation * _rotation * _scale;
 	LEti::Shader::set_transform_matrix(result_matrix);
