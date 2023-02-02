@@ -1,5 +1,5 @@
-#ifndef __SPACE_SPLITTER_2D
-#define __SPACE_SPLITTER_2D
+#ifndef __Collision_Detector_2D
+#define __Collision_Detector_2D
 
 #include "L_Debug/L_Debug.h"
 
@@ -13,10 +13,10 @@
 
 namespace LEti
 {
-	class Space_Splitter_2D final		//	TODO: try spatial hashing instead of a quad-tree
+	class Collision_Detector_2D final		//	TODO: try spatial hashing instead of a quad-tree
 	{
 	private:
-		Space_Splitter_2D() = delete;
+		Collision_Detector_2D() = delete;
 
 	private:
 		static std::list<const LEti::Object_2D*> m_registred_models;
@@ -58,21 +58,21 @@ namespace LEti
 
 
 	template<typename Broad_Phase_Implementation>
-	void Space_Splitter_2D::set_broad_phase()
+	void Collision_Detector_2D::set_broad_phase()
 	{
 		delete m_broad_phase;
 		m_broad_phase = new Broad_Phase_Implementation;
 	}
 
 	template<typename Narrow_Phase_Implementation>
-	void Space_Splitter_2D::set_narrow_phase()
+	void Collision_Detector_2D::set_narrow_phase()
 	{
 		delete m_narrow_phase;
 		m_narrow_phase = new Narrow_Phase_Implementation;
 	}
 
 	template<typename Narrowest_Phase_Implementation>
-	void Space_Splitter_2D::set_narrowest_phase()
+	void Collision_Detector_2D::set_narrowest_phase()
 	{
 		L_ASSERT(!(!m_narrow_phase));
 		m_narrow_phase->set_narrowest_phase<Narrowest_Phase_Implementation>();
@@ -80,4 +80,4 @@ namespace LEti
 
 }	/*LEti*/
 
-#endif // __Space_Splitter_2D
+#endif // __Collision_Detector_2D

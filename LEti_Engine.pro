@@ -61,6 +61,7 @@ HEADERS += \
     include/Object_System/Object_Base.h \
     include/Object_System/Text_Field.h \
     include/Physics/Broad_Phase_Interface.h \
+    include/Physics/Collision_Detector_2D.h \
     include/Physics/Default_Narrow_CD.h \
     include/Physics/Default_Narrowest_CD.h \
     include/Physics/Narrow_Phase_Interface.h \
@@ -69,7 +70,6 @@ HEADERS += \
     include/Physics/Physical_Model_3D.h \
     include/Physics/SAT_Narrowest_CD.h \
     include/Physics/Space_Hasher_2D.h \
-    include/Physics/Space_Splitter_2D.h \
     include/Picture.h \
     include/Picture_Manager.h \
     include/Shader.h \
@@ -92,6 +92,7 @@ SOURCES += \
     source/Object_System/Object_Base.cpp \
     source/Object_System/Text_Field.cpp \
     source/Physics/Broad_Phase_Interface.cpp \
+    source/Physics/Collision_Detector_2D.cpp \
     source/Physics/Default_Narrow_CD.cpp \
     source/Physics/Default_Narrowest_CD.cpp \
     source/Physics/Narrow_Phase_Interface.cpp \
@@ -100,7 +101,6 @@ SOURCES += \
     source/Physics/Physical_Model_3D.cpp \
     source/Physics/SAT_Narrowest_CD.cpp \
     source/Physics/Space_Hasher_2D.cpp \
-    source/Physics/Space_Splitter_2D.cpp \
     source/Picture.cpp \
     source/Picture_Manager.cpp \
     source/Shader.cpp \

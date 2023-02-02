@@ -1,18 +1,18 @@
-#include "../../include/Physics/Space_Splitter_2D.h"
+#include "../../include/Physics/Collision_Detector_2D.h"
 
 
 using namespace LEti;
 
 
-std::list<const LEti::Object_2D*> Space_Splitter_2D::m_registred_models;
-std::list<const glm::vec3*> Space_Splitter_2D::m_registred_points;
+std::list<const LEti::Object_2D*> Collision_Detector_2D::m_registred_models;
+std::list<const glm::vec3*> Collision_Detector_2D::m_registred_points;
 
-Broad_Phase_Interface* Space_Splitter_2D::m_broad_phase = nullptr;
-Narrow_Phase_Interface* Space_Splitter_2D::m_narrow_phase = nullptr;
+Broad_Phase_Interface* Collision_Detector_2D::m_broad_phase = nullptr;
+Narrow_Phase_Interface* Collision_Detector_2D::m_narrow_phase = nullptr;
 
 
 
-void Space_Splitter_2D::debug_assert_if_model_copy_found(const LEti::Object_2D *_model, bool _reverse)
+void Collision_Detector_2D::debug_assert_if_model_copy_found(const LEti::Object_2D *_model, bool _reverse)
 {
 	std::list<const LEti::Object_2D*>::iterator check = m_registred_models.begin();
 	while(check != m_registred_models.end())
@@ -25,7 +25,7 @@ void Space_Splitter_2D::debug_assert_if_model_copy_found(const LEti::Object_2D *
 		L_ASSERT(!(true));
 }
 
-void Space_Splitter_2D::debug_assert_if_point_copy_found(const glm::vec3 *_point, bool _reverse)
+void Collision_Detector_2D::debug_assert_if_point_copy_found(const glm::vec3 *_point, bool _reverse)
 {
 	std::list<const glm::vec3*>::iterator check = m_registred_points.begin();
 	while(check != m_registred_points.end())
@@ -40,25 +40,25 @@ void Space_Splitter_2D::debug_assert_if_point_copy_found(const glm::vec3 *_point
 
 
 
-Broad_Phase_Interface* Space_Splitter_2D::get_broad_phase()
+Broad_Phase_Interface* Collision_Detector_2D::get_broad_phase()
 {
 	return m_broad_phase;
 }
 
-Narrow_Phase_Interface* Space_Splitter_2D::get_narrow_phase()
+Narrow_Phase_Interface* Collision_Detector_2D::get_narrow_phase()
 {
 	return m_narrow_phase;
 }
 
 
 
-void Space_Splitter_2D::register_object(const LEti::Object_2D *_model)
+void Collision_Detector_2D::register_object(const LEti::Object_2D *_model)
 {
 	L_DEBUG_FUNC_2ARG(debug_assert_if_model_copy_found, _model, false);
 	m_registred_models.push_back(_model);
 }
 
-void Space_Splitter_2D::unregister_object(const LEti::Object_2D *_model)
+void Collision_Detector_2D::unregister_object(const LEti::Object_2D *_model)
 {
 	std::list<const LEti::Object_2D*>::iterator it = m_registred_models.begin();
 	while(it != m_registred_models.end())
@@ -70,13 +70,13 @@ void Space_Splitter_2D::unregister_object(const LEti::Object_2D *_model)
 	m_registred_models.erase(it);
 }
 
-void Space_Splitter_2D::register_point(const glm::vec3 *_point)
+void Collision_Detector_2D::register_point(const glm::vec3 *_point)
 {
 	L_DEBUG_FUNC_2ARG(debug_assert_if_point_copy_found, _point, false);
 	m_registred_points.push_back(_point);
 }
 
-void Space_Splitter_2D::unregister_point(const glm::vec3 *_point)
+void Collision_Detector_2D::unregister_point(const glm::vec3 *_point)
 {
 	std::list<const glm::vec3*>::iterator it = m_registred_points.begin();
 	while(it != m_registred_points.end())
@@ -90,7 +90,7 @@ void Space_Splitter_2D::unregister_point(const glm::vec3 *_point)
 
 
 
-void Space_Splitter_2D::update()
+void Collision_Detector_2D::update()
 {
 	L_ASSERT(!(!m_broad_phase || !m_narrow_phase));
 
@@ -106,13 +106,13 @@ void Space_Splitter_2D::update()
 
 
 
-const Narrow_Phase_Interface::Collision_Data_List__Models& Space_Splitter_2D::get_collisions__models()
+const Narrow_Phase_Interface::Collision_Data_List__Models& Collision_Detector_2D::get_collisions__models()
 {
 	L_ASSERT(!(!m_broad_phase || !m_narrow_phase));
 	return m_narrow_phase->get_collisions__models();
 }
 
-const Narrow_Phase_Interface::Collision_Data_List__Points& Space_Splitter_2D::get_collisions__points()
+const Narrow_Phase_Interface::Collision_Data_List__Points& Collision_Detector_2D::get_collisions__points()
 {
 	L_ASSERT(!(!m_broad_phase || !m_narrow_phase));
 	return m_narrow_phase->get_collisions__points();

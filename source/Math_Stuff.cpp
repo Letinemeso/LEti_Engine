@@ -147,8 +147,8 @@ Geometry::Polygon::Polygon(const Polygon& _other)
 	m_actual_A = _other.m_actual_A;
 	m_actual_B = _other.m_actual_B;
 	m_actual_C = _other.m_actual_C;
-	m_center_of_mass_raw = _other.m_center_of_mass_raw;
-	m_center_of_mass = _other.m_center_of_mass;
+	m_center_raw = _other.m_center_raw;
+	m_center = _other.m_center;
 }
 
 void Geometry::Polygon::setup(const float *_raw_coords, const bool* _segment_can_collide)
@@ -159,7 +159,7 @@ void Geometry::Polygon::setup(const float *_raw_coords, const bool* _segment_can
 	glm::vec3 sum{0.0f, 0.0f, 0.0f};
 	for(unsigned int i=0; i<3; ++i)
 		sum += glm::vec3(_raw_coords[i * 3], _raw_coords[i * 3 + 1], _raw_coords[i * 3 + 2]);
-	m_center_of_mass_raw = sum / 3.0f;
+	m_center_raw = sum / 3.0f;
 
 	L_ASSERT(m_raw_coords && m_segment_can_collide);
 }
@@ -171,8 +171,8 @@ void Geometry::Polygon::setup(const Polygon& _other)
 	m_actual_A = _other.m_actual_A;
 	m_actual_B = _other.m_actual_B;
 	m_actual_C = _other.m_actual_C;
-	m_center_of_mass_raw = _other.m_center_of_mass_raw;
-	m_center_of_mass = _other.m_center_of_mass;
+	m_center_raw = _other.m_center_raw;
+	m_center = _other.m_center;
 }
 
 void Geometry::Polygon::update_points(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)
@@ -190,7 +190,7 @@ void Geometry::Polygon::update_points_with_single_matrix(const glm::mat4x4 &_mat
 	m_actual_A = _matrix * glm::vec4(m_raw_coords[0], m_raw_coords[1], m_raw_coords[2], 1.0f);
 	m_actual_B = _matrix * glm::vec4(m_raw_coords[3], m_raw_coords[4], m_raw_coords[5], 1.0f);
 	m_actual_C = _matrix * glm::vec4(m_raw_coords[6], m_raw_coords[7], m_raw_coords[8], 1.0f);
-	m_center_of_mass = _matrix * glm::vec4(m_center_of_mass_raw, 1.0f);
+	m_center = _matrix * glm::vec4(m_center_raw, 1.0f);
 }
 
 
@@ -225,14 +225,14 @@ bool Geometry::Polygon::segment_can_collide(unsigned int _index) const
 	return m_segment_can_collide[_index];
 }
 
-const glm::vec3& Geometry::Polygon::center_of_mass() const
+const glm::vec3& Geometry::Polygon::center() const
 {
-	return m_center_of_mass;
+	return m_center;
 }
 
-const glm::vec3& Geometry::Polygon::center_of_mass_raw() const
+const glm::vec3& Geometry::Polygon::center_raw() const
 {
-	return m_center_of_mass_raw;
+	return m_center_raw;
 }
 
 

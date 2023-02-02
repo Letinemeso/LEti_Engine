@@ -97,7 +97,7 @@ namespace Geometry {
 	private:
 		const float* m_raw_coords = nullptr;
 		glm::vec3 m_actual_A, m_actual_B, m_actual_C;
-		glm::vec3 m_center_of_mass_raw, m_center_of_mass;
+		glm::vec3 m_center_raw, m_center;
 
 		const bool* m_segment_can_collide = nullptr;
 
@@ -113,8 +113,8 @@ namespace Geometry {
 		const glm::vec3& operator[](unsigned int _index) const;
 		glm::vec3& operator[](unsigned int _index);
 		bool segment_can_collide(unsigned int _index) const;
-		const glm::vec3& center_of_mass() const;
-		const glm::vec3& center_of_mass_raw() const;
+		const glm::vec3& center() const;
+		const glm::vec3& center_raw() const;
 
 	};
 
