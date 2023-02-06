@@ -38,6 +38,9 @@ public:
 
 class Object_2D : public Object_Base
 {
+public:
+	DECLARE_VARIABLE;
+
 protected:
 	Default_Draw_Module_2D* m_draw_module = nullptr;
 	Default_Physics_Module_2D* m_physics_module = nullptr;

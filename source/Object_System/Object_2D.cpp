@@ -4,7 +4,7 @@ using namespace LEti;
 
 #include "MDL_Reader.h"
 
-INIT_FIELDS(Object_2D_Stub, LV::Variable_Base)
+INIT_FIELDS(LEti::Object_2D_Stub, LV::Variable_Base)
 
 ADD_FIELD(glm::vec3, position)
 ADD_FIELD(glm::vec3, scale)
@@ -24,6 +24,10 @@ ADD_FIELD(float*, phys_coords)
 
 ADD_FIELD(bool*, collision_permissions)
 
+FIELDS_END
+
+
+INIT_FIELDS(LEti::Object_2D, LEti::Object_Base)
 FIELDS_END
 
 

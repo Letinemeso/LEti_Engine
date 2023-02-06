@@ -3,6 +3,10 @@
 using namespace LEti;
 
 
+INIT_FIELDS(LEti::Rigid_Body_2D, LEti::Object_2D);
+FIELDS_END;
+
+
 
 void Rigid_Body_2D::update(float _ratio)
 {

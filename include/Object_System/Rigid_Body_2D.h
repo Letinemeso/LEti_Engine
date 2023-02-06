@@ -9,6 +9,9 @@ namespace LEti
 
 	class Rigid_Body_2D : public Object_2D
 	{
+	public:
+		DECLARE_VARIABLE;
+
 	private:
 		glm::vec3 m_velocity{0.0f, 0.0f, 0.0f};
 		float m_angular_velocity = 0.0f;

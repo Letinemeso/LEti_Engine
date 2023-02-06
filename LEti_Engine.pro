@@ -63,6 +63,8 @@ HEADERS += \
     include/Object_System/Text_Field.h \
     include/Physics/Broad_Phase_Interface.h \
     include/Physics/Collision_Detector_2D.h \
+    include/Physics/Collision_Resolution__Rigid_Body.h \
+    include/Physics/Collision_Resolver.h \
     include/Physics/Default_Narrow_CD.h \
     include/Physics/Default_Narrowest_CD.h \
     include/Physics/Narrow_Phase_Interface.h \
@@ -95,6 +97,9 @@ SOURCES += \
     source/Object_System/Text_Field.cpp \
     source/Physics/Broad_Phase_Interface.cpp \
     source/Physics/Collision_Detector_2D.cpp \
+    source/Physics/Collision_Resolution__Rigid_Body.cpp \
+    source/Physics/Collision_Resolver.cpp \
+    source/Physics/Collision_Resolver.cpp \
     source/Physics/Default_Narrow_CD.cpp \
     source/Physics/Default_Narrowest_CD.cpp \
     source/Physics/Narrow_Phase_Interface.cpp \
