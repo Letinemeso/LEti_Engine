@@ -18,19 +18,30 @@ float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const P
 {
 	float result = 0.0f;
 
-	for(unsigned int i=0; i<_model.get_polygons_count(); ++i)
-	{
-		float sum = 0.0f;
-		for(unsigned int v=0; v < 3; ++v)
-		{
-			glm::vec3 distance_vec = M_calculate_center_of_mass(_model) - _model.get_polygons()[i][v];
-			float distance_squared = (distance_vec.x * distance_vec.x) + (distance_vec.y * distance_vec.y) + (distance_vec.z * distance_vec.z);
-			sum += distance_squared;
-		}
-		result += sum;
-	}
-	result *= _mass;
-	result /= _model.get_polygons_count() * 3;
+	glm::vec3 center_of_mass = M_calculate_center_of_mass(_model);
+
+    if(_model.get_polygons_count() == 1)
+    {
+        for(unsigned int v=0; v < 3; ++v)
+        {
+            glm::vec3 distance_vec = M_calculate_center_of_mass(_model) - _model.get_polygons()[0][v];
+            float distance_squared = (distance_vec.x * distance_vec.x) + (distance_vec.y * distance_vec.y) + (distance_vec.z * distance_vec.z);
+            result += distance_squared;
+        }
+        result *= _mass;
+        result /= _model.get_polygons_count() * 3;
+    }
+    else
+    {
+        for(unsigned int i=0; i<_model.get_polygons_count(); ++i)
+        {
+            glm::vec3 distance_vec = center_of_mass - _model.get_polygons()[i].center();
+
+            result += (distance_vec.x * distance_vec.x) + (distance_vec.y * distance_vec.y) + (distance_vec.z * distance_vec.z);
+        }
+        result *= _mass;
+        result /= _model.get_polygons_count();
+    }
 
 	return result;
 }
