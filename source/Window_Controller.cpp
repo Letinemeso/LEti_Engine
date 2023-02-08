@@ -7,6 +7,7 @@ Window_Controller::cursor_position Window_Controller::m_prev_cursor_pos, Window_
 Window_Controller::window_size Window_Controller::m_window_data;
 bool Window_Controller::m_keys_pressed_before[GLFW_KEY_LAST + 1] = { false };
 bool Window_Controller::m_mouse_buttons_pressed_before[GLFW_MOUSE_BUTTON_LAST + 1] = { false };
+int Window_Controller::m_mouse_wheel_rotation = 0;
 
 
 void Window_Controller::create_window(unsigned int _width, unsigned int _height, const char* _name)
@@ -22,6 +23,11 @@ void Window_Controller::create_window(unsigned int _width, unsigned int _height,
 
 	m_window_data.width = _width;
 	m_window_data.height = _height;
+
+	glfwSetScrollCallback(m_window, [](GLFWwindow*, double /*_x*/, double _y)
+	{
+		m_mouse_wheel_rotation += (int)_y;
+	});
 }
 
 
@@ -31,9 +37,13 @@ void Window_Controller::update()
 		m_keys_pressed_before[i] = glfwGetKey(m_window, i);
 	for (unsigned int i = 0; i <= GLFW_MOUSE_BUTTON_LAST; ++i)
 		m_mouse_buttons_pressed_before[i] = glfwGetMouseButton(m_window, i);
+
+	m_mouse_wheel_rotation = 0;
+
 	glfwPollEvents();
 
 	glfwGetCursorPos(m_window, &m_current_cursor_pos.x, &m_current_cursor_pos.y);
+	update_cursor_stride();
 	m_current_cursor_pos.y = m_window_data.height - m_current_cursor_pos.y;
 }
 
@@ -64,7 +74,7 @@ void Window_Controller::set_cursor_pos(double _x, double _y)
 void Window_Controller::update_cursor_stride()
 {
 	m_cursor_stride.x = m_prev_cursor_pos.x - m_current_cursor_pos.x;
-	m_cursor_stride.y = m_prev_cursor_pos.y - m_current_cursor_pos.y;
+	m_cursor_stride.y = -(m_prev_cursor_pos.y - m_current_cursor_pos.y);
 	m_prev_cursor_pos.x = m_current_cursor_pos.x;
 	m_prev_cursor_pos.y = m_current_cursor_pos.y;
 }
@@ -106,5 +116,11 @@ bool Window_Controller::key_prev_pressed(unsigned int _key)
 bool Window_Controller::mouse_button_prev_pressed(unsigned int _btn)
 {
 	return m_mouse_buttons_pressed_before[_btn];
+}
+
+
+int Window_Controller::mouse_wheel_rotation()
+{
+	return m_mouse_wheel_rotation;
 }
 

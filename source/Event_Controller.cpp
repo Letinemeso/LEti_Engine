@@ -52,6 +52,11 @@ bool Event_Controller::mouse_button_was_released(unsigned int _btn)
 	return !Window_Controller::is_mouse_button_down(_btn) && Window_Controller::mouse_button_prev_pressed(_btn);
 }
 
+int Event_Controller::mouse_wheel_rotation()
+{
+	return Window_Controller::mouse_wheel_rotation();
+}
+
 
 bool Event_Controller::is_key_down(unsigned int _key)
 {

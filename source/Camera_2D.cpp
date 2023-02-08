@@ -31,7 +31,10 @@ void Camera_2D::set_position(const glm::vec3& _position)
 
 void Camera_2D::set_view_scale(float _scale)
 {
-	m_view_scale = _scale;
+	if(_scale < 0.0f)
+		m_view_scale = 0.1f;
+	else
+		m_view_scale = _scale;
 	M_update_matrix();
 }
 

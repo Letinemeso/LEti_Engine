@@ -22,6 +22,8 @@ private:
 	static bool m_keys_pressed_before[GLFW_KEY_LAST + 1];
 	static bool m_mouse_buttons_pressed_before[GLFW_MOUSE_BUTTON_LAST + 1];
 
+	static int m_mouse_wheel_rotation;
+
 private:
 	Window_Controller() = delete;
 
@@ -48,6 +50,8 @@ public:
 	static bool is_mouse_button_down(unsigned int _btn);
 	static bool key_prev_pressed(unsigned int _key);
 	static bool mouse_button_prev_pressed(unsigned int _btn);
+
+	static int mouse_wheel_rotation();
 
 };
 
