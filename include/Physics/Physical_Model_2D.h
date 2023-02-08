@@ -57,8 +57,6 @@ namespace LEti
 			unsigned int m_polygons_count = 0;
 			Geometry_2D::Rectangular_Border m_rect_border;
 
-			glm::vec3 m_center_of_mass_raw, m_center_of_mass;
-
 		private:
 			Imprint(const Geometry::Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent);
 
@@ -80,7 +78,6 @@ namespace LEti
 			inline const Geometry::Polygon* get_polygons() const { return m_polygons; }
 			unsigned int get_polygons_count() const;
 			const Geometry_2D::Rectangular_Border& curr_rect_border() const;
-			const glm::vec3& center_of_mass() const;
 
 		};
 
@@ -93,15 +90,11 @@ namespace LEti
 		Geometry::Polygon* m_polygons = nullptr;
 		unsigned int m_polygons_count = 0;
 
-		glm::vec3 m_center_of_mass_raw, m_center_of_mass;
-		float m_moment_of_inertia = 0.0f;
-
 	private:
 		Geometry_2D::Rectangular_Border m_current_border;
 
 	private:
 		void M_update_rectangular_border();
-		void M_update_moment_of_inertia();
 
 	public:
 		const Geometry_2D::Rectangular_Border& curr_rect_border() const;
@@ -123,9 +116,6 @@ namespace LEti
 		const Geometry::Polygon* get_polygons() const;
 		unsigned int get_polygons_count() const;
 		const Geometry::Polygon& operator[](unsigned int _index) const;
-		const glm::vec3& center_of_mass() const;
-		const glm::vec3& center_of_mass_raw() const;
-		float moment_of_inertia() const;
 
 	};
 }

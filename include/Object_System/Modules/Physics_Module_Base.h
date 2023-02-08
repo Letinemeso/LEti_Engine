@@ -9,9 +9,6 @@ namespace LEti
 
 	class Physics_Module_Base
 	{
-	private:
-
-
 	public:
 		Physics_Module_Base();
 		virtual ~Physics_Module_Base();

@@ -10,10 +10,16 @@ namespace LEti
 	class Physics_Module__Rigid_Body_2D : public Default_Physics_Module_2D
 	{
 	private:
-		//	move mass, moment of inertia and other stuff here
+		float m_mass = 1.0f;
 
 	public:
 		void align_to_center_of_mass();
+		void set_mass(float _mass);
+
+	public:
+		float mass() const;
+
+		glm::vec3 calculate_raw_center_of_mass() const;
 
 	};
 

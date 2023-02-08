@@ -16,7 +16,6 @@ namespace LEti
 	private:
 		glm::vec3 m_velocity{0.0f, 0.0f, 0.0f};
 		float m_angular_velocity = 0.0f;
-		float m_mass = 1.0f;
 
 	public:
 		void init(const LV::Variable_Base& _stub) override;
@@ -30,7 +29,7 @@ namespace LEti
 	public:
 		void set_velocity(const glm::vec3& _v);
 		void set_angular_velocity(float _av);
-		void set_mass(float _mass);
+		void set_mass(float _mass);	//	TODO: should probably find another way to set/get mass
 
 		void apply_linear_impulse(const glm::vec3& _imp);
 		void apply_rotation(float _av);

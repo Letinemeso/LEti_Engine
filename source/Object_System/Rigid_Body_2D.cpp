@@ -12,7 +12,7 @@ void Rigid_Body_2D::init(const LV::Variable_Base &_stub)
 {
 	Object_2D::init(_stub);
 
-	glm::vec3 stride = -physics_module()->get_physical_model()->center_of_mass_raw();
+	glm::vec3 stride = -((Physics_Module__Rigid_Body_2D*)physics_module())->calculate_raw_center_of_mass();
 
 	((Physics_Module__Rigid_Body_2D*)physics_module())->align_to_center_of_mass();
 
@@ -57,7 +57,7 @@ void Rigid_Body_2D::set_angular_velocity(float _av)
 
 void Rigid_Body_2D::set_mass(float _mass)
 {
-	m_mass = _mass;
+	((Physics_Module__Rigid_Body_2D*)physics_module())->set_mass(_mass);
 }
 
 
@@ -85,5 +85,5 @@ float Rigid_Body_2D::angular_velocity() const
 
 float Rigid_Body_2D::mass() const
 {
-	return m_mass;
+	return ((Physics_Module__Rigid_Body_2D*)physics_module())->mass();
 }
