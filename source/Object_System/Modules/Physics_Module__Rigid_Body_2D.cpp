@@ -5,10 +5,6 @@ using namespace LEti;
 
 void Physics_Module__Rigid_Body_2D::align_to_center_of_mass()
 {
-//	glm::vec3 stride = -get_physical_model()->center_of_mass_raw();
-
-
-
 	glm::vec3 stride = -calculate_raw_center_of_mass();
 
 	get_physical_model()->move_raw(stride);

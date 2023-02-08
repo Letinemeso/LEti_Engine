@@ -1,9 +1,9 @@
-#include <Physics/Collision_Resolution__Rigid_Body.h>
+#include <Physics/Collision_Resolution__Rigid_Body_2D.h>
 
 using namespace LEti;
 
 
-glm::vec3 Collision_Resolution__Rigid_Body::M_calculate_center_of_mass(const Physical_Model_2D &_model) const
+glm::vec3 Collision_Resolution__Rigid_Body_2D::M_calculate_center_of_mass(const Physical_Model_2D &_model) const
 {
 	glm::vec3 result(0.0f, 0.0f, 0.0f);
 
@@ -14,16 +14,18 @@ glm::vec3 Collision_Resolution__Rigid_Body::M_calculate_center_of_mass(const Phy
 	return result;
 }
 
-float Collision_Resolution__Rigid_Body::M_calculate_moment_of_inertia(const Physical_Model_2D &_model, float _mass) const
+float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const Physical_Model_2D &_model, float _mass) const
 {
 	float result = 0.0f;
+
 	for(unsigned int i=0; i<_model.get_polygons_count(); ++i)
 	{
 		float sum = 0.0f;
 		for(unsigned int v=0; v < 3; ++v)
 		{
-			float distance = LEti::Math::vector_length(M_calculate_center_of_mass(_model) - _model.get_polygons()[i][v]);
-			sum += distance * distance;
+			glm::vec3 distance_vec = M_calculate_center_of_mass(_model) - _model.get_polygons()[i][v];
+			float distance_squared = (distance_vec.x * distance_vec.x) + (distance_vec.y * distance_vec.y) + (distance_vec.z * distance_vec.z);
+			sum += distance_squared;
 		}
 		result += sum;
 	}
@@ -35,7 +37,7 @@ float Collision_Resolution__Rigid_Body::M_calculate_moment_of_inertia(const Phys
 
 
 
-bool Collision_Resolution__Rigid_Body::resolve(const Physical_Model_2D::Intersection_Data &_id)
+bool Collision_Resolution__Rigid_Body_2D::resolve(const Physical_Model_2D::Intersection_Data &_id)
 {
 	LEti::Rigid_Body_2D* bodyA = LV::cast_variable<Rigid_Body_2D>((Object_2D*)_id.first);	//	too lazy to figure out appropriate way to pass non-const pointer here
 	LEti::Rigid_Body_2D* bodyB = LV::cast_variable<Rigid_Body_2D>((Object_2D*)_id.second);
