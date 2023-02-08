@@ -156,10 +156,7 @@ void Geometry::Polygon::setup(const float *_raw_coords, const bool* _segment_can
 	m_raw_coords = _raw_coords;
 	m_segment_can_collide = _segment_can_collide;
 
-	glm::vec3 sum{0.0f, 0.0f, 0.0f};
-	for(unsigned int i=0; i<3; ++i)
-		sum += glm::vec3(_raw_coords[i * 3], _raw_coords[i * 3 + 1], _raw_coords[i * 3 + 2]);
-	m_center_raw = sum / 3.0f;
+	calculate_center();
 
 	L_ASSERT(m_raw_coords && m_segment_can_collide);
 }
@@ -173,6 +170,14 @@ void Geometry::Polygon::setup(const Polygon& _other)
 	m_actual_C = _other.m_actual_C;
 	m_center_raw = _other.m_center_raw;
 	m_center = _other.m_center;
+}
+
+void Geometry::Polygon::calculate_center()
+{
+	glm::vec3 sum{0.0f, 0.0f, 0.0f};
+	for(unsigned int i=0; i<m_count; i += 3)
+		sum += glm::vec3(m_raw_coords[i], m_raw_coords[i + 1], m_raw_coords[i + 2]);
+	m_center_raw = sum / 3.0f;
 }
 
 void Geometry::Polygon::update_points(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)

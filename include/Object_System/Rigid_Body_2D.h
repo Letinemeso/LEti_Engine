@@ -2,6 +2,7 @@
 #define RIGID_BODY_2D_H
 
 #include <Object_System/Object_2D.h>
+#include <Object_System/Modules/Physics_Module__Rigid_Body_2D.h>
 
 
 namespace LEti
@@ -16,6 +17,12 @@ namespace LEti
 		glm::vec3 m_velocity{0.0f, 0.0f, 0.0f};
 		float m_angular_velocity = 0.0f;
 		float m_mass = 1.0f;
+
+	public:
+		void init(const LV::Variable_Base& _stub) override;
+
+	public:
+		void create_physics_module() override;
 
 	public:
 		void update(float _ratio = 1.0f) override;

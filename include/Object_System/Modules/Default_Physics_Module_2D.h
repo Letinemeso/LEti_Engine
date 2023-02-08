@@ -6,7 +6,8 @@
 #include "../../Physics/Physical_Model_2D.h"
 
 
-namespace LEti {
+namespace LEti
+{
 
 	class Default_Physics_Module_2D : public Physics_Module_Base
 	{

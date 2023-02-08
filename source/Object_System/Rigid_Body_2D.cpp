@@ -8,6 +8,32 @@ FIELDS_END;
 
 
 
+void Rigid_Body_2D::init(const LV::Variable_Base &_stub)
+{
+	Object_2D::init(_stub);
+
+	glm::vec3 stride = -physics_module()->get_physical_model()->center_of_mass_raw();
+
+	((Physics_Module__Rigid_Body_2D*)physics_module())->align_to_center_of_mass();
+
+	for(unsigned int i=0; i<draw_module()->get_vertices().size(); i += 3)
+	{
+		draw_module()->get_vertices()[i] += stride.x;
+		draw_module()->get_vertices()[i + 1] += stride.y;
+		draw_module()->get_vertices()[i + 2] += stride.z;
+	}
+}
+
+
+
+void Rigid_Body_2D::create_physics_module()
+{
+	delete[] m_physics_module;
+	m_physics_module = new Physics_Module__Rigid_Body_2D;
+}
+
+
+
 void Rigid_Body_2D::update(float _ratio)
 {
 	move(m_velocity * LEti::Event_Controller::get_dt() * _ratio);

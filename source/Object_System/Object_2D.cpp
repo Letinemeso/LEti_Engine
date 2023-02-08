@@ -300,7 +300,8 @@ void Object_2D::init(const LV::Variable_Base& _stub)
 	if(stub->phys_coords)
 	{
 		create_physics_module();
-		m_physics_module->init(stub->phys_coords, stub->phys_coords_count, stub->collision_permissions);
+		physics_module()->init(stub->phys_coords, stub->phys_coords_count, stub->collision_permissions);
+		physics_module()->update(m_current_state.translation_matrix, m_current_state.rotation_matrix, m_current_state.scale_matrix);
 	}
 }
 

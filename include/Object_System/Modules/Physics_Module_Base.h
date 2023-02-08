@@ -4,7 +4,8 @@
 #include <mat4x4.hpp>
 
 
-namespace LEti {
+namespace LEti
+{
 
 	class Physics_Module_Base
 	{

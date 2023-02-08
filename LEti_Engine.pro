@@ -57,6 +57,7 @@ HEADERS += \
     include/Object_System/Modules/Default_Physics_Module_2D.h \
     include/Object_System/Modules/Draw_Module_Base.h \
     include/Object_System/Modules/Physics_Module_Base.h \
+    include/Object_System/Modules/Physics_Module__Rigid_Body_2D.h \
     include/Object_System/Object_2D.h \
     include/Object_System/Object_Base.h \
     include/Object_System/Rigid_Body_2D.h \
@@ -91,6 +92,7 @@ SOURCES += \
     source/Object_System/Modules/Default_Physics_Module_2D.cpp \
     source/Object_System/Modules/Draw_Module_Base.cpp \
     source/Object_System/Modules/Physics_Module_Base.cpp \
+    source/Object_System/Modules/Physics_Module__Rigid_Body_2D.cpp \
     source/Object_System/Object_2D.cpp \
     source/Object_System/Object_Base.cpp \
     source/Object_System/Rigid_Body_2D.cpp \

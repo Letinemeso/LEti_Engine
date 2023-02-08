@@ -7,7 +7,21 @@ void Buffer::float_container::operator=(float _f)
 {
 	buffer_data[last_requested_index] = _f;
 	glBindBuffer(GL_ARRAY_BUFFER, *buffer);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * last_requested_index, sizeof(float), &_f);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * last_requested_index, sizeof(float), &buffer_data[last_requested_index]);
+}
+
+void Buffer::float_container::operator+=(float _f)
+{
+	buffer_data[last_requested_index] += _f;
+	glBindBuffer(GL_ARRAY_BUFFER, *buffer);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * last_requested_index, sizeof(float), &buffer_data[last_requested_index]);
+}
+
+void Buffer::float_container::operator-=(float _f)
+{
+	buffer_data[last_requested_index] -= _f;
+	glBindBuffer(GL_ARRAY_BUFFER, *buffer);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * last_requested_index, sizeof(float), &buffer_data[last_requested_index]);
 }
 
 float Buffer::float_container::operator*() const

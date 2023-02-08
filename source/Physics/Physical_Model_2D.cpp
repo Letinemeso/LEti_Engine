@@ -50,7 +50,7 @@ Physical_Model_2D::Imprint::~Imprint()
 
 
 
-void Physical_Model_2D::Imprint::update_rectangular_border()
+void Physical_Model_2D::Imprint::M_update_rectangular_border()
 {
 	L_ASSERT(!(!m_polygons));
 
@@ -91,7 +91,7 @@ void Physical_Model_2D::Imprint::update_with_single_matrix(const glm::mat4x4& _m
 
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 		m_polygons[i].update_points_with_single_matrix(_matrix);
-	update_rectangular_border();
+	M_update_rectangular_border();
 }
 
 void Physical_Model_2D::Imprint::update_to_current_model_state()
@@ -102,10 +102,13 @@ void Physical_Model_2D::Imprint::update_to_current_model_state()
 	{
 		for(unsigned int vert=0; vert<3; ++vert)
 			m_polygons[i][vert] = m_parent->m_polygons[i][vert];
+
+		m_polygons[i].calculate_center();
 	}
 	m_rect_border = m_parent->curr_rect_border();
 
 	m_center_of_mass = m_parent->m_center_of_mass;
+	m_center_of_mass_raw = m_parent->m_center_of_mass_raw;
 }
 
 
@@ -138,7 +141,7 @@ const glm::vec3& Physical_Model_2D::Imprint::center_of_mass() const
 
 
 
-void Physical_Model_2D::update_rectangular_border()
+void Physical_Model_2D::M_update_rectangular_border()
 {
 	L_ASSERT(!(!m_polygons));
 
@@ -159,7 +162,7 @@ void Physical_Model_2D::update_rectangular_border()
 	}
 }
 
-void Physical_Model_2D::update_moment_of_inertia()
+void Physical_Model_2D::M_update_moment_of_inertia()
 {
 	L_ASSERT(!(!m_polygons));
 
@@ -168,12 +171,27 @@ void Physical_Model_2D::update_moment_of_inertia()
 	m_moment_of_inertia = 0.0f;
 	for(unsigned int i=0; i<m_polygons_count; ++i)
 	{
-		float distance = LEti::Math::vector_length(m_center_of_mass - m_polygons[i].center());
-		m_moment_of_inertia += distance * distance;
+		float sum = 0.0f;
+		for(unsigned int v=0; v < 3; ++v)
+		{
+			float distance = LEti::Math::vector_length(m_center_of_mass - m_polygons[i][v]);
+			sum += distance * distance;
+		}
+		m_moment_of_inertia += sum;
 	}
 	m_moment_of_inertia *= m_mass;
-	m_moment_of_inertia /= m_polygons_count;
-	m_moment_of_inertia *= 3.0;
+	m_moment_of_inertia /= m_polygons_count * 3;
+//	m_moment_of_inertia *= 3.0;
+
+//	m_moment_of_inertia = 0.0f;
+//	for(unsigned int i=0; i<m_polygons_count; ++i)
+//	{
+//		float distance = LEti::Math::vector_length(m_center_of_mass - m_polygons[i].center());
+//		m_moment_of_inertia += distance * distance;
+//	}
+//	m_moment_of_inertia *= m_mass;
+//	m_moment_of_inertia /= m_polygons_count;
+//	m_moment_of_inertia *= 3.0;
 }
 
 
@@ -223,7 +241,25 @@ void Physical_Model_2D::setup(const float* _raw_coords, unsigned int _raw_coords
 		m_center_of_mass_raw += m_polygons[i].center_raw();
 	m_center_of_mass_raw /= (float)m_polygons_count;
 
-	update_moment_of_inertia();
+	M_update_moment_of_inertia();
+}
+
+void Physical_Model_2D::move_raw(const glm::vec3 &_stride)
+{
+	for(unsigned int i=0; i<m_raw_coords_count; i += 3)
+	{
+		m_raw_coords[i] += _stride.x;
+		m_raw_coords[i + 1] += _stride.y;
+		m_raw_coords[i + 2] += _stride.z;
+	}
+
+	m_center_of_mass_raw = {0.0f, 0.0f, 0.0f};
+	for(unsigned int i=0; i < m_polygons_count; ++i)
+	{
+		m_polygons[i].calculate_center();
+		m_center_of_mass_raw += m_polygons[i].center_raw();
+	}
+	m_center_of_mass_raw /= (float)m_polygons_count;
 }
 
 Physical_Model_2D::~Physical_Model_2D()
@@ -244,9 +280,9 @@ void Physical_Model_2D::update(const glm::mat4x4& _translation, const glm::mat4x
 
 	m_center_of_mass = result_matrix * glm::vec4(m_center_of_mass_raw, 1.0f);
 
-	update_moment_of_inertia();
+	M_update_moment_of_inertia();
 
-	update_rectangular_border();
+	M_update_rectangular_border();
 }
 
 void Physical_Model_2D::copy_real_coordinates(const Physical_Model_2D &_other)
@@ -289,6 +325,11 @@ const Geometry::Polygon& Physical_Model_2D::operator[](unsigned int _index) cons
 const glm::vec3& Physical_Model_2D::center_of_mass() const
 {
 	return m_center_of_mass;
+}
+
+const glm::vec3& Physical_Model_2D::center_of_mass_raw() const
+{
+	return m_center_of_mass_raw;
 }
 
 float Physical_Model_2D::moment_of_inertia() const
