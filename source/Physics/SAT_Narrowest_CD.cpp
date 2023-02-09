@@ -28,10 +28,7 @@ SAT_Narrowest_CD::Intersection_Data SAT_Narrowest_CD::M_polygons_collision(const
 	SAT_Narrowest_CD::Intersection_Data result;
 
 	for(unsigned int i=0; i<3; ++i)
-	{
-//		if(_first.segment_can_collide(i) == false)
-//			continue;
-
+    {
 		glm::vec3 axis = _first[i + 1] - _first[i];
 		Math::shrink_vector_to_1(axis);
 		Geometry_2D::rotate_perpendicular_ccw(axis);
@@ -55,6 +52,32 @@ SAT_Narrowest_CD::Intersection_Data SAT_Narrowest_CD::M_polygons_collision(const
 			result.min_dist_axis = axis;
 		}
 	}
+
+    for(unsigned int i=0; i<3; ++i)
+    {
+        glm::vec3 axis = _second[i + 1] - _second[i];
+        Math::shrink_vector_to_1(axis);
+        Geometry_2D::rotate_perpendicular_ccw(axis);
+
+        mm_pair f = M_get_minmax_projections(axis, _second);
+        mm_pair s = M_get_minmax_projections(axis, _first);
+
+        if(f.first > s.second || s.first > f.second)
+            return Intersection_Data();
+
+        result.intersection = true;
+
+        float dist_1 = fabs(f.second - s.first);
+        float dist_2 = fabs(s.second - f.first);
+
+        float min = dist_1 < dist_2 ? dist_1 : dist_2;
+
+        if(result.min_dist < 0.0f || result.min_dist > min)
+        {
+            result.min_dist = min;
+            result.min_dist_axis = axis;
+        }
+    }
 
 	glm::vec3 direction = _second.center() - _first.center();
 
@@ -220,30 +243,6 @@ Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model
 
 	if(!f_id.intersection)
 		return {};
-
-	Intersection_Data s_id;
-	for(unsigned int i=0; i<_pols_amount_2; ++i)
-	{
-		for(unsigned int j=0; j<_pols_amount_1; ++j)
-		{
-			Intersection_Data id = M_polygons_collision(_pols_2[i], _pols_1[j]);
-
-			if(!id.intersection)
-				continue;
-
-			if(s_id.min_dist < 0.0f || s_id.min_dist > id.min_dist)
-				s_id = id;
-		}
-	}
-
-	if(!s_id.intersection)
-		return {};
-
-	if(s_id.min_dist < f_id.min_dist)
-	{
-		f_id = s_id;
-		f_id.min_dist_axis *= -1.0f;
-	}
 
     result.normal = -f_id.min_dist_axis;
 	LEti::Math::shrink_vector_to_1(result.normal);
