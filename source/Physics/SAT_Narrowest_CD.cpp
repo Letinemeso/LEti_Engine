@@ -29,8 +29,8 @@ SAT_Narrowest_CD::Intersection_Data SAT_Narrowest_CD::M_polygons_collision(const
 
 	for(unsigned int i=0; i<3; ++i)
 	{
-		if(_first.segment_can_collide(i) == false)
-			continue;
+//		if(_first.segment_can_collide(i) == false)
+//			continue;
 
 		glm::vec3 axis = _first[i + 1] - _first[i];
 		Math::shrink_vector_to_1(axis);
@@ -245,8 +245,9 @@ Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model
 		f_id.min_dist_axis *= -1.0f;
 	}
 
-	result.normal = -f_id.min_dist_axis;
+    result.normal = -f_id.min_dist_axis;
 	LEti::Math::shrink_vector_to_1(result.normal);
+    result.depth = f_id.min_dist;
 
 	LDS::List<glm::vec3> points = M_points_of_contact(_pols_1, _pols_amount_1, _pols_2, _pols_amount_2);
 	if(points.size() == 0)
@@ -256,8 +257,6 @@ Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model
 		result.point += *it;
 
 	result.point /= (float)points.size();
-
-	result.depth = f_id.min_dist;
 
 	return result;
 }

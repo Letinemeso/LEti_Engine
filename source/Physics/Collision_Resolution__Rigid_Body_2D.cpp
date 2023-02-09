@@ -20,30 +20,6 @@ float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const P
 
 	glm::vec3 center_of_mass = M_calculate_center_of_mass(_model);
 
-//    if(_model.get_polygons_count() == 1)
-//    {
-//        for(unsigned int v=0; v < 3; ++v)
-//        {
-//            glm::vec3 distance_vec = M_calculate_center_of_mass(_model) - _model.get_polygons()[0][v];
-//            float distance_squared = (distance_vec.x * distance_vec.x) + (distance_vec.y * distance_vec.y) + (distance_vec.z * distance_vec.z);
-//            result += distance_squared;
-//        }
-//        result *= _mass;
-//        result /= _model.get_polygons_count() * 3;
-//    }
-//    else
-//    {
-//        for(unsigned int i=0; i<_model.get_polygons_count(); ++i)
-//        {
-//            glm::vec3 distance_vec = center_of_mass - _model.get_polygons()[i].center();
-
-//            result += (distance_vec.x * distance_vec.x) + (distance_vec.y * distance_vec.y) + (distance_vec.z * distance_vec.z);
-//        }
-//        result *= _mass;
-//        result /= _model.get_polygons_count();
-//    }
-
-
     unsigned int counted_points = 0;
 
     for(unsigned int p=0; p<_model.get_polygons_count(); ++p)
@@ -120,8 +96,8 @@ bool Collision_Resolution__Rigid_Body_2D::resolve(const Physical_Model_2D::Inter
 	float avA = LEti::Math::cross_product(ra, impulse) / A_moment_of_inertia;
 	float avB = LEti::Math::cross_product(rb, impulse) / B_moment_of_inertia;
 
-	bodyA->move(_id.normal * _id.depth / 2.0f);
-	bodyB->move(-_id.normal * _id.depth / 2.0f);
+    bodyA->move(_id.normal * (_id.depth + 0.1f) / 2.0f);
+    bodyB->move(-_id.normal * (_id.depth + 0.1f) / 2.0f);
 
 	bodyA->apply_linear_impulse(-impulse / bodyA->mass());
 	bodyA->apply_rotation(-avA);

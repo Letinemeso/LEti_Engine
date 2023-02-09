@@ -127,7 +127,7 @@ Physical_Model_2D::Intersection_Data Default_Narrow_CD::get_precise_time_ratio_o
 
 	if(id)
 	{
-		id.time_of_intersection_ratio = curr_time_point - step_diff;
+        id.time_of_intersection_ratio = curr_time_point /*- step_diff*/;
 		if(id.time_of_intersection_ratio < 0.0f) id.time_of_intersection_ratio = 0.0f;
 	}
 	return id;
@@ -231,26 +231,16 @@ Physical_Model_2D::Intersection_Data Default_Narrow_CD::objects_collide(const LE
 		if((dynamic_object.physics_module()->get_dynamic_rb() && static_object.physics_module()->get_physical_model()->curr_rect_border()))
 			return Physical_Model_2D::Intersection_Data();
 
-//		Physical_Model_2D::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(dynamic_object.physics_module()->get_physical_model_prev_state()->get_polygons(), dynamic_object.physics_module()->get_physical_model_prev_state()->get_polygons_count(),
-//																										  static_object.physics_module()->get_physical_model_prev_state()->get_polygons(), static_object.physics_module()->get_physical_model_prev_state()->get_polygons_count());
-//		if(prev_state_cd)
-//			return prev_state_cd;
-
 		if(dynamic_object.moved_since_last_frame())
 			return collision__moving_vs_static(dynamic_object, static_object);
 
 		return m_narrowest_phase->collision__model_vs_model(_first.physics_module()->get_physical_model()->get_polygons(), _first.physics_module()->get_physical_model()->get_polygons_count(),
 														  _second.physics_module()->get_physical_model()->get_polygons(), _second.physics_module()->get_physical_model()->get_polygons_count());
 	}
-	else /*if(is_dynamic() && _other.is_dynamic())*/
+    else
 	{
 		if(!(_first.physics_module()->get_dynamic_rb() && _second.physics_module()->get_dynamic_rb()))
 			return Physical_Model_2D::Intersection_Data();
-
-//		Physical_Model_2D::Intersection_Data prev_state_cd = m_narrowest_phase->collision__model_vs_model(_first.physics_module()->get_physical_model_prev_state()->get_polygons(), _first.physics_module()->get_physical_model_prev_state()->get_polygons_count(),
-//																  _second.physics_module()->get_physical_model_prev_state()->get_polygons(), _second.physics_module()->get_physical_model_prev_state()->get_polygons_count());
-//		if(prev_state_cd)
-//			return prev_state_cd;
 
 		if(_first.moved_since_last_frame() || _second.moved_since_last_frame())
 			return collision__moving_vs_moving(_first, _second);
