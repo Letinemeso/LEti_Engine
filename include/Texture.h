@@ -10,33 +10,33 @@
 namespace LEti
 {
 
-	class Texture final : public LEti::Buffer
-	{
-	private:
-		unsigned int texture_object = 0;
-		const Picture* m_picture = nullptr;
+    class Texture final : public LEti::Buffer
+    {
+    private:
+	unsigned int texture_object = 0;
+	const Picture* m_picture = nullptr;
 
-	public:
-		Texture();
-		Texture(const Picture* _picture, float* _tex_coords, unsigned int _tex_coords_count);
-		Texture(const LEti::Texture&) = delete;
-		Texture(LEti::Texture&&) = delete;
-		void operator=(const LEti::Texture&) = delete;
-		void operator=(LEti::Texture&&) = delete;
+    public:
+	Texture();
+	Texture(const Picture* _picture, float* _tex_coords, unsigned int _tex_coords_count);
+	Texture(const LEti::Texture&) = delete;
+	Texture(LEti::Texture&&) = delete;
+	void operator=(const LEti::Texture&) = delete;
+	void operator=(LEti::Texture&&) = delete;
 
-		void init(const Picture* _picture, const float* const _tex_coords, unsigned int _tex_coords_count);
-		void set_picture(const Picture* _picture);
-		void set_texture_coords(const float* const _tex_coords, unsigned int _tex_coords_count);
+	void init(const Picture* _picture, const float* const _tex_coords, unsigned int _tex_coords_count);
+	void set_picture(const Picture* _picture);
+	void set_texture_coords(const float* const _tex_coords, unsigned int _tex_coords_count);
 
-		~Texture();
+	~Texture();
 
-	public:
-		const Picture* get_picture() const;
+    public:
+	const Picture* get_picture() const;
 
-	public:
-		void use() const;
+    public:
+	void bind() const;
 
-	};
+    };
 
 }
 

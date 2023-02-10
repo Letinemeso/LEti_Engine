@@ -57,7 +57,7 @@ const Picture* Texture::get_picture() const
 
 
 
-void Texture::use() const
+void Texture::bind() const
 {
 	L_ASSERT(!(texture_object == 0 || buffer_size == 0 || buffer == 0 || buffer_data == 0));
 	glBindTexture(GL_TEXTURE_2D, texture_object);

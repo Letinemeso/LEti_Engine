@@ -3,16 +3,17 @@
 using namespace LEti;
 
 
-bool Shader::initialized = false;
-bool Shader::valid = true;
+bool Shader::m_initialized = false;
 
-std::string Shader::projection_matrix_uniform_name, Shader::transform_matrix_uniform_name, Shader::texture_uniform_name;
+int Shader::m_projection_matrix_uniform = -1;
+int Shader::m_transform_matrix_uniform = -1;
+int Shader::m_texture_uniform = -1;
 
-unsigned int Shader::vertex_shader = 0, Shader::fragment_shader = 0;
-unsigned int Shader::program = 0;
+unsigned int Shader::m_vertex_shader = 0, Shader::m_fragment_shader = 0;
+unsigned int Shader::m_program = 0;
 
 
-void Shader::get_shader_source(const char* _path, char*& _result_buffer, unsigned int* _result_size)
+void Shader::M_get_shader_source(const std::string& _path, char*& _result_buffer, unsigned int* _result_size)
 {
     std::ifstream file(_path, std::ios::binary);
 
@@ -41,7 +42,7 @@ void Shader::get_shader_source(const char* _path, char*& _result_buffer, unsigne
 	file.close();
 }
 
-void Shader::shader_debug(unsigned int _shader)
+void Shader::M_shader_debug(unsigned int _shader)
 {
 	int result = 0;
 	glGetShaderiv(_shader, GL_COMPILE_STATUS, &result);
@@ -51,14 +52,13 @@ void Shader::shader_debug(unsigned int _shader)
 		int size = 0;
 		char log[2048];
 		glGetShaderInfoLog(_shader, 2048, &size, log);
-		std::cout << log << "\n";
-		valid = false;
+        std::cout << log << "\n";
 		
-		L_ASSERT(!(true));
+        L_ASSERT(false);
 	}
 }
 
-void Shader::program_debug(unsigned int _program)
+void Shader::M_program_debug(unsigned int _program)
 {
 	int result = 0;
 	glGetProgramiv(_program, GL_LINK_STATUS, &result);
@@ -68,98 +68,87 @@ void Shader::program_debug(unsigned int _program)
 		int size = 0;
 		char log[2048];
 		glGetProgramInfoLog(_program, 2048, &size, log);
-		std::cout << log << "\n";
-		valid = false;
+        std::cout << log << "\n";
 		
-		L_ASSERT(!(true));
+        L_ASSERT(false);
 	}
 }
 
 
 
-void Shader::init_shader(const char* _v_path, const char* _f_path)
+void Shader::init_shader(const std::string& _v_path, const std::string& _f_path)
 {
-	if (initialized) return;
+    glDeleteShader(m_vertex_shader);
+    glDeleteShader(m_fragment_shader);
+    glDeleteProgram(m_program);
 
-	glDeleteShader(vertex_shader);
-	glDeleteShader(fragment_shader);
-	glDeleteProgram(program);
-
-	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-	fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	program = glCreateProgram();
+    m_vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    m_fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+    m_program = glCreateProgram();
 
 	char* buffer = nullptr;
 	unsigned int size = 0;
 
-	get_shader_source(_v_path, buffer, &size);
-	glShaderSource(vertex_shader, 1, &buffer, 0);
-	glCompileShader(vertex_shader);
-	L_DEBUG_FUNC_1ARG(shader_debug, vertex_shader);
+    M_get_shader_source(_v_path, buffer, &size);
+    glShaderSource(m_vertex_shader, 1, &buffer, 0);
+    glCompileShader(m_vertex_shader);
+    L_DEBUG_FUNC_1ARG(M_shader_debug, m_vertex_shader);
 	delete buffer;
-	get_shader_source(_f_path, buffer, &size);
-	glShaderSource(fragment_shader, 1, &buffer, 0);
-	glCompileShader(fragment_shader);
-	L_DEBUG_FUNC_1ARG(shader_debug, fragment_shader);
+    M_get_shader_source(_f_path, buffer, &size);
+    glShaderSource(m_fragment_shader, 1, &buffer, 0);
+    glCompileShader(m_fragment_shader);
+    L_DEBUG_FUNC_1ARG(M_shader_debug, m_fragment_shader);
 	delete buffer;
 
 
-	glAttachShader(program, vertex_shader);
-	glAttachShader(program, fragment_shader);
+    glAttachShader(m_program, m_vertex_shader);
+    glAttachShader(m_program, m_fragment_shader);
 
-	glLinkProgram(program);
-	L_DEBUG_FUNC_1ARG(program_debug, program);
-	glUseProgram(program);
+    glLinkProgram(m_program);
+    L_DEBUG_FUNC_1ARG(M_program_debug, m_program);
+    glUseProgram(m_program);
 
-	initialized = true;
+    m_initialized = true;
 }
 
-void Shader::set_projection_matrix_uniform_name(const char* _name)
+void Shader::set_projection_matrix_uniform_name(const std::string& _name)
 {
-	projection_matrix_uniform_name = _name;
+    m_projection_matrix_uniform = glGetUniformLocation(m_program, _name.c_str());
+    L_ASSERT(m_projection_matrix_uniform != -1);
 }
 
-void Shader::set_transform_matrix_uniform_name(const char* _name)
+void Shader::set_transform_matrix_uniform_name(const std::string& _name)
 {
-	transform_matrix_uniform_name = _name;
+    m_transform_matrix_uniform = glGetUniformLocation(m_program, _name.c_str());
+    L_ASSERT(m_transform_matrix_uniform != -1);
 }
 
-void Shader::set_texture_uniform_name(const char* _name)
+void Shader::set_texture_uniform_name(const std::string& _name)
 {
-	texture_uniform_name = _name;
+    m_texture_uniform = glGetUniformLocation(m_program, _name.c_str());
+    L_ASSERT(m_texture_uniform != -1);
 }
-
-
-
-bool Shader::is_valid()
-{
-	return initialized && valid;
-}
-
 
 
 void Shader::set_projection_matrix(glm::mat4x4& _matrix)
 {
-	int location = glGetUniformLocation(program, projection_matrix_uniform_name.c_str());
-	L_ASSERT(!(location == -1));
+    L_ASSERT(m_projection_matrix_uniform != -1);
 
-	glUniformMatrix4fv(location, 1, false, &_matrix[0][0]);
+    glUniformMatrix4fv(m_projection_matrix_uniform, 1, false, &_matrix[0][0]);
 }
 
 void Shader::set_transform_matrix(glm::mat4x4& _matrix)
 {
-	int location = glGetUniformLocation(program, transform_matrix_uniform_name.c_str());
-	L_ASSERT(!(location == -1));
+    L_ASSERT(m_transform_matrix_uniform != -1);
 
-	glUniformMatrix4fv(location, 1, false, &_matrix[0][0]);
+    glUniformMatrix4fv(m_transform_matrix_uniform, 1, false, &_matrix[0][0]);
 }
 
 void Shader::set_texture(const LEti::Texture& _texture)
 {
-	int location = glGetUniformLocation(program, texture_uniform_name.c_str());
-	L_ASSERT(!(location == -1));
+    L_ASSERT(m_texture_uniform != -1);
 	
-	glUniform1i(location, 0);
+    glUniform1i(m_texture_uniform, 0);
 
-	_texture.use();
+    _texture.bind();
 }

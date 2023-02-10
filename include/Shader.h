@@ -17,20 +17,19 @@ namespace LEti {
 	class Shader
 	{
 	private:
-		static bool initialized;
-		static bool valid;
+        static bool m_initialized;
 
 	private:
-		static unsigned int vertex_shader, fragment_shader;
-		static unsigned int program;
+        static unsigned int m_vertex_shader, m_fragment_shader;
+        static unsigned int m_program;
+
+    private:
+        static int m_projection_matrix_uniform, m_transform_matrix_uniform, m_texture_uniform;
 
 	private:
-		static std::string projection_matrix_uniform_name, transform_matrix_uniform_name, texture_uniform_name;	//TODO: store not strings but find locations imidiatly after setting name
-
-	private:
-		static void get_shader_source(const char* _path, char*& _buffer, unsigned int* _size);
-		static void shader_debug(unsigned int _shader);
-		static void program_debug(unsigned int _program);
+        static void M_get_shader_source(const std::string& _path, char*& _buffer, unsigned int* _size);
+        static void M_shader_debug(unsigned int _shader);
+        static void M_program_debug(unsigned int _program);
 
 	public:
 		Shader() = delete;
@@ -40,12 +39,10 @@ namespace LEti {
 		void operator=(const Shader&) = delete;
 
 	public:
-		static void init_shader(const char* _v_path, const char* f_path);
-		static void set_projection_matrix_uniform_name(const char* _name);
-		static void set_transform_matrix_uniform_name(const char* _name);
-		static void set_texture_uniform_name(const char* _name);
-
-		static bool is_valid();
+        static void init_shader(const std::string& _v_path, const std::string& f_path);
+        static void set_projection_matrix_uniform_name(const std::string& _name);
+        static void set_transform_matrix_uniform_name(const std::string& _name);
+        static void set_texture_uniform_name(const std::string& _name);
 
 		static void set_projection_matrix(glm::mat4x4& _matrix);
 		static void set_transform_matrix(glm::mat4x4& _matrix);
