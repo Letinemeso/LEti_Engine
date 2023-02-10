@@ -3,7 +3,7 @@
 using namespace LEti;
 
 
-constexpr unsigned int tcpc = 12, cpc = 18;		//texture coordinates per character, coordinates per character
+constexpr unsigned int tcpc = 12, cpc = 18, colorpc = 24;		//texture coordinates per character, coordinates per character
 
 
 
@@ -71,7 +71,7 @@ void Text_Field::set_text(const char* _text)
 		for (unsigned int j = 0; j < tcpc; ++j)
 			temp_coords[i * tcpc + j] = ptr[j];
 	}
-	draw_module()->set_texture_coords(temp_coords, text.size() * tcpc);
+    m_draw_module->set_texture_coords(temp_coords, text.size() * tcpc);
 	delete[] temp_coords;
 
 	actual_symbol_width = (height * text.size() > width ? width / text.size() : height);
@@ -93,7 +93,15 @@ void Text_Field::set_text(const char* _text)
 	}
 	for (unsigned int i = 2; i < text.size() * cpc; i += 3)
 		temp_coords[i] = 0.0f;
-	draw_module()->init_vertices(temp_coords, text.size() * cpc);
+    m_draw_module->init_vertices(temp_coords, text.size() * cpc);
+
+    unsigned int colors_count = m_draw_module->vertices().size() / 3 * 4;
+    float* colors = new float[colors_count];
+    for(unsigned int i=0; i<colors_count; ++i)
+        colors[i] = 1.0f;
+    m_draw_module->init_colors(colors, colors_count);
+    delete[] colors;
+
 	delete[] temp_coords;
 }
 
@@ -106,6 +114,7 @@ const std::unsigned_string& Text_Field::get_text() const
 
 void Text_Field::draw() const
 {
-	if (text.size() == 0) return;
+    if (text.size() == 0)
+        return;
     Object_2D::draw();
 }

@@ -16,11 +16,11 @@ void Rigid_Body_2D::init(const LV::Variable_Base &_stub)
 
 	((Physics_Module__Rigid_Body_2D*)physics_module())->align_to_center_of_mass();
 
-	for(unsigned int i=0; i<draw_module()->get_vertices().size(); i += 3)
+	for(unsigned int i=0; i<draw_module()->vertices().size(); i += 3)
 	{
-		draw_module()->get_vertices()[i] += stride.x;
-		draw_module()->get_vertices()[i + 1] += stride.y;
-		draw_module()->get_vertices()[i + 2] += stride.z;
+		draw_module()->vertices()[i] += stride.x;
+		draw_module()->vertices()[i + 1] += stride.y;
+		draw_module()->vertices()[i + 2] += stride.z;
 	}
 }
 

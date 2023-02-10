@@ -9,20 +9,21 @@
 #include <fstream>
 
 
-namespace LEti {
-
-class Vertices final : public LEti::Buffer
+namespace LEti
 {
-public:
-	Vertices() : LEti::Buffer() {}
-	~Vertices();
 
-	void init(const float* const _coords, unsigned int _count);
+    class Vertices final : public LEti::Buffer
+    {
+    public:
+    Vertices() : LEti::Buffer() {}
+    ~Vertices();
 
-public:
-	unsigned int get_vertices_count() const;
+    void init(const float* const _coords, unsigned int _count);
 
-};
+    public:
+    unsigned int vertices_count() const;
+
+    };
 
 }
 

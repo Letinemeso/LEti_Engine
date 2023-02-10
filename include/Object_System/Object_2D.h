@@ -30,6 +30,9 @@ namespace LEti
 		unsigned int coords_count = 0;
 		float* coords = nullptr;
 
+        unsigned int colors_count = 0;
+        float* colors = nullptr;
+
 		unsigned int phys_coords_count = 0;
 		float* phys_coords = nullptr;
 

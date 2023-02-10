@@ -19,6 +19,9 @@ ADD_FIELD(float*, tcoords)
 ADD_FIELD(unsigned int, coords_count)
 ADD_FIELD(float*, coords)
 
+ADD_FIELD(unsigned int, colors_count)
+ADD_FIELD(float*, colors)
+
 ADD_FIELD(unsigned int, phys_coords_count)
 ADD_FIELD(float*, phys_coords)
 
@@ -291,10 +294,11 @@ void Object_2D::init(const LV::Variable_Base& _stub)
 	set_rotation_angle(stub->rotation_angle);
 
 	if(stub->tcoords && stub->coords)
-	{
+    {
 		create_draw_module();
 		m_draw_module->init_texture(Picture_Manager::get_picture(stub->texture_name), stub->tcoords, stub->tcoords_count);
 		m_draw_module->init_vertices(stub->coords, stub->coords_count);
+        m_draw_module->init_colors(stub->colors, stub->colors_count);
 	}
 
 	if(stub->phys_coords)

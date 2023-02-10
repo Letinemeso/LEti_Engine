@@ -7,7 +7,7 @@ void Debug_Line_Draw_Module::draw(const glm::mat4x4 &_translation, const glm::ma
 {
 	if (!m_visible) return;
 
-	L_ASSERT(!(m_vertex_array == 0 || m_vertices.get_vertices_count() == 0 || m_texture.size() == 0));
+    L_ASSERT(!(m_vertex_array == 0 || m_vertices.vertices_count() == 0 || m_texture.size() == 0 || m_colors.size() == 0));
 
 	LEti::Camera_2D::use();
 
@@ -16,7 +16,7 @@ void Debug_Line_Draw_Module::draw(const glm::mat4x4 &_translation, const glm::ma
 
 	glBindVertexArray(m_vertex_array);
 	LEti::Shader::set_texture(m_texture);
-	glDrawArrays(GL_LINES, 0, m_vertices.get_vertices_count());
+    glDrawArrays(GL_LINES, 0, m_vertices.vertices_count());
 
 	glBindVertexArray(0);
 }
@@ -80,30 +80,35 @@ void Debug_Drawable_Frame::update(float _ratio)
 
 	unsigned int total_coords_count = m_sequence.size() * 6;
 	unsigned int total_tex_coords_count = m_sequence.size() * 4;
-	draw_module()->get_vertices().free_memory();
-	draw_module()->get_vertices().allocate_memory(total_coords_count);
-	draw_module()->get_vertices().setup_buffer(0, 3);
+    draw_module()->vertices().free_memory();
+    draw_module()->vertices().allocate_memory(total_coords_count);
+    draw_module()->vertices().setup_buffer(0, 3);
 
 	for(unsigned int se=0; se<m_sequence.size() - 1; ++se)
 	{
 		for(unsigned int i=0; i<3; ++i)
 		{
-			draw_module()->get_vertices()[se * 6 + i] = m_points[m_sequence[se]][i];
-			draw_module()->get_vertices()[se * 6 + (i+3)] = m_points[m_sequence[se + 1]][i];
-		}
+            draw_module()->vertices()[se * 6 + i] = m_points[m_sequence[se]][i];
+            draw_module()->vertices()[se * 6 + (i+3)] = m_points[m_sequence[se + 1]][i];
+        }
 	}
 	for(unsigned int i=0; i<3; ++i)
 	{
-		draw_module()->get_vertices()[(m_sequence.size()-1) * 6 + i] = m_points[m_sequence[m_sequence.size()-1]][i];
-		draw_module()->get_vertices()[(m_sequence.size()-1) * 6 + (i+3)] = m_points[m_sequence[0]][i];
+        draw_module()->vertices()[(m_sequence.size()-1) * 6 + i] = m_points[m_sequence[m_sequence.size()-1]][i];
+        draw_module()->vertices()[(m_sequence.size()-1) * 6 + (i+3)] = m_points[m_sequence[0]][i];
 	}
 
-	draw_module()->get_texture().free_memory();
-	draw_module()->get_texture().allocate_memory(total_tex_coords_count);
-	draw_module()->get_texture().setup_buffer(1, 2);
+    draw_module()->colors().resize(draw_module()->vertices().size() / 3 * 4);
+    draw_module()->colors().setup_buffer(1, 4);
+    for(unsigned int i=0; i<draw_module()->vertices().size() / 3 * 4; ++i)
+        draw_module()->colors()[i] = 1.0f;
+
+    draw_module()->texture().free_memory();
+    draw_module()->texture().allocate_memory(total_tex_coords_count);
+    draw_module()->texture().setup_buffer(2, 2);
 
 	for(unsigned int i=0; i<total_tex_coords_count; ++i)
-		draw_module()->get_texture()[i] = 0.0f;
+        draw_module()->texture()[i] = 0.0f;
 
 	m_changes_were_made = false;
 }
