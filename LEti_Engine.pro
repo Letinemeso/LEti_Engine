@@ -54,8 +54,8 @@ HEADERS += \
     include/Math_Stuff.h \
     include/Object_System/Debug_Drawable_Frame.h \
     include/Object_System/Modules/Default_Draw_Module_2D.h \
-    include/Object_System/Modules/Default_Physics_Module_2D.h \
     include/Object_System/Modules/Draw_Module_Base.h \
+    include/Object_System/Modules/Dynamic_Physics_Module_2D.h \
     include/Object_System/Modules/Physics_Module_Base.h \
     include/Object_System/Modules/Physics_Module__Rigid_Body_2D.h \
     include/Object_System/Object_2D.h \
@@ -67,8 +67,8 @@ HEADERS += \
     include/Physics/Collision_Resolution__Rigid_Body_2D.h \
     include/Physics/Collision_Resolution__Rigid_Body_2D.h \
     include/Physics/Collision_Resolver.h \
-    include/Physics/Default_Narrow_CD.h \
     include/Physics/Default_Narrowest_CD.h \
+    include/Physics/Dynamic_Narrow_CD.h \
     include/Physics/Narrow_Phase_Interface.h \
     include/Physics/Narrowest_Phase_Interface.h \
     include/Physics/Physical_Model_2D.h \
@@ -90,8 +90,8 @@ SOURCES += \
     source/Math_Stuff.cpp \
     source/Object_System/Debug_Drawable_Frame.cpp \
     source/Object_System/Modules/Default_Draw_Module_2D.cpp \
-    source/Object_System/Modules/Default_Physics_Module_2D.cpp \
     source/Object_System/Modules/Draw_Module_Base.cpp \
+    source/Object_System/Modules/Dynamic_Physics_Module_2D.cpp \
     source/Object_System/Modules/Physics_Module_Base.cpp \
     source/Object_System/Modules/Physics_Module__Rigid_Body_2D.cpp \
     source/Object_System/Object_2D.cpp \
@@ -103,7 +103,7 @@ SOURCES += \
     source/Physics/Collision_Resolution__Rigid_Body_2D.cpp \
     source/Physics/Collision_Resolver.cpp \
     source/Physics/Collision_Resolver.cpp \
-    source/Physics/Default_Narrow_CD.cpp \
+    source/Physics/Dynamic_Narrow_CD.cpp \
     source/Physics/Default_Narrowest_CD.cpp \
     source/Physics/Narrow_Phase_Interface.cpp \
     source/Physics/Narrowest_Phase_Interface.cpp \

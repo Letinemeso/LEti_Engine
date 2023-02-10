@@ -333,7 +333,7 @@ const Default_Draw_Module_2D* Object_2D::draw_module() const
 void Object_2D::create_physics_module()
 {
 	remove_physics_module();
-	m_physics_module = new Default_Physics_Module_2D;
+	m_physics_module = new Dynamic_Physics_Module_2D;
 }
 
 void Object_2D::remove_physics_module()
@@ -342,12 +342,12 @@ void Object_2D::remove_physics_module()
 	m_physics_module = nullptr;
 }
 
-Default_Physics_Module_2D* Object_2D::physics_module()
+Dynamic_Physics_Module_2D* Object_2D::physics_module()
 {
 	return m_physics_module;
 }
 
-const Default_Physics_Module_2D* Object_2D::physics_module() const
+const Dynamic_Physics_Module_2D* Object_2D::physics_module() const
 {
 	return m_physics_module;
 }

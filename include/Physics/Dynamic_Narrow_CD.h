@@ -1,5 +1,5 @@
-#ifndef __DEFAULT_NARROW_CD
-#define __DEFAULT_NARROW_CD
+#ifndef __DYNAMIC_NARROW_CD
+#define __DYNAMIC_NARROW_CD
 
 #include "Narrow_Phase_Interface.h"
 
@@ -7,7 +7,7 @@
 namespace LEti
 {
 
-	class Default_Narrow_CD : public Narrow_Phase_Interface
+    class Dynamic_Narrow_CD : public Narrow_Phase_Interface
 	{
 	private:
 		Collision_Data_List__Models m_collisions__models;
@@ -42,4 +42,4 @@ namespace LEti
 }
 
 
-#endif // __DEFAULT_NARROW_CD
+#endif // __DYNAMIC_NARROW_CD

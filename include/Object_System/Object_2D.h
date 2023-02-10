@@ -5,7 +5,7 @@
 
 #include "Object_Base.h"
 #include "Modules/Default_Draw_Module_2D.h"
-#include "Modules/Default_Physics_Module_2D.h"
+#include "Modules/Dynamic_Physics_Module_2D.h"
 #include "Picture_Manager.h"
 
 
@@ -43,7 +43,7 @@ namespace LEti
 
 	protected:
 		Default_Draw_Module_2D* m_draw_module = nullptr;
-		Default_Physics_Module_2D* m_physics_module = nullptr;
+		Dynamic_Physics_Module_2D* m_physics_module = nullptr;
 
 	protected:
 		struct Transformation_Data
@@ -110,8 +110,8 @@ namespace LEti
 
 		virtual void create_physics_module();
 		void remove_physics_module();
-		Default_Physics_Module_2D* physics_module();
-		const Default_Physics_Module_2D* physics_module() const;
+		Dynamic_Physics_Module_2D* physics_module();
+		const Dynamic_Physics_Module_2D* physics_module() const;
 
 	public:
 		virtual void revert_to_previous_state();

@@ -25,9 +25,7 @@ void Space_Hasher_2D::update_border(const objects_list& _registred_objects)
 
 	std::list<const LEti::Object_2D*>::const_iterator model_it = _registred_objects.begin();
 
-	const Geometry_2D::Rectangular_Border& first_rb = (*model_it)->physics_module()->is_dynamic() ?
-				(*model_it)->physics_module()->get_dynamic_rb() :
-				(*model_it)->physics_module()->get_physical_model()->curr_rect_border();
+    const Geometry_2D::Rectangular_Border& first_rb = (*model_it)->physics_module()->rectangular_border();
 	float max_left = first_rb.left;
 	float max_right = first_rb.right;
 	float max_top = first_rb.top;
@@ -42,9 +40,7 @@ void Space_Hasher_2D::update_border(const objects_list& _registred_objects)
 			continue;
 		}
 
-		const Geometry_2D::Rectangular_Border& rb = (*model_it)->physics_module()->is_dynamic() ?
-					(*model_it)->physics_module()->get_dynamic_rb() :
-					(*model_it)->physics_module()->get_physical_model()->curr_rect_border();
+        const Geometry_2D::Rectangular_Border& rb = (*model_it)->physics_module()->rectangular_border();
 
 		if(rb.left < max_left) max_left = rb.left;
 		if(rb.right > max_right) max_right = rb.right;
@@ -79,8 +75,7 @@ void Space_Hasher_2D::hash_objects(const objects_list& _registred_objects)
 	objects_list::const_iterator model_it = _registred_objects.cbegin();
 	while(model_it != _registred_objects.end())
 	{
-		const Geometry_2D::Rectangular_Border& curr_rb = (*model_it)->physics_module()->is_dynamic() ?
-					(*model_it)->physics_module()->get_dynamic_rb() : (*model_it)->physics_module()->get_physical_model()->curr_rect_border();
+        const Geometry_2D::Rectangular_Border& curr_rb = (*model_it)->physics_module()->rectangular_border();
 
 		unsigned int min_index_x = (unsigned int)((curr_rb.left - m_space_borders.min_x) / m_space_borders.width * m_precision);
 		unsigned int max_index_x = (unsigned int)((curr_rb.right - m_space_borders.min_x) / m_space_borders.width * m_precision);
