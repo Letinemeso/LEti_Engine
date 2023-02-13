@@ -17,8 +17,7 @@ namespace LEti
 		virtual ~Object_Base() { }
 
 	public:
-		virtual void update(float _ratio = 1.0f) = 0;
-		virtual void draw() const = 0;
+        virtual void update(float _ratio = 1.0f) = 0;
 
 	};
 

@@ -50,6 +50,7 @@ DISTFILES += \
 HEADERS += \
     include/Buffer.h \
     include/Camera_2D.h \
+    include/Camera_Base.h \
     include/Colors.h \
     include/Event_Controller.h \
     include/Math_Stuff.h \
@@ -78,6 +79,7 @@ HEADERS += \
     include/Physics/Space_Hasher_2D.h \
     include/Picture.h \
     include/Picture_Manager.h \
+    include/Renderer.h \
     include/Shader.h \
     include/Texture.h \
     include/Timer.h \
@@ -87,6 +89,7 @@ HEADERS += \
 SOURCES += \
     source/Buffer.cpp \
     source/Camera_2D.cpp \
+    source/Camera_Base.cpp \
     source/Colors.cpp \
     source/Event_Controller.cpp \
     source/Math_Stuff.cpp \
@@ -115,6 +118,7 @@ SOURCES += \
     source/Physics/Space_Hasher_2D.cpp \
     source/Picture.cpp \
     source/Picture_Manager.cpp \
+    source/Renderer.cpp \
     source/Shader.cpp \
     source/Texture.cpp \
     source/Timer.cpp \

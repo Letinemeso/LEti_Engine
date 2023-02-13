@@ -52,10 +52,7 @@ namespace LEti
 
 	public:
 		void set_text(const char* _text);
-		const std::unsigned_string& get_text() const;
-
-	public:
-		void draw() const override;
+        const std::unsigned_string& get_text() const;
 
 	};
 

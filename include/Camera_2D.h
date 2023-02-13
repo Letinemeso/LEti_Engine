@@ -5,40 +5,36 @@
 #include "mat4x4.hpp"
 #include "../OpenGL/GLM/gtx/transform.hpp"
 
+#include <Camera_Base.h>
+
 #include <Shader.h>
 #include <Event_Controller.h>
 
-namespace LEti {
+namespace LEti
+{
 
-	class Camera_2D
+    class Camera_2D : public Camera_Base
 	{
 	private:
-		static glm::vec3 m_position;
-		static float m_view_scale;
+        glm::vec3 m_position;
+        float m_view_scale;
+
+    public:
+        Camera_2D();
+        Camera_2D(const Camera_2D& _other);
 
 	private:
-		static glm::mat4x4 m_matrix;
-
-	private:
-		static void M_update_matrix();
-
-	private:
-		Camera_2D() = delete;
-		Camera_2D(const Camera_2D&) = delete;
-		Camera_2D(Camera_2D&&) = delete;
+        void M_update_matrix();
 
 	public:
-		static void set_position(const glm::vec3& _position);
-		static void set_view_scale(float _scale);
+        void set_position(const glm::vec3& _position);
+        void set_view_scale(float _scale);
 
 	public:
-		static const glm::vec3& position();
-		static float view_scale();
+        inline const glm::vec3& position() const { return m_position; }
+        inline float view_scale() const { return m_view_scale; }
 
-		static glm::vec3 convert_window_coords(const glm::vec3& _window_coords);
-
-	public:
-		static void use();
+        glm::vec3 convert_window_coords(const glm::vec3& _window_coords) const;
 
 	};
 

@@ -3,26 +3,6 @@
 using namespace LEti;
 
 
-void Debug_Line_Draw_Module::draw(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 _scale) const
-{
-	if (!m_visible) return;
-
-    L_ASSERT(!(m_vertex_array == 0 || m_vertices.vertices_count() == 0 || m_texture.size() == 0 || m_colors.size() == 0));
-
-	LEti::Camera_2D::use();
-
-	glm::mat4x4 result_matrix = _translation * _rotation * _scale;
-	LEti::Shader::set_transform_matrix(result_matrix);
-
-	glBindVertexArray(m_vertex_array);
-	LEti::Shader::set_texture(m_texture);
-    glDrawArrays(GL_LINES, 0, m_vertices.vertices_count());
-
-	glBindVertexArray(0);
-}
-
-
-
 Debug_Drawable_Frame& Debug_Drawable_Frame::set_point(unsigned int _index, const glm::vec3 &_point)
 {
 	if(_index >= m_points.size())

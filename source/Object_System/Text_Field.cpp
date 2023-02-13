@@ -109,12 +109,3 @@ const std::unsigned_string& Text_Field::get_text() const
 {
 	return text;
 }
-
-
-
-void Text_Field::draw() const
-{
-    if (text.size() == 0)
-        return;
-    Object_2D::draw();
-}

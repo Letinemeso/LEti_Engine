@@ -3,9 +3,6 @@
 
 #include <glew.h>
 
-#include <Texture.h>
-#include <Vertices.h>
-#include <Colors.h>
 #include <Shader.h>
 #include <Camera_2D.h>
 
@@ -17,15 +14,6 @@ namespace LEti
 
     class Default_Draw_Module_2D : public Draw_Module_Base
     {
-    protected:
-        bool m_visible = true;
-
-        unsigned int m_vertex_array = 0;
-
-        LEti::Texture m_texture;
-        LEti::Vertices m_vertices;
-        LEti::Colors m_colors;
-
     public:
         Default_Draw_Module_2D();
         ~Default_Draw_Module_2D();
@@ -39,12 +27,7 @@ namespace LEti
         void set_texture_coords(const float* _tc, unsigned int _tc_count);
 
     public:
-        void draw(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4 _scale) const override;
-
-    public:
-        inline LEti::Texture& texture() { return m_texture; }
-        inline LEti::Vertices& vertices() { return m_vertices; }
-        inline LEti::Colors& colors() { return m_colors; }
+        inline unsigned int gl_draw_mode() const override { return GL_TRIANGLES; }
 
     };
 

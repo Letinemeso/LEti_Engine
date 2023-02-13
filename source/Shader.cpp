@@ -3,17 +3,59 @@
 using namespace LEti;
 
 
-bool Shader::m_initialized = false;
+Shader::Shader()
+{
 
-int Shader::m_projection_matrix_uniform = -1;
-int Shader::m_transform_matrix_uniform = -1;
-int Shader::m_texture_uniform = -1;
+}
 
-unsigned int Shader::m_vertex_shader = 0, Shader::m_fragment_shader = 0;
-unsigned int Shader::m_program = 0;
+Shader::Shader(Shader&& _other)
+{
+    m_vertex_shader = _other.m_vertex_shader;
+    _other.m_vertex_shader = 0;
+    m_fragment_shader = _other.m_fragment_shader;
+    _other.m_fragment_shader = 0;
+    m_program = _other.m_program;
+    _other.m_program = 0;
+
+    m_projection_matrix_uniform = _other.m_projection_matrix_uniform;
+    _other.m_projection_matrix_uniform = -1;
+    m_transform_matrix_uniform = _other.m_transform_matrix_uniform;
+    _other.m_transform_matrix_uniform = -1;
+    m_texture_uniform = _other.m_texture_uniform;
+    _other.m_texture_uniform = -1;
+}
+
+void Shader::operator=(Shader&& _other)
+{
+    m_vertex_shader = _other.m_vertex_shader;
+    _other.m_vertex_shader = 0;
+    m_fragment_shader = _other.m_fragment_shader;
+    _other.m_fragment_shader = 0;
+    m_program = _other.m_program;
+    _other.m_program = 0;
+
+    m_projection_matrix_uniform = _other.m_projection_matrix_uniform;
+    _other.m_projection_matrix_uniform = -1;
+    m_transform_matrix_uniform = _other.m_transform_matrix_uniform;
+    _other.m_transform_matrix_uniform = -1;
+    m_texture_uniform = _other.m_texture_uniform;
+    _other.m_texture_uniform = -1;
+}
 
 
-void Shader::M_get_shader_source(const std::string& _path, char*& _result_buffer, unsigned int* _result_size)
+Shader::~Shader()
+{
+    if(m_program > 0)
+        glDeleteProgram(m_program);
+    if(m_vertex_shader > 0)
+        glDeleteShader(m_vertex_shader);
+    if(m_fragment_shader > 0)
+        glDeleteShader(m_fragment_shader);
+}
+
+
+
+void Shader::M_get_shader_source(const std::string& _path, char*& _result_buffer, unsigned int* _result_size) const
 {
     std::ifstream file(_path, std::ios::binary);
 
@@ -42,7 +84,7 @@ void Shader::M_get_shader_source(const std::string& _path, char*& _result_buffer
 	file.close();
 }
 
-void Shader::M_shader_debug(unsigned int _shader)
+void Shader::M_shader_debug(unsigned int _shader) const
 {
 	int result = 0;
 	glGetShaderiv(_shader, GL_COMPILE_STATUS, &result);
@@ -58,7 +100,7 @@ void Shader::M_shader_debug(unsigned int _shader)
 	}
 }
 
-void Shader::M_program_debug(unsigned int _program)
+void Shader::M_program_debug(unsigned int _program) const
 {
 	int result = 0;
 	glGetProgramiv(_program, GL_LINK_STATUS, &result);
@@ -76,7 +118,7 @@ void Shader::M_program_debug(unsigned int _program)
 
 
 
-void Shader::init_shader(const std::string& _v_path, const std::string& _f_path)
+void Shader::init(const std::string& _v_path, const std::string& _f_path)
 {
     glDeleteShader(m_vertex_shader);
     glDeleteShader(m_fragment_shader);
@@ -107,44 +149,42 @@ void Shader::init_shader(const std::string& _v_path, const std::string& _f_path)
     glLinkProgram(m_program);
     L_DEBUG_FUNC_1ARG(M_program_debug, m_program);
     glUseProgram(m_program);
-
-    m_initialized = true;
 }
 
-void Shader::set_projection_matrix_uniform_name(const std::string& _name)
+void Shader::set_projection_matrix_uniform(const std::string& _name)
 {
     m_projection_matrix_uniform = glGetUniformLocation(m_program, _name.c_str());
     L_ASSERT(m_projection_matrix_uniform != -1);
 }
 
-void Shader::set_transform_matrix_uniform_name(const std::string& _name)
+void Shader::set_transform_matrix_uniform(const std::string& _name)
 {
     m_transform_matrix_uniform = glGetUniformLocation(m_program, _name.c_str());
     L_ASSERT(m_transform_matrix_uniform != -1);
 }
 
-void Shader::set_texture_uniform_name(const std::string& _name)
+void Shader::set_texture_uniform(const std::string& _name)
 {
     m_texture_uniform = glGetUniformLocation(m_program, _name.c_str());
     L_ASSERT(m_texture_uniform != -1);
 }
 
 
-void Shader::set_projection_matrix(glm::mat4x4& _matrix)
+void Shader::set_projection_matrix(const glm::mat4x4& _matrix) const
 {
     L_ASSERT(m_projection_matrix_uniform != -1);
 
     glUniformMatrix4fv(m_projection_matrix_uniform, 1, false, &_matrix[0][0]);
 }
 
-void Shader::set_transform_matrix(glm::mat4x4& _matrix)
+void Shader::set_transform_matrix(const glm::mat4x4& _matrix) const
 {
     L_ASSERT(m_transform_matrix_uniform != -1);
 
     glUniformMatrix4fv(m_transform_matrix_uniform, 1, false, &_matrix[0][0]);
 }
 
-void Shader::set_texture(const LEti::Texture& _texture)
+void Shader::set_texture(const LEti::Texture& _texture) const
 {
     L_ASSERT(m_texture_uniform != -1);
 	

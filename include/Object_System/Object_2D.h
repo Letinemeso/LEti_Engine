@@ -119,8 +119,7 @@ namespace LEti
 	public:
 		virtual void revert_to_previous_state();
 		virtual void update_previous_state();
-		void update(float _ratio = 1.0f) override;
-		void draw() const override;
+        void update(float _ratio = 1.0f) override;
 
 	};
 

@@ -12,41 +12,41 @@
 #include <string>
 
 
-namespace LEti {
+namespace LEti
+{
 
 	class Shader
-	{
+    {
 	private:
-        static bool m_initialized;
-
-	private:
-        static unsigned int m_vertex_shader, m_fragment_shader;
-        static unsigned int m_program;
+        unsigned int m_vertex_shader = 0, m_fragment_shader = 0;
+        unsigned int m_program = 0;
 
     private:
-        static int m_projection_matrix_uniform, m_transform_matrix_uniform, m_texture_uniform;
+        int m_projection_matrix_uniform = -1, m_transform_matrix_uniform = -1, m_texture_uniform = -1;
+
+    public:
+        Shader();
+        Shader(Shader&& _other);
+        void operator=(Shader&& _other);
+        Shader(const Shader&) = delete;
+        void operator=(const Shader&) = delete;
+
+        ~Shader();
 
 	private:
-        static void M_get_shader_source(const std::string& _path, char*& _buffer, unsigned int* _size);
-        static void M_shader_debug(unsigned int _shader);
-        static void M_program_debug(unsigned int _program);
+        void M_get_shader_source(const std::string& _path, char*& _buffer, unsigned int* _size) const;
+        void M_shader_debug(unsigned int _shader) const;
+        void M_program_debug(unsigned int _program) const;
 
 	public:
-		Shader() = delete;
-		Shader(Shader&&) = delete;
-		void operator=(Shader&&) = delete;
-		Shader(const Shader&) = delete;
-		void operator=(const Shader&) = delete;
+        void init(const std::string& _v_path, const std::string& _f_path);
+        void set_projection_matrix_uniform(const std::string& _name);
+        void set_transform_matrix_uniform(const std::string& _name);
+        void set_texture_uniform(const std::string& _name);
 
-	public:
-        static void init_shader(const std::string& _v_path, const std::string& f_path);
-        static void set_projection_matrix_uniform_name(const std::string& _name);
-        static void set_transform_matrix_uniform_name(const std::string& _name);
-        static void set_texture_uniform_name(const std::string& _name);
-
-		static void set_projection_matrix(glm::mat4x4& _matrix);
-		static void set_transform_matrix(glm::mat4x4& _matrix);
-		static void set_texture(const LEti::Texture& _texture);
+        void set_projection_matrix(const glm::mat4x4& _matrix) const;
+        void set_transform_matrix(const glm::mat4x4& _matrix) const;
+        void set_texture(const LEti::Texture& _texture) const;
 	};
 
 }	//LEti

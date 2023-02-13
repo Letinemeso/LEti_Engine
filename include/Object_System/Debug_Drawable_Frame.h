@@ -6,12 +6,13 @@
 #include <vector>
 
 
-namespace LEti {
+namespace LEti
+{
 
 	class Debug_Line_Draw_Module : public Default_Draw_Module_2D
 	{
-	public:
-		void draw(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 _scale) const override;
+    public:
+        inline unsigned int gl_draw_mode() const override { return GL_LINES; }
 
 	};
 

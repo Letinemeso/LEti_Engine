@@ -3,9 +3,17 @@
 using namespace LEti;
 
 
-glm::vec3 Camera_2D::m_position = {0.0f, 0.0f, 0.0f};
-float Camera_2D::m_view_scale = 1.0f;
-glm::mat4x4 Camera_2D::m_matrix;
+Camera_2D::Camera_2D()
+{
+
+}
+
+Camera_2D::Camera_2D(const Camera_2D& _other)
+{
+    m_position = _other.m_position;
+    m_view_scale = _other.m_view_scale;
+    m_matrix = _other.m_matrix;
+}
 
 
 
@@ -40,18 +48,7 @@ void Camera_2D::set_view_scale(float _scale)
 
 
 
-const glm::vec3& Camera_2D::position()
-{
-	return m_position;
-}
-
-float Camera_2D::view_scale()
-{
-	return m_view_scale;
-}
-
-
-glm::vec3 Camera_2D::convert_window_coords(const glm::vec3 &_window_coords)
+glm::vec3 Camera_2D::convert_window_coords(const glm::vec3 &_window_coords) const
 {
 	glm::vec3 result(0.0f, 0.0f, 0.0f);
 
@@ -68,11 +65,4 @@ glm::vec3 Camera_2D::convert_window_coords(const glm::vec3 &_window_coords)
 	result.y = view_height * ratio_y + bottom_edge;
 
 	return result;
-}
-
-
-
-void Camera_2D::use()
-{
-	LEti::Shader::set_projection_matrix(m_matrix);
 }
