@@ -37,9 +37,9 @@ void Renderer::draw(const Draw_Module_Base &_what) const
 
     m_shader->set_projection_matrix(m_camera->matrix());
     m_shader->set_transform_matrix(_what.transform_matrix());
+    m_shader->set_texture(_what.texture());
 
     glBindVertexArray(_what.vertex_array());
-    m_shader->set_texture(_what.texture());
 
     glDrawArrays(_what.gl_draw_mode(), 0, _what.vertices().vertices_count());
 

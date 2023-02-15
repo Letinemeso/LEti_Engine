@@ -37,6 +37,7 @@ void Text_Field::init(const LV::Variable_Base &_stub)
 	sequence = *(std::unsigned_string*)&stub->sequence;
 
 	create_draw_module();
+
 	draw_module()->set_texture(Picture_Manager::get_picture(stub->font_texture));
 	text_tex_coords.first = stub->tcoords;
 	text_tex_coords.second = stub->tcoords_count;
@@ -94,15 +95,14 @@ void Text_Field::set_text(const char* _text)
 	for (unsigned int i = 2; i < text.size() * cpc; i += 3)
 		temp_coords[i] = 0.0f;
     m_draw_module->init_vertices(temp_coords, text.size() * cpc);
+    delete[] temp_coords;
 
-    unsigned int colors_count = m_draw_module->vertices().size() / 3 * 4;
+    unsigned int colors_count = text.size() * colorpc;
     float* colors = new float[colors_count];
     for(unsigned int i=0; i<colors_count; ++i)
         colors[i] = 1.0f;
     m_draw_module->init_colors(colors, colors_count);
     delete[] colors;
-
-	delete[] temp_coords;
 }
 
 const std::unsigned_string& Text_Field::get_text() const
