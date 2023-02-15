@@ -74,12 +74,14 @@ bool Math::is_digit(char _c)
 
 float Math::angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& _second)
 {
-	L_ASSERT(!(vector_length(_first) == 0 ||  vector_length(_second) == 0));
-	if(vector_length(_first) == 0 ||  vector_length(_second) == 0)
+    float length_1 = vector_length(_first),
+          length_2 = vector_length(_second);
+
+    if(length_1 == 0 || length_2 == 0)
 		return 0.0f;
 
 	float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
-	float divider = vector_length(_first) * vector_length(_second);
+    float divider = length_1 * length_2;
 	return divident / divider;
 }
 

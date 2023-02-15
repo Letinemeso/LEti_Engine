@@ -45,19 +45,32 @@ float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const P
 }
 
 
+float Collision_Resolution__Rigid_Body_2D::M_calculate_kinetic_energy(const Rigid_Body_2D &_model) const
+{
+    float velocity = Math::vector_length(_model.velocity());
+
+    float movemental = (_model.mass() * velocity * velocity) / 2.0f;
+    float rotational = (M_calculate_moment_of_inertia(*_model.physics_module()->get_physical_model(), _model.mass()) * _model.angular_velocity() * _model.angular_velocity()) / 2.0f;
+
+    return movemental + rotational;
+}
+
+
 
 bool Collision_Resolution__Rigid_Body_2D::resolve(const Physical_Model_2D::Intersection_Data &_id)
 {
 	LEti::Rigid_Body_2D* bodyA = LV::cast_variable<Rigid_Body_2D>((Object_2D*)_id.first);	//	too lazy to figure out appropriate way to pass non-const pointer here
 	LEti::Rigid_Body_2D* bodyB = LV::cast_variable<Rigid_Body_2D>((Object_2D*)_id.second);
 
+    if(!bodyA || !bodyB)
+        return false;
+
+    float ke_before = M_calculate_kinetic_energy(*bodyA) + M_calculate_kinetic_energy(*bodyB);
+
 	bodyA->revert_to_previous_state();
 	bodyA->update(_id.time_of_intersection_ratio);
 	bodyB->revert_to_previous_state();
-	bodyB->update(_id.time_of_intersection_ratio);
-
-	if(!bodyA || !bodyB)
-		return false;
+    bodyB->update(_id.time_of_intersection_ratio);
 
 	float e = 1.0f;
 
@@ -103,6 +116,20 @@ bool Collision_Resolution__Rigid_Body_2D::resolve(const Physical_Model_2D::Inter
 	bodyA->apply_rotation(-avA);
 	bodyB->apply_linear_impulse(impulse / bodyB->mass());
 	bodyB->apply_rotation(avB);
+
+    float ke_after = M_calculate_kinetic_energy(*bodyA) + M_calculate_kinetic_energy(*bodyB);   //  attempt to fix increase of models' velocities after some collisions. and it seems to work fine!
+
+    if(!Math::floats_are_equal(ke_after, 0.0f) && !Math::floats_are_equal(ke_before, 0.0f))
+    {
+        float ratio_sqrt = sqrtf(ke_before / ke_after);
+
+        bodyA->set_velocity(bodyA->velocity() * ratio_sqrt);
+        bodyA->set_angular_velocity(bodyA->angular_velocity() * ratio_sqrt);
+        bodyB->set_velocity(bodyB->velocity() * ratio_sqrt);
+        bodyB->set_angular_velocity(bodyB->angular_velocity() * ratio_sqrt);
+    }
+
+    float ke_after_fix = M_calculate_kinetic_energy(*bodyA) + M_calculate_kinetic_energy(*bodyB);
 
 	return true;
 }
