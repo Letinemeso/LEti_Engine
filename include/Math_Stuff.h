@@ -26,6 +26,8 @@ namespace Math {
 
     void extend_vector_to_length(glm::vec3& _vec, float _length);
 
+    glm::vec3 extend_vector_to_length(const glm::vec3& _vec, float _length);
+
     float get_distance(const glm::vec3& _first, const glm::vec3& _second);
 
     glm::vec3 normalize(const glm::vec3& _first, const glm::vec3& _second);
@@ -51,6 +53,8 @@ namespace Math {
 	bool floats_are_equal(float _first, float _second, float _precision = 0.0001f);
 
 	bool vecs_are_equal(const glm::vec3& _first, const glm::vec3& _second);
+
+    unsigned int random_number(unsigned int _lower_limimt = 0, unsigned int _upper_limit = 0xFFFFFFFF);
 
 }	/*Math*/
 

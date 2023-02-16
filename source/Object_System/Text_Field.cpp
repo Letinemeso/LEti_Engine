@@ -61,7 +61,8 @@ void Text_Field::set_text(const char* _text)
 {
 	text = (const unsigned char*)_text;
 
-	if (text.size() == 0) return;
+    if (text.size() == 0)
+        return;
 
 	float* temp_coords = new float[text.size() * tcpc];
 	for (unsigned int i = 0; i < text.size(); ++i)

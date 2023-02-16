@@ -26,6 +26,14 @@ void Math::extend_vector_to_length(glm::vec3& _vec, float _length)
 	_vec *= _length;
 }
 
+glm::vec3 Math::extend_vector_to_length(const glm::vec3& _vec, float _length)
+{
+    glm::vec3 result = _vec;
+    shrink_vector_to_1(result);
+    result *= _length;
+    return result;
+}
+
 float Math::get_distance(const glm::vec3& _first, const glm::vec3& _second)
 {
 	if (_first == _second)
@@ -112,6 +120,14 @@ bool Math::floats_are_equal(float _first, float _second, float _precision)
 bool Math::vecs_are_equal(const glm::vec3& _first, const glm::vec3& _second)
 {
 	return floats_are_equal(_first.x, _second.x) && floats_are_equal(_first.y, _second.y) && floats_are_equal(_first.z, _second.z);
+}
+
+unsigned int Math::random_number(unsigned int _lower_limimt, unsigned int _upper_limit)
+{
+    L_ASSERT(_upper_limit > _lower_limimt);
+
+    unsigned int limit = _upper_limit - _lower_limimt;
+    return rand() % limit + _lower_limimt;
 }
 
 
