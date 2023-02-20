@@ -282,6 +282,8 @@ bool Object_2D::moved_since_last_frame() const
 
 void Object_2D::init(const LV::Variable_Base& _stub)
 {
+    assign_values({});
+
 	remove_draw_module();
 	remove_physics_module();
 
