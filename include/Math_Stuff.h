@@ -190,6 +190,8 @@ namespace Geometry_2D {
 
 	void rotate_perpendicular_ccw(glm::vec3& _vec);
 
+    bool vec_points_left(const glm::vec3& _vec, const glm::vec3& _from);
+
 }	/*Geometry_2D*/
 
 }	/*LEti*/

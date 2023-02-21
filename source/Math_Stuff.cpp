@@ -586,6 +586,11 @@ void Geometry_2D::rotate_perpendicular_ccw(glm::vec3& _vec)
 	_vec.y = x;
 }
 
+bool Geometry_2D::vec_points_left(const glm::vec3& _vec, const glm::vec3& _from)
+{
+    return (_vec.x * _from.y - _vec.y * _from.x) < 0.0f;
+}
+
 
 
 
