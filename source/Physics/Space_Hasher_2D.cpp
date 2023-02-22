@@ -25,15 +25,21 @@ void Space_Hasher_2D::update_border(const objects_list& _registred_objects)
 
 	std::list<const LEti::Object_2D*>::const_iterator model_it = _registred_objects.begin();
 
-    const Geometry_2D::Rectangular_Border& first_rb = (*model_it)->physics_module()->rectangular_border();
-	float max_left = first_rb.left;
-	float max_right = first_rb.right;
-	float max_top = first_rb.top;
-	float max_bottom = first_rb.bottom;
-	++model_it;
+    bool rb_inited = false;
+
+    float max_left = 0.0f;
+    float max_right = 0.0f;
+    float max_top = 0.0f;
+    float max_bottom = 0.0f;
 
 	while(model_it != _registred_objects.end())
 	{
+        if(!(*model_it)->physics_module())
+        {
+            ++model_it;
+            continue;
+        }
+
 		if((*model_it)->physics_module()->can_collide() == false)
 		{
 			++model_it;
@@ -42,10 +48,21 @@ void Space_Hasher_2D::update_border(const objects_list& _registred_objects)
 
         const Geometry_2D::Rectangular_Border& rb = (*model_it)->physics_module()->rectangular_border();
 
-		if(rb.left < max_left) max_left = rb.left;
-		if(rb.right > max_right) max_right = rb.right;
-		if(rb.top > max_top) max_top = rb.top;
-		if(rb.bottom < max_bottom) max_bottom = rb.bottom;
+        if(!rb_inited)
+        {
+            max_left = rb.left;
+            max_right = rb.right;
+            max_top = rb.top;
+            max_bottom = rb.bottom;
+            rb_inited = true;
+        }
+        else
+        {
+            if(rb.left < max_left) max_left = rb.left;
+            if(rb.right > max_right) max_right = rb.right;
+            if(rb.top > max_top) max_top = rb.top;
+            if(rb.bottom < max_bottom) max_bottom = rb.bottom;
+        }
 
 		++model_it;
 	}
@@ -75,6 +92,12 @@ void Space_Hasher_2D::hash_objects(const objects_list& _registred_objects)
 	objects_list::const_iterator model_it = _registred_objects.cbegin();
 	while(model_it != _registred_objects.end())
 	{
+        if(!(*model_it)->physics_module())
+        {
+            ++model_it;
+            continue;
+        }
+
         const Geometry_2D::Rectangular_Border& curr_rb = (*model_it)->physics_module()->rectangular_border();
 
 		unsigned int min_index_x = (unsigned int)((curr_rb.left - m_space_borders.min_x) / m_space_borders.width * m_precision);
