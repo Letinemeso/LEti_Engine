@@ -21,7 +21,8 @@ namespace LEti {
 
 		void update();
 
-		bool is_active() const;
+        inline bool is_active() const { return m_active; }
+        inline float time_left() const { return m_alarm_time - m_current_time; }
 
 	};
 

@@ -19,13 +19,10 @@ void Timer::reset()
 
 void Timer::update()
 {
-	if(!m_active) return;
+    if(!m_active)
+        return;
+
 	m_current_time += LEti::Event_Controller::get_dt();
-	if(m_current_time >= m_alarm_time) reset();
-}
-
-
-bool Timer::is_active() const
-{
-	return m_active;
+    if(m_current_time >= m_alarm_time)
+        reset();
 }
