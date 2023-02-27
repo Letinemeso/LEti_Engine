@@ -34,7 +34,7 @@ void Text_Field::init(const LV::Variable_Base &_stub)
 	remove_draw_module();
 	remove_physics_module();
 
-	sequence = *(std::unsigned_string*)&stub->sequence;
+    sequence = stub->sequence;
 
 	create_draw_module();
 
@@ -57,9 +57,9 @@ void Text_Field::init(const LV::Variable_Base &_stub)
 
 
 
-void Text_Field::set_text(const char* _text)
+void Text_Field::set_text(const std::string& _text)
 {
-	text = (const unsigned char*)_text;
+    text = _text;
 
     if (text.size() == 0)
         return;
@@ -106,7 +106,7 @@ void Text_Field::set_text(const char* _text)
     delete[] colors;
 }
 
-const std::unsigned_string& Text_Field::get_text() const
+const std::string& Text_Field::get_text() const
 {
 	return text;
 }
