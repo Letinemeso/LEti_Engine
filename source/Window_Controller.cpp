@@ -17,6 +17,12 @@ void Window_Controller::create_window(unsigned int _width, unsigned int _height,
 	glfwMakeContextCurrent(m_window);
 	glewInit();
 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_CW);
+
 	glfwSetWindowSizeLimits(m_window, _width, _height, _width, _height);
 
 	L_ASSERT(!(m_window == nullptr));
