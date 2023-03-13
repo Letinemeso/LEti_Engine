@@ -22,12 +22,12 @@ void Texture::init(const Picture* _picture, const float* const _tex_coords, unsi
 
 void Texture::set_picture(const Picture* _picture)
 {
-	glDeleteTextures(1, &texture_object);
+	glDeleteTextures(1, &m_texture_object);
 
 	m_picture = _picture;
 
-	glGenTextures(1, &texture_object);
-	glBindTexture(GL_TEXTURE_2D, texture_object);
+	glGenTextures(1, &m_texture_object);
+	glBindTexture(GL_TEXTURE_2D, m_texture_object);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -45,7 +45,7 @@ void Texture::set_texture_coords(const float* const _tex_coords, unsigned int _t
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &texture_object);
+	glDeleteTextures(1, &m_texture_object);
 }
 
 
@@ -59,6 +59,6 @@ const Picture* Texture::get_picture() const
 
 void Texture::bind() const
 {
-	L_ASSERT(!(texture_object == 0 || buffer_size == 0 || buffer == 0 || buffer_data == 0));
-	glBindTexture(GL_TEXTURE_2D, texture_object);
+	L_ASSERT(!(m_texture_object == 0 || buffer_size == 0 || buffer == 0 || buffer_data == 0));
+	glBindTexture(GL_TEXTURE_2D, m_texture_object);
 }

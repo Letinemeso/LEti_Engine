@@ -4,7 +4,8 @@
 #include "L_Debug/L_Debug.h"
 
 
-namespace LEti {
+namespace LEti
+{
 
     class Picture
     {
@@ -14,7 +15,7 @@ namespace LEti {
 
     private:
         Picture() {}
-		friend Picture* load_picture(const char* _path);
+        friend Picture* load_picture(const std::string& _path);
 
     public:
         Picture(Picture&& _from);
@@ -27,7 +28,7 @@ namespace LEti {
 
     };
 
-	Picture* load_picture(const char* _path);
+    Picture* load_picture(const std::string& _path);
 
 } /*LEti*/
 

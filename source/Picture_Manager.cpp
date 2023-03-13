@@ -34,7 +34,7 @@ namespace LEti
 
 
 
-		LDS::Map<std::string, Picture*> m_pictures;
+        static LDS::Map<std::string, Picture*> m_pictures;
 
 		void add_picture(const std::string& _name, Picture* _picture)
 		{
