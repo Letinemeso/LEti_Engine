@@ -20,23 +20,16 @@ namespace LEti
 
 	public:
 		glm::vec3 position, scale, rotation_axis;
-		float rotation_angle;
+        float rotation_angle;
 
-		std::string texture_name;
+        bool enable_draw_module = false;
+        Draw_Module_Base_Stub* draw_module = nullptr;
+        bool enable_physics_module = false;
+        Physics_Module_Base_Stub* physics_module = nullptr;
 
-		unsigned int tcoords_count = 0;
-		float* tcoords = nullptr;
+    public:
+        ~Object_2D_Stub();
 
-		unsigned int coords_count = 0;
-		float* coords = nullptr;
-
-        unsigned int colors_count = 0;
-        float* colors = nullptr;
-
-		unsigned int phys_coords_count = 0;
-		float* phys_coords = nullptr;
-
-		bool* collision_permissions = nullptr;
 	};
 
 	class Object_2D : public Object_Base

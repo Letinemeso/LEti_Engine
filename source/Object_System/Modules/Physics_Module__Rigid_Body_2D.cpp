@@ -26,10 +26,10 @@ float Physics_Module__Rigid_Body_2D::mass() const
 
 glm::vec3 Physics_Module__Rigid_Body_2D::calculate_raw_center_of_mass() const
 {
-	glm::vec3 result(0.0f, 0.0f, 0.0f);
+    glm::vec3 result(0.0f, 0.0f, 0.0f);
 
-	for(unsigned int i=0; i<get_physical_model()->get_polygons_count(); ++i)
-		result += get_physical_model()->get_polygons()[i].center_raw();
+    for(unsigned int i=0; i<get_physical_model()->get_polygons_count(); ++i)
+        result += get_physical_model()->get_polygons()[i].center_raw();
 
-	return result;
+    return result;
 }

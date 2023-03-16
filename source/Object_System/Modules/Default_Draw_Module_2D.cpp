@@ -3,6 +3,32 @@
 using namespace LEti;
 
 
+INIT_FIELDS(LEti::Default_Draw_Module_2D_Stub, LEti::Draw_Module_Base_Stub)
+
+ADD_FIELD(std::string, texture_name)
+
+ADD_FIELD(unsigned int, tcoords_count)
+ADD_FIELD(float*, tcoords)
+
+ADD_FIELD(unsigned int, coords_count)
+ADD_FIELD(float*, coords)
+
+ADD_FIELD(unsigned int, colors_count)
+ADD_FIELD(float*, colors)
+
+FIELDS_END
+
+
+
+Default_Draw_Module_2D_Stub::~Default_Draw_Module_2D_Stub()
+{
+    delete[] coords;
+    delete[] tcoords;
+    delete[] colors;
+}
+
+
+
 Default_Draw_Module_2D::Default_Draw_Module_2D() : Draw_Module_Base()
 {
 	glGenVertexArrays(1, &m_vertex_array);
@@ -21,6 +47,19 @@ Default_Draw_Module_2D::~Default_Draw_Module_2D()
 	glDeleteVertexArrays(1, &m_vertex_array);
 }
 
+
+
+void Default_Draw_Module_2D::init(const Draw_Module_Base_Stub *_stub)
+{
+    Draw_Module_Base::init(_stub);
+
+    const Default_Draw_Module_2D_Stub* stub = LV::cast_variable<Default_Draw_Module_2D_Stub>(_stub);
+    L_ASSERT(stub);
+
+    init_vertices(stub->coords, stub->coords_count);
+    init_colors(stub->colors, stub->colors_count);
+    init_texture(LEti::Picture_Manager::get_picture(stub->texture_name), stub->tcoords, stub->tcoords_count);
+}
 
 
 void Default_Draw_Module_2D::init_vertices(const float *const _coords, unsigned int _coords_count)

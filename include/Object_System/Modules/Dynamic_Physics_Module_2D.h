@@ -9,6 +9,22 @@
 namespace LEti
 {
 
+    class Dynamic_Physics_Module_2D_Stub : public Physics_Module_Base_Stub
+    {
+    public:
+        DECLARE_VARIABLE;
+
+    public:
+        unsigned int coords_count = 0;
+        float* coords = nullptr;
+
+        bool* collision_permissions = nullptr;
+
+    public:
+        virtual ~Dynamic_Physics_Module_2D_Stub() { }
+
+    };
+
     class Dynamic_Physics_Module_2D : public Physics_Module_Base
 	{
     private:
@@ -20,7 +36,7 @@ namespace LEti
         Dynamic_Physics_Module_2D();
         ~Dynamic_Physics_Module_2D();
 
-		void init(const float* _coords, unsigned int _coords_count, const bool* _collision_permissions);
+        void init(const Physics_Module_Base_Stub* _stub) override;
 
 	public:
 		void update_previous_state() override;

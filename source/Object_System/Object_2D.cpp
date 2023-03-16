@@ -2,7 +2,6 @@
 
 using namespace LEti;
 
-#include "MDL_Reader.h"
 
 INIT_FIELDS(LEti::Object_2D_Stub, LV::Variable_Base)
 
@@ -11,27 +10,24 @@ ADD_FIELD(glm::vec3, scale)
 ADD_FIELD(glm::vec3, rotation_axis)
 ADD_FIELD(float, rotation_angle)
 
-ADD_FIELD(std::string, texture_name)
-
-ADD_FIELD(unsigned int, tcoords_count)
-ADD_FIELD(float*, tcoords)
-
-ADD_FIELD(unsigned int, coords_count)
-ADD_FIELD(float*, coords)
-
-ADD_FIELD(unsigned int, colors_count)
-ADD_FIELD(float*, colors)
-
-ADD_FIELD(unsigned int, phys_coords_count)
-ADD_FIELD(float*, phys_coords)
-
-ADD_FIELD(bool*, collision_permissions)
+ADD_FIELD(bool, enable_draw_module)
+ADD_CHILD("draw_module", *draw_module)
+ADD_FIELD(bool, enable_physics_module)
+ADD_CHILD("physics_module", *physics_module)
 
 FIELDS_END
 
 
 INIT_FIELDS(LEti::Object_2D, LEti::Object_Base)
 FIELDS_END
+
+
+
+Object_2D_Stub::~Object_2D_Stub()
+{
+    delete draw_module;
+    delete physics_module;
+}
 
 
 
@@ -295,19 +291,16 @@ void Object_2D::init(const LV::Variable_Base& _stub)
 	set_rotation_axis(stub->rotation_axis);
 	set_rotation_angle(stub->rotation_angle);
 
-	if(stub->tcoords && stub->coords)
+    if(stub->enable_draw_module)
     {
-		create_draw_module();
-		m_draw_module->init_texture(Picture_Manager::get_picture(stub->texture_name), stub->tcoords, stub->tcoords_count);
-		m_draw_module->init_vertices(stub->coords, stub->coords_count);
-        m_draw_module->init_colors(stub->colors, stub->colors_count);
+        create_draw_module();
+        m_draw_module->init(stub->draw_module);
 	}
 
-	if(stub->phys_coords)
+    if(stub->enable_physics_module)
 	{
 		create_physics_module();
-		physics_module()->init(stub->phys_coords, stub->phys_coords_count, stub->collision_permissions);
-		physics_module()->update(m_current_state.translation_matrix, m_current_state.rotation_matrix, m_current_state.scale_matrix);
+        m_physics_module->init(stub->physics_module);
 	}
 }
 

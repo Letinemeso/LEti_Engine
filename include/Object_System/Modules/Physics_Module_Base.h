@@ -3,9 +3,21 @@
 
 #include <mat4x4.hpp>
 
+#include <Variable_Base.h>
+
 
 namespace LEti
 {
+
+    class Physics_Module_Base_Stub : public LV::Variable_Base
+    {
+    public:
+        DECLARE_VARIABLE;
+
+    public:
+        virtual ~Physics_Module_Base_Stub() { }
+
+    };
 
 	class Physics_Module_Base
     {
@@ -15,6 +27,8 @@ namespace LEti
 	public:
 		Physics_Module_Base();
 		virtual ~Physics_Module_Base();
+
+        virtual void init(const Physics_Module_Base_Stub* _stub) { }
 
 	public:
 		virtual void update_previous_state() = 0;

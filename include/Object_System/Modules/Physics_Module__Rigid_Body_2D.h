@@ -12,14 +12,14 @@ namespace LEti
 	private:
 		float m_mass = 1.0f;
 
-	public:
-		void align_to_center_of_mass();
-		void set_mass(float _mass);
+    public:
+        void align_to_center_of_mass();
+        void set_mass(float _mass);
 
-	public:
-		float mass() const;
+    public:
+        float mass() const;
 
-		glm::vec3 calculate_raw_center_of_mass() const;
+        glm::vec3 calculate_raw_center_of_mass() const;
 
 	};
 
