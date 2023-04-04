@@ -1,0 +1,66 @@
+#ifndef DRAW_MODULE__ANIMATION_H
+#define DRAW_MODULE__ANIMATION_H
+
+#include <Stuff/Stopwatch.h>
+
+#include <Object_System/Modules/Default_Draw_Module_2D.h>
+
+
+namespace LEti
+{
+
+    class Draw_Module__Animation : public Default_Draw_Module_2D
+    {
+    public:
+        DECLARE_VARIABLE;
+
+    private:
+        unsigned int m_frames_count = 0;
+        unsigned int m_fps = 0;
+        float m_frame_offset_ratio = 0.0f;
+
+        unsigned int m_current_frame = 0;
+
+    private:
+        LST::Stopwatch m_frame_update_timer;
+
+    public:
+        void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4 _scale, float _ratio) override;
+
+    public:
+        void set_animation_data(unsigned int _frames_count);
+
+    public:
+        inline void set_fps(unsigned int _fps) { m_fps = _fps; };
+
+    public:
+        void set_frame(unsigned int _frame);
+        void start();
+        void pause();
+
+    public:
+        inline unsigned int frames_count() const { return m_frames_count; }
+        inline unsigned int fps() const { return m_fps; }
+        inline unsigned int current_frame() const { return m_current_frame; }
+
+    };
+
+    class Draw_Module__Animation__Stub : public Default_Draw_Module_2D_Stub
+    {
+    public:
+        DECLARE_VARIABLE;
+
+    public:
+        unsigned int frames_per_second = 0;
+        unsigned int frames_count = 0;
+
+    protected:
+        LV::Variable_Base* M_construct_product() const override;
+        void M_init_constructed_product(LV::Variable_Base* _product) const override;
+
+    };
+
+}
+
+
+#endif // DRAW_MODULE__ANIMATION_H

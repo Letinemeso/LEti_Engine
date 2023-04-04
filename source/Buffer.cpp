@@ -3,25 +3,42 @@
 using namespace LEti;
 
 
+void Buffer::float_container::M_update_buffer()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, *buffer);
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * last_requested_index, sizeof(float), &buffer_data[last_requested_index]);
+}
+
+
+
 void Buffer::float_container::operator=(float _f)
 {
     buffer_data[last_requested_index] = _f;
-    glBindBuffer(GL_ARRAY_BUFFER, *buffer);
-    glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * last_requested_index, sizeof(float), &buffer_data[last_requested_index]);
+    M_update_buffer();
 }
 
 void Buffer::float_container::operator+=(float _f)
 {
     buffer_data[last_requested_index] += _f;
-    glBindBuffer(GL_ARRAY_BUFFER, *buffer);
-    glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * last_requested_index, sizeof(float), &buffer_data[last_requested_index]);
+    M_update_buffer();
 }
 
 void Buffer::float_container::operator-=(float _f)
 {
     buffer_data[last_requested_index] -= _f;
-    glBindBuffer(GL_ARRAY_BUFFER, *buffer);
-    glBufferSubData(GL_ARRAY_BUFFER, sizeof(float) * last_requested_index, sizeof(float), &buffer_data[last_requested_index]);
+    M_update_buffer();
+}
+
+void Buffer::float_container::operator*=(float _f)
+{
+    buffer_data[last_requested_index] *= _f;
+    M_update_buffer();
+}
+
+void Buffer::float_container::operator/=(float _f)
+{
+    buffer_data[last_requested_index] /= _f;
+    M_update_buffer();
 }
 
 float Buffer::float_container::operator*() const

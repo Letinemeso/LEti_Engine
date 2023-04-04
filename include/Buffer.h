@@ -16,14 +16,21 @@ namespace LEti
 	{
 	private:
 	    friend class Buffer;
+
 	private:
 	    const unsigned int* buffer = nullptr;
 	    float* buffer_data = nullptr;
 	    unsigned int last_requested_index = 0;
+
+    private:
+        void M_update_buffer();
+
 	public:
 	    void operator=(float _f);
 	    void operator+=(float _f);
 	    void operator-=(float _f);
+        void operator*=(float _f);
+        void operator/=(float _f);
 	    float operator*() const;
 	    operator float() const;
 	};

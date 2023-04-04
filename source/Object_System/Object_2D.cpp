@@ -368,5 +368,5 @@ void Object_2D::update(float _ratio)
     if(m_physics_module)
         m_physics_module->update(m_current_state.translation_matrix, m_current_state.rotation_matrix, m_current_state.scale_matrix);
     if(m_draw_module)
-        m_draw_module->update(m_current_state.translation_matrix, m_current_state.rotation_matrix, m_current_state.scale_matrix);
+        m_draw_module->update(m_current_state.translation_matrix, m_current_state.rotation_matrix, m_current_state.scale_matrix, _ratio);
 }

@@ -58,6 +58,7 @@ HEADERS += \
     include/Object_System/Debug_Drawable_Frame.h \
     include/Object_System/Modules/Default_Draw_Module_2D.h \
     include/Object_System/Modules/Draw_Module_Base.h \
+    include/Object_System/Modules/Draw_Module__Animation.h \
     include/Object_System/Modules/Dynamic_Physics_Module_2D.h \
     include/Object_System/Modules/Physics_Module_Base.h \
     include/Object_System/Modules/Physics_Module__Rigid_Body_2D.h \
@@ -98,6 +99,7 @@ SOURCES += \
     source/Object_System/Debug_Drawable_Frame.cpp \
     source/Object_System/Modules/Default_Draw_Module_2D.cpp \
     source/Object_System/Modules/Draw_Module_Base.cpp \
+    source/Object_System/Modules/Draw_Module__Animation.cpp \
     source/Object_System/Modules/Dynamic_Physics_Module_2D.cpp \
     source/Object_System/Modules/Physics_Module_Base.cpp \
     source/Object_System/Modules/Physics_Module__Rigid_Body_2D.cpp \
