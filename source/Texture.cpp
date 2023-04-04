@@ -2,6 +2,7 @@
 
 using namespace LEti;
 
+
 Texture::Texture()
 {
 
@@ -40,6 +41,22 @@ void Texture::set_texture_coords(const float* const _tex_coords, unsigned int _t
 	free_memory();
 	allocate_memory(_tex_coords_count);
 	copy_array(_tex_coords, _tex_coords_count);
+}
+
+void Texture::reconfigure_texture_coords()
+{
+    L_ASSERT(m_picture);
+    L_ASSERT(size() > 0);
+
+    for(unsigned int i=0; i<size(); i += 2)
+    {
+        glm::vec2 vertex;
+        vertex.x = (*this)[i];
+        vertex.y = (*this)[i + 1];
+        m_picture->convert_texture_coords_vertex(vertex);
+        (*this)[i] = vertex.x;
+        (*this)[i + 1] = vertex.y;
+    }
 }
 
 

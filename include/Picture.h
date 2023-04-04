@@ -1,6 +1,8 @@
 #ifndef __PICTURE
 #define __PICTURE
 
+#include <gtx/transform.hpp>
+
 #include "L_Debug/L_Debug.h"
 
 
@@ -25,6 +27,9 @@ namespace LEti
         int width() const;
         int height() const;
         const unsigned char* data() const;
+
+    public:
+        void convert_texture_coords_vertex(glm::vec2& _vertex) const;
 
     };
 

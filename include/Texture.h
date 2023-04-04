@@ -24,9 +24,11 @@ namespace LEti
         void operator=(const LEti::Texture&) = delete;
         void operator=(LEti::Texture&&) = delete;
 
+    public:
         void init(const Picture* _picture, const float* const _tex_coords, unsigned int _tex_coords_count);
         void set_picture(const Picture* _picture);
         void set_texture_coords(const float* const _tex_coords, unsigned int _tex_coords_count);
+        void reconfigure_texture_coords();
 
         ~Texture();
 

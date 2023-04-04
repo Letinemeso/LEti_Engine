@@ -88,6 +88,7 @@ void Default_Draw_Module_2D::init_texture(const Picture* _picture, const float *
 	glBindVertexArray(m_vertex_array);
 	m_texture.init(_picture, tex_coords, _tex_coords_count);
     m_texture.setup_buffer(2, 2);		//TODO: this data shpuld not be hard-coded. it should be stored in LEti::Shader (probably)
+    m_texture.reconfigure_texture_coords();
 }
 
 

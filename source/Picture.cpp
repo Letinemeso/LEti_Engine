@@ -15,7 +15,7 @@ Picture* LEti::load_picture(const std::string& _path)
 	Picture* result = new Picture;
 	result->m_picture_data = picture_data;
 	result->m_width = width;
-	result->m_height = height;
+    result->m_height = height;
 
     return result;
 }
@@ -51,4 +51,12 @@ int Picture::height() const
 const unsigned char* Picture::data() const
 {
     return m_picture_data;
+}
+
+
+
+void Picture::convert_texture_coords_vertex(glm::vec2 &_vertex) const
+{
+    _vertex.x = _vertex.x / m_width;
+    _vertex.y = _vertex.y / m_height;
 }
