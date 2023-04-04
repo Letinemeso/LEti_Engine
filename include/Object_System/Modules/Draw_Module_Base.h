@@ -3,7 +3,7 @@
 
 #include <mat4x4.hpp>
 
-#include <Variable_Base.h>
+#include <Object_System/Builder_Stub.h>
 
 #include <Texture.h>
 #include <Vertices.h>
@@ -13,7 +13,7 @@
 namespace LEti
 {
 
-    class Draw_Module_Base_Stub : public LV::Variable_Base
+    class Draw_Module_Base_Stub : public Builder_Stub
     {
     public:
         DECLARE_VARIABLE;
@@ -23,8 +23,11 @@ namespace LEti
 
     };
 
-    class Draw_Module_Base
+    class Draw_Module_Base : public LV::Variable_Base
     {
+    public:
+        DECLARE_VARIABLE;
+
     protected:
         unsigned int m_vertex_array = 0;
         glm::mat4x4 m_transform_matrix;
@@ -38,9 +41,7 @@ namespace LEti
 
 	public:
 		Draw_Module_Base();
-		virtual ~Draw_Module_Base();
-
-        virtual void init(const Draw_Module_Base_Stub* _stub) { }
+        virtual ~Draw_Module_Base();
 
     public:
         inline void set_visible(bool _visible) { m_visible = _visible; }

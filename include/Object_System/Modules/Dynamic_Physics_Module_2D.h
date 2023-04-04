@@ -20,13 +20,19 @@ namespace LEti
 
         bool* collision_permissions = nullptr;
 
-    public:
-        virtual ~Dynamic_Physics_Module_2D_Stub() { }
+    protected:
+        LV::Variable_Base* M_construct_product() const override;
+        void M_init_constructed_product(LV::Variable_Base* /*_product*/) const override;
 
+    public:
+        virtual ~Dynamic_Physics_Module_2D_Stub();
     };
 
     class Dynamic_Physics_Module_2D : public Physics_Module_Base
 	{
+    public:
+        DECLARE_VARIABLE;
+
     private:
 		LEti::Physical_Model_2D* m_physical_model = nullptr;
         LEti::Physical_Model_2D::Imprint* m_physical_model_prev_state = nullptr;
@@ -36,7 +42,8 @@ namespace LEti
         Dynamic_Physics_Module_2D();
         ~Dynamic_Physics_Module_2D();
 
-        void init(const Physics_Module_Base_Stub* _stub) override;
+    public:
+        void init_physical_model(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions);
 
 	public:
 		void update_previous_state() override;

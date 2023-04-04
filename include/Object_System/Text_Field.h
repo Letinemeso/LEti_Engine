@@ -3,13 +3,14 @@
 
 //#include "../include/Object.h"
 #include <Object_System/Object_2D.h>
+#include <Object_System/Builder_Stub.h>
 
 #include <string>
 
 namespace LEti
 {
 
-	class Text_Field_Stub : public LV::Variable_Base
+    class Text_Field_Stub : public Builder_Stub
 	{
 	public:
 		DECLARE_VARIABLE;
@@ -25,10 +26,23 @@ namespace LEti
 
 		std::string sequence;
 
+    public:
+        ~Text_Field_Stub();
+
+    protected:
+        LV::Variable_Base* M_construct_product() const override;
+        void M_init_constructed_product(LV::Variable_Base* _product) const override;
+
 	};
 
 	class Text_Field : public Object_2D
 	{
+    public:
+        friend class Text_Field_Stub;
+
+    public:
+        DECLARE_VARIABLE;
+
     public:
         enum class Horizontal_Alignment
         {
@@ -57,10 +71,7 @@ namespace LEti
         std::string m_text;
 
 	public:
-		Text_Field();
-
-	public:
-		void init(const LV::Variable_Base& _stub) override;
+        Text_Field();
 
     public:
         inline void set_horizontal_alignment(Horizontal_Alignment _ha) { m_horizontal_alignment = _ha; }

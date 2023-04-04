@@ -3,7 +3,7 @@
 using namespace LEti;
 
 
-INIT_FIELDS(LEti::Object_2D_Stub, LV::Variable_Base)
+INIT_FIELDS(LEti::Object_2D_Stub, LEti::Builder_Stub)
 
 ADD_FIELD(glm::vec3, position)
 ADD_FIELD(glm::vec3, scale)
@@ -18,16 +18,39 @@ ADD_CHILD("physics_module", *physics_module)
 FIELDS_END
 
 
-INIT_FIELDS(LEti::Object_2D, LEti::Object_Base)
-FIELDS_END
-
-
 
 Object_2D_Stub::~Object_2D_Stub()
 {
     delete draw_module;
     delete physics_module;
 }
+
+
+
+LV::Variable_Base* Object_2D_Stub::M_construct_product() const
+{
+    return new Object_2D;
+}
+
+void Object_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
+{
+    Object_2D* result = (Object_2D*)_product;
+
+    result->set_pos(position);
+    result->set_scale(scale);
+    result->set_rotation_axis(rotation_axis);
+    result->set_rotation_angle(rotation_angle);
+
+    if(enable_draw_module)
+        result->set_draw_module((Default_Draw_Module_2D*)draw_module->construct());
+
+    if(enable_physics_module)
+        result->set_physics_module((Dynamic_Physics_Module_2D*)physics_module->construct());
+}
+
+
+INIT_FIELDS(LEti::Object_2D, LEti::Object_Base)
+FIELDS_END
 
 
 
@@ -276,40 +299,10 @@ bool Object_2D::moved_since_last_frame() const
 
 
 
-void Object_2D::init(const LV::Variable_Base& _stub)
+void Object_2D::set_draw_module(Default_Draw_Module_2D* _module)
 {
-    assign_values({});
-
-	remove_draw_module();
-	remove_physics_module();
-
-	const Object_2D_Stub* stub = LV::cast_variable<Object_2D_Stub>(&_stub);
-	L_ASSERT(stub);
-
-	set_pos(stub->position);
-	set_scale(stub->scale);
-	set_rotation_axis(stub->rotation_axis);
-	set_rotation_angle(stub->rotation_angle);
-
-    if(stub->enable_draw_module)
-    {
-        create_draw_module();
-        m_draw_module->init(stub->draw_module);
-	}
-
-    if(stub->enable_physics_module)
-	{
-		create_physics_module();
-        m_physics_module->init(stub->physics_module);
-	}
-}
-
-
-
-void Object_2D::create_draw_module()
-{
-	remove_draw_module();
-	m_draw_module = new Default_Draw_Module_2D;
+    delete m_draw_module;
+    m_draw_module = _module;
 }
 
 void Object_2D::remove_draw_module()
@@ -329,10 +322,10 @@ const Default_Draw_Module_2D* Object_2D::draw_module() const
 }
 
 
-void Object_2D::create_physics_module()
+void Object_2D::set_physics_module(Dynamic_Physics_Module_2D* _module)
 {
-	remove_physics_module();
-	m_physics_module = new Dynamic_Physics_Module_2D;
+    delete m_physics_module;
+    m_physics_module = _module;
 }
 
 void Object_2D::remove_physics_module()
@@ -369,6 +362,9 @@ void Object_2D::update_previous_state()
 
 void Object_2D::update(float _ratio)
 {
+    if(m_on_update)
+        m_on_update(_ratio);
+
     if(m_physics_module)
         m_physics_module->update(m_current_state.translation_matrix, m_current_state.rotation_matrix, m_current_state.scale_matrix);
     if(m_draw_module)

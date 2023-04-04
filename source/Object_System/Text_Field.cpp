@@ -7,7 +7,7 @@ constexpr unsigned int tcpc = 12, cpc = 18, colorpc = 24;		//texture coordinates
 
 
 
-INIT_FIELDS(Text_Field_Stub, LV::Variable_Base)
+INIT_FIELDS(LEti::Text_Field_Stub, LEti::Builder_Stub)
 
 ADD_FIELD(std::string, font_texture)
 ADD_FIELD(unsigned int, tcoords_count)
@@ -21,38 +21,53 @@ FIELDS_END
 
 
 
+Text_Field_Stub::~Text_Field_Stub()
+{
+    delete[] tcoords;
+}
+
+
+
+LV::Variable_Base* Text_Field_Stub::M_construct_product() const
+{
+    return new Text_Field;
+}
+
+void Text_Field_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
+{
+    Text_Field* result = (Text_Field*)_product;     //  this stuff need a lot of refactoring
+
+    result->m_sequence = sequence;
+
+    result->m_draw_module = new Default_Draw_Module_2D;
+
+    result->draw_module()->set_texture(Picture_Manager::get_picture(font_texture));
+    result->m_text_tex_coords.first = tcoords;
+    result->m_text_tex_coords.second = tcoords_count;
+
+    L_ASSERT(!(result->m_text_tex_coords.second < result->m_sequence.size()* tcpc));
+    for (unsigned int i = 0; i < result->m_sequence.size(); ++i)
+    {
+        unsigned char current_char = result->m_sequence[i];
+        L_ASSERT(!(result->m_sequence_map.find(current_char) != result->m_sequence_map.end()));
+        result->m_sequence_map.emplace(current_char, &(result->m_text_tex_coords.first[tcpc * i]));
+    }
+
+    result->set_pos(position);
+    result->m_width = width;
+    result->m_height = height;
+}
+
+
+
+INIT_FIELDS(LEti::Text_Field, LEti::Object_2D)
+FIELDS_END
+
+
+
 Text_Field::Text_Field() : Object_2D()
 {
 
-}
-
-void Text_Field::init(const LV::Variable_Base &_stub)
-{
-	const Text_Field_Stub* stub = LV::cast_variable<Text_Field_Stub>(&_stub);
-	L_ASSERT(stub);
-
-	remove_draw_module();
-	remove_physics_module();
-
-    m_sequence = stub->sequence;
-
-	create_draw_module();
-
-	draw_module()->set_texture(Picture_Manager::get_picture(stub->font_texture));
-    m_text_tex_coords.first = stub->tcoords;
-    m_text_tex_coords.second = stub->tcoords_count;
-
-    L_ASSERT(!(m_text_tex_coords.second < m_sequence.size()* tcpc));
-    for (unsigned int i = 0; i < m_sequence.size(); ++i)
-	{
-        unsigned char current_char = m_sequence[i];
-        L_ASSERT(!(m_sequence_map.find(current_char) != m_sequence_map.end()));
-        m_sequence_map.emplace(current_char, &(m_text_tex_coords.first[tcpc * i]));
-	}
-
-	set_pos(stub->position);
-    m_width = stub->width;
-    m_height = stub->height;
 }
 
 

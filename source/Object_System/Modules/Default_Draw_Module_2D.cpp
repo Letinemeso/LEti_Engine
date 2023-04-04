@@ -19,12 +19,32 @@ ADD_FIELD(float*, colors)
 FIELDS_END
 
 
+INIT_FIELDS(LEti::Default_Draw_Module_2D, LEti::Draw_Module_Base)
+FIELDS_END
+
+
 
 Default_Draw_Module_2D_Stub::~Default_Draw_Module_2D_Stub()
 {
     delete[] coords;
     delete[] tcoords;
     delete[] colors;
+}
+
+
+
+LV::Variable_Base* Default_Draw_Module_2D_Stub::M_construct_product() const
+{
+    return new Default_Draw_Module_2D;
+}
+
+void Default_Draw_Module_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
+{
+    Default_Draw_Module_2D* result = (Default_Draw_Module_2D*)_product;
+
+    result->init_vertices(coords, coords_count);
+    result->init_colors(colors, colors_count);
+    result->init_texture(LEti::Picture_Manager::get_picture(texture_name), tcoords, tcoords_count);
 }
 
 
@@ -47,19 +67,6 @@ Default_Draw_Module_2D::~Default_Draw_Module_2D()
 	glDeleteVertexArrays(1, &m_vertex_array);
 }
 
-
-
-void Default_Draw_Module_2D::init(const Draw_Module_Base_Stub *_stub)
-{
-    Draw_Module_Base::init(_stub);
-
-    const Default_Draw_Module_2D_Stub* stub = LV::cast_variable<Default_Draw_Module_2D_Stub>(_stub);
-    L_ASSERT(stub);
-
-    init_vertices(stub->coords, stub->coords_count);
-    init_colors(stub->colors, stub->colors_count);
-    init_texture(LEti::Picture_Manager::get_picture(stub->texture_name), stub->tcoords, stub->tcoords_count);
-}
 
 
 void Default_Draw_Module_2D::init_vertices(const float *const _coords, unsigned int _coords_count)

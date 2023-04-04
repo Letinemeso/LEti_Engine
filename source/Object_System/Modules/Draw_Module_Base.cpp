@@ -3,7 +3,11 @@
 using namespace LEti;
 
 
-INIT_FIELDS(LEti::Draw_Module_Base_Stub, LV::Variable_Base)
+INIT_FIELDS(LEti::Draw_Module_Base_Stub, LEti::Builder_Stub)
+FIELDS_END
+
+
+INIT_FIELDS(LEti::Draw_Module_Base, LV::Variable_Base)
 FIELDS_END
 
 

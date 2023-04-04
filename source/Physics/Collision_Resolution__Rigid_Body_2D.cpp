@@ -45,12 +45,14 @@ float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const P
 }
 
 
-float Collision_Resolution__Rigid_Body_2D::M_calculate_kinetic_energy(const Rigid_Body_2D &_model) const
+float Collision_Resolution__Rigid_Body_2D::M_calculate_kinetic_energy(const Object_2D &_model) const
 {
-    float velocity = Math::vector_length(_model.velocity());
+    Physics_Module__Rigid_Body_2D* pm = (Physics_Module__Rigid_Body_2D*)(_model.physics_module());
 
-    float movemental = (_model.mass() * velocity * velocity) / 2.0f;
-    float rotational = (M_calculate_moment_of_inertia(*_model.physics_module()->get_physical_model(), _model.mass()) * _model.angular_velocity() * _model.angular_velocity()) / 2.0f;
+    float velocity = Math::vector_length(pm->velocity());
+
+    float movemental = (pm->mass() * velocity * velocity) / 2.0f;
+    float rotational = (M_calculate_moment_of_inertia(*_model.physics_module()->get_physical_model(), pm->mass()) * pm->angular_velocity() * pm->angular_velocity()) / 2.0f;
 
     return movemental + rotational;
 }
@@ -59,10 +61,13 @@ float Collision_Resolution__Rigid_Body_2D::M_calculate_kinetic_energy(const Rigi
 
 bool Collision_Resolution__Rigid_Body_2D::resolve(const Physical_Model_2D::Intersection_Data &_id)
 {
-	LEti::Rigid_Body_2D* bodyA = LV::cast_variable<Rigid_Body_2D>((Object_2D*)_id.first);	//	too lazy to figure out appropriate way to pass non-const pointer here
-	LEti::Rigid_Body_2D* bodyB = LV::cast_variable<Rigid_Body_2D>((Object_2D*)_id.second);
+    LEti::Object_2D* bodyA = (LEti::Object_2D*)_id.first;	//	too lazy to figure out appropriate way to pass non-const pointer here
+    LEti::Object_2D* bodyB = (LEti::Object_2D*)_id.second;
 
-    if(!bodyA || !bodyB)
+    Physics_Module__Rigid_Body_2D* pm1 = LV::cast_variable<Physics_Module__Rigid_Body_2D>((Object_2D*)_id.first->physics_module());
+    Physics_Module__Rigid_Body_2D* pm2 = LV::cast_variable<Physics_Module__Rigid_Body_2D>((Object_2D*)_id.second->physics_module());
+
+    if(!pm1 || !pm2)
         return false;
 
     float ke_before = M_calculate_kinetic_energy(*bodyA) + M_calculate_kinetic_energy(*bodyB);
@@ -74,11 +79,11 @@ bool Collision_Resolution__Rigid_Body_2D::resolve(const Physical_Model_2D::Inter
 
 	float e = 1.0f;
 
-	glm::vec3 A_center_of_mas = M_calculate_center_of_mass(*bodyA->physics_module()->get_physical_model());
-	glm::vec3 B_center_of_mas = M_calculate_center_of_mass(*bodyB->physics_module()->get_physical_model());
+    glm::vec3 A_center_of_mas = M_calculate_center_of_mass(*pm1->get_physical_model());
+    glm::vec3 B_center_of_mas = M_calculate_center_of_mass(*pm2->get_physical_model());
 
-	float A_moment_of_inertia = M_calculate_moment_of_inertia(*bodyA->physics_module()->get_physical_model(), bodyA->mass());
-	float B_moment_of_inertia = M_calculate_moment_of_inertia(*bodyB->physics_module()->get_physical_model(), bodyA->mass());
+    float A_moment_of_inertia = M_calculate_moment_of_inertia(*pm1->get_physical_model(), pm1->mass());
+    float B_moment_of_inertia = M_calculate_moment_of_inertia(*pm2->get_physical_model(), pm2->mass());
 
 	glm::vec3 ra = _id.point - A_center_of_mas;
 	glm::vec3 rb = _id.point - B_center_of_mas;
@@ -87,17 +92,17 @@ bool Collision_Resolution__Rigid_Body_2D::resolve(const Physical_Model_2D::Inter
 	glm::vec3 rbPerp = {-rb.y, rb.x, 0.0f};
 
 	//	angular linear velocity
-	glm::vec3 alvA = raPerp * bodyA->angular_velocity();
-	glm::vec3 alvB = rbPerp * bodyB->angular_velocity();
+    glm::vec3 alvA = raPerp * pm1->angular_velocity();
+    glm::vec3 alvB = rbPerp * pm2->angular_velocity();
 
-	glm::vec3 relativeVelocity = (bodyB->velocity() + alvB) - (bodyA->velocity() + alvA);
+    glm::vec3 relativeVelocity = (pm2->velocity() + alvB) - (pm1->velocity() + alvA);
 
 	float contactVelocityMag = LEti::Math::dot_product(relativeVelocity, _id.normal);
 
 	float raPerpDotN = LEti::Math::dot_product(raPerp, _id.normal);
 	float rbPerpDotN = LEti::Math::dot_product(rbPerp, _id.normal);
 
-	float denom = 1 / bodyA->mass() + 1 / bodyB->mass() +
+    float denom = 1 / pm1->mass() + 1 / pm2->mass() +
 			(raPerpDotN * raPerpDotN) / A_moment_of_inertia +
 			(rbPerpDotN * rbPerpDotN) / B_moment_of_inertia;
 
@@ -112,24 +117,23 @@ bool Collision_Resolution__Rigid_Body_2D::resolve(const Physical_Model_2D::Inter
     bodyA->move(_id.normal * (_id.depth + 0.1f) / 2.0f);
     bodyB->move(-_id.normal * (_id.depth + 0.1f) / 2.0f);
 
-	bodyA->apply_linear_impulse(-impulse / bodyA->mass());
-	bodyA->apply_rotation(-avA);
-	bodyB->apply_linear_impulse(impulse / bodyB->mass());
-	bodyB->apply_rotation(avB);
+    pm1->apply_linear_impulse(-impulse / pm1->mass());
+    pm1->apply_rotation(-avA);
+    pm2->apply_linear_impulse(impulse / pm2->mass());
+    pm2->apply_rotation(avB);
 
-    float ke_after = M_calculate_kinetic_energy(*bodyA) + M_calculate_kinetic_energy(*bodyB);   //  attempt to fix increase of models' velocities after some collisions. and it seems to work fine!
+    //  attempt to fix increase of models' velocities after some collisions. and it seems to work fine!
+    float ke_after = M_calculate_kinetic_energy(*bodyA) + M_calculate_kinetic_energy(*bodyB);
 
     if(!Math::floats_are_equal(ke_after, 0.0f) && !Math::floats_are_equal(ke_before, 0.0f))
     {
         float ratio_sqrt = sqrtf(ke_before / ke_after);
 
-        bodyA->set_velocity(bodyA->velocity() * ratio_sqrt);
-        bodyA->set_angular_velocity(bodyA->angular_velocity() * ratio_sqrt);
-        bodyB->set_velocity(bodyB->velocity() * ratio_sqrt);
-        bodyB->set_angular_velocity(bodyB->angular_velocity() * ratio_sqrt);
+        pm1->set_velocity(pm1->velocity() * ratio_sqrt);
+        pm1->set_angular_velocity(pm1->angular_velocity() * ratio_sqrt);
+        pm2->set_velocity(pm2->velocity() * ratio_sqrt);
+        pm2->set_angular_velocity(pm2->angular_velocity() * ratio_sqrt);
     }
-
-    float ke_after_fix = M_calculate_kinetic_energy(*bodyA) + M_calculate_kinetic_energy(*bodyB);
 
 	return true;
 }

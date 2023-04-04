@@ -3,6 +3,20 @@
 using namespace LEti;
 
 
+
+INIT_FIELDS(LEti::Debug_Line_Draw_Module, LEti::Default_Draw_Module_2D)
+FIELDS_END
+
+INIT_FIELDS(LEti::Debug_Line_Draw_Module_Stub, LEti::Default_Draw_Module_2D_Stub)
+FIELDS_END
+
+INIT_FIELDS(LEti::Debug_Drawable_Frame, LEti::Object_2D)
+FIELDS_END
+
+INIT_FIELDS(LEti::Debug_Drawable_Frame_Stub, LEti::Object_2D_Stub)
+FIELDS_END
+
+
 Debug_Drawable_Frame& Debug_Drawable_Frame::set_point(unsigned int _index, const glm::vec3 &_point)
 {
 	if(_index >= m_points.size())
@@ -33,21 +47,6 @@ Debug_Drawable_Frame& Debug_Drawable_Frame::clear_sequence()
 {
 	m_sequence.clear();
 	return *this;
-}
-
-
-
-void Debug_Drawable_Frame::init(const LV::Variable_Base &_stub)
-{
-	Object_2D::init(_stub);
-}
-
-
-
-void Debug_Drawable_Frame::create_draw_module()
-{
-	remove_draw_module();
-	m_draw_module = new Debug_Line_Draw_Module;
 }
 
 

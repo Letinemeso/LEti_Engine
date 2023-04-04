@@ -54,6 +54,7 @@ HEADERS += \
     include/Colors.h \
     include/Event_Controller.h \
     include/Math_Stuff.h \
+    include/Object_System/Builder_Stub.h \
     include/Object_System/Debug_Drawable_Frame.h \
     include/Object_System/Modules/Default_Draw_Module_2D.h \
     include/Object_System/Modules/Draw_Module_Base.h \
@@ -62,7 +63,7 @@ HEADERS += \
     include/Object_System/Modules/Physics_Module__Rigid_Body_2D.h \
     include/Object_System/Object_2D.h \
     include/Object_System/Object_Base.h \
-    include/Object_System/Rigid_Body_2D.h \
+    include/Object_System/Rigid_Body_2D_Stub.h \
     include/Object_System/Text_Field.h \
     include/Physics/Broad_Phase_Interface.h \
     include/Physics/Collision_Detector_2D.h \
@@ -93,6 +94,7 @@ SOURCES += \
     source/Colors.cpp \
     source/Event_Controller.cpp \
     source/Math_Stuff.cpp \
+    source/Object_System/Builder_Stub.cpp \
     source/Object_System/Debug_Drawable_Frame.cpp \
     source/Object_System/Modules/Default_Draw_Module_2D.cpp \
     source/Object_System/Modules/Draw_Module_Base.cpp \
@@ -101,7 +103,7 @@ SOURCES += \
     source/Object_System/Modules/Physics_Module__Rigid_Body_2D.cpp \
     source/Object_System/Object_2D.cpp \
     source/Object_System/Object_Base.cpp \
-    source/Object_System/Rigid_Body_2D.cpp \
+    source/Object_System/Rigid_Body_2D_Stub.cpp \
     source/Object_System/Text_Field.cpp \
     source/Physics/Broad_Phase_Interface.cpp \
     source/Physics/Collision_Detector_2D.cpp \

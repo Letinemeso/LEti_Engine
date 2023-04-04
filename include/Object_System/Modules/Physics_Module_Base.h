@@ -3,13 +3,13 @@
 
 #include <mat4x4.hpp>
 
-#include <Variable_Base.h>
+#include <Object_System/Builder_Stub.h>
 
 
 namespace LEti
 {
 
-    class Physics_Module_Base_Stub : public LV::Variable_Base
+    class Physics_Module_Base_Stub : public Builder_Stub
     {
     public:
         DECLARE_VARIABLE;
@@ -19,16 +19,17 @@ namespace LEti
 
     };
 
-	class Physics_Module_Base
+    class Physics_Module_Base : public LV::Variable_Base
     {
+    public:
+        DECLARE_VARIABLE;
+
     private:
         bool m_can_collide = true;
 
 	public:
 		Physics_Module_Base();
-		virtual ~Physics_Module_Base();
-
-        virtual void init(const Physics_Module_Base_Stub* _stub) { }
+        virtual ~Physics_Module_Base();
 
 	public:
 		virtual void update_previous_state() = 0;

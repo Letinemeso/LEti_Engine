@@ -1,8 +1,9 @@
 #ifndef __OBJECT_2D
 #define __OBJECT_2D
 
-#include "Variable_Base.h"
+#include <Stuff/Function_Wrapper.h>
 
+#include "Object_System/Builder_Stub.h"
 #include "Object_Base.h"
 #include "Modules/Default_Draw_Module_2D.h"
 #include "Modules/Dynamic_Physics_Module_2D.h"
@@ -13,7 +14,7 @@
 namespace LEti
 {
 
-	class Object_2D_Stub : public LV::Variable_Base
+    class Object_2D_Stub : public Builder_Stub
 	{
 	public:
 		DECLARE_VARIABLE;
@@ -26,6 +27,10 @@ namespace LEti
         Draw_Module_Base_Stub* draw_module = nullptr;
         bool enable_physics_module = false;
         Physics_Module_Base_Stub* physics_module = nullptr;
+
+    protected:
+        LV::Variable_Base* M_construct_product() const override;
+        void M_init_constructed_product(LV::Variable_Base* /*_product*/) const override;
 
     public:
         ~Object_2D_Stub();
@@ -58,14 +63,17 @@ namespace LEti
 		Transformation_Data m_current_state;
 		Transformation_Data m_previous_state;
 
+    protected:
+        LST::Function<void(float)> m_on_update;
+
 	public:
 		Object_2D();
-		~Object_2D();
+        ~Object_2D();
 
-	public:
-		virtual void init(const LV::Variable_Base& _stub);
+    public:
+        inline void set_on_update_func(const LST::Function<void(float)> _on_update) { m_on_update = _on_update; }
 
-	public:
+    public:
 		void set_pos(const glm::vec3& _position);
 		void move(const glm::vec3& _stride);
 
@@ -99,12 +107,12 @@ namespace LEti
 		bool moved_since_last_frame() const;
 
 	public:
-		virtual void create_draw_module();
+        void set_draw_module(Default_Draw_Module_2D* _module);
 		void remove_draw_module();
 		Default_Draw_Module_2D* draw_module();
 		const Default_Draw_Module_2D* draw_module() const;
 
-		virtual void create_physics_module();
+        void set_physics_module(Dynamic_Physics_Module_2D* _module);
 		void remove_physics_module();
 		Dynamic_Physics_Module_2D* physics_module();
 		const Dynamic_Physics_Module_2D* physics_module() const;

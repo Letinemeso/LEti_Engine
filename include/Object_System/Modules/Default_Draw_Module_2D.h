@@ -30,6 +30,10 @@ namespace LEti
         unsigned int colors_count = 0;
         float* colors = nullptr;
 
+    protected:
+        LV::Variable_Base* M_construct_product() const override;
+        void M_init_constructed_product(LV::Variable_Base* /*_product*/) const override;
+
     public:
         virtual ~Default_Draw_Module_2D_Stub();
 
@@ -38,11 +42,11 @@ namespace LEti
     class Default_Draw_Module_2D : public Draw_Module_Base
     {
     public:
-        Default_Draw_Module_2D();
-        ~Default_Draw_Module_2D();
+        DECLARE_VARIABLE;
 
     public:
-        void init(const Draw_Module_Base_Stub* _stub) override;
+        Default_Draw_Module_2D();
+        ~Default_Draw_Module_2D();
 
         void init_vertices(const float* const _coords, unsigned int _coords_count);
         void init_colors(const float* const _colors, unsigned int _colors_count);
