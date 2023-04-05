@@ -7,9 +7,26 @@ INIT_FIELDS(LEti::Draw_Module__Animation, LEti::Default_Draw_Module_2D)
 FIELDS_END
 
 
+Draw_Module__Animation::Draw_Module__Animation() : Default_Draw_Module_2D()
+{
+
+}
+
+
+
 void Draw_Module__Animation::update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 _scale, float _ratio)
 {
-    Default_Draw_Module_2D::update(_translation, _rotation, _scale, _ratio)
+    Default_Draw_Module_2D::update(_translation, _rotation, _scale, _ratio);
+
+    if(m_is_paused)
+        return;
+
+    m_frame_update_timer.update(LEti::Event_Controller::get_dt() * _ratio);
+    if(m_frame_update_timer.is_active())
+        return;
+
+    set_frame((m_current_frame + 1) % m_frames_count);
+    m_frame_update_timer.start(m_time_before_next_frame);
 }
 
 
@@ -20,7 +37,11 @@ void Draw_Module__Animation::set_animation_data(unsigned int _frames_count)
     m_frame_offset_ratio = 1.0f / (float)m_frames_count;
 }
 
-
+void Draw_Module__Animation::set_fps(unsigned int _fps)
+{
+    m_fps = _fps;
+    m_time_before_next_frame = 1.0f / (float)m_fps;
+}
 
 void Draw_Module__Animation::set_frame(unsigned int _frame)
 {
@@ -31,6 +52,20 @@ void Draw_Module__Animation::set_frame(unsigned int _frame)
         texture()[i] += needed_offset - current_offset;
 
     m_current_frame = _frame;
+}
+
+
+void Draw_Module__Animation::start()
+{
+    if(!m_frame_update_timer.is_active())
+        m_frame_update_timer.start(m_time_before_next_frame);
+    m_is_paused = false;
+}
+
+void Draw_Module__Animation::pause()
+{
+    m_frame_update_timer.reset();
+    m_is_paused = true;
 }
 
 
@@ -51,6 +86,8 @@ LV::Variable_Base* Draw_Module__Animation__Stub::M_construct_product() const
 
 void Draw_Module__Animation__Stub::M_init_constructed_product(LV::Variable_Base *_product) const
 {
+    Default_Draw_Module_2D_Stub::M_init_constructed_product(_product);
+
     Draw_Module__Animation* product = (Draw_Module__Animation*)_product;
 
     product->set_animation_data(frames_count);

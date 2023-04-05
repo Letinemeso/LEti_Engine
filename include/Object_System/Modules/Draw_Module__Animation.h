@@ -1,7 +1,7 @@
 #ifndef DRAW_MODULE__ANIMATION_H
 #define DRAW_MODULE__ANIMATION_H
 
-#include <Stuff/Stopwatch.h>
+#include <Stuff/Timer.h>
 
 #include <Object_System/Modules/Default_Draw_Module_2D.h>
 
@@ -17,24 +17,26 @@ namespace LEti
     private:
         unsigned int m_frames_count = 0;
         unsigned int m_fps = 0;
+        float m_time_before_next_frame = 0.0f;
         float m_frame_offset_ratio = 0.0f;
 
         unsigned int m_current_frame = 0;
 
     private:
-        LST::Stopwatch m_frame_update_timer;
+        bool m_is_paused = false;
+        LST::Timer m_frame_update_timer;
 
     public:
-        void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4 _scale, float _ratio) override;
+        Draw_Module__Animation();
+
+    public:
+        void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4 _scale, float _ratio = 1.0f) override;
 
     public:
         void set_animation_data(unsigned int _frames_count);
-
-    public:
-        inline void set_fps(unsigned int _fps) { m_fps = _fps; };
-
-    public:
+        void set_fps(unsigned int _fps);
         void set_frame(unsigned int _frame);
+
         void start();
         void pause();
 

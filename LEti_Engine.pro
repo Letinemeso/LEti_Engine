@@ -84,7 +84,6 @@ HEADERS += \
     include/Renderer.h \
     include/Shader.h \
     include/Texture.h \
-    include/Timer.h \
     include/Vertices.h \
     include/Window_Controller.h
 
@@ -125,6 +124,5 @@ SOURCES += \
     source/Renderer.cpp \
     source/Shader.cpp \
     source/Texture.cpp \
-    source/Timer.cpp \
     source/Vertices.cpp \
     source/Window_Controller.cpp
