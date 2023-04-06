@@ -23,8 +23,10 @@ namespace LEti
         unsigned int m_current_frame = 0;
 
     private:
-        bool m_is_paused = false;
+        bool m_is_paused = true;
         LST::Timer m_frame_update_timer;
+        unsigned int m_times_to_repeat = 0;
+        unsigned int m_repetitions = 0;
 
     public:
         Draw_Module__Animation();
@@ -37,13 +39,16 @@ namespace LEti
         void set_fps(unsigned int _fps);
         void set_frame(unsigned int _frame);
 
-        void start();
+        void start(unsigned int _cycles = 0);
         void pause();
+        void unpause();
 
     public:
         inline unsigned int frames_count() const { return m_frames_count; }
         inline unsigned int fps() const { return m_fps; }
         inline unsigned int current_frame() const { return m_current_frame; }
+        inline unsigned int repetitions() const { return m_repetitions; }
+        inline bool paused() const { return m_is_paused; }
 
     };
 
@@ -55,6 +60,7 @@ namespace LEti
     public:
         unsigned int frames_per_second = 0;
         unsigned int frames_count = 0;
+        unsigned int times_to_repeat = 0;
 
     protected:
         LV::Variable_Base* M_construct_product() const override;

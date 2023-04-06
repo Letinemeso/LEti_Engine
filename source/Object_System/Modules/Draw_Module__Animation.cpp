@@ -25,6 +25,15 @@ void Draw_Module__Animation::update(const glm::mat4x4 &_translation, const glm::
     if(m_frame_update_timer.is_active())
         return;
 
+    if(m_current_frame + 1 >= m_frames_count)
+        ++m_repetitions;
+
+    if(m_repetitions >= m_times_to_repeat && m_times_to_repeat != 0)
+    {
+        pause();
+        return;
+    }
+
     set_frame((m_current_frame + 1) % m_frames_count);
     m_frame_update_timer.start(m_time_before_next_frame);
 }
@@ -55,11 +64,15 @@ void Draw_Module__Animation::set_frame(unsigned int _frame)
 }
 
 
-void Draw_Module__Animation::start()
+void Draw_Module__Animation::start(unsigned int _cycles)
 {
-    if(!m_frame_update_timer.is_active())
-        m_frame_update_timer.start(m_time_before_next_frame);
-    m_is_paused = false;
+    pause();
+
+    m_times_to_repeat = _cycles;
+    m_repetitions = 0;
+
+    set_frame(0);
+    unpause();
 }
 
 void Draw_Module__Animation::pause()
@@ -68,12 +81,20 @@ void Draw_Module__Animation::pause()
     m_is_paused = true;
 }
 
+void Draw_Module__Animation::unpause()
+{
+    if(!m_frame_update_timer.is_active())
+        m_frame_update_timer.start(m_time_before_next_frame);
+    m_is_paused = false;
+}
+
 
 
 INIT_FIELDS(LEti::Draw_Module__Animation__Stub, LEti::Default_Draw_Module_2D_Stub)
 
 ADD_FIELD(unsigned int, frames_per_second)
 ADD_FIELD(unsigned int, frames_count)
+ADD_FIELD(unsigned int, times_to_repeat)
 
 FIELDS_END
 
@@ -92,5 +113,7 @@ void Draw_Module__Animation__Stub::M_init_constructed_product(LV::Variable_Base 
 
     product->set_animation_data(frames_count);
     product->set_fps(frames_per_second);
+
+    product->start(times_to_repeat);
 }
 
