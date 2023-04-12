@@ -90,7 +90,15 @@ float Math::angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& 
 
 	float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
     float divider = length_1 * length_2;
-	return divident / divider;
+
+	float result = divident / divider;
+
+	if(result < -1.0f)
+		result = -1.0f;
+	else if(result > 1.0f)
+		result = 1.0f;
+
+	return result;
 }
 
 float Math::angle_sin_between_vectors(const glm::vec3& _first, const glm::vec3& _second)
