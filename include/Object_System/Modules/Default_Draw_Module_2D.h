@@ -55,6 +55,8 @@ namespace LEti
         void set_texture(const Picture* _picture);
         void set_texture_coords(const float* _tc, unsigned int _tc_count);
 
+        void move_raw(const glm::vec3& _stride);
+
     public:
         inline unsigned int gl_draw_mode() const override { return GL_TRIANGLES; }
 

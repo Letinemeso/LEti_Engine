@@ -84,6 +84,11 @@ void Collision_Detector_2D::unregister_object(const LEti::Object_2D *_model)
 	m_registred_models.erase(it);
 }
 
+void Collision_Detector_2D::unregister_all_objects()
+{
+    m_registred_models.clear();
+}
+
 void Collision_Detector_2D::register_point(const glm::vec3 *_point)
 {
 	L_DEBUG_FUNC_2ARG(debug_assert_if_point_copy_found, _point, false);
@@ -100,6 +105,11 @@ void Collision_Detector_2D::unregister_point(const glm::vec3 *_point)
 	}
 	L_ASSERT(!(it == m_registred_points.end()));
 	m_registred_points.erase(it);
+}
+
+void Collision_Detector_2D::unregister_all_points()
+{
+    m_registred_points.clear();
 }
 
 

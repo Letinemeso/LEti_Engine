@@ -39,8 +39,10 @@ namespace LEti
 	public:
 		void register_object(const LEti::Object_2D* _model);
 		void unregister_object(const LEti::Object_2D* _model);
+		void unregister_all_objects();
 		void register_point(const glm::vec3* _point);
 		void unregister_point(const glm::vec3* _point);
+		void unregister_all_points();
 
 	public:
 		void update();

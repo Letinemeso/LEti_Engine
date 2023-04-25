@@ -66,6 +66,12 @@ void Dynamic_Physics_Module_2D::init_physical_model(const float* _raw_coords, un
 }
 
 
+void Dynamic_Physics_Module_2D::move_raw(const glm::vec3 &_stride)
+{
+    m_physical_model->move_raw(_stride);
+}
+
+
 
 void Dynamic_Physics_Module_2D::update_previous_state()
 {

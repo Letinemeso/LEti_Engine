@@ -45,6 +45,8 @@ namespace LEti
     public:
         void init_physical_model(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions);
 
+        void move_raw(const glm::vec3 &_stride);
+
 	public:
 		void update_previous_state() override;
         void update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale) override;

@@ -104,3 +104,14 @@ void Default_Draw_Module_2D::set_texture_coords(const float* _tc, unsigned int _
 	m_texture.set_texture_coords(_tc, _tc_count);
     m_texture.setup_buffer(2, 2);
 }
+
+
+void Default_Draw_Module_2D::move_raw(const glm::vec3 &_stride)
+{
+    for(unsigned int i=0; i<m_vertices.size(); i += 3)
+    {
+        m_vertices[i] += _stride.x;
+        m_vertices[i + 1] += _stride.y;
+        m_vertices[i + 2] += _stride.z;
+    }
+}
