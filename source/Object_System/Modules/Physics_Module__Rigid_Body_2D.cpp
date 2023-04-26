@@ -41,12 +41,7 @@ void Physics_Module__Rigid_Body_2D::align_to_center_of_mass(Default_Draw_Module_
     if(_associated_draw_module == nullptr)
         return;
 
-    for(unsigned int i=0; i<_associated_draw_module->vertices().size(); i += 3)
-    {
-        _associated_draw_module->vertices()[i] += stride.x;
-        _associated_draw_module->vertices()[i + 1] += stride.y;
-        _associated_draw_module->vertices()[i + 2] += stride.z;
-    }
+    _associated_draw_module->move_raw(stride);
 }
 
 
@@ -101,6 +96,8 @@ glm::vec3 Physics_Module__Rigid_Body_2D::calculate_raw_center_of_mass() const
 
     for(unsigned int i=0; i<get_physical_model()->get_polygons_count(); ++i)
         result += get_physical_model()->get_polygons()[i].center_raw();
+
+    result /= get_physical_model()->get_polygons_count();
 
     return result;
 }

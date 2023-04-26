@@ -14,7 +14,7 @@ namespace LEti
         DECLARE_VARIABLE;
 
     protected:
-        void M_init_constructed_product(LV::Variable_Base* /*_product*/) const override;
+        void M_init_constructed_product(LV::Variable_Base* _product) const override;
 
     };
 
