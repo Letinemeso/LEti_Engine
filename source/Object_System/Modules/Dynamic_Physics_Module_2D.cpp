@@ -62,7 +62,7 @@ void Dynamic_Physics_Module_2D::init_physical_model(const float* _raw_coords, un
 
     m_physical_model = new Physical_Model_2D();
     m_physical_model->setup(_raw_coords, _raw_coords_count, _collision_permissions);
-    m_physical_model_prev_state = new Physical_Model_2D::Imprint(m_physical_model->create_imprint());
+    m_physical_model_prev_state = m_physical_model->create_imprint();
 }
 
 

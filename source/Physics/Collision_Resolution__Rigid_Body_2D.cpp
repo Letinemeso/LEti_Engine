@@ -24,7 +24,7 @@ float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const P
 
     for(unsigned int p=0; p<_model.get_polygons_count(); ++p)
     {
-        const Geometry::Polygon& polygon = _model.get_polygons()[p];
+        const Polygon& polygon = _model.get_polygons()[p];
 
         for(unsigned int v=0; v < 3; ++v)
         {
@@ -57,7 +57,7 @@ float Collision_Resolution__Rigid_Body_2D::M_calculate_kinetic_energy(const glm:
 
 
 
-bool Collision_Resolution__Rigid_Body_2D::resolve(const Physical_Model_2D::Intersection_Data &_id)
+bool Collision_Resolution__Rigid_Body_2D::resolve(const Intersection_Data &_id)
 {
     LEti::Object_2D* bodyA = (LEti::Object_2D*)_id.first;	//	too lazy to figure out appropriate way to pass non-const pointer here
     LEti::Object_2D* bodyB = (LEti::Object_2D*)_id.second;

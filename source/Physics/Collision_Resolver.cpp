@@ -35,7 +35,7 @@ void Collision_Resolver::clear_resolutions()
 
 
 
-void Collision_Resolver::resolve_single(const Physical_Model_2D::Intersection_Data &_id) const
+void Collision_Resolver::resolve_single(const Intersection_Data &_id) const
 {
 	auto it = m_resolutions.begin();
 	bool resolved = false;
@@ -48,7 +48,7 @@ void Collision_Resolver::resolve_single(const Physical_Model_2D::Intersection_Da
 	L_ASSERT(resolved);
 }
 
-void Collision_Resolver::resolve_all(const std::list<Physical_Model_2D::Intersection_Data> &_ids) const
+void Collision_Resolver::resolve_all(const std::list<Intersection_Data> &_ids) const
 {
 	for(auto it = _ids.begin(); it != _ids.end(); ++it)
 		resolve_single(*it);

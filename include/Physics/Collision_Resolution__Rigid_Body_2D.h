@@ -17,7 +17,7 @@ namespace LEti
         float M_calculate_kinetic_energy(const glm::vec3& _velocity, float _angular_velocity, float _mass, float _moment_of_inertia) const;
 
 	public:
-		bool resolve(const Physical_Model_2D::Intersection_Data &_id) override;
+		bool resolve(const Intersection_Data &_id) override;
 
 	};
 

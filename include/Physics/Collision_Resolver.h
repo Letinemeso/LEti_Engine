@@ -17,7 +17,7 @@ namespace LEti
 		virtual ~Collision_Resolution_Interface(){}
 
 	public:
-		virtual bool resolve(const Physical_Model_2D::Intersection_Data& _id) = 0;
+                virtual bool resolve(const Intersection_Data& _id) = 0;
 
 	};
 
@@ -37,8 +37,8 @@ namespace LEti
 		void clear_resolutions();
 
 	public:
-		void resolve_single(const Physical_Model_2D::Intersection_Data& _id) const;
-		void resolve_all(const std::list<Physical_Model_2D::Intersection_Data>& _ids) const;
+                void resolve_single(const Intersection_Data& _id) const;
+                void resolve_all(const std::list<Intersection_Data>& _ids) const;
 
 	};
 

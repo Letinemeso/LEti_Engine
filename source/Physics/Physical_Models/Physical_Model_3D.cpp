@@ -1,4 +1,4 @@
-#include "../../include/Physics/Physical_Model_3D.h"
+#include <Physics/Physical_Models/Physical_Model_3D.h>
 
 /*
 using namespace LEti;

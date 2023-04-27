@@ -15,7 +15,7 @@ Default_Narrowest_CD::~Default_Narrowest_CD()
 
 
 
-Geometry::Simple_Intersection_Data Default_Narrowest_CD::intersection__polygon_vs_point(const Geometry::Polygon& _polygon, const glm::vec3& _point) const
+Geometry::Simple_Intersection_Data Default_Narrowest_CD::intersection__polygon_vs_point(const Polygon& _polygon, const glm::vec3& _point) const
 {
 	Geometry_2D::Equasion_Data AB_eq(_polygon[0], _polygon[1]);
 	Geometry_2D::Equasion_Data BC_eq(_polygon[1], _polygon[2]);
@@ -35,11 +35,11 @@ Geometry::Simple_Intersection_Data Default_Narrowest_CD::intersection__polygon_v
 }
 
 
-Physical_Model_2D::Intersection_Data Default_Narrowest_CD::intersection__polygon_vs_segment(const Geometry::Polygon& _polygon, const Geometry::Segment& _segment) const
+Intersection_Data Default_Narrowest_CD::intersection__polygon_vs_segment(const Polygon& _polygon, const Geometry::Segment& _segment) const
 {
 	unsigned int found_intersections = 0;
 
-	Physical_Model_2D::Intersection_Data result_id;
+	Intersection_Data result_id;
 	Geometry::Simple_Intersection_Data ids[3];
 
 	ids[0] = Geometry_2D::segments_intersect({_polygon[0], _polygon[1]}, _segment);
@@ -58,16 +58,16 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::intersection__polygon
 	}
 
 	if(found_intersections == 0)
-		return Physical_Model_2D::Intersection_Data();
+		return Intersection_Data();
 
-	result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+	result_id.type = Intersection_Data::Type::intersection;
 	LEti::Math::shrink_vector_to_1(result_id.normal);
 	result_id.point /= (float)found_intersections;
 
 	return result_id;
 }
 
-Physical_Model_2D::Intersection_Data Default_Narrowest_CD::intersection__polygon_vs_polygon(const Geometry::Polygon& _first, const Geometry::Polygon& _second) const
+Intersection_Data Default_Narrowest_CD::intersection__polygon_vs_polygon(const Polygon& _first, const Polygon& _second) const
 {
 	Geometry_2D::Rectangular_Border this_rb;
 	this_rb.consider_point(_first[0]).consider_point(_first[1]).consider_point(_first[2]);
@@ -75,11 +75,11 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::intersection__polygon
 	other_rb.consider_point(_second[0]).consider_point(_second[1]).consider_point(_second[2]);
 
 	if(!(this_rb && other_rb))
-		return Physical_Model_2D::Intersection_Data();
+		return Intersection_Data();
 
 	unsigned int found_intersections = 0;
-	Physical_Model_2D::Intersection_Data result_id;
-	Physical_Model_2D::Intersection_Data ids[3];
+	Intersection_Data result_id;
+	Intersection_Data ids[3];
 
 	ids[0] = intersection__polygon_vs_segment(_first, {_second[0], _second[1]});
 	ids[1] = intersection__polygon_vs_segment(_first, {_second[1], _second[2]});
@@ -96,7 +96,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::intersection__polygon
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 		result_id.point /= (float)found_intersections;
 
@@ -107,20 +107,20 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::intersection__polygon
 	Geometry::Simple_Intersection_Data _4 = intersection__polygon_vs_point(_first, _second[1]);
 	Geometry::Simple_Intersection_Data _5 = intersection__polygon_vs_point(_first, _second[2]);
 	if(_3 && _4 && _5)
-		return Physical_Model_2D::Intersection_Data(Physical_Model_2D::Intersection_Data::Type::intersection, glm::vec3(_3+_4+_5)/3.0f);
+		return Intersection_Data(Intersection_Data::Type::intersection, glm::vec3(_3+_4+_5)/3.0f);
 	else
 		{L_ASSERT(!(_3 || _4 || _5));}
-	return Physical_Model_2D::Intersection_Data();
+	return Intersection_Data();
 }
 
-Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_segment(const Physical_Model_2D& _model, const Geometry::Segment& _segment) const
+Intersection_Data Default_Narrowest_CD::collision__model_vs_segment(const Physical_Model_2D& _model, const Geometry::Segment& _segment) const
 {
-	Physical_Model_2D::Intersection_Data result_id;
+	Intersection_Data result_id;
 	unsigned int found_intersections = 0;
 
 	for (unsigned int i = 0; i < _model.get_polygons_count(); ++i)
 	{
-		Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_segment(_model[i], _segment);
+		Intersection_Data id = intersection__polygon_vs_segment(_model[i], _segment);
 		if (id)
 		{
 			++found_intersections;
@@ -130,9 +130,9 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_s
 	}
 
 	if(found_intersections == 0)
-		return Physical_Model_2D::Intersection_Data(Physical_Model_2D::Intersection_Data::Type::none);
+		return Intersection_Data(Intersection_Data::Type::none);
 
-	result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+	result_id.type = Intersection_Data::Type::intersection;
 	result_id.point /= (float)found_intersections;
 	LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -153,16 +153,16 @@ Geometry::Simple_Intersection_Data Default_Narrowest_CD::collision__model_vs_poi
 }
 
 
-Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Geometry::Polygon* _pols_1, unsigned int _pols_amount_1, const Geometry::Polygon* _pols_2, unsigned int _pols_amount_2) const
+Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Polygon* _pols_1, unsigned int _pols_amount_1, const Polygon* _pols_2, unsigned int _pols_amount_2) const
 {
-	Physical_Model_2D::Intersection_Data result_id;
+	Intersection_Data result_id;
 	unsigned int found_intersections = 0;
 
 	for (unsigned int i = 0; i < _pols_amount_1; ++i)
 	{
 		for (unsigned int j = 0; j < _pols_amount_2; ++j)
 		{
-			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_pols_1[i], _pols_2[j]);
+			Intersection_Data id = intersection__polygon_vs_polygon(_pols_1[i], _pols_2[j]);
 			if (id)
 			{
 				++found_intersections;
@@ -174,10 +174,10 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -188,7 +188,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 	{
 		for (unsigned int j = 0; j < _pols_amount_1; ++j)
 		{
-			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_pols_1[j], _pols_2[i]);
+			Intersection_Data id = intersection__polygon_vs_polygon(_pols_1[j], _pols_2[i]);
 			if (id)
 			{
 				++found_intersections;
@@ -200,30 +200,30 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
 		return result_id;
 	}
 
-	return Physical_Model_2D::Intersection_Data();
+	return Intersection_Data();
 }
 
 /*
-Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D& _1, const Physical_Model_2D& _2) const
+Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D& _1, const Physical_Model_2D& _2) const
 {
-	Physical_Model_2D::Intersection_Data result_id;
+	Intersection_Data result_id;
 	unsigned int found_intersections = 0;
 
 	for (unsigned int i = 0; i < _1.get_polygons_count(); ++i)
 	{
 		for (unsigned int j = 0; j < _2.get_polygons_count(); ++j)
 		{
-			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_1[i], _2[j]);
+			Intersection_Data id = intersection__polygon_vs_polygon(_1[i], _2[j]);
 			if (id)
 			{
 				++found_intersections;
@@ -235,10 +235,10 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -249,7 +249,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 	{
 		for (unsigned int j = 0; j < _1.get_polygons_count(); ++j)
 		{
-			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_1[j], _2[i]);
+			Intersection_Data id = intersection__polygon_vs_polygon(_1[j], _2[i]);
 			if (id)
 			{
 				++found_intersections;
@@ -261,29 +261,29 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
 		return result_id;
 	}
 
-	return Physical_Model_2D::Intersection_Data();
+	return Intersection_Data();
 }
 
-Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D::Imprint& _1, const Physical_Model_2D::Imprint& _2) const
+Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D_Imprint& _1, const Physical_Model_2D_Imprint& _2) const
 {
-	Physical_Model_2D::Intersection_Data result_id;
+	Intersection_Data result_id;
 	unsigned int found_intersections = 0;
 
 	for (unsigned int i = 0; i < _1.get_polygons_count(); ++i)
 	{
 		for (unsigned int j = 0; j < _2.get_polygons_count(); ++j)
 		{
-			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_1[i], _2[j]);
+			Intersection_Data id = intersection__polygon_vs_polygon(_1[i], _2[j]);
 			if (id)
 			{
 				++found_intersections;
@@ -295,10 +295,10 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -309,7 +309,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 	{
 		for (unsigned int j = 0; j < _1.get_polygons_count(); ++j)
 		{
-			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_1[j], _2[i]);
+			Intersection_Data id = intersection__polygon_vs_polygon(_1[j], _2[i]);
 			if (id)
 			{
 				++found_intersections;
@@ -321,29 +321,29 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
 		return result_id;
 	}
 
-	return Physical_Model_2D::Intersection_Data();
+	return Intersection_Data();
 }
 
-Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D::Imprint& _1, const Physical_Model_2D& _2) const
+Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D_Imprint& _1, const Physical_Model_2D& _2) const
 {
-	Physical_Model_2D::Intersection_Data result_id;
+	Intersection_Data result_id;
 	unsigned int found_intersections = 0;
 
 	for (unsigned int i = 0; i < _1.get_polygons_count(); ++i)
 	{
 		for (unsigned int j = 0; j < _2.get_polygons_count(); ++j)
 		{
-			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_1[i], _2[j]);
+			Intersection_Data id = intersection__polygon_vs_polygon(_1[i], _2[j]);
 			if (id)
 			{
 				++found_intersections;
@@ -355,10 +355,10 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -369,7 +369,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 	{
 		for (unsigned int j = 0; j < _1.get_polygons_count(); ++j)
 		{
-			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_1[j], _2[i]);
+			Intersection_Data id = intersection__polygon_vs_polygon(_1[j], _2[i]);
 			if (id)
 			{
 				++found_intersections;
@@ -381,29 +381,29 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
 		return result_id;
 	}
 
-	return Physical_Model_2D::Intersection_Data();
+	return Intersection_Data();
 }
 
-Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D& _1, const Physical_Model_2D::Imprint& _2) const
+Intersection_Data Default_Narrowest_CD::collision__model_vs_model(const Physical_Model_2D& _1, const Physical_Model_2D_Imprint& _2) const
 {
-	Physical_Model_2D::Intersection_Data result_id;
+	Intersection_Data result_id;
 	unsigned int found_intersections = 0;
 
 	for (unsigned int i = 0; i < _1.get_polygons_count(); ++i)
 	{
 		for (unsigned int j = 0; j < _2.get_polygons_count(); ++j)
 		{
-			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_1[i], _2[j]);
+			Intersection_Data id = intersection__polygon_vs_polygon(_1[i], _2[j]);
 			if (id)
 			{
 				++found_intersections;
@@ -415,10 +415,10 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
@@ -429,7 +429,7 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 	{
 		for (unsigned int j = 0; j < _1.get_polygons_count(); ++j)
 		{
-			Physical_Model_2D::Intersection_Data id = intersection__polygon_vs_polygon(_1[j], _2[i]);
+			Intersection_Data id = intersection__polygon_vs_polygon(_1[j], _2[i]);
 			if (id)
 			{
 				++found_intersections;
@@ -441,17 +441,17 @@ Physical_Model_2D::Intersection_Data Default_Narrowest_CD::collision__model_vs_m
 
 	if(found_intersections != 0)
 	{
-		result_id.type = Physical_Model_2D::Intersection_Data::Type::intersection;
+		result_id.type = Intersection_Data::Type::intersection;
 		result_id.point /= (float)found_intersections;
 
-		if(Math::vector_length(result_id.normal) < 0.0001f) return Physical_Model_2D::Intersection_Data();
+		if(Math::vector_length(result_id.normal) < 0.0001f) return Intersection_Data();
 
 		LEti::Math::shrink_vector_to_1(result_id.normal);
 
 		return result_id;
 	}
 
-	return Physical_Model_2D::Intersection_Data();
+	return Intersection_Data();
 }
 */
 

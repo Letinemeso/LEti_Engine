@@ -1,9 +1,8 @@
 #ifndef __Dynamic_Physics_Module_2D
 #define __Dynamic_Physics_Module_2D
 
-#include "Physics_Module_Base.h"
-
-#include "../../Physics/Physical_Model_2D.h"
+#include <Object_System/Modules/Physics_Module_Base.h>
+#include <Physics/Physical_Models/Physical_Model_2D.h>
 
 
 namespace LEti
@@ -35,7 +34,7 @@ namespace LEti
 
     private:
 		LEti::Physical_Model_2D* m_physical_model = nullptr;
-        LEti::Physical_Model_2D::Imprint* m_physical_model_prev_state = nullptr;
+        LEti::Physical_Model_2D_Imprint* m_physical_model_prev_state = nullptr;
         LEti::Geometry_2D::Rectangular_Border m_rectangular_border;
 
 	public:
@@ -53,9 +52,9 @@ namespace LEti
 
 	public:
         inline LEti::Physical_Model_2D* get_physical_model() { return m_physical_model; }
-        inline LEti::Physical_Model_2D::Imprint* get_physical_model_prev_state() { return m_physical_model_prev_state; }
+        inline LEti::Physical_Model_2D_Imprint* get_physical_model_prev_state() { return m_physical_model_prev_state; }
         inline const LEti::Physical_Model_2D* get_physical_model() const { return m_physical_model; }
-        inline const LEti::Physical_Model_2D::Imprint* get_physical_model_prev_state() const { return m_physical_model_prev_state; }
+        inline const LEti::Physical_Model_2D_Imprint* get_physical_model_prev_state() const { return m_physical_model_prev_state; }
         inline const LEti::Geometry_2D::Rectangular_Border& rectangular_border() const { return m_rectangular_border; }
 
 	};

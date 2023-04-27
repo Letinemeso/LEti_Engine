@@ -19,8 +19,8 @@ public:
     void set_narrowest_phase(Narrowest_Phase_Interface* _narrowest_phase_impl);
 
 public:
-    using Collision_Data_List__Models = std::list<Physical_Model_2D::Intersection_Data>;
-    using Collision_Data_List__Points = std::list<Physical_Model_2D::Intersection_Data>;
+    using Collision_Data_List__Models = std::list<Intersection_Data>;
+    using Collision_Data_List__Points = std::list<Intersection_Data>;
 
 public:
     virtual ~Narrow_Phase_Interface();

@@ -66,6 +66,9 @@ HEADERS += \
     include/Object_System/Object_Base.h \
     include/Object_System/Rigid_Body_2D_Stub.h \
     include/Object_System/Text_Field.h \
+    include/Physics/Intersection_Data.h \
+    include/Physics/Physical_Models/Physical_Model_2D.h \
+    include/Physics/Physical_Models/Physical_Model_3D.h \
     include/Physics/Broad_Phase_Interface.h \
     include/Physics/Collision_Detector_2D.h \
     include/Physics/Collision_Resolution__Rigid_Body_2D.h \
@@ -75,8 +78,7 @@ HEADERS += \
     include/Physics/Dynamic_Narrow_CD.h \
     include/Physics/Narrow_Phase_Interface.h \
     include/Physics/Narrowest_Phase_Interface.h \
-    include/Physics/Physical_Model_2D.h \
-    include/Physics/Physical_Model_3D.h \
+    include/Physics/Physical_Models/Polygon.h \
     include/Physics/SAT_Narrowest_CD.h \
     include/Physics/Space_Hasher_2D.h \
     include/Picture.h \
@@ -106,6 +108,9 @@ SOURCES += \
     source/Object_System/Object_Base.cpp \
     source/Object_System/Rigid_Body_2D_Stub.cpp \
     source/Object_System/Text_Field.cpp \
+    source/Physics/Intersection_Data.cpp \
+    source/Physics/Physical_Models/Physical_Model_2D.cpp \
+    source/Physics/Physical_Models/Physical_Model_3D.cpp \
     source/Physics/Broad_Phase_Interface.cpp \
     source/Physics/Collision_Detector_2D.cpp \
     source/Physics/Collision_Resolution__Rigid_Body_2D.cpp \
@@ -115,8 +120,7 @@ SOURCES += \
     source/Physics/Default_Narrowest_CD.cpp \
     source/Physics/Narrow_Phase_Interface.cpp \
     source/Physics/Narrowest_Phase_Interface.cpp \
-    source/Physics/Physical_Model_2D.cpp \
-    source/Physics/Physical_Model_3D.cpp \
+    source/Physics/Physical_Models/Polygon.cpp \
     source/Physics/SAT_Narrowest_CD.cpp \
     source/Physics/Space_Hasher_2D.cpp \
     source/Picture.cpp \

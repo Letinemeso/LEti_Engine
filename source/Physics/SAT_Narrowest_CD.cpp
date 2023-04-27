@@ -3,7 +3,7 @@
 using namespace LEti;
 
 
-SAT_Narrowest_CD::mm_pair SAT_Narrowest_CD::M_get_minmax_projections(const glm::vec3 &_axis, const Geometry::Polygon &_pol) const
+SAT_Narrowest_CD::mm_pair SAT_Narrowest_CD::M_get_minmax_projections(const glm::vec3 &_axis, const Polygon &_pol) const
 {
 	float min = 0.0f, max = 0.0f;
 
@@ -23,7 +23,7 @@ SAT_Narrowest_CD::mm_pair SAT_Narrowest_CD::M_get_minmax_projections(const glm::
 }
 
 
-SAT_Narrowest_CD::Intersection_Data SAT_Narrowest_CD::M_polygons_collision(const Geometry::Polygon &_first, const Geometry::Polygon &_second) const
+SAT_Narrowest_CD::Intersection_Data SAT_Narrowest_CD::M_polygons_collision(const Polygon &_first, const Polygon &_second) const
 {
 	SAT_Narrowest_CD::Intersection_Data result;
 
@@ -109,7 +109,7 @@ float SAT_Narrowest_CD::M_smallest_point_to_polygon_distance(const glm::vec3 &_p
 	return min_dist;
 }
 
-LDS::List<glm::vec3> SAT_Narrowest_CD::M_points_of_contact(const Geometry::Polygon *_f_pols, unsigned int _f_count, const Geometry::Polygon *_s_pols, unsigned int _s_count) const
+LDS::List<glm::vec3> SAT_Narrowest_CD::M_points_of_contact(const Polygon *_f_pols, unsigned int _f_count, const Polygon *_s_pols, unsigned int _s_count) const
 {
 	float min_dist = -1.0f;
 
@@ -189,7 +189,7 @@ LDS::List<glm::vec3> SAT_Narrowest_CD::M_points_of_contact(const Geometry::Polyg
 }
 
 
-Geometry::Simple_Intersection_Data SAT_Narrowest_CD::intersection__polygon_vs_point(const Geometry::Polygon& _polygon, const glm::vec3& _point) const
+Geometry::Simple_Intersection_Data SAT_Narrowest_CD::intersection__polygon_vs_point(const Polygon& _polygon, const glm::vec3& _point) const
 {
 	Geometry_2D::Equasion_Data AB_eq(_polygon[0], _polygon[1]);
 	Geometry_2D::Equasion_Data BC_eq(_polygon[1], _polygon[2]);
@@ -222,16 +222,16 @@ Geometry::Simple_Intersection_Data SAT_Narrowest_CD::collision__model_vs_point(c
 }
 
 
-Physical_Model_2D::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Geometry::Polygon* _pols_1, unsigned int _pols_amount_1, const Geometry::Polygon* _pols_2, unsigned int _pols_amount_2) const
+LEti::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Polygon* _pols_1, unsigned int _pols_amount_1, const Polygon* _pols_2, unsigned int _pols_amount_2) const
 {
-	Physical_Model_2D::Intersection_Data result(Physical_Model_2D::Intersection_Data::Type::intersection);
+    LEti::Intersection_Data result(LEti::Intersection_Data::Type::intersection);
 
-	Intersection_Data f_id;
+    SAT_Narrowest_CD::Intersection_Data f_id;
 	for(unsigned int i=0; i<_pols_amount_1; ++i)
 	{
 		for(unsigned int j=0; j<_pols_amount_2; ++j)
 		{
-			Intersection_Data id = M_polygons_collision(_pols_1[i], _pols_2[j]);
+            SAT_Narrowest_CD::Intersection_Data id = M_polygons_collision(_pols_1[i], _pols_2[j]);
 
 			if(!id.intersection)
 				continue;
