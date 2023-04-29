@@ -46,11 +46,11 @@ namespace LEti
 
     };
 
+
     class Physical_Model_2D_Imprint;
 
 	class Physical_Model_2D
     {
-    private:
 	private:
 		float* m_raw_coords = nullptr;
 		unsigned int m_raw_coords_count = 0;
@@ -60,6 +60,9 @@ namespace LEti
         Polygon_Holder_Base* m_polygons_holder = nullptr;
 		unsigned int m_polygons_count = 0;
 
+    private:
+        glm::vec3 m_center_of_mass{0.0f, 0.0f, 0.0f};
+
 	private:
 		Geometry_2D::Rectangular_Border m_current_border;
 
@@ -68,6 +71,7 @@ namespace LEti
 
 	private:
 		void M_update_rectangular_border();
+        virtual glm::vec3 M_calculate_center_of_mass() const;
 
 	public:
 		const Geometry_2D::Rectangular_Border& curr_rect_border() const;
@@ -89,6 +93,8 @@ namespace LEti
         const Polygon* get_polygon(unsigned int _index) const;
         const Polygon_Holder_Base* get_polygons() const;
         unsigned int get_polygons_count() const;
+
+        inline const glm::vec3& center_of_mass() const { return m_center_of_mass; }
 
 	};
 

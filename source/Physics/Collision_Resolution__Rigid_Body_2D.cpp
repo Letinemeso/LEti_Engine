@@ -3,22 +3,9 @@
 using namespace LEti;
 
 
-glm::vec3 Collision_Resolution__Rigid_Body_2D::M_calculate_center_of_mass(const Physical_Model_2D &_model) const
-{
-    glm::vec3 result(0.0f, 0.0f, 0.0f);
-
-    for(unsigned int i=0; i<_model.get_polygons_count(); ++i)
-        result += _model.get_polygon(i)->center();
-    result /= (float)_model.get_polygons_count();
-
-    return result;
-}
-
-float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const Physical_Model_2D &_model, float _mass) const
+float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const Physical_Model_2D& _model, float _mass) const
 {
     float result = 0.0f;
-
-    glm::vec3 center_of_mass = M_calculate_center_of_mass(_model);
 
     unsigned int counted_points = 0;
 
@@ -31,7 +18,7 @@ float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const P
             if(!polygon.segment_can_collide(v))
                 continue;
 
-            glm::vec3 center_to_point = center_of_mass - polygon[v];
+            glm::vec3 center_to_point = _model.center_of_mass() - polygon[v];
             float distance_squared = (center_to_point.x * center_to_point.x) + (center_to_point.y * center_to_point.y) + (center_to_point.z * center_to_point.z);
             result += distance_squared;
 
@@ -68,8 +55,8 @@ bool Collision_Resolution__Rigid_Body_2D::resolve(const Intersection_Data &_id)
     if(!pm1 || !pm2)
         return false;
 
-    glm::vec3 A_center_of_mas = M_calculate_center_of_mass(*pm1->get_physical_model());
-    glm::vec3 B_center_of_mas = M_calculate_center_of_mass(*pm2->get_physical_model());
+    glm::vec3 A_center_of_mas = pm1->get_physical_model()->center_of_mass();
+    glm::vec3 B_center_of_mas = pm2->get_physical_model()->center_of_mass();
 
     float A_moment_of_inertia = M_calculate_moment_of_inertia(*pm1->get_physical_model(), pm1->mass());
     float B_moment_of_inertia = M_calculate_moment_of_inertia(*pm2->get_physical_model(), pm2->mass());

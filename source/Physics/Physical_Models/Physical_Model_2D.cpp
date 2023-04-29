@@ -1,5 +1,5 @@
 #include <Physics/Physical_Models/Physical_Model_2D.h>
-
+#include <Physics/Physical_Models/Rigid_Body_Polygon.h>
 using namespace LEti;
 
 
@@ -38,6 +38,17 @@ void Physical_Model_2D::M_update_rectangular_border()
             if(m_current_border.bottom > polygon[p].y) m_current_border.bottom = polygon[p].y;
 		}
 	}
+}
+
+glm::vec3 Physical_Model_2D::M_calculate_center_of_mass() const
+{
+    glm::vec3 result(0.0f, 0.0f, 0.0f);
+
+    for(unsigned int i=0; i<get_polygons_count(); ++i)
+        result += get_polygon(i)->center();
+    result /= (float)get_polygons_count();
+
+    return result;
 }
 
 
@@ -114,6 +125,7 @@ void Physical_Model_2D::update(const glm::mat4x4& _translation, const glm::mat4x
         m_polygons_holder->get_polygon(i)->update_points_with_single_matrix(result_matrix);
 
 	M_update_rectangular_border();
+    m_center_of_mass = M_calculate_center_of_mass();
 }
 
 void Physical_Model_2D::copy_real_coordinates(const Physical_Model_2D &_other)
