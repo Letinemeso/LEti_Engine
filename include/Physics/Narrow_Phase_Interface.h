@@ -1,7 +1,6 @@
 #ifndef __NARROW_PHASE_INTERFACE
 #define __NARROW_PHASE_INTERFACE
 
-//#include "../../include/Object.h"
 #include <Object_System/Object_2D.h>
 
 #include "Broad_Phase_Interface.h"
@@ -19,8 +18,8 @@ public:
     void set_narrowest_phase(Narrowest_Phase_Interface* _narrowest_phase_impl);
 
 public:
-    using Collision_Data_List__Models = std::list<Intersection_Data>;
-    using Collision_Data_List__Points = std::list<Intersection_Data>;
+    using Collision_Data_List__Models = LDS::List<Intersection_Data>;
+    using Collision_Data_List__Points = LDS::List<Intersection_Data>;
 
 public:
     virtual ~Narrow_Phase_Interface();

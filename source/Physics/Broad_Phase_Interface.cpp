@@ -1,4 +1,4 @@
-#include "../../include/Physics/Broad_Phase_Interface.h"
+#include <Physics/Broad_Phase_Interface.h>
 
 using namespace LEti;
 

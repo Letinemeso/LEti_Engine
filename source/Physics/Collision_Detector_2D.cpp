@@ -18,11 +18,10 @@ Collision_Detector_2D::~Collision_Detector_2D()
 
 void Collision_Detector_2D::debug_assert_if_model_copy_found(const LEti::Object_2D *_model, bool _reverse)
 {
-	std::list<const LEti::Object_2D*>::iterator check = m_registred_models.begin();
-	while(check != m_registred_models.end())
+    LDS::List<const LEti::Object_2D*>::Iterator check = m_registred_models.begin();
+    while(!check.end_reached())
 	{
-		if(!_reverse)
-		{ L_ASSERT(!(*check == _model)); }
+        L_ASSERT(!_reverse && *check != _model);
 		++check;
 	}
 
@@ -31,11 +30,10 @@ void Collision_Detector_2D::debug_assert_if_model_copy_found(const LEti::Object_
 
 void Collision_Detector_2D::debug_assert_if_point_copy_found(const glm::vec3 *_point, bool _reverse)
 {
-	std::list<const glm::vec3*>::iterator check = m_registred_points.begin();
-	while(check != m_registred_points.end())
-	{
-		if(!_reverse)
-			{ L_ASSERT(!(*check == _point)); }
+    LDS::List<const glm::vec3*>::Iterator check = m_registred_points.begin();
+    while(!check.end_reached())
+    {
+        L_ASSERT(!_reverse && *check != _point);
 		++check;
 	}
 
@@ -74,13 +72,14 @@ void Collision_Detector_2D::register_object(const LEti::Object_2D *_model)
 
 void Collision_Detector_2D::unregister_object(const LEti::Object_2D *_model)
 {
-	std::list<const LEti::Object_2D*>::iterator it = m_registred_models.begin();
-	while(it != m_registred_models.end())
+    LDS::List<const LEti::Object_2D*>::Iterator it = m_registred_models.begin();
+    while(!it.end_reached())
 	{
-		if(*it == _model) break;
+        if(*it == _model)
+            break;
 		++it;
 	}
-	L_ASSERT(it != m_registred_models.end());
+    L_ASSERT(!it.end_reached());
 	m_registred_models.erase(it);
 }
 
@@ -97,13 +96,14 @@ void Collision_Detector_2D::register_point(const glm::vec3 *_point)
 
 void Collision_Detector_2D::unregister_point(const glm::vec3 *_point)
 {
-	std::list<const glm::vec3*>::iterator it = m_registred_points.begin();
-	while(it != m_registred_points.end())
+    LDS::List<const glm::vec3*>::Iterator it = m_registred_points.begin();
+    while(!it.end_reached())
 	{
-		if(*it == _point) break;
+        if(*it == _point)
+            break;
 		++it;
 	}
-	L_ASSERT(!(it == m_registred_points.end()));
+    L_ASSERT(!it.end_reached());
 	m_registred_points.erase(it);
 }
 
@@ -120,8 +120,8 @@ void Collision_Detector_2D::update()
 
 	m_broad_phase->update(m_registred_models, m_registred_points);
 
-	std::list<Broad_Phase_Interface::Colliding_Pair> possible_collisions__models = m_broad_phase->get_possible_collisions__models();
-	std::list<Broad_Phase_Interface::Colliding_Point_And_Object> possible_collisions__points = m_broad_phase->get_possible_collisions__points();
+    LDS::List<Broad_Phase_Interface::Colliding_Pair> possible_collisions__models = m_broad_phase->get_possible_collisions__models();
+    LDS::List<Broad_Phase_Interface::Colliding_Point_And_Object> possible_collisions__points = m_broad_phase->get_possible_collisions__points();
 
 	m_narrow_phase->update(possible_collisions__models, possible_collisions__points);
 }

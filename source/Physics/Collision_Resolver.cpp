@@ -48,8 +48,8 @@ void Collision_Resolver::resolve_single(const Intersection_Data &_id) const
 	L_ASSERT(resolved);
 }
 
-void Collision_Resolver::resolve_all(const std::list<Intersection_Data> &_ids) const
+void Collision_Resolver::resolve_all(const LDS::List<Intersection_Data> &_ids) const
 {
-	for(auto it = _ids.begin(); it != _ids.end(); ++it)
+    for(LDS::List<Intersection_Data>::Const_Iterator it = _ids.begin(); !it.end_reached(); ++it)
 		resolve_single(*it);
 }

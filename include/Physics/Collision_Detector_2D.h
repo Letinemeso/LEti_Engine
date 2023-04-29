@@ -2,13 +2,12 @@
 #define __Collision_Detector_2D
 
 #include "L_Debug/L_Debug.h"
+#include <Data_Structures/List.h>
 
-#include <list>
-//#include "../../include/Object.h"
 #include <Object_System/Object_2D.h>
 
-#include "../../include/Physics/Broad_Phase_Interface.h"
-#include "../../include/Physics/Narrow_Phase_Interface.h"
+#include <Physics/Broad_Phase_Interface.h>
+#include <Physics/Narrow_Phase_Interface.h>
 
 
 namespace LEti
@@ -20,8 +19,8 @@ namespace LEti
 		virtual ~Collision_Detector_2D();
 
 	private:
-		std::list<const LEti::Object_2D*> m_registred_models;
-		std::list<const glm::vec3*> m_registred_points;
+        LDS::List<const LEti::Object_2D*> m_registred_models;
+        LDS::List<const glm::vec3*> m_registred_points;
 
 	private:
 		void debug_assert_if_model_copy_found(const LEti::Object_2D *_model, bool _reverse);

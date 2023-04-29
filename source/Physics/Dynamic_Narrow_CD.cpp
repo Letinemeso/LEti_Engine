@@ -238,8 +238,8 @@ void Dynamic_Narrow_CD::update(const Broad_Phase_Interface::Colliding_Pair_List 
     m_collisions__models.clear();
     m_collisions__points.clear();
 
-    Broad_Phase_Interface::Colliding_Pair_List::const_iterator itm = _possible_collisions__models.cbegin();
-    while(itm != _possible_collisions__models.cend())
+    Broad_Phase_Interface::Colliding_Pair_List::Const_Iterator itm = _possible_collisions__models.begin();
+    while(!itm.end_reached())
     {
         Intersection_Data id = objects_collide(*itm->first, *itm->second);
         if(id)
@@ -252,8 +252,8 @@ void Dynamic_Narrow_CD::update(const Broad_Phase_Interface::Colliding_Pair_List 
         ++itm;
     }
 
-    Broad_Phase_Interface::Colliding_Point_And_Object_List::const_iterator itp = _possible_collisions__points.cbegin();
-    while(itp != _possible_collisions__points.cend())
+    Broad_Phase_Interface::Colliding_Point_And_Object_List::Const_Iterator itp = _possible_collisions__points.begin();
+    while(!itp.end_reached())
     {
         Geometry::Simple_Intersection_Data id = collision__static_vs_point(*itp->object, *itp->point);
         if(id)

@@ -23,7 +23,7 @@ void Space_Hasher_2D::update_border(const objects_list& _registred_objects)
 {
 	if(_registred_objects.size() == 0) return;
 
-	std::list<const LEti::Object_2D*>::const_iterator model_it = _registred_objects.begin();
+    LDS::List<const LEti::Object_2D*>::Const_Iterator model_it = _registred_objects.begin();
 
     bool rb_inited = false;
 
@@ -32,7 +32,7 @@ void Space_Hasher_2D::update_border(const objects_list& _registred_objects)
     float max_top = 0.0f;
     float max_bottom = 0.0f;
 
-	while(model_it != _registred_objects.end())
+    while(!model_it.end_reached())
 	{
         if(!(*model_it)->physics_module())
         {
@@ -89,8 +89,8 @@ void Space_Hasher_2D::reset_hash_array()
 
 void Space_Hasher_2D::hash_objects(const objects_list& _registred_objects)
 {
-	objects_list::const_iterator model_it = _registred_objects.cbegin();
-	while(model_it != _registred_objects.end())
+    objects_list::Const_Iterator model_it = _registred_objects.begin();
+    while(!model_it.end_reached())
 	{
         if(!(*model_it)->physics_module())
         {
@@ -111,22 +111,24 @@ void Space_Hasher_2D::hash_objects(const objects_list& _registred_objects)
 			{
 				unsigned int hash = construct_hash(x, y);
 
-				if(m_array[hash])
-				{
-					bool copy = false;
-					for(const LEti::Object_2D*& a : *(m_array[hash]))
-					{
-						if(a == *model_it)
-							copy = true;
-					}
-					if(!copy)
-						m_array[hash]->push_back(*model_it);
-				}
-				else
-				{
-					m_array[hash] = new objects_list;
-					m_array[hash]->push_back(*model_it);
-				}
+                if(!m_array[hash])
+                {
+                    m_array[hash] = new objects_list;
+                    m_array[hash]->push_back(*model_it);
+                    continue;
+                }
+
+                bool copy = false;
+
+                const objects_list& list = *m_array[hash];
+                for(objects_list::Const_Iterator list_it = list.begin(); !list_it.end_reached(); ++list_it)
+                {
+                    if(*list_it == *model_it)
+                        copy = true;
+                }
+
+                if(!copy)
+                    m_array[hash]->push_back(*model_it);
 			}
 		}
 
@@ -136,12 +138,10 @@ void Space_Hasher_2D::hash_objects(const objects_list& _registred_objects)
 
 void Space_Hasher_2D::check_for_possible_collisions__points(const points_list &_registred_points)
 {
-//		m_possible_point_and_object_collisions
-//		while*
 	m_possible_collisions__points.clear();
 
-	points_list::const_iterator point_it = _registred_points.cbegin();
-	while(point_it != _registred_points.cend())
+    points_list::Const_Iterator point_it = _registred_points.begin();
+    while(!point_it.end_reached())
 	{
 		glm::vec3 point_with_offset = *(*point_it);
 		point_with_offset.x -= m_space_borders.min_x;
@@ -163,12 +163,12 @@ void Space_Hasher_2D::check_for_possible_collisions__points(const points_list &_
 			continue;
 		}
 
-		const objects_list& list = *(m_array[hash]);
-		objects_list::const_iterator it = list.cbegin();
-		while(it != list.end())
+        const objects_list& list = *m_array[hash];
+        objects_list::Const_Iterator it = list.begin();
+        while(!it.end_reached())
 		{
 			if((*it)->physics_module()->can_collide())
-				m_possible_collisions__points.emplace(Colliding_Point_And_Object(*it, *point_it), false);
+                m_possible_collisions__points.insert(Colliding_Point_And_Object(*it, *point_it));
 			++it;
 		}
 
@@ -188,17 +188,17 @@ void Space_Hasher_2D::check_for_possible_collisions__models()
 		const objects_list& curr_list = *(m_array[i]);
 		if(curr_list.size() < 2) continue;
 
-		objects_list::const_iterator first = curr_list.begin();
-		while(first != curr_list.end())
+        objects_list::Const_Iterator first = curr_list.begin();
+        while(!first.end_reached())
 		{
-			objects_list::const_iterator second = first;
+            objects_list::Const_Iterator second = first;
 			++second;
 
-			while(second != curr_list.end())
+            while(!second.end_reached())
 			{
 				Colliding_Pair cd(*first, *second);
-				if(m_possible_collisions__models.find(cd) == m_possible_collisions__models.end())
-					m_possible_collisions__models.emplace(cd, false);
+                if(!m_possible_collisions__models.find(cd).is_ok())
+                    m_possible_collisions__models.insert(cd);
 
 				++second;
 			}
@@ -253,28 +253,28 @@ void Space_Hasher_2D::update(const objects_list &_registred_objects, const point
 }
 
 
-std::list<Space_Hasher_2D::Colliding_Pair> Space_Hasher_2D::get_possible_collisions__models()
+LDS::List<Space_Hasher_2D::Colliding_Pair> Space_Hasher_2D::get_possible_collisions__models()
 {
-	std::list<Colliding_Pair> result;
-	std::map<Colliding_Pair, bool>::const_iterator it = m_possible_collisions__models.begin();
+    LDS::List<Colliding_Pair> result;
+    LDS::AVL_Tree<Colliding_Pair>::Iterator it = m_possible_collisions__models.iterator();
 
-	while(it != m_possible_collisions__models.end())
+    while(!it.end_reached())
 	{
-		result.push_back({it->first.first, it->first.second});
+        result.push_back({it->first, it->second});
 		++it;
 	}
 
 	return result;
 }
 
-std::list<Space_Hasher_2D::Colliding_Point_And_Object> Space_Hasher_2D::get_possible_collisions__points()
+LDS::List<Space_Hasher_2D::Colliding_Point_And_Object> Space_Hasher_2D::get_possible_collisions__points()
 {
-	std::list<Colliding_Point_And_Object> result;
-	std::map<Colliding_Point_And_Object, bool>::const_iterator it = m_possible_collisions__points.begin();
+    LDS::List<Colliding_Point_And_Object> result;
+    LDS::AVL_Tree<Colliding_Point_And_Object>::Iterator it = m_possible_collisions__points.iterator();
 
-	while(it != m_possible_collisions__points.end())
+    while(!it.end_reached())
 	{
-		result.push_back({it->first.object, it->first.point});
+        result.push_back({it->object, it->point});
 		++it;
 	}
 
