@@ -5,7 +5,7 @@ using namespace LEti;
 
 INIT_FIELDS(LEti::Physics_Module__Rigid_Body_2D__Stub, LEti::Dynamic_Physics_Module_2D_Stub)
 
-ADD_FIELD(float, mass)
+ADD_FIELD(float*, masses)
 
 FIELDS_END
 
@@ -21,13 +21,37 @@ void Physics_Module__Rigid_Body_2D__Stub::M_init_constructed_product(LV::Variabl
     Dynamic_Physics_Module_2D_Stub::M_init_constructed_product(_product);
 
     Physics_Module__Rigid_Body_2D* result = (Physics_Module__Rigid_Body_2D*)_product;
-    result->set_mass(mass);
+    result->set_masses(masses);
 }
 
 
 
 INIT_FIELDS(LEti::Physics_Module__Rigid_Body_2D, LEti::Dynamic_Physics_Module_2D)
 FIELDS_END
+
+
+
+Physical_Model_2D* Physics_Module__Rigid_Body_2D::M_create_physical_model() const
+{
+    return new Rigid_Body_Physical_Model_2D;
+}
+
+
+
+glm::vec3 Physics_Module__Rigid_Body_2D::calculate_raw_center_of_mass() const
+{
+    glm::vec3 result(0.0f, 0.0f, 0.0f);
+
+    for(unsigned int i=0; i<get_physical_model()->get_polygons_count(); ++i)
+    {
+        const Rigid_Body_Polygon& polygon = (const Rigid_Body_Polygon&)*get_physical_model()->get_polygon(i);
+        result += polygon.center_raw() * polygon.mass();
+    }
+
+    result /= ((Rigid_Body_Physical_Model_2D*)get_physical_model())->total_mass();
+
+    return result;
+}
 
 
 
@@ -46,58 +70,25 @@ void Physics_Module__Rigid_Body_2D::align_to_center_of_mass(Default_Draw_Module_
 
 
 
-void Physics_Module__Rigid_Body_2D::set_mass(float _mass)
+void Physics_Module__Rigid_Body_2D::set_masses(const float* _masses)
 {
-	m_mass = _mass;
-}
+    Rigid_Body_Physical_Model_2D* physical_model = (Rigid_Body_Physical_Model_2D*)get_physical_model();
 
-void Physics_Module__Rigid_Body_2D::set_velocity(const glm::vec3 &_v)
-{
-    m_velocity = _v;
-}
-
-void Physics_Module__Rigid_Body_2D::set_angular_velocity(float _av)
-{
-    m_angular_velocity = _av;
-}
-
-
-void Physics_Module__Rigid_Body_2D::apply_linear_impulse(const glm::vec3 &_imp)
-{
-    m_velocity += _imp;
-}
-
-void Physics_Module__Rigid_Body_2D::apply_rotation(float _av)
-{
-    m_angular_velocity += _av;
+    physical_model->set_masses(_masses);
 }
 
 
 
 float Physics_Module__Rigid_Body_2D::mass() const
 {
-	return m_mass;
+    Rigid_Body_Physical_Model_2D* physical_model = (Rigid_Body_Physical_Model_2D*)get_physical_model();
+
+    return physical_model->total_mass() * m_mass_multiplier;
 }
 
-const glm::vec3& Physics_Module__Rigid_Body_2D::velocity() const
+float Physics_Module__Rigid_Body_2D::moment_of_inertia() const
 {
-    return m_velocity;
-}
+    Rigid_Body_Physical_Model_2D* physical_model = (Rigid_Body_Physical_Model_2D*)get_physical_model();
 
-float Physics_Module__Rigid_Body_2D::angular_velocity() const
-{
-    return m_angular_velocity;
-}
-
-
-glm::vec3 Physics_Module__Rigid_Body_2D::calculate_raw_center_of_mass() const
-{
-    glm::vec3 result(0.0f, 0.0f, 0.0f);
-
-    for(unsigned int i=0; i<get_physical_model()->get_polygons_count(); ++i)
-        result += get_physical_model()->get_polygons()->get_polygon(i)->center_raw();
-
-    result /= get_physical_model()->get_polygons_count();
-
-    return result;
+    return physical_model->moment_of_inertia() * m_mass_multiplier;
 }

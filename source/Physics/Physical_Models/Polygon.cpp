@@ -19,6 +19,11 @@ Polygon::Polygon(const Polygon& _other)
     m_center = _other.m_center;
 }
 
+Polygon::~Polygon()
+{
+
+}
+
 void Polygon::setup(const float *_raw_coords, const bool* _segment_can_collide)
 {
     m_raw_coords = _raw_coords;

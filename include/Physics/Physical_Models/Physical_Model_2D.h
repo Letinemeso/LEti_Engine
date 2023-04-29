@@ -16,12 +16,9 @@ namespace LEti
 
     class Polygon_Holder_Base
     {
-    protected:
-        Polygon* polygons = nullptr;
-
     public:
         Polygon_Holder_Base() { }
-        ~Polygon_Holder_Base() { delete[] polygons; }
+        virtual ~Polygon_Holder_Base() { }
 
     public:
         virtual Polygon_Holder_Base* create_copy() const = 0;
@@ -35,14 +32,16 @@ namespace LEti
     class Polygon_Holder final : public Polygon_Holder_Base
     {
     private:
-        inline T* M_cast() { return (T*)polygons; }
-        inline const T* M_cast() const { return (const T*)polygons; }
+        T* polygons = nullptr;
 
     public:
         inline Polygon_Holder_Base* create_copy() const override { return new Polygon_Holder<T>; }
         void allocate(unsigned int _amount) override { delete[] polygons;  polygons = new T[_amount]; }
-        inline Polygon* get_polygon(unsigned int _index) { return &M_cast()[_index]; }
-        inline const Polygon* get_polygon(unsigned int _index) const { return &M_cast()[_index]; }
+        inline Polygon* get_polygon(unsigned int _index) { return &polygons[_index]; }
+        inline const Polygon* get_polygon(unsigned int _index) const { return &polygons[_index]; }
+
+    public:
+        ~Polygon_Holder() { delete[] polygons; }
 
     };
 
@@ -82,9 +81,9 @@ namespace LEti
 		void setup(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions);
 		void move_raw(const glm::vec3& _stride);
 
-		~Physical_Model_2D();
+        virtual ~Physical_Model_2D();
 
-		void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
+        virtual void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
 		void copy_real_coordinates(const Physical_Model_2D& _other);
 
         Physical_Model_2D_Imprint* create_imprint() const;

@@ -123,6 +123,8 @@ SOURCES += \
     source/Physics/Narrow_Phase_Interface.cpp \
     source/Physics/Narrowest_Phase_Interface.cpp \
     source/Physics/Physical_Models/Polygon.cpp \
+    source/Physics/Physical_Models/Rigid_Body_Physical_Model_2D.cpp \
+    source/Physics/Physical_Models/Rigid_Body_Polygon.cpp \
     source/Physics/SAT_Narrowest_CD.cpp \
     source/Physics/Space_Hasher_2D.cpp \
     source/Picture.cpp \

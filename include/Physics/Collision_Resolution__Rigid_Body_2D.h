@@ -11,8 +11,6 @@ namespace LEti
 	class Collision_Resolution__Rigid_Body_2D : public Collision_Resolution_Interface
 	{
     private:
-        float M_calculate_moment_of_inertia(const Physical_Model_2D& _model, float _mass) const;
-
         float M_calculate_kinetic_energy(const glm::vec3& _velocity, float _angular_velocity, float _mass, float _moment_of_inertia) const;
 
 	public:

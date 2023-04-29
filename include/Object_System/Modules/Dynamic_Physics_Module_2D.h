@@ -21,7 +21,7 @@ namespace LEti
 
     protected:
         LV::Variable_Base* M_construct_product() const override;
-        void M_init_constructed_product(LV::Variable_Base* /*_product*/) const override;
+        void M_init_constructed_product(LV::Variable_Base* _product) const override;
 
     public:
         virtual ~Dynamic_Physics_Module_2D_Stub();
@@ -40,6 +40,9 @@ namespace LEti
 	public:
         Dynamic_Physics_Module_2D();
         ~Dynamic_Physics_Module_2D();
+
+    private:
+        virtual Physical_Model_2D* M_create_physical_model() const;
 
     public:
         void init_physical_model(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions);

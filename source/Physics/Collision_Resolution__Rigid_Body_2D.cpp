@@ -3,35 +3,6 @@
 using namespace LEti;
 
 
-float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const Physical_Model_2D& _model, float _mass) const
-{
-    float result = 0.0f;
-
-    unsigned int counted_points = 0;
-
-    for(unsigned int p=0; p<_model.get_polygons_count(); ++p)
-    {
-        const Polygon& polygon = *_model.get_polygon(p);
-
-        for(unsigned int v=0; v < 3; ++v)
-        {
-            if(!polygon.segment_can_collide(v))
-                continue;
-
-            glm::vec3 center_to_point = _model.center_of_mass() - polygon[v];
-            float distance_squared = (center_to_point.x * center_to_point.x) + (center_to_point.y * center_to_point.y) + (center_to_point.z * center_to_point.z);
-            result += distance_squared;
-
-            ++counted_points;
-        }
-    }
-    result *= _mass;
-    result /= (float)counted_points;
-
-    return result;
-}
-
-
 float Collision_Resolution__Rigid_Body_2D::M_calculate_kinetic_energy(const glm::vec3& _velocity, float _angular_velocity, float _mass, float _moment_of_inertia) const
 {
     float velocity = Math::vector_length(_velocity);
@@ -58,8 +29,8 @@ bool Collision_Resolution__Rigid_Body_2D::resolve(const Intersection_Data &_id)
     glm::vec3 A_center_of_mas = pm1->get_physical_model()->center_of_mass();
     glm::vec3 B_center_of_mas = pm2->get_physical_model()->center_of_mass();
 
-    float A_moment_of_inertia = M_calculate_moment_of_inertia(*pm1->get_physical_model(), pm1->mass());
-    float B_moment_of_inertia = M_calculate_moment_of_inertia(*pm2->get_physical_model(), pm2->mass());
+    float A_moment_of_inertia = pm1->moment_of_inertia();
+    float B_moment_of_inertia = pm2->moment_of_inertia();
 
     glm::vec3 A_velocity = (bodyA->get_pos() - bodyA->get_pos_prev()) / LEti::Event_Controller::get_dt();
     glm::vec3 B_velocity = (bodyB->get_pos() - bodyB->get_pos_prev()) / LEti::Event_Controller::get_dt();

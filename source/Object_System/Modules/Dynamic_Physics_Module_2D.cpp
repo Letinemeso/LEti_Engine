@@ -53,6 +53,13 @@ Dynamic_Physics_Module_2D::~Dynamic_Physics_Module_2D()
 
 
 
+Physical_Model_2D* Dynamic_Physics_Module_2D::M_create_physical_model() const
+{
+    return new Physical_Model_2D;
+}
+
+
+
 void Dynamic_Physics_Module_2D::init_physical_model(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions)
 {
 	delete m_physical_model;
@@ -60,7 +67,7 @@ void Dynamic_Physics_Module_2D::init_physical_model(const float* _raw_coords, un
 	delete m_physical_model_prev_state;
 	m_physical_model_prev_state = nullptr;
 
-    m_physical_model = new Physical_Model_2D();
+    m_physical_model = M_create_physical_model();
     m_physical_model->setup(_raw_coords, _raw_coords_count, _collision_permissions);
     m_physical_model_prev_state = m_physical_model->create_imprint();
 }
