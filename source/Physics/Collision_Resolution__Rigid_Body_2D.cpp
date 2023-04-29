@@ -8,7 +8,7 @@ glm::vec3 Collision_Resolution__Rigid_Body_2D::M_calculate_center_of_mass(const 
     glm::vec3 result(0.0f, 0.0f, 0.0f);
 
     for(unsigned int i=0; i<_model.get_polygons_count(); ++i)
-        result += _model.get_polygons()[i].center();
+        result += _model.get_polygon(i)->center();
     result /= (float)_model.get_polygons_count();
 
     return result;
@@ -24,7 +24,7 @@ float Collision_Resolution__Rigid_Body_2D::M_calculate_moment_of_inertia(const P
 
     for(unsigned int p=0; p<_model.get_polygons_count(); ++p)
     {
-        const Polygon& polygon = _model.get_polygons()[p];
+        const Polygon& polygon = *_model.get_polygon(p);
 
         for(unsigned int v=0; v < 3; ++v)
         {

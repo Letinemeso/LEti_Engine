@@ -14,21 +14,57 @@
 namespace LEti
 {
 
+    class Polygon_Holder_Base
+    {
+    protected:
+        Polygon* polygons = nullptr;
+
+    public:
+        Polygon_Holder_Base() { }
+        ~Polygon_Holder_Base() { delete[] polygons; }
+
+    public:
+        virtual Polygon_Holder_Base* create_copy() const = 0;
+        virtual void allocate(unsigned int _amount) = 0;
+        virtual Polygon* get_polygon(unsigned int _index) = 0;
+        virtual const Polygon* get_polygon(unsigned int _index) const = 0;
+
+    };
+
+    template<typename T>
+    class Polygon_Holder final : public Polygon_Holder_Base
+    {
+    private:
+        inline T* M_cast() { return (T*)polygons; }
+        inline const T* M_cast() const { return (const T*)polygons; }
+
+    public:
+        inline Polygon_Holder_Base* create_copy() const override { return new Polygon_Holder<T>; }
+        void allocate(unsigned int _amount) override { delete[] polygons;  polygons = new T[_amount]; }
+        inline Polygon* get_polygon(unsigned int _index) { return &M_cast()[_index]; }
+        inline const Polygon* get_polygon(unsigned int _index) const { return &M_cast()[_index]; }
+
+    };
+
     class Physical_Model_2D_Imprint;
 
 	class Physical_Model_2D
     {
+    private:
 	private:
 		float* m_raw_coords = nullptr;
 		unsigned int m_raw_coords_count = 0;
 
 		bool* m_collision_permissions = nullptr;
 
-        Polygon* m_polygons = nullptr;
+        Polygon_Holder_Base* m_polygons_holder = nullptr;
 		unsigned int m_polygons_count = 0;
 
 	private:
 		Geometry_2D::Rectangular_Border m_current_border;
+
+    private:
+        virtual Polygon_Holder_Base* M_create_polygons_holder() const;
 
 	private:
 		void M_update_rectangular_border();
@@ -50,9 +86,9 @@ namespace LEti
         Physical_Model_2D_Imprint* create_imprint() const;
 
 	public:
-        const Polygon* get_polygons() const;
-		unsigned int get_polygons_count() const;
-        const Polygon& operator[](unsigned int _index) const;
+        const Polygon* get_polygon(unsigned int _index) const;
+        const Polygon_Holder_Base* get_polygons() const;
+        unsigned int get_polygons_count() const;
 
 	};
 
@@ -62,12 +98,12 @@ namespace LEti
         const Physical_Model_2D* m_parent = nullptr;
 
     private:
-        Polygon* m_polygons = nullptr;
+        Polygon_Holder_Base* m_polygons_holder = nullptr;
         unsigned int m_polygons_count = 0;
         Geometry_2D::Rectangular_Border m_rect_border;
 
     public:
-        Physical_Model_2D_Imprint(const Polygon* _polygons, unsigned int _polygons_count, const Physical_Model_2D* _parent);
+        Physical_Model_2D_Imprint(const Physical_Model_2D* _parent);
         Physical_Model_2D_Imprint(Physical_Model_2D_Imprint&& _other);
         Physical_Model_2D_Imprint(const Physical_Model_2D_Imprint& _other);
         ~Physical_Model_2D_Imprint();
@@ -80,9 +116,9 @@ namespace LEti
         void update_with_single_matrix(const glm::mat4x4& _matrix);
         void update_to_current_model_state();
 
-        const Polygon& operator[](unsigned int _index) const;
         const Physical_Model_2D* get_parent() const;
-        inline const Polygon* get_polygons() const { return m_polygons; }
+        const Polygon* get_polygon(unsigned int _index) const;
+        const Polygon_Holder_Base* get_polygons() const;
         unsigned int get_polygons_count() const;
         const Geometry_2D::Rectangular_Border& curr_rect_border() const;
 

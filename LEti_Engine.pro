@@ -79,6 +79,8 @@ HEADERS += \
     include/Physics/Narrow_Phase_Interface.h \
     include/Physics/Narrowest_Phase_Interface.h \
     include/Physics/Physical_Models/Polygon.h \
+    include/Physics/Physical_Models/Rigid_Body_Physical_Model_2D.h \
+    include/Physics/Physical_Models/Rigid_Body_Polygon.h \
     include/Physics/SAT_Narrowest_CD.h \
     include/Physics/Space_Hasher_2D.h \
     include/Picture.h \

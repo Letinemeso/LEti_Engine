@@ -88,7 +88,7 @@ SAT_Narrowest_CD::Intersection_Data SAT_Narrowest_CD::M_polygons_collision(const
 }
 
 
-float SAT_Narrowest_CD::M_smallest_point_to_polygon_distance(const glm::vec3 &_point, const Pol &_pol) const
+float SAT_Narrowest_CD::M_smallest_point_to_polygon_distance(const glm::vec3 &_point, const Polygon &_pol) const
 {
 	float min_dist = -1.0f;
 
@@ -109,7 +109,7 @@ float SAT_Narrowest_CD::M_smallest_point_to_polygon_distance(const glm::vec3 &_p
 	return min_dist;
 }
 
-LDS::List<glm::vec3> SAT_Narrowest_CD::M_points_of_contact(const Polygon *_f_pols, unsigned int _f_count, const Polygon *_s_pols, unsigned int _s_count) const
+LDS::List<glm::vec3> SAT_Narrowest_CD::M_points_of_contact(const Polygon_Holder_Base* _f_pols, unsigned int _f_count, const Polygon_Holder_Base* _s_pols, unsigned int _s_count) const
 {
 	float min_dist = -1.0f;
 
@@ -125,7 +125,7 @@ LDS::List<glm::vec3> SAT_Narrowest_CD::M_points_of_contact(const Polygon *_f_pol
 
 	for(unsigned int i=0; i<_f_count; ++i)
 	{
-		const Pol& cur_pol = _f_pols[i];
+        const Polygon& cur_pol = *_f_pols->get_polygon(i);
 
 		for(unsigned int j=0; j<3; ++j)
 		{
@@ -133,7 +133,7 @@ LDS::List<glm::vec3> SAT_Narrowest_CD::M_points_of_contact(const Polygon *_f_pol
 
 			for(unsigned int s_pol_i = 0; s_pol_i < _s_count; ++s_pol_i)
 			{
-				float min = M_smallest_point_to_polygon_distance(cur_point, _s_pols[s_pol_i]);
+                float min = M_smallest_point_to_polygon_distance(cur_point, *_s_pols->get_polygon(s_pol_i));
 
 				if(min < 0.0f)
 					continue;
@@ -156,7 +156,7 @@ LDS::List<glm::vec3> SAT_Narrowest_CD::M_points_of_contact(const Polygon *_f_pol
 
 	for(unsigned int i=0; i<_s_count; ++i)
 	{
-		const Pol& cur_pol = _s_pols[i];
+        const Polygon& cur_pol = *_s_pols->get_polygon(i);
 
 		for(unsigned int j=0; j<3; ++j)
 		{
@@ -164,7 +164,7 @@ LDS::List<glm::vec3> SAT_Narrowest_CD::M_points_of_contact(const Polygon *_f_pol
 
 			for(unsigned int f_pol_i = 0; f_pol_i < _f_count; ++f_pol_i)
 			{
-				float min = M_smallest_point_to_polygon_distance(cur_point, _f_pols[f_pol_i]);
+                float min = M_smallest_point_to_polygon_distance(cur_point, *_f_pols->get_polygon(f_pol_i));
 
 				if(min < 0.0f)
 					continue;
@@ -214,7 +214,7 @@ Geometry::Simple_Intersection_Data SAT_Narrowest_CD::collision__model_vs_point(c
 {
 	for (unsigned int i = 0; i < _model.get_polygons_count(); ++i)
 	{
-		Geometry::Simple_Intersection_Data id = intersection__polygon_vs_point(_model[i], _point);
+        Geometry::Simple_Intersection_Data id = intersection__polygon_vs_point(*_model.get_polygon(i), _point);
 		if(id)
 			return id;
 	}
@@ -222,7 +222,7 @@ Geometry::Simple_Intersection_Data SAT_Narrowest_CD::collision__model_vs_point(c
 }
 
 
-LEti::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Polygon* _pols_1, unsigned int _pols_amount_1, const Polygon* _pols_2, unsigned int _pols_amount_2) const
+LEti::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Polygon_Holder_Base* _polygon_holder_1, unsigned int _pols_amount_1, const Polygon_Holder_Base* _polygon_holder_2, unsigned int _pols_amount_2) const
 {
     LEti::Intersection_Data result(LEti::Intersection_Data::Type::intersection);
 
@@ -231,7 +231,7 @@ LEti::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Polygo
 	{
 		for(unsigned int j=0; j<_pols_amount_2; ++j)
 		{
-            SAT_Narrowest_CD::Intersection_Data id = M_polygons_collision(_pols_1[i], _pols_2[j]);
+            SAT_Narrowest_CD::Intersection_Data id = M_polygons_collision(*_polygon_holder_1->get_polygon(i), *_polygon_holder_2->get_polygon(j));
 
 			if(!id.intersection)
 				continue;
@@ -248,7 +248,7 @@ LEti::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Polygo
 	LEti::Math::shrink_vector_to_1(result.normal);
     result.depth = f_id.min_dist;
 
-	LDS::List<glm::vec3> points = M_points_of_contact(_pols_1, _pols_amount_1, _pols_2, _pols_amount_2);
+    LDS::List<glm::vec3> points = M_points_of_contact(_polygon_holder_1, _pols_amount_1, _polygon_holder_2, _pols_amount_2);
 	if(points.size() == 0)
 		return {};
 

@@ -33,9 +33,9 @@ namespace LEti
         DECLARE_VARIABLE;
 
     private:
-		LEti::Physical_Model_2D* m_physical_model = nullptr;
-        LEti::Physical_Model_2D_Imprint* m_physical_model_prev_state = nullptr;
-        LEti::Geometry_2D::Rectangular_Border m_rectangular_border;
+        Physical_Model_2D* m_physical_model = nullptr;
+        Physical_Model_2D_Imprint* m_physical_model_prev_state = nullptr;
+        Geometry_2D::Rectangular_Border m_rectangular_border;
 
 	public:
         Dynamic_Physics_Module_2D();
