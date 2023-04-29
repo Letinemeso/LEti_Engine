@@ -1,11 +1,11 @@
 #ifndef __TEXT_FIELD
 #define __TEXT_FIELD
 
-//#include "../include/Object.h"
+#include <string>
+#include <map>
+
 #include <Object_System/Object_2D.h>
 #include <Object_System/Builder_Stub.h>
-
-#include <string>
 
 namespace LEti
 {
