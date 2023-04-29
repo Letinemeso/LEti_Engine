@@ -51,7 +51,7 @@ namespace LEti
 
 	public:
 		void update_previous_state() override;
-        void update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale) override;
+        void update(const glm::mat4x4 &_matrix) override;
 
 	public:
         inline LEti::Physical_Model_2D* get_physical_model() { return m_physical_model; }

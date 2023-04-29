@@ -83,7 +83,7 @@ namespace LEti
 
         virtual ~Physical_Model_2D();
 
-        virtual void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale);
+        virtual void update(const glm::mat4x4& _matrix);
 		void copy_real_coordinates(const Physical_Model_2D& _other);
 
         Physical_Model_2D_Imprint* create_imprint() const;

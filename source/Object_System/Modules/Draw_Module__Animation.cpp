@@ -14,14 +14,14 @@ Draw_Module__Animation::Draw_Module__Animation() : Default_Draw_Module_2D()
 
 
 
-void Draw_Module__Animation::update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 _scale, float _ratio)
+void Draw_Module__Animation::update(const glm::mat4x4 &_matrix)
 {
-    Default_Draw_Module_2D::update(_translation, _rotation, _scale, _ratio);
+    Default_Draw_Module_2D::update(_matrix);
 
     if(m_is_paused)
         return;
 
-    m_frame_update_timer.update(LEti::Event_Controller::get_dt() * _ratio);
+    m_frame_update_timer.update(LEti::Event_Controller::get_dt());
     if(m_frame_update_timer.is_active())
         return;
 

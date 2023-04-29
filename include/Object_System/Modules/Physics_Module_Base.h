@@ -33,7 +33,7 @@ namespace LEti
 
 	public:
 		virtual void update_previous_state() = 0;
-        virtual void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale) = 0;
+        virtual void update(const glm::mat4x4& _matrix) = 0;
 
     public:
         inline void set_can_collide(bool _can_collide) { m_can_collide = _can_collide; }

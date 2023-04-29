@@ -27,7 +27,7 @@ namespace LEti
         float M_calculate_moment_of_inertia() const;
 
     public:
-        void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale) override;
+        void update(const glm::mat4x4& _matrix) override;
 
     public:
         void set_masses(const float* _masses);

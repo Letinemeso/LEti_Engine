@@ -12,9 +12,9 @@ FIELDS_END
 
 
 
-void Draw_Module_Base::update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4 _scale, float _ratio)
+void Draw_Module_Base::update(const glm::mat4x4& _matrix)
 {
-    m_transform_matrix = _translation * _rotation * _scale;
+    m_transform_matrix = _matrix;
 }
 
 

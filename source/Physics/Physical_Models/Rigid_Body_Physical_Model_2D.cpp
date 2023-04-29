@@ -75,9 +75,9 @@ float Rigid_Body_Physical_Model_2D::M_calculate_moment_of_inertia() const
 
 
 
-void Rigid_Body_Physical_Model_2D::update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)
+void Rigid_Body_Physical_Model_2D::update(const glm::mat4x4 &_matrix)
 {
-    Physical_Model_2D::update(_translation, _rotation, _scale);
+    Physical_Model_2D::update(_matrix);
 
     m_moment_of_inertia = M_calculate_moment_of_inertia();
 }

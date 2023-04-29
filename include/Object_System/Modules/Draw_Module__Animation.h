@@ -32,7 +32,7 @@ namespace LEti
         Draw_Module__Animation();
 
     public:
-        void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4 _scale, float _ratio = 1.0f) override;
+        void update(const glm::mat4x4& _matrix) override;
 
     public:
         void set_animation_data(unsigned int _frames_count);

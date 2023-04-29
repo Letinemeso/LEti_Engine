@@ -90,14 +90,14 @@ void Dynamic_Physics_Module_2D::update_previous_state()
 	m_physical_model_prev_state->update_to_current_model_state();
 }
 
-void Dynamic_Physics_Module_2D::update(const glm::mat4x4 &_translation, const glm::mat4x4 &_rotation, const glm::mat4x4 &_scale)
+void Dynamic_Physics_Module_2D::update(const glm::mat4x4 &_matrix)
 {
 	L_ASSERT(!(!m_physical_model || !m_physical_model_prev_state));
 
     if(!can_collide())
         return;
 
-	m_physical_model->update(_translation, _rotation, _scale);
+    m_physical_model->update(_matrix);
 
 	const LEti::Geometry_2D::Rectangular_Border& prev_rb = get_physical_model_prev_state()->curr_rect_border(),
 			curr_rb = get_physical_model()->curr_rect_border();

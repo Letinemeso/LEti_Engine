@@ -47,7 +47,7 @@ namespace LEti
         inline void set_visible(bool _visible) { m_visible = _visible; }
 
     public:
-        virtual void update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4 _scale, float _ratio);
+        virtual void update(const glm::mat4x4& _matrix);
 
     public:
         inline LEti::Texture& texture() { return m_texture; }

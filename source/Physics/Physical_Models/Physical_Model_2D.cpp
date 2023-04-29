@@ -115,14 +115,12 @@ Physical_Model_2D::~Physical_Model_2D()
 }
 
 
-void Physical_Model_2D::update(const glm::mat4x4& _translation, const glm::mat4x4& _rotation, const glm::mat4x4& _scale)
+void Physical_Model_2D::update(const glm::mat4x4& _matrix)
 {
     L_ASSERT(m_polygons_holder);
 
-	glm::mat4x4 result_matrix = _translation * _rotation * _scale;
-
 	for (unsigned int i = 0; i < m_polygons_count; ++i)
-        m_polygons_holder->get_polygon(i)->update_points_with_single_matrix(result_matrix);
+        m_polygons_holder->get_polygon(i)->update_points_with_single_matrix(_matrix);
 
 	M_update_rectangular_border();
     m_center_of_mass = M_calculate_center_of_mass();
