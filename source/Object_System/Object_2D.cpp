@@ -372,3 +372,8 @@ void Object_2D::update(float _ratio)
     if(m_draw_module)
         m_draw_module->update(matrix);
 }
+
+void Object_2D::draw(const LEti::Renderer &_renderer) const
+{
+    _renderer.draw(*draw_module());
+}

@@ -3,6 +3,7 @@
 
 #include <Variable_Base.h>
 
+#include <Renderer.h>
 
 namespace LEti
 {
@@ -18,6 +19,7 @@ namespace LEti
 
 	public:
         virtual void update(float _ratio = 1.0f) = 0;
+        virtual void draw(const LEti::Renderer& _renderer) const = 0;
 
 	};
 
