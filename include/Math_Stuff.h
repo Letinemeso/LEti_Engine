@@ -52,6 +52,8 @@ namespace Math {
 
 	bool floats_are_equal(float _first, float _second, float _precision = 0.0001f);
 
+    int float_to_int(float _value);
+
 	bool vecs_are_equal(const glm::vec3& _first, const glm::vec3& _second);
 
     unsigned int random_number(unsigned int _lower_limimt = 0, unsigned int _upper_limit = 0xFFFFFFFF);
