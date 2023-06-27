@@ -18,10 +18,12 @@ LV::Variable_Base* Physics_Module__Rigid_Body_2D__Stub::M_construct_product() co
 
 void Physics_Module__Rigid_Body_2D__Stub::M_init_constructed_product(LV::Variable_Base* _product) const
 {
-    Dynamic_Physics_Module_2D_Stub::M_init_constructed_product(_product);
-
     Physics_Module__Rigid_Body_2D* result = (Physics_Module__Rigid_Body_2D*)_product;
+
+    result->init_physical_model();
+    result->setup_base_data(coords, coords_count, collision_permissions);
     result->set_masses(masses);
+    result->init_prev_state();
 }
 
 

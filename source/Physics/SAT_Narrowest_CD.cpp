@@ -226,6 +226,9 @@ LEti::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Polygo
 {
     LEti::Intersection_Data result(LEti::Intersection_Data::Type::intersection);
 
+    unsigned int first_collided_polygon = 0;
+    unsigned int second_collided_polygon = 0;
+
     SAT_Narrowest_CD::Intersection_Data f_id;
 	for(unsigned int i=0; i<_pols_amount_1; ++i)
 	{
@@ -236,8 +239,12 @@ LEti::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Polygo
 			if(!id.intersection)
 				continue;
 
-			if(f_id.min_dist < 0.0f || f_id.min_dist > id.min_dist)
-				f_id = id;
+            if(!(f_id.min_dist < 0.0f || f_id.min_dist > id.min_dist))
+                continue;
+
+            f_id = id;
+            first_collided_polygon = i;
+            second_collided_polygon = j;
 		}
 	}
 
@@ -256,6 +263,9 @@ LEti::Intersection_Data SAT_Narrowest_CD::collision__model_vs_model(const Polygo
 		result.point += *it;
 
 	result.point /= (float)points.size();
+
+    result.first_collided_polygon_index = first_collided_polygon;
+    result.second_collided_polygon_index = second_collided_polygon;
 
 	return result;
 }

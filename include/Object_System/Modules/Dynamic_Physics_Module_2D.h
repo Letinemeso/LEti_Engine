@@ -45,12 +45,14 @@ namespace LEti
         virtual Physical_Model_2D* M_create_physical_model() const;
 
     public:
-        void init_physical_model(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions);
+	void init_physical_model(); //	allocates physical_model
+	void init_prev_state();	    //	allocates physical_model_imprint with physical_model's data
+	void setup_base_data(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions);
 
         void move_raw(const glm::vec3 &_stride);
 
-	public:
-		void update_previous_state() override;
+    public:
+	void update_previous_state() override;
         void update(const glm::mat4x4 &_matrix) override;
 
 	public:

@@ -23,7 +23,9 @@ void Dynamic_Physics_Module_2D_Stub::M_init_constructed_product(LV::Variable_Bas
 {
     Dynamic_Physics_Module_2D* result = (Dynamic_Physics_Module_2D*)_product;
 
-    result->init_physical_model(coords, coords_count, collision_permissions);
+    result->init_physical_model();
+    result->setup_base_data(coords, coords_count, collision_permissions);
+    result->init_prev_state();
 }
 
 
@@ -60,16 +62,25 @@ Physical_Model_2D* Dynamic_Physics_Module_2D::M_create_physical_model() const
 
 
 
-void Dynamic_Physics_Module_2D::init_physical_model(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions)
+void Dynamic_Physics_Module_2D::init_physical_model()
 {
 	delete m_physical_model;
-	m_physical_model = nullptr;
-	delete m_physical_model_prev_state;
-	m_physical_model_prev_state = nullptr;
+    m_physical_model = nullptr;
 
     m_physical_model = M_create_physical_model();
-    m_physical_model->setup(_raw_coords, _raw_coords_count, _collision_permissions);
+}
+
+void Dynamic_Physics_Module_2D::init_prev_state()
+{
+    delete m_physical_model_prev_state;
+    m_physical_model_prev_state = nullptr;
+
     m_physical_model_prev_state = m_physical_model->create_imprint();
+}
+
+void Dynamic_Physics_Module_2D::setup_base_data(const float* _raw_coords, unsigned int _raw_coords_count, const bool* _collision_permissions)
+{
+    m_physical_model->setup(_raw_coords, _raw_coords_count, _collision_permissions);
 }
 
 

@@ -7,6 +7,7 @@ namespace LEti
 {
 
     class Object_2D;
+    class Polygon;
 
     struct Intersection_Data
     {
@@ -23,7 +24,10 @@ namespace LEti
         glm::vec3 point{0.0f, 0.0f, 0.0f};
         glm::vec3 normal{0.0f, 0.0f, 0.0f};
         float depth = 0.0f;
-        const Object_2D* first = nullptr, *second = nullptr;
+        const Object_2D* first = nullptr;
+        const Object_2D* second = nullptr;
+        unsigned int first_collided_polygon_index = 0;
+        unsigned int second_collided_polygon_index = 0;
         float time_of_intersection_ratio = 1.0f;
 
     public:
