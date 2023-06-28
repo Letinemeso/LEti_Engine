@@ -17,7 +17,7 @@ namespace LEti
 	namespace Picture_Manager
 	{
 
-		void Picture_Autoload_Stub::M_on_values_assigned()
+        void Picture_Autoload_Stub::on_values_assigned()
 		{
 			for(unsigned int i=0; i<amount; ++i)
 			{

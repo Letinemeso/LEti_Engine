@@ -25,8 +25,8 @@ namespace LEti
 			std::string* names = nullptr;
 			std::string* paths = nullptr;
 
-		protected:
-			void M_on_values_assigned() override;
+        public:
+            void on_values_assigned() override;
 
 		public:
 			~Picture_Autoload_Stub();
