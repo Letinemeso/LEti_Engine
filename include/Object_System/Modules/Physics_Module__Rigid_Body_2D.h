@@ -36,7 +36,7 @@ namespace LEti
     private:
         Physical_Model_2D* M_create_physical_model() const override;
 
-    private:
+    public:
         glm::vec3 calculate_raw_center_of_mass() const;
 
     public:
