@@ -110,12 +110,14 @@ void Object_2D::set_rotation_axis(const glm::vec3 &_axis)
 void Object_2D::set_rotation_angle(float _angle)
 {
 	m_current_state.rotation_angle = _angle;
+
 	m_current_state.rotation_matrix = glm::rotate(m_current_state.rotation_angle, m_current_state.rotation_axis);
 }
 
 void Object_2D::rotate(float _angle)
 {
 	m_current_state.rotation_angle += _angle;
+
 	m_current_state.rotation_matrix = glm::rotate(m_current_state.rotation_angle, m_current_state.rotation_axis);
 }
 

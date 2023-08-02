@@ -1,6 +1,8 @@
 #ifndef PHYSICS_MODULE__RIGID_BODY_2D_H
 #define PHYSICS_MODULE__RIGID_BODY_2D_H
 
+#include <Stuff/Function_Wrapper.h>
+
 #include <Object_System/Modules/Dynamic_Physics_Module_2D.h>
 #include <Draw_Modules/Default_Draw_Module_2D.h>
 #include <Physics/Physical_Models/Rigid_Body_Physical_Model_2D.h>
@@ -34,6 +36,8 @@ namespace LEti
         glm::vec3 m_velocity{0.0f, 0.0f, 0.0f};
         float m_angular_velocity = 0.0f;
 
+        LST::Function<void()> m_on_alignment;
+
     private:
         Physical_Model_2D* M_create_physical_model() const override;
 
@@ -41,7 +45,7 @@ namespace LEti
         glm::vec3 calculate_raw_center_of_mass() const;
 
     public:
-        void align_to_center_of_mass(LR::Default_Draw_Module_2D* _associated_draw_module = nullptr);
+        void align_to_center_of_mass();
 
     public:
         void set_masses(const float* _masses);
@@ -52,6 +56,8 @@ namespace LEti
 
         inline void apply_linear_impulse(const glm::vec3& _imp) { m_velocity += _imp; }
         inline void apply_rotation(float _av) { m_angular_velocity += _av; }
+
+        inline void set_on_alignment_func(const LST::Function<void()>& _on_alignment) { m_on_alignment = _on_alignment; }
 
     public:
         float mass() const;

@@ -59,17 +59,15 @@ glm::vec3 Physics_Module__Rigid_Body_2D::calculate_raw_center_of_mass() const
 
 
 
-void Physics_Module__Rigid_Body_2D::align_to_center_of_mass(LR::Default_Draw_Module_2D* _associated_draw_module)
+void Physics_Module__Rigid_Body_2D::align_to_center_of_mass()
 {
+    if(m_on_alignment)
+        m_on_alignment();
+
 	glm::vec3 stride = -calculate_raw_center_of_mass();
 
 	get_physical_model()->move_raw(stride);
 	get_physical_model_prev_state()->update_to_current_model_state();
-
-    if(_associated_draw_module == nullptr)
-        return;
-
-    _associated_draw_module->move_raw(stride);
 }
 
 
