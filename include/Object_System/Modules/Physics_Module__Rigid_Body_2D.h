@@ -2,7 +2,7 @@
 #define PHYSICS_MODULE__RIGID_BODY_2D_H
 
 #include <Object_System/Modules/Dynamic_Physics_Module_2D.h>
-#include <Object_System/Modules/Default_Draw_Module_2D.h>
+#include <Draw_Modules/Default_Draw_Module_2D.h>
 #include <Physics/Physical_Models/Rigid_Body_Physical_Model_2D.h>
 
 
@@ -16,6 +16,7 @@ namespace LEti
 
     public:
         float* masses = nullptr;
+        float mass_multiplier = 1.0f;
 
     protected:
         LV::Variable_Base* M_construct_product() const override;
@@ -40,7 +41,7 @@ namespace LEti
         glm::vec3 calculate_raw_center_of_mass() const;
 
     public:
-        void align_to_center_of_mass(Default_Draw_Module_2D* _associated_draw_module = nullptr);
+        void align_to_center_of_mass(LR::Default_Draw_Module_2D* _associated_draw_module = nullptr);
 
     public:
         void set_masses(const float* _masses);

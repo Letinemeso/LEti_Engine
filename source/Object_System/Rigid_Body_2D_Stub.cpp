@@ -19,7 +19,7 @@ void Rigid_Body_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product)
     {
         Physics_Module__Rigid_Body_2D* pm = (Physics_Module__Rigid_Body_2D*)result->physics_module();
 
-        result->move(pm->velocity() * LEti::Event_Controller::get_dt() * _ratio);
-        result->rotate(pm->angular_velocity() * LEti::Event_Controller::get_dt() * _ratio);
+        result->move(pm->velocity() * LR::Event_Controller::get_dt() * _ratio);
+        result->rotate(pm->angular_velocity() * LR::Event_Controller::get_dt() * _ratio);
     });
 }

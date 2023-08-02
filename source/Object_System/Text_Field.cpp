@@ -39,9 +39,9 @@ void Text_Field_Stub::M_init_constructed_product(LV::Variable_Base* _product) co
 
     result->m_sequence = sequence;
 
-    result->m_draw_module = new Default_Draw_Module_2D;
+    result->m_draw_module = new LR::Default_Draw_Module_2D;
 
-    result->draw_module()->set_texture(Picture_Manager::get_picture(font_texture));
+    result->draw_module()->set_texture(LR::Picture_Manager::get_picture(font_texture));
     result->m_text_tex_coords.first = tcoords;
     result->m_text_tex_coords.second = tcoords_count;
 

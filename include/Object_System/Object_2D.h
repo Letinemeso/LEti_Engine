@@ -5,9 +5,9 @@
 
 #include "Object_System/Builder_Stub.h"
 #include "Object_Base.h"
-#include "Modules/Default_Draw_Module_2D.h"
+#include "Draw_Modules/Default_Draw_Module_2D.h"
 #include "Modules/Dynamic_Physics_Module_2D.h"
-#include "Picture_Manager.h"
+#include "Picture/Picture_Manager.h"
 
 
 
@@ -24,7 +24,7 @@ namespace LEti
         float rotation_angle;
 
         bool enable_draw_module = false;
-        Draw_Module_Base_Stub* draw_module = nullptr;
+        LR::Draw_Module_Base_Stub* draw_module = nullptr;
         bool enable_physics_module = false;
         Physics_Module_Base_Stub* physics_module = nullptr;
 
@@ -43,7 +43,7 @@ namespace LEti
 		DECLARE_VARIABLE;
 
 	protected:
-		Default_Draw_Module_2D* m_draw_module = nullptr;
+        LR::Default_Draw_Module_2D* m_draw_module = nullptr;
 		Dynamic_Physics_Module_2D* m_physics_module = nullptr;
 
 	protected:
@@ -107,10 +107,10 @@ namespace LEti
 		bool moved_since_last_frame() const;
 
 	public:
-        void set_draw_module(Default_Draw_Module_2D* _module);
+        void set_draw_module(LR::Default_Draw_Module_2D* _module);
 		void remove_draw_module();
-		Default_Draw_Module_2D* draw_module();
-		const Default_Draw_Module_2D* draw_module() const;
+        LR::Default_Draw_Module_2D* draw_module();
+        const LR::Default_Draw_Module_2D* draw_module() const;
 
         void set_physics_module(Dynamic_Physics_Module_2D* _module);
 		void remove_physics_module();
@@ -121,7 +121,7 @@ namespace LEti
 		virtual void revert_to_previous_state();
 		virtual void update_previous_state();
         void update(float _ratio = 1.0f) override;
-        void draw(const LEti::Renderer &_renderer) const override;
+        void draw(const LR::Renderer &_renderer) const override;
 
 	};
 

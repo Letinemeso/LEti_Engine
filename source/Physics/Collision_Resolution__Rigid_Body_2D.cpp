@@ -32,10 +32,10 @@ bool Collision_Resolution__Rigid_Body_2D::resolve(const Intersection_Data &_id)
     float A_moment_of_inertia = pm1->moment_of_inertia();
     float B_moment_of_inertia = pm2->moment_of_inertia();
 
-    glm::vec3 A_velocity = (bodyA->get_pos() - bodyA->get_pos_prev()) / LEti::Event_Controller::get_dt();
-    glm::vec3 B_velocity = (bodyB->get_pos() - bodyB->get_pos_prev()) / LEti::Event_Controller::get_dt();
-    float A_angular_velocity = (bodyA->get_rotation_angle() - bodyA->get_rotation_angle_prev()) / LEti::Event_Controller::get_dt();
-    float B_angular_velocity = (bodyB->get_rotation_angle() - bodyB->get_rotation_angle_prev()) / LEti::Event_Controller::get_dt();
+    glm::vec3 A_velocity = (bodyA->get_pos() - bodyA->get_pos_prev()) / LR::Event_Controller::get_dt();
+    glm::vec3 B_velocity = (bodyB->get_pos() - bodyB->get_pos_prev()) / LR::Event_Controller::get_dt();
+    float A_angular_velocity = (bodyA->get_rotation_angle() - bodyA->get_rotation_angle_prev()) / LR::Event_Controller::get_dt();
+    float B_angular_velocity = (bodyB->get_rotation_angle() - bodyB->get_rotation_angle_prev()) / LR::Event_Controller::get_dt();
 
     float ke_before = M_calculate_kinetic_energy(A_velocity, A_angular_velocity, pm1->mass(), A_moment_of_inertia) + M_calculate_kinetic_energy(B_velocity, B_angular_velocity, pm2->mass(), B_moment_of_inertia);
 

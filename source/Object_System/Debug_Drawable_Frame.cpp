@@ -4,10 +4,10 @@ using namespace LEti;
 
 
 
-INIT_FIELDS(LEti::Debug_Line_Draw_Module, LEti::Default_Draw_Module_2D)
+INIT_FIELDS(LEti::Debug_Line_Draw_Module, LR::Default_Draw_Module_2D)
 FIELDS_END
 
-INIT_FIELDS(LEti::Debug_Line_Draw_Module_Stub, LEti::Default_Draw_Module_2D_Stub)
+INIT_FIELDS(LEti::Debug_Line_Draw_Module_Stub, LR::Default_Draw_Module_2D_Stub)
 FIELDS_END
 
 INIT_FIELDS(LEti::Debug_Drawable_Frame, LEti::Object_2D)

@@ -6,6 +6,7 @@ using namespace LEti;
 INIT_FIELDS(LEti::Physics_Module__Rigid_Body_2D__Stub, LEti::Dynamic_Physics_Module_2D_Stub)
 
 ADD_FIELD(float*, masses)
+ADD_FIELD(float, mass_multiplier)
 
 FIELDS_END
 
@@ -23,6 +24,7 @@ void Physics_Module__Rigid_Body_2D__Stub::M_init_constructed_product(LV::Variabl
     result->init_physical_model();
     result->setup_base_data(coords, coords_count, collision_permissions);
     result->set_masses(masses);
+    result->set_mass_multiplier(mass_multiplier);
     result->init_prev_state();
 }
 
@@ -57,7 +59,7 @@ glm::vec3 Physics_Module__Rigid_Body_2D::calculate_raw_center_of_mass() const
 
 
 
-void Physics_Module__Rigid_Body_2D::align_to_center_of_mass(Default_Draw_Module_2D* _associated_draw_module)
+void Physics_Module__Rigid_Body_2D::align_to_center_of_mass(LR::Default_Draw_Module_2D* _associated_draw_module)
 {
 	glm::vec3 stride = -calculate_raw_center_of_mass();
 

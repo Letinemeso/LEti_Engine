@@ -42,7 +42,7 @@ void Object_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product) con
     result->set_rotation_angle(rotation_angle);
 
     if(enable_draw_module)
-        result->set_draw_module((Default_Draw_Module_2D*)draw_module->construct());
+        result->set_draw_module((LR::Default_Draw_Module_2D*)draw_module->construct());
 
     if(enable_physics_module)
         result->set_physics_module((Dynamic_Physics_Module_2D*)physics_module->construct());
@@ -299,7 +299,7 @@ bool Object_2D::moved_since_last_frame() const
 
 
 
-void Object_2D::set_draw_module(Default_Draw_Module_2D* _module)
+void Object_2D::set_draw_module(LR::Default_Draw_Module_2D* _module)
 {
     delete m_draw_module;
     m_draw_module = _module;
@@ -311,12 +311,12 @@ void Object_2D::remove_draw_module()
 	m_draw_module = nullptr;
 }
 
-Default_Draw_Module_2D* Object_2D::draw_module()
+LR::Default_Draw_Module_2D* Object_2D::draw_module()
 {
 	return m_draw_module;
 }
 
-const Default_Draw_Module_2D* Object_2D::draw_module() const
+const LR::Default_Draw_Module_2D* Object_2D::draw_module() const
 {
 	return m_draw_module;
 }
@@ -373,7 +373,7 @@ void Object_2D::update(float _ratio)
         m_draw_module->update(matrix);
 }
 
-void Object_2D::draw(const LEti::Renderer &_renderer) const
+void Object_2D::draw(const LR::Renderer &_renderer) const
 {
     _renderer.draw(*draw_module());
 }
