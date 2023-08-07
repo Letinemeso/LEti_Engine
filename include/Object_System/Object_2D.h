@@ -26,7 +26,7 @@ namespace LEti
         bool enable_draw_module = false;
         LR::Draw_Module_Base_Stub* draw_module = nullptr;
         bool enable_physics_module = false;
-        Physics_Module_Base_Stub* physics_module = nullptr;
+        LPhys::Physics_Module_Base_Stub* physics_module = nullptr;
 
     protected:
         LV::Variable_Base* M_construct_product() const override;
@@ -44,7 +44,7 @@ namespace LEti
 
 	protected:
         LR::Default_Draw_Module_2D* m_draw_module = nullptr;
-		Dynamic_Physics_Module_2D* m_physics_module = nullptr;
+        LPhys::Dynamic_Physics_Module_2D* m_physics_module = nullptr;
 
 	protected:
 		struct Transformation_Data
@@ -112,10 +112,10 @@ namespace LEti
         LR::Default_Draw_Module_2D* draw_module();
         const LR::Default_Draw_Module_2D* draw_module() const;
 
-        void set_physics_module(Dynamic_Physics_Module_2D* _module);
+        void set_physics_module(LPhys::Dynamic_Physics_Module_2D* _module);
 		void remove_physics_module();
-		Dynamic_Physics_Module_2D* physics_module();
-		const Dynamic_Physics_Module_2D* physics_module() const;
+        LPhys::Dynamic_Physics_Module_2D* physics_module();
+        const LPhys::Dynamic_Physics_Module_2D* physics_module() const;
 
 	public:
 		virtual void revert_to_previous_state();

@@ -14,7 +14,7 @@ void Rigid_Body_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product)
 
     Object_2D* result = (Object_2D*)_product;
 
-    Physics_Module__Rigid_Body_2D* pm = (Physics_Module__Rigid_Body_2D*)(result->physics_module());
+    LPhys::Physics_Module__Rigid_Body_2D* pm = (LPhys::Physics_Module__Rigid_Body_2D*)(result->physics_module());
     pm->set_on_alignment_func([result, pm]()
     {
         result->draw_module()->move_raw(-pm->calculate_raw_center_of_mass());
@@ -23,7 +23,7 @@ void Rigid_Body_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product)
 
     result->set_on_update_func([result](float _ratio)
     {
-        Physics_Module__Rigid_Body_2D* pm = (Physics_Module__Rigid_Body_2D*)result->physics_module();
+        LPhys::Physics_Module__Rigid_Body_2D* pm = (LPhys::Physics_Module__Rigid_Body_2D*)result->physics_module();
 
         result->move(pm->velocity() * LR::Event_Controller::get_dt() * _ratio);
         result->rotate(pm->angular_velocity() * LR::Event_Controller::get_dt() * _ratio);

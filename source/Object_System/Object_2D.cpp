@@ -45,7 +45,7 @@ void Object_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product) con
         result->set_draw_module((LR::Default_Draw_Module_2D*)draw_module->construct());
 
     if(enable_physics_module)
-        result->set_physics_module((Dynamic_Physics_Module_2D*)physics_module->construct());
+        result->set_physics_module((LPhys::Dynamic_Physics_Module_2D*)physics_module->construct());
 }
 
 
@@ -324,7 +324,7 @@ const LR::Default_Draw_Module_2D* Object_2D::draw_module() const
 }
 
 
-void Object_2D::set_physics_module(Dynamic_Physics_Module_2D* _module)
+void Object_2D::set_physics_module(LPhys::Dynamic_Physics_Module_2D* _module)
 {
     delete m_physics_module;
     m_physics_module = _module;
@@ -336,12 +336,12 @@ void Object_2D::remove_physics_module()
 	m_physics_module = nullptr;
 }
 
-Dynamic_Physics_Module_2D* Object_2D::physics_module()
+LPhys::Dynamic_Physics_Module_2D* Object_2D::physics_module()
 {
 	return m_physics_module;
 }
 
-const Dynamic_Physics_Module_2D* Object_2D::physics_module() const
+const LPhys::Dynamic_Physics_Module_2D* Object_2D::physics_module() const
 {
 	return m_physics_module;
 }
