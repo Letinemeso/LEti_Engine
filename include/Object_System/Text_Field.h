@@ -5,12 +5,12 @@
 #include <map>
 
 #include <Object_System/Object_2D.h>
-#include <Object_System/Builder_Stub.h>
+#include <Builder_Stub.h>
 
 namespace LEti
 {
 
-    class Text_Field_Stub : public Builder_Stub
+    class Text_Field_Stub : public LV::Builder_Stub
 	{
 	public:
 		DECLARE_VARIABLE;

@@ -36,7 +36,6 @@ INCLUDEPATH += "../L_Physics/include/"
 
 HEADERS += \
     include/Math_Stuff.h \
-    include/Object_System/Builder_Stub.h \
     include/Object_System/Debug_Drawable_Frame.h \
     include/Object_System/Modules/Default_Draw_Module_2D.h \
     include/Object_System/Object_2D.h \
@@ -46,7 +45,6 @@ HEADERS += \
 
 SOURCES += \
     source/Math_Stuff.cpp \
-    source/Object_System/Builder_Stub.cpp \
     source/Object_System/Debug_Drawable_Frame.cpp \
     source/Object_System/Object_2D.cpp \
     source/Object_System/Object_Base.cpp \

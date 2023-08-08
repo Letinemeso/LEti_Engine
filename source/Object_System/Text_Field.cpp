@@ -7,7 +7,7 @@ constexpr unsigned int tcpc = 12, cpc = 18, colorpc = 24;		//texture coordinates
 
 
 
-INIT_FIELDS(LEti::Text_Field_Stub, LEti::Builder_Stub)
+INIT_FIELDS(LEti::Text_Field_Stub, LV::Builder_Stub)
 
 ADD_FIELD(std::string, font_texture)
 ADD_FIELD(unsigned int, tcoords_count)

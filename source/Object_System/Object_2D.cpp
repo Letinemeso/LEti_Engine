@@ -3,7 +3,7 @@
 using namespace LEti;
 
 
-INIT_FIELDS(LEti::Object_2D_Stub, LEti::Builder_Stub)
+INIT_FIELDS(LEti::Object_2D_Stub, LV::Builder_Stub)
 
 ADD_FIELD(glm::vec3, position)
 ADD_FIELD(glm::vec3, scale)

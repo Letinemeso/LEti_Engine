@@ -3,7 +3,8 @@
 
 #include <Stuff/Function_Wrapper.h>
 
-#include "Object_System/Builder_Stub.h"
+#include <Builder_Stub.h>
+
 #include "Object_Base.h"
 #include "Draw_Modules/Default_Draw_Module_2D.h"
 #include "Modules/Dynamic_Physics_Module_2D.h"
@@ -14,7 +15,7 @@
 namespace LEti
 {
 
-    class Object_2D_Stub : public Builder_Stub
+    class Object_2D_Stub : public LV::Builder_Stub
 	{
 	public:
 		DECLARE_VARIABLE;
