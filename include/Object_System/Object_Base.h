@@ -18,7 +18,7 @@ namespace LEti
 		virtual ~Object_Base() { }
 
 	public:
-        virtual void update(float _ratio = 1.0f) = 0;
+        virtual void update() = 0;
         virtual void draw(const LR::Renderer& _renderer) const = 0;
 
 	};

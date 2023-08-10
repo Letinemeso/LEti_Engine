@@ -53,6 +53,8 @@ void Text_Field_Stub::M_init_constructed_product(LV::Variable_Base* _product) co
         result->m_sequence_map.emplace(current_char, &(result->m_text_tex_coords.first[tcpc * i]));
     }
 
+    result->set_scale(1.0f);
+    result->set_rotation_angle(0.0f);
     result->set_pos(position);
     result->m_width = width;
     result->m_height = height;
@@ -132,4 +134,11 @@ void Text_Field::set_text(const std::string& _text)
         colors[i] = 1.0f;
     m_draw_module->init_colors(colors, colors_count);
     delete[] colors;
+}
+
+
+
+void Text_Field::draw(const LR::Renderer &_renderer) const
+{
+    LEti::Object_2D::draw(_renderer);
 }

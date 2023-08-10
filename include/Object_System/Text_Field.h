@@ -82,6 +82,9 @@ namespace LEti
 
         inline const std::string& get_text() const { return m_text; }
 
+    public:
+        void draw(const LR::Renderer &_renderer) const override;
+
 	};
 
 
