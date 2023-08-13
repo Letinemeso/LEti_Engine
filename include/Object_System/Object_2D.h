@@ -8,8 +8,6 @@
 #include <Object_System/Object_Base.h>
 #include <Transformation_Data.h>
 #include <Module.h>
-#include <Draw_Modules/Default_Draw_Module_2D.h>
-#include <Picture/Picture_Manager.h>
 
 
 
@@ -25,8 +23,8 @@ namespace LEti
         glm::vec3 position, scale, rotation_axis;
         float rotation_angle;
 
-        bool enable_draw_module = false;
-        LR::Draw_Module_Base_Stub* draw_module = nullptr;
+//        bool enable_draw_module = false;
+//        LR::Draw_Module_Base_Stub* draw_module = nullptr;
 
     protected:
         LV::Variable_Base* M_construct_product() const override;
@@ -43,7 +41,6 @@ namespace LEti
         DECLARE_VARIABLE;
 
     protected:
-        LR::Default_Draw_Module_2D* m_draw_module = nullptr;
         LDS::List<Module*> m_modules;
 
     protected:
@@ -80,11 +77,6 @@ namespace LEti
         void add_module(Module* _module);
         void remove_module(Module* _module);    //  this does not delete a module (if you have pointer, you should delete it yourself)
         void remove_all_modules();  //  this deletes all modules
-
-        void set_draw_module(LR::Default_Draw_Module_2D* _module);
-        void remove_draw_module();
-        LR::Default_Draw_Module_2D* draw_module();
-        const LR::Default_Draw_Module_2D* draw_module() const;
 
     public:
         virtual void revert_to_previous_state();

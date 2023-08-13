@@ -10,8 +10,8 @@ ADD_FIELD(glm::vec3, scale)
 ADD_FIELD(glm::vec3, rotation_axis)
 ADD_FIELD(float, rotation_angle)
 
-ADD_FIELD(bool, enable_draw_module)
-ADD_CHILD("draw_module", *draw_module)
+//ADD_FIELD(bool, enable_draw_module)
+//ADD_CHILD("draw_module", *draw_module)
 
 FIELDS_END
 
@@ -19,7 +19,7 @@ FIELDS_END
 
 Object_2D_Stub::~Object_2D_Stub()
 {
-    delete draw_module;
+//    delete draw_module;
 }
 
 
@@ -38,8 +38,8 @@ void Object_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product) con
     result->set_rotation_axis(rotation_axis);
     result->set_rotation_angle(rotation_angle);
 
-    if(enable_draw_module)
-        result->set_draw_module((LR::Default_Draw_Module_2D*)draw_module->construct());
+//    if(enable_draw_module)
+//        result->set_draw_module((LR::Default_Draw_Module_2D*)draw_module->construct());
 }
 
 
@@ -55,8 +55,6 @@ Object_2D::Object_2D() : Object_Base()
 
 Object_2D::~Object_2D()
 {
-    remove_draw_module();
-
     remove_all_modules();
 }
 
@@ -149,8 +147,11 @@ void Object_2D::add_module(Module *_module)
     L_ASSERT(_module);
     for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
     {
-        L_ASSERT(*it != _module);
-        return;
+        if(*it == _module)
+        {
+            L_ASSERT(false);
+            return;
+        }
     }
 
     _module->set_transformation_data(&m_current_state);
@@ -185,29 +186,6 @@ void Object_2D::remove_all_modules()
 }
 
 
-void Object_2D::set_draw_module(LR::Default_Draw_Module_2D* _module)
-{
-    delete m_draw_module;
-    m_draw_module = _module;
-}
-
-void Object_2D::remove_draw_module()
-{
-	delete m_draw_module;
-	m_draw_module = nullptr;
-}
-
-LR::Default_Draw_Module_2D* Object_2D::draw_module()
-{
-	return m_draw_module;
-}
-
-const LR::Default_Draw_Module_2D* Object_2D::draw_module() const
-{
-	return m_draw_module;
-}
-
-
 
 void Object_2D::revert_to_previous_state()
 {
@@ -229,12 +207,9 @@ void Object_2D::update()
 
     m_current_state.update_matrix();
     glm::mat4x4 matrix = m_current_state.matrix();
-
-    if(m_draw_module)
-        m_draw_module->update(matrix);
 }
 
 void Object_2D::draw(const LR::Renderer &_renderer) const
 {
-    _renderer.draw(*draw_module());
+//    _renderer.draw(*draw_module());
 }
