@@ -74,6 +74,12 @@ namespace LEti
         float get_rotation_angle_prev() const;
 
     public:
+        inline Transformation_Data& current_state() { return m_current_state; }
+        inline const Transformation_Data& current_state() const { return m_current_state; }
+        inline Transformation_Data& previous_state() { return m_previous_state; }
+        inline const Transformation_Data& previous_state() const { return m_previous_state; }
+
+    public:
         void add_module(Module* _module);
         void remove_module(Module* _module);    //  this does not delete a module (if you have pointer, you should delete it yourself)
         void remove_all_modules();  //  this deletes all modules
