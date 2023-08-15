@@ -14,9 +14,12 @@ namespace LEti
     class Transformation_Data final
     {
     private:
-        glm::vec3 m_position;
-        glm::vec3 m_rotation;
-        glm::vec3 m_scale;
+        bool m_changes_made = false;
+
+    private:
+        glm::vec3 m_position{0.0f, 0.0f, 0.0f};
+        glm::vec3 m_rotation{0.0f, 0.0f, 0.0f};
+        glm::vec3 m_scale{1.0f, 1.0f, 1.0f};
 
         glm::mat4x4 m_matrix;
 
@@ -32,11 +35,11 @@ namespace LEti
         inline const glm::mat4x4& matrix() const { return m_matrix; }
 
     public:
-        inline void set_position(const glm::vec3& _position) { m_position = _position; }
-        inline void move(const glm::vec3& _vec) { m_position += _vec; }
-        inline void set_rotation(const glm::vec3& _rotation) { m_rotation = _rotation; }
-        inline void rotate(const glm::vec3& _vec) { m_rotation += _vec; }
-        inline void set_scale(const glm::vec3& _scale) { m_scale = _scale; }
+        void set_position(const glm::vec3& _position);
+        void move(const glm::vec3& _vec);
+        void set_rotation(const glm::vec3& _rotation);
+        void rotate(const glm::vec3& _vec);
+        void set_scale(const glm::vec3& _scale);
 
     public:
         void update_matrix();

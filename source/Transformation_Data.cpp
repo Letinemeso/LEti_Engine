@@ -3,6 +3,39 @@
 using namespace LEti;
 
 
+void Transformation_Data::set_position(const glm::vec3& _position)
+{
+    m_changes_made = true;  //  some code duplicacy here, but who cares
+
+    m_position = _position;
+}
+void Transformation_Data::move(const glm::vec3& _vec)
+{
+    m_changes_made = true;
+
+    m_position += _vec;
+}
+void Transformation_Data::set_rotation(const glm::vec3& _rotation)
+{
+    m_changes_made = true;
+
+    m_rotation = _rotation;
+}
+void Transformation_Data::rotate(const glm::vec3& _vec)
+{
+    m_changes_made = true;
+
+    m_rotation += _vec;
+}
+void Transformation_Data::set_scale(const glm::vec3& _scale)
+{
+    m_changes_made = true;
+
+    m_scale = _scale;
+}
+
+
+
 glm::mat4x4 Transformation_Data::translation_matrix() const
 {
     glm::mat4x4 translation_matrix
@@ -56,7 +89,12 @@ glm::mat4x4 Transformation_Data::scale_matrix() const
 
 void Transformation_Data::update_matrix()
 {
+    if(!m_changes_made)
+        return;
+
     m_matrix = translation_matrix() * rotation_matrix() * scale_matrix();
+
+    m_changes_made = false;
 }
 
 
