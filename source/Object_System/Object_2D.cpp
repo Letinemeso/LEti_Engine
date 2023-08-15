@@ -110,11 +110,8 @@ void Object_2D::update_previous_state()
         (*it)->update_prev_state();
 }
 
-void Object_2D::update()
+void Object_2D::update(float _dt)
 {
     for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
-        (*it)->update();
-
-    m_current_state.update_matrix();
-    glm::mat4x4 matrix = m_current_state.matrix();
+        (*it)->update(_dt);
 }

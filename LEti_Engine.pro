@@ -17,8 +17,6 @@ INCLUDEPATH += "include/"
 
 INCLUDEPATH += "../L_Variable/include/"
 INCLUDEPATH += "../L_Utility/include/"
-INCLUDEPATH += "../L_Renderer/include/"
-INCLUDEPATH += "../L_Physics/include/"
 
 
 HEADERS += \
@@ -26,7 +24,6 @@ HEADERS += \
     include/Module.h \
     include/Object_System/Object_2D.h \
     include/Object_System/Object_Base.h \
-    include/Object_System/Rigid_Body_2D_Stub.h \
     include/Object_System/Text_Field.h \
     include/Transformation_Data.h
 
@@ -35,6 +32,5 @@ SOURCES += \
     source/Module.cpp \
     source/Object_System/Object_2D.cpp \
     source/Object_System/Object_Base.cpp \
-    source/Object_System/Rigid_Body_2D_Stub.cpp \
     source/Object_System/Text_Field.cpp \
     source/Transformation_Data.cpp

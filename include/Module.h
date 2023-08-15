@@ -3,8 +3,6 @@
 
 #include <Variable_Base.h>
 
-#include <Event_Controller/Event_Controller.h>  //  TODO: remove this and all calls to current state of Event_Controller
-
 #include <Transformation_Data.h>
 
 
@@ -32,7 +30,7 @@ namespace LEti
 
     public:
         virtual void update_prev_state() { }
-        virtual void update() { }
+        virtual void update(float /*_dt*/) { }
 
     };
 

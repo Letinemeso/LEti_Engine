@@ -3,8 +3,6 @@
 
 #include <Variable_Base.h>
 
-#include <Renderer/Renderer.h>
-
 namespace LEti
 {
 
@@ -18,7 +16,7 @@ namespace LEti
 		virtual ~Object_Base() { }
 
 	public:
-        virtual void update() = 0;
+        virtual void update(float _dt) = 0;
 
 	};
 
