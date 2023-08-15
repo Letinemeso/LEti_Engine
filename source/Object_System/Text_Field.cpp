@@ -135,10 +135,3 @@ void Text_Field::set_text(const std::string& _text)
 //    m_draw_module->init_colors(colors, colors_count);
 //    delete[] colors;
 }
-
-
-
-void Text_Field::draw(const LR::Renderer &_renderer) const
-{
-//    LEti::Object_2D::draw(_renderer);
-}

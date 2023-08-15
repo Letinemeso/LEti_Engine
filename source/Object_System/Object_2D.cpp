@@ -33,13 +33,10 @@ void Object_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product) con
 {
     Object_2D* result = (Object_2D*)_product;
 
-    result->set_pos(position);
-    result->set_scale(scale);
-    result->set_rotation_axis(rotation_axis);
-    result->set_rotation_angle(rotation_angle);
+    result->current_state().set_position(position);
+    result->current_state().set_scale(scale);
+    result->current_state().set_rotation({0.0f, 0.0f, rotation_angle});
 
-//    if(enable_draw_module)
-//        result->set_draw_module((LR::Default_Draw_Module_2D*)draw_module->construct());
 }
 
 
@@ -56,88 +53,6 @@ Object_2D::Object_2D() : Object_Base()
 Object_2D::~Object_2D()
 {
     remove_all_modules();
-}
-
-
-
-void Object_2D::set_pos(const glm::vec3 &_position)
-{
-    m_current_state.set_position(_position);
-}
-
-void Object_2D::move(const glm::vec3 &_stride)
-{
-    m_current_state.move(_stride);
-}
-
-
-void Object_2D::set_rotation_axis(const glm::vec3 &_axis)
-{
-
-}
-
-void Object_2D::set_rotation_angle(float _angle)
-{
-    m_current_state.set_rotation({0.0f, 0.0f, _angle});
-}
-
-void Object_2D::rotate(float _angle)
-{
-    m_current_state.rotate({0.0f, 0.0f, _angle});
-}
-
-
-void Object_2D::set_scale(const glm::vec3 &_scale)
-{
-    m_current_state.set_scale(_scale);
-}
-
-void Object_2D::set_scale(float _scale)
-{
-    m_current_state.set_scale({_scale, _scale, _scale});
-}
-
-
-
-glm::vec3 Object_2D::get_pos() const
-{
-    return m_current_state.position();
-}
-
-glm::vec3 Object_2D::get_scale() const
-{
-    return m_current_state.scale();
-}
-
-glm::vec3 Object_2D::get_rotation_axis() const      //  TODO: remove outdated stuff
-{
-    return {0.0f, 0.0f, 1.0f};
-}
-
-float Object_2D::get_rotation_angle() const
-{
-    return m_current_state.rotation().z;
-}
-
-
-glm::vec3 Object_2D::get_pos_prev() const
-{
-    return m_previous_state.position();
-}
-
-glm::vec3 Object_2D::get_scale_prev() const
-{
-    return m_previous_state.scale();
-}
-
-glm::vec3 Object_2D::get_rotation_axis_prev() const
-{
-    return {0.0f, 0.0f, 1.0f};
-}
-
-float Object_2D::get_rotation_angle_prev() const
-{
-    return m_previous_state.rotation().z;
 }
 
 
@@ -187,11 +102,6 @@ void Object_2D::remove_all_modules()
 
 
 
-void Object_2D::revert_to_previous_state()
-{
-	m_current_state = m_previous_state;
-}
-
 void Object_2D::update_previous_state()
 {
     m_previous_state = m_current_state;
@@ -207,9 +117,4 @@ void Object_2D::update()
 
     m_current_state.update_matrix();
     glm::mat4x4 matrix = m_current_state.matrix();
-}
-
-void Object_2D::draw(const LR::Renderer &_renderer) const
-{
-//    _renderer.draw(*draw_module());
 }

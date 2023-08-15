@@ -19,7 +19,6 @@ namespace LEti
 
 	public:
         virtual void update() = 0;
-        virtual void draw(const LR::Renderer& _renderer) const = 0;
 
 	};
 

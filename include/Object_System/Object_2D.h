@@ -23,9 +23,6 @@ namespace LEti
         glm::vec3 position, scale, rotation_axis;
         float rotation_angle;
 
-//        bool enable_draw_module = false;
-//        LR::Draw_Module_Base_Stub* draw_module = nullptr;
-
     protected:
         LV::Variable_Base* M_construct_product() const override;
         void M_init_constructed_product(LV::Variable_Base* _product) const override;
@@ -52,28 +49,6 @@ namespace LEti
         ~Object_2D();
 
     public:
-        void set_pos(const glm::vec3& _position);
-        void move(const glm::vec3& _stride);
-
-        void set_rotation_axis(const glm::vec3& _axis);
-        void set_rotation_angle(float _angle);
-        void rotate(float _angle);
-
-        void set_scale(const glm::vec3& _scale);
-        void set_scale(float _scale);
-
-    public:
-        glm::vec3 get_pos() const;
-        glm::vec3 get_scale() const;
-        glm::vec3 get_rotation_axis() const;
-        float get_rotation_angle() const;
-
-        glm::vec3 get_pos_prev() const;
-        glm::vec3 get_scale_prev() const;
-        glm::vec3 get_rotation_axis_prev() const;
-        float get_rotation_angle_prev() const;
-
-    public:
         inline Transformation_Data& current_state() { return m_current_state; }
         inline const Transformation_Data& current_state() const { return m_current_state; }
         inline Transformation_Data& previous_state() { return m_previous_state; }
@@ -85,10 +60,8 @@ namespace LEti
         void remove_all_modules();  //  this deletes all modules
 
     public:
-        virtual void revert_to_previous_state();
-        virtual void update_previous_state();
+        void update_previous_state();
         void update() override;
-        void draw(const LR::Renderer &_renderer) const override;
 
     };
 
