@@ -25,7 +25,6 @@ HEADERS += \
     include/Module.h \
     include/Object_System/Object_2D.h \
     include/Object_System/Object_Base.h \
-    include/Object_System/Text_Field.h \
     include/Transformation_Data.h
 
 SOURCES += \
@@ -34,5 +33,4 @@ SOURCES += \
     source/Module.cpp \
     source/Object_System/Object_2D.cpp \
     source/Object_System/Object_Base.cpp \
-    source/Object_System/Text_Field.cpp \
     source/Transformation_Data.cpp
