@@ -101,7 +101,7 @@ void Transformation_Data::update_matrix()
 
 glm::vec3 Transformation_Data::get_position_for_ratio(const Transformation_Data& _previous_state, const Transformation_Data& _current_state, float _ratio)
 {
-    L_ASSERT(!(_ratio < 0.0f || _ratio > 1.0f));
+    L_ASSERT(_ratio > -0.0001f && _ratio < 1.0001f);
 
     glm::vec3 curr_pos = _current_state.position();
     glm::vec3 prev_pos = _previous_state.position();
@@ -113,7 +113,7 @@ glm::vec3 Transformation_Data::get_position_for_ratio(const Transformation_Data&
 
 glm::vec3 Transformation_Data::get_rotation_for_ratio(const Transformation_Data& _previous_state, const Transformation_Data& _current_state, float _ratio)
 {
-    L_ASSERT(!(_ratio < 0.0f || _ratio > 1.0f));
+    L_ASSERT(_ratio > -0.0001f && _ratio < 1.0001f);
 
     glm::vec3 curr_rotation = _current_state.rotation();
     glm::vec3 prev_rotation = _previous_state.rotation();
@@ -125,7 +125,7 @@ glm::vec3 Transformation_Data::get_rotation_for_ratio(const Transformation_Data&
 
 glm::vec3 Transformation_Data::get_scale_for_ratio(const Transformation_Data& _previous_state, const Transformation_Data& _current_state, float _ratio)
 {
-    L_ASSERT(!(_ratio < 0.0f || _ratio > 1.0f));
+    L_ASSERT(_ratio > -0.0001f && _ratio < 1.0001f);
 
     glm::vec3 curr_scale = _current_state.scale();
     glm::vec3 prev_scale = _previous_state.scale();
@@ -153,7 +153,7 @@ glm::mat4x4 Transformation_Data::get_translation_matrix_for_ratio(const Transfor
 
 glm::mat4x4 Transformation_Data::get_translation_matrix_inversed_for_ratio(const Transformation_Data &_previous_state, const Transformation_Data &_current_state, float _ratio)
 {
-    L_ASSERT(!(_ratio < 0.0f || _ratio > 1.0f));
+    L_ASSERT(_ratio > -0.0001f && _ratio < 1.0001f);
 
     glm::vec3 curr_pos = _current_state.position();
     glm::vec3 prev_pos = _previous_state.position();
