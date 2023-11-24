@@ -7,8 +7,7 @@ INIT_FIELDS(LEti::Object_Stub, LV::Builder_Stub)
 
 ADD_FIELD(glm::vec3, position)
 ADD_FIELD(glm::vec3, scale)
-ADD_FIELD(glm::vec3, rotation_axis)
-ADD_FIELD(float, rotation_angle)
+ADD_FIELD(glm::vec3, rotation_angles)
 
 FIELDS_END
 
@@ -16,7 +15,7 @@ FIELDS_END
 
 Object_Stub::~Object_Stub()
 {
-//    delete draw_module;
+
 }
 
 
@@ -32,7 +31,7 @@ void Object_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
 
     result->current_state().set_position(position);
     result->current_state().set_scale(scale);
-    result->current_state().set_rotation({0.0f, 0.0f, rotation_angle});
+    result->current_state().set_rotation(rotation_angles);
 
 }
 

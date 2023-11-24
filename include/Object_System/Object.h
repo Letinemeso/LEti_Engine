@@ -19,8 +19,7 @@ namespace LEti
         DECLARE_VARIABLE;
 
     public:
-        glm::vec3 position, scale, rotation_axis;
-        float rotation_angle;
+        glm::vec3 position, scale, rotation_angles;
 
     protected:
         LV::Variable_Base* M_construct_product() const override;
