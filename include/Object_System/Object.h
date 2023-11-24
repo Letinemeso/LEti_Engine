@@ -1,5 +1,4 @@
-#ifndef __OBJECT_2D
-#define __OBJECT_2D
+#pragma once
 
 #include <Data_Structures/List.h>
 
@@ -14,7 +13,7 @@
 namespace LEti
 {
 
-    class Object_2D_Stub : public LV::Builder_Stub
+    class Object_Stub : public LV::Builder_Stub
     {
     public:
         DECLARE_VARIABLE;
@@ -28,11 +27,11 @@ namespace LEti
         void M_init_constructed_product(LV::Variable_Base* _product) const override;
 
     public:
-        ~Object_2D_Stub();
+        ~Object_Stub();
 
     };
 
-    class Object_2D : public Object_Base
+    class Object : public Object_Base
     {
     public:
         DECLARE_VARIABLE;
@@ -45,8 +44,8 @@ namespace LEti
         Transformation_Data m_previous_state;
 
     public:
-        Object_2D();
-        ~Object_2D();
+        Object();
+        ~Object();
 
     public:
         inline Transformation_Data& current_state() { return m_current_state; }
@@ -66,6 +65,3 @@ namespace LEti
     };
 
 }
-
-
-#endif // __OBJECT_2D

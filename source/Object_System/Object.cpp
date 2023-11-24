@@ -1,37 +1,34 @@
-#include <Object_System/Object_2D.h>
+#include <Object_System/Object.h>
 
 using namespace LEti;
 
 
-INIT_FIELDS(LEti::Object_2D_Stub, LV::Builder_Stub)
+INIT_FIELDS(LEti::Object_Stub, LV::Builder_Stub)
 
 ADD_FIELD(glm::vec3, position)
 ADD_FIELD(glm::vec3, scale)
 ADD_FIELD(glm::vec3, rotation_axis)
 ADD_FIELD(float, rotation_angle)
 
-//ADD_FIELD(bool, enable_draw_module)
-//ADD_CHILD("draw_module", *draw_module)
-
 FIELDS_END
 
 
 
-Object_2D_Stub::~Object_2D_Stub()
+Object_Stub::~Object_Stub()
 {
 //    delete draw_module;
 }
 
 
 
-LV::Variable_Base* Object_2D_Stub::M_construct_product() const
+LV::Variable_Base* Object_Stub::M_construct_product() const
 {
-    return new Object_2D;
+    return new Object;
 }
 
-void Object_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
+void Object_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
 {
-    Object_2D* result = (Object_2D*)_product;
+    Object* result = (Object*)_product;
 
     result->current_state().set_position(position);
     result->current_state().set_scale(scale);
@@ -40,24 +37,24 @@ void Object_2D_Stub::M_init_constructed_product(LV::Variable_Base* _product) con
 }
 
 
-INIT_FIELDS(LEti::Object_2D, LEti::Object_Base)
+INIT_FIELDS(LEti::Object, LEti::Object_Base)
 FIELDS_END
 
 
 
-Object_2D::Object_2D() : Object_Base()
+Object::Object() : Object_Base()
 {
 	m_previous_state = m_current_state;
 }
 
-Object_2D::~Object_2D()
+Object::~Object()
 {
     remove_all_modules();
 }
 
 
 
-void Object_2D::add_module(Module *_module)
+void Object::add_module(Module *_module)
 {
     L_ASSERT(_module);
     for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
@@ -74,7 +71,7 @@ void Object_2D::add_module(Module *_module)
     m_modules.push_back(_module);
 }
 
-void Object_2D::remove_module(Module *_module)
+void Object::remove_module(Module *_module)
 {
     L_ASSERT(_module);
 
@@ -92,7 +89,7 @@ void Object_2D::remove_module(Module *_module)
         m_modules.erase(it);
 }
 
-void Object_2D::remove_all_modules()
+void Object::remove_all_modules()
 {
     for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
         delete *it;
@@ -102,7 +99,7 @@ void Object_2D::remove_all_modules()
 
 
 
-void Object_2D::update_previous_state()
+void Object::update_previous_state()
 {
     m_previous_state = m_current_state;
 
@@ -110,7 +107,7 @@ void Object_2D::update_previous_state()
         (*it)->update_prev_state();
 }
 
-void Object_2D::update(float _dt)
+void Object::update(float _dt)
 {
     for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
         (*it)->update(_dt);

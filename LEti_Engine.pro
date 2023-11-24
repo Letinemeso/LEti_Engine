@@ -23,7 +23,7 @@ HEADERS += \
     include/FPS_Timer.h \
     include/Math_Stuff.h \
     include/Module.h \
-    include/Object_System/Object_2D.h \
+    include/Object_System/Object.h \
     include/Object_System/Object_Base.h \
     include/Transformation_Data.h
 
@@ -31,6 +31,6 @@ SOURCES += \
     source/FPS_Timer.cpp \
     source/Math_Stuff.cpp \
     source/Module.cpp \
-    source/Object_System/Object_2D.cpp \
+    source/Object_System/Object.cpp \
     source/Object_System/Object_Base.cpp \
     source/Transformation_Data.cpp
