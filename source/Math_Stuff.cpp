@@ -41,11 +41,6 @@ float Math::get_distance(const glm::vec3& _first, const glm::vec3& _second)
 	return sqrt(pow(_second.x - _first.x, 2) + pow(_second.y - _first.y, 2) + pow(_second.z - _first.z, 2));
 }
 
-glm::vec3 Math::normalize(const glm::vec3& _first, const glm::vec3& _second)
-{
-	return {_first.y * _second.z - _second.y * _first.z, -(_first.x * _second.z - _second.x * _first.z), _first.x * _second.y - _second.x * _first.y};
-}
-
 float Math::dot_product(const glm::vec3& _first, const glm::vec3& _second)
 {
 	float length1 = vector_length(_first);
@@ -55,9 +50,9 @@ float Math::dot_product(const glm::vec3& _first, const glm::vec3& _second)
 	return length1 * length2 * angle_cos_between_vectors(_first, _second);
 }
 
-float Math::cross_product(const glm::vec3& _first, const glm::vec3& _second)
+glm::vec3 Math::cross_product(const glm::vec3& _first, const glm::vec3& _second)
 {
-	return normalize(_first, _second).z;
+    return {_first.y * _second.z - _second.y * _first.z, -(_first.x * _second.z - _second.x * _first.z), _first.x * _second.y - _second.x * _first.y};
 }
 
 glm::vec3 Math::rotate_vector(const glm::vec3& _vector, const glm::vec3& _axis, float _angle)
