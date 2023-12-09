@@ -75,3 +75,7 @@ build/
 CMakeLists.txt.user
 .qmake.stash
 .qtc_clangd/
+
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
