@@ -33,6 +33,8 @@ void Object_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
     result->current_state().set_scale(scale);
     result->current_state().set_rotation(rotation_angles);
 
+    result->update(0.0001f);
+    result->update_previous_state();
 }
 
 
