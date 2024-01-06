@@ -171,6 +171,14 @@ Geometry_2D::Rectangular_Border::Rectangular_Border()
 
 }
 
+Geometry_2D::Rectangular_Border::Rectangular_Border(const Rectangular_Border& _other)
+{
+    left = _other.left;
+    right = _other.right;
+    top = _other.top;
+    bottom = _other.bottom;
+}
+
 void Geometry_2D::Rectangular_Border::operator=(const Rectangular_Border& _other)
 {
 	left = _other.left;
@@ -244,6 +252,22 @@ Geometry_2D::Rectangular_Border Geometry_2D::Rectangular_Border::operator&&(cons
 	return shared_space;
 }
 
+Geometry_2D::Rectangular_Border Geometry_2D::Rectangular_Border::operator||(const Rectangular_Border &_other) const
+{
+    Rectangular_Border shared_space = *this;
+
+    if(_other.left < shared_space.left)
+        shared_space.left = _other.left;
+    if(_other.right > shared_space.right)
+        shared_space.right = _other.right;
+    if(_other.bottom < shared_space.bottom)
+        shared_space.bottom = _other.bottom;
+    if(_other.top > shared_space.top)
+        shared_space.top = _other.top;
+
+    return shared_space;
+}
+
 bool Geometry_2D::Rectangular_Border::operator==(const Rectangular_Border &_other) const
 {
 	return	Math::floats_are_equal(left, _other.left) &&
@@ -265,6 +289,15 @@ Geometry_2D::Rectangular_Border::operator bool() const
 	}
 
 	return !result;
+}
+
+bool Geometry_2D::Rectangular_Border::point_is_inside(const glm::vec3& _point) const
+{
+    return
+            left <= _point.x &&
+            right >= _point.x &&
+            bottom <= _point.y &&
+            top >= _point.y;
 }
 
 

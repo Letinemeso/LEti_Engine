@@ -104,6 +104,7 @@ namespace Geometry_2D {
 
 	public:
 		Rectangular_Border();
+        Rectangular_Border(const Rectangular_Border& _other);
 		void operator=(const Rectangular_Border& _other);
 
 		Rectangular_Border& consider_point(const glm::vec3& _point);
@@ -114,8 +115,11 @@ namespace Geometry_2D {
 		glm::vec3 right_bottom() const;
 
 		Rectangular_Border operator&&(const Rectangular_Border& _other) const;
+        Rectangular_Border operator||(const Rectangular_Border& _other) const;
 		bool operator==(const Rectangular_Border& _other) const;
 		operator bool() const;
+
+        bool point_is_inside(const glm::vec3& _point) const;
 
 	};
 
