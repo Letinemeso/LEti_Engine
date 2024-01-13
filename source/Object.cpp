@@ -1,46 +1,14 @@
-#include <Object_System/Object.h>
+#include <Object.h>
 
 using namespace LEti;
 
 
-INIT_FIELDS(LEti::Object_Stub, LV::Builder_Stub)
-
-ADD_FIELD(glm::vec3, position)
-ADD_FIELD(glm::vec3, scale)
-ADD_FIELD(glm::vec3, rotation_angles)
-
+INIT_FIELDS(LEti::Object, LV::Variable_Base)
 FIELDS_END
 
 
 
-Object_Stub::~Object_Stub()
-{
-
-}
-
-
-
-LV::Variable_Base* Object_Stub::M_construct_product() const
-{
-    return new Object;
-}
-
-void Object_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
-{
-    Object* result = (Object*)_product;
-
-    result->current_state().set_position(position);
-    result->current_state().set_scale(scale);
-    result->current_state().set_rotation(rotation_angles);
-}
-
-
-INIT_FIELDS(LEti::Object, LEti::Object_Base)
-FIELDS_END
-
-
-
-Object::Object() : Object_Base()
+Object::Object()
 {
 	m_previous_state = m_current_state;
 }
@@ -109,4 +77,38 @@ void Object::update(float _dt)
 {
     for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
         (*it)->update(_dt);
+}
+
+
+
+
+
+INIT_FIELDS(LEti::Object_Stub, LV::Builder_Stub)
+
+ADD_FIELD(glm::vec3, position)
+ADD_FIELD(glm::vec3, scale)
+ADD_FIELD(glm::vec3, rotation_angles)
+
+FIELDS_END
+
+
+Object_Stub::~Object_Stub()
+{
+
+}
+
+
+
+LV::Variable_Base* Object_Stub::M_construct_product() const
+{
+    return new Object;
+}
+
+void Object_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
+{
+    Object* result = (Object*)_product;
+
+    result->current_state().set_position(position);
+    result->current_state().set_scale(scale);
+    result->current_state().set_rotation(rotation_angles);
 }

@@ -4,7 +4,6 @@
 
 #include <Builder_Stub.h>
 
-#include <Object_System/Object_Base.h>
 #include <Transformation_Data.h>
 #include <Module.h>
 
@@ -12,6 +11,41 @@
 
 namespace LEti
 {
+
+    class Object : public LV::Variable_Base
+    {
+    public:
+        DECLARE_VARIABLE;
+
+    protected:
+        Transformation_Data m_current_state;
+        Transformation_Data m_previous_state;
+
+    protected:
+        LDS::List<Module*> m_modules;
+
+    public:
+        Object();
+        virtual ~Object();
+
+    public:
+        inline Transformation_Data& current_state() { return m_current_state; }
+        inline const Transformation_Data& current_state() const { return m_current_state; }
+        inline Transformation_Data& previous_state() { return m_previous_state; }
+        inline const Transformation_Data& previous_state() const { return m_previous_state; }
+
+    public:
+        void add_module(Module* _module);
+        void remove_module(Module* _module);    //  this does not delete a module (if you have pointer, you should delete it yourself)
+        void remove_all_modules();  //  this deletes all modules
+
+    public:
+        void update_previous_state();
+        virtual void update(float _dt);
+
+    };
+
+
 
     class Object_Stub : public LV::Builder_Stub
     {
@@ -27,39 +61,6 @@ namespace LEti
 
     public:
         ~Object_Stub();
-
-    };
-
-    class Object : public Object_Base
-    {
-    public:
-        DECLARE_VARIABLE;
-
-    protected:
-        LDS::List<Module*> m_modules;
-
-    protected:
-        Transformation_Data m_current_state;
-        Transformation_Data m_previous_state;
-
-    public:
-        Object();
-        ~Object();
-
-    public:
-        inline Transformation_Data& current_state() { return m_current_state; }
-        inline const Transformation_Data& current_state() const { return m_current_state; }
-        inline Transformation_Data& previous_state() { return m_previous_state; }
-        inline const Transformation_Data& previous_state() const { return m_previous_state; }
-
-    public:
-        void add_module(Module* _module);
-        void remove_module(Module* _module);    //  this does not delete a module (if you have pointer, you should delete it yourself)
-        void remove_all_modules();  //  this deletes all modules
-
-    public:
-        void update_previous_state();
-        void update(float _dt) override;
 
     };
 
