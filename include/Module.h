@@ -1,7 +1,7 @@
-#ifndef MODULE_H
-#define MODULE_H
+#pragma once
 
 #include <Variable_Base.h>
+#include <Builder_Stub.h>
 
 #include <Transformation_Data.h>
 
@@ -34,6 +34,13 @@ namespace LEti
 
     };
 
-}
 
-#endif // MODULE_H
+
+    class Module_Stub : public LV::Builder_Stub
+    {
+    public:
+        DECLARE_VARIABLE;
+
+    };
+
+}

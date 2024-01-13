@@ -16,3 +16,10 @@ Module::~Module()
 {
 
 }
+
+
+
+
+
+INIT_FIELDS(LEti::Module_Stub, LV::Builder_Stub)
+FIELDS_END

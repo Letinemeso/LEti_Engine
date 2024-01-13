@@ -94,7 +94,8 @@ FIELDS_END
 
 Object_Stub::~Object_Stub()
 {
-
+    for(Module_Stubs_Map::Iterator it = module_stubs.iterator(); !it.end_reached(); ++it)
+        delete *it;
 }
 
 
@@ -111,4 +112,7 @@ void Object_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
     result->current_state().set_position(position);
     result->current_state().set_scale(scale);
     result->current_state().set_rotation(rotation_angles);
+
+    for(Module_Stubs_Map::Const_Iterator it = module_stubs.iterator(); !it.end_reached(); ++it)
+        result->add_module((Module*)(*it)->construct());
 }
