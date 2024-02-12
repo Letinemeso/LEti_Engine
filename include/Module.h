@@ -23,14 +23,15 @@ namespace LEti
         ~Module();
 
     public:
-        inline void set_transformation_data(Transformation_Data* _data) { m_transformation_data = _data; }
+        virtual void set_transformation_data(Transformation_Data* _data) { m_transformation_data = _data; }
+        virtual void set_transformation_data_prev_state(const Transformation_Data* _data) { m_transformation_data_prev_state = _data; }
+
         inline Transformation_Data* transformation_data() const { return m_transformation_data; }
-        inline void set_transformation_data_prev_state(const Transformation_Data* _data) { m_transformation_data_prev_state = _data; }
         inline const Transformation_Data* transformation_data_prev_state() const { return m_transformation_data_prev_state; }
 
     public:
         virtual void update_prev_state() { }
-        virtual void update(float /*_dt*/) { }
+        virtual void update(float _dt) = 0;
 
     };
 
