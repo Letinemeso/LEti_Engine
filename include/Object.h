@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Stuff/Function_Wrapper.h>
 #include <Data_Structures/List.h>
 
 #include <Builder_Stub.h>
@@ -23,6 +24,7 @@ namespace LEti
 
     protected:
         LDS::List<Module*> m_modules;
+        LST::Function<void(Object*)> m_on_update_func;
 
     public:
         Object();
@@ -35,9 +37,15 @@ namespace LEti
         inline const Transformation_Data& previous_state() const { return m_previous_state; }
 
     public:
+        inline void set_on_update_func(const LST::Function<void(Object*)>& _func) { m_on_update_func = _func; }
+
+    public:
         void add_module(Module* _module);
         void remove_module(Module* _module);    //  this does not delete a module (if you have pointer, you should delete it yourself)
         void remove_all_modules();  //  this deletes all modules
+
+    public:
+        inline const LDS::List<Module*>& modules() const { return m_modules; }
 
     public:
         void update_previous_state();
