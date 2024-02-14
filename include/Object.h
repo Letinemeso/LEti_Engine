@@ -64,10 +64,7 @@ namespace LEti
         glm::vec3 position, scale, rotation_angles;
 
     public:
-        using Module_Stubs_Map = LDS::Map<std::string, Module_Stub*>;
-
-    public:
-        Module_Stubs_Map module_stubs;
+        LV::Variable_Base::Childs_List module_stubs;
 
     protected:
         LV::Variable_Base* M_construct_product() const override;
