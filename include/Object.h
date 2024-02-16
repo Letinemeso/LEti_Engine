@@ -16,7 +16,7 @@ namespace LEti
     class Object : public LV::Variable_Base
     {
     public:
-        DECLARE_VARIABLE;
+        INIT_VARIABLE(LEti::Object, LV::Variable_Base)
 
     protected:
         Transformation_Data m_current_state;
@@ -58,7 +58,17 @@ namespace LEti
     class Object_Stub : public LV::Builder_Stub
     {
     public:
-        DECLARE_VARIABLE;
+        INIT_VARIABLE(LEti::Object_Stub, LV::Builder_Stub)
+
+        INIT_FIELDS
+        ADD_FIELD(glm::vec3, position)
+        ADD_FIELD(glm::vec3, scale)
+        ADD_FIELD(glm::vec3, rotation_angles)
+        FIELDS_END
+
+        INIT_CHILDS_LISTS
+        ADD_CHILDS_LIST("Module__*", &module_stubs)
+        CHILDS_LISTS_END
 
     public:
         glm::vec3 position, scale, rotation_angles;

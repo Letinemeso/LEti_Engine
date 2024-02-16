@@ -3,11 +3,6 @@
 using namespace LEti;
 
 
-INIT_FIELDS(LEti::Object, LV::Variable_Base)
-FIELDS_END
-
-
-
 Object::Object()
 {
 	m_previous_state = m_current_state;
@@ -84,15 +79,6 @@ void Object::update(float _dt)
 
 
 
-
-
-INIT_FIELDS(LEti::Object_Stub, LV::Builder_Stub)
-
-ADD_FIELD(glm::vec3, position)
-ADD_FIELD(glm::vec3, scale)
-ADD_FIELD(glm::vec3, rotation_angles)
-
-FIELDS_END
 
 
 Object_Stub::~Object_Stub()

@@ -12,7 +12,7 @@ namespace LEti
     class Module : public LV::Variable_Base
     {
     public:
-        DECLARE_VARIABLE;
+        INIT_VARIABLE(LEti::Module, LV::Variable_Base)
 
     private:
         Transformation_Data* m_transformation_data = nullptr;
@@ -40,7 +40,7 @@ namespace LEti
     class Module_Stub : public LV::Builder_Stub
     {
     public:
-        DECLARE_VARIABLE;
+        INIT_VARIABLE(LEti::Module, LV::Builder_Stub)
 
     };
 
