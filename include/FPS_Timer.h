@@ -1,5 +1,4 @@
-#ifndef FPS_TIMER_H
-#define FPS_TIMER_H
+#pragma once
 
 #include <Stuff/Stopwatch.h>
 
@@ -28,5 +27,3 @@ namespace LEti
     };
 
 }
-
-#endif // FPS_TIMER_H

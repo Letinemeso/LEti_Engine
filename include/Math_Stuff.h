@@ -1,5 +1,4 @@
-#ifndef __MATH_STUFF
-#define __MATH_STUFF
+#pragma once
 
 #include "L_Debug/L_Debug.h"
 
@@ -168,5 +167,3 @@ namespace Geometry_2D {
 }	/*Geometry_2D*/
 
 }	/*LEti*/
-
-#endif

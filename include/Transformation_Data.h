@@ -1,5 +1,4 @@
-#ifndef TRANSFORMATION_DATA_H
-#define TRANSFORMATION_DATA_H
+#pragma once
 
 #include <vec3.hpp>
 #include <mat4x4.hpp>
@@ -61,5 +60,3 @@ namespace LEti
 
 
 }
-
-#endif // TRANSFORMATION_DATA_H
