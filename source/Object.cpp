@@ -70,11 +70,11 @@ void Object::update_previous_state()
 
 void Object::update(float _dt)
 {
-    for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
-        (*it)->update(_dt);
-
     if(m_on_update_func)
         m_on_update_func(this);
+
+    for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
+        (*it)->update(_dt);
 }
 
 
