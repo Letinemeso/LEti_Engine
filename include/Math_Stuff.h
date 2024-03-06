@@ -97,7 +97,7 @@ namespace Geometry
 namespace Geometry_2D
 {
 
-	class Equasion_Data
+    class Equasion_Data     //  looks like this legacy junk stays here until i desperately need 3d and write normal 3d lines intersection detection
 	{
 	private:
 		bool m_is_ok = true;
@@ -130,10 +130,6 @@ namespace Geometry_2D
 	Geometry::Simple_Intersection_Data lines_intersect(const Equasion_Data& _first, const Equasion_Data& _second);
 
 	Geometry::Simple_Intersection_Data segments_intersect(const Geometry::Segment& _first, const Geometry::Segment& _second);
-
-	float point_to_axis_projection(const glm::vec3& _point, const glm::vec3& _axis);
-
-	float point_to_segment_distance(const glm::vec3& _point, const glm::vec3& _seg_start, const glm::vec3& _seg_end);
 
 	void rotate_perpendicular_ccw(glm::vec3& _vec);
 
