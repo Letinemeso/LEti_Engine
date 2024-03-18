@@ -23,8 +23,14 @@ namespace LEti
         Transformation_Data m_previous_state;
 
     protected:
-        LDS::List<Module*> m_modules;
-        LST::Function<void(Object*)> m_on_update_func;
+        using Modules_List = LDS::List<Module*>;
+
+    public:
+        using On_Update_Func = LST::Function<void(Object*)>;
+
+    protected:
+        Modules_List m_modules;
+        On_Update_Func m_on_update_func;
 
     public:
         Object();
@@ -37,7 +43,7 @@ namespace LEti
         inline const Transformation_Data& previous_state() const { return m_previous_state; }
 
     public:
-        inline void set_on_update_func(const LST::Function<void(Object*)>& _func) { m_on_update_func = _func; }
+        inline void set_on_update_func(const On_Update_Func& _func) { m_on_update_func = _func; }
 
     public:
         void add_module(Module* _module);
@@ -48,11 +54,46 @@ namespace LEti
         inline const LDS::List<Module*>& modules() const { return m_modules; }
 
     public:
+        template<typename Module_Type>
+        void process_logic_for_modules_of_type(const LST::Function<void(Module_Type*)>& _logic);
+        template<typename Module_Type>
+        void process_logic_for_modules_of_type(const LST::Function<void(const Module_Type*)>& _logic) const;
+
+    public:
         void update_previous_state();
         virtual void update(float _dt);
 
     };
 
+    template<typename Module_Type>
+    void Object::process_logic_for_modules_of_type(const LST::Function<void(Module_Type*)>& _logic)
+    {
+        L_ASSERT(_logic);
+
+        for(Modules_List::Iterator module_it = m_modules.begin(); !module_it.end_reached(); ++module_it)
+        {
+            Module_Type* requested_type_module = LV::cast_variable<Module_Type>(*module_it);
+            if(!requested_type_module)
+                continue;
+
+            _logic(requested_type_module);
+        }
+    }
+
+    template<typename Module_Type>
+    void Object::process_logic_for_modules_of_type(const LST::Function<void(const Module_Type*)>& _logic) const
+    {
+        L_ASSERT(_logic);
+
+        for(Modules_List::Const_Iterator module_it = m_modules.begin(); !module_it.end_reached(); ++module_it)
+        {
+            const Module_Type* requested_type_module = LV::cast_variable<Module_Type>(*module_it);
+            if(!requested_type_module)
+                continue;
+
+            _logic(requested_type_module);
+        }
+    }
 
 
     class Object_Stub : public LV::Builder_Stub

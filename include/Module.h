@@ -40,7 +40,7 @@ namespace LEti
     class Module_Stub : public LV::Builder_Stub
     {
     public:
-        INIT_VARIABLE(LEti::Module, LV::Builder_Stub)
+        INIT_VARIABLE(LEti::Module_Stub, LV::Builder_Stub)
 
     };
 
