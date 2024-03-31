@@ -22,7 +22,7 @@ namespace LEti
         Transformation_Data m_current_state;
         Transformation_Data m_previous_state;
 
-    protected:
+    public:
         using Modules_List = LDS::List<Module*>;
 
     public:
@@ -51,7 +51,7 @@ namespace LEti
         void remove_all_modules();  //  this deletes all modules
 
     public:
-        inline const LDS::List<Module*>& modules() const { return m_modules; }
+        inline const Modules_List& modules() const { return m_modules; }
 
     public:
         template<typename Module_Type>
