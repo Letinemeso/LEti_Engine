@@ -13,7 +13,7 @@ namespace LEti
     class Transformation_Data final
     {
     private:
-        bool m_changes_made = false;
+        bool m_changes_made = true;
 
     private:
         glm::vec3 m_position{0.0f, 0.0f, 0.0f};
