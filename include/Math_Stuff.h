@@ -55,6 +55,8 @@ namespace Math {
 
     unsigned int random_number(unsigned int _lower_limimt = 0, unsigned int _upper_limit = 0xFFFFFFFF);
 
+    float random_number_float(float _lower_limimt, float _upper_limit);
+
 }	/*Math*/
 
 }	/*LEti*/
