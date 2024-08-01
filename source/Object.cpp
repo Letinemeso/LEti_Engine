@@ -29,6 +29,8 @@ void Object::add_module(Module *_module)
 
     _module->set_transformation_data(&m_current_state);
     _module->set_transformation_data_prev_state(&m_previous_state);
+    _module->set_parent_object(this);
+
     m_modules.push_back(_module);
 }
 
@@ -46,6 +48,7 @@ void Object::remove_module(Module *_module)
     L_ASSERT(!it.end_reached());
     _module->set_transformation_data(nullptr);
     _module->set_transformation_data_prev_state(nullptr);
+    _module->set_parent_object(nullptr);
     if(!it.end_reached())
         m_modules.erase(it);
 }

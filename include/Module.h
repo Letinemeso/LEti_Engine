@@ -9,6 +9,9 @@
 namespace LEti
 {
 
+    class Object;
+
+
     class Module : public LV::Variable_Base
     {
     public:
@@ -18,6 +21,8 @@ namespace LEti
         Transformation_Data* m_transformation_data = nullptr;
         const Transformation_Data* m_transformation_data_prev_state = nullptr;
 
+        Object* m_parent_object = nullptr;
+
     public:
         Module();
         ~Module();
@@ -25,9 +30,11 @@ namespace LEti
     public:
         virtual void set_transformation_data(Transformation_Data* _data) { m_transformation_data = _data; }
         virtual void set_transformation_data_prev_state(const Transformation_Data* _data) { m_transformation_data_prev_state = _data; }
+        inline void set_parent_object(Object* _ptr) { m_parent_object = _ptr; }
 
         inline Transformation_Data* transformation_data() const { return m_transformation_data; }
         inline const Transformation_Data* transformation_data_prev_state() const { return m_transformation_data_prev_state; }
+        inline Object* parent_object() const { return m_parent_object; }
 
     public:
         virtual void update_prev_state() { }
