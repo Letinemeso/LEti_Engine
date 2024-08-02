@@ -58,6 +58,8 @@ namespace LEti
         void process_logic_for_modules_of_type(const LST::Function<void(Module_Type*)>& _logic);
         template<typename Module_Type>
         void process_logic_for_modules_of_type(const LST::Function<void(const Module_Type*)>& _logic) const;
+        template<typename Module_Type>
+        Module_Type* get_module_of_type(unsigned int _skip_amount = 0) const;
 
     public:
         void update_previous_state();
@@ -93,6 +95,24 @@ namespace LEti
 
             _logic(requested_type_module);
         }
+    }
+
+    template<typename Module_Type>
+    Module_Type* Object::get_module_of_type(unsigned int _skip_amount) const
+    {
+        for(Modules_List::Const_Iterator module_it = m_modules.begin(); !module_it.end_reached(); ++module_it)
+        {
+            Module_Type* requested_type_module = LV::cast_variable<Module_Type>(*module_it);
+            if(!requested_type_module)
+                continue;
+
+            if(_skip_amount == 0)
+                return requested_type_module;
+
+            --_skip_amount;
+        }
+
+        return nullptr;
     }
 
 
