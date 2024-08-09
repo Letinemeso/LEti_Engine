@@ -1,6 +1,9 @@
 #pragma once
 
-#include <Stuff/Stopwatch.h>
+#include <thread>
+#include <chrono>
+
+#include <Stuff/Function_Wrapper.h>
 
 
 namespace LEti
@@ -9,20 +12,21 @@ namespace LEti
     class FPS_Timer
     {
     private:
-        std::chrono::time_point<std::chrono::steady_clock> m_start_time_point = std::chrono::steady_clock::now();
+        unsigned int m_target_fps = 60;
+        std::chrono::duration<float> m_frame_duration{1.0f / m_target_fps};
 
-        float m_max_dt = 0.1f;
-        float m_dt = 0.0f;
+        std::chrono::high_resolution_clock::time_point previous_time = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<float> accumulated_time{0.0f};
 
-    public:
-        inline void set_max_dt(float _max_dt) { m_max_dt = _max_dt; }
-
-    public:
-        inline float dt() const { return m_dt; }
+        LST::Function<void(float _dt)> m_on_tick;
 
     public:
-        void start();
-        void stop();
+        inline void set_on_tick(const LST::Function<void(float _dt)>& _on_tick) { m_on_tick = _on_tick; }
+
+        void set_target_fps(unsigned int _value);
+
+    public:
+        void tick();
 
     };
 
