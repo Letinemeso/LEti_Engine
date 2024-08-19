@@ -16,7 +16,6 @@ namespace LEti
         std::chrono::duration<float> m_frame_duration{1.0f / m_target_fps};
 
         std::chrono::high_resolution_clock::time_point previous_time = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<float> accumulated_time{0.0f};
 
         LST::Function<void(float _dt)> m_on_tick;
 
