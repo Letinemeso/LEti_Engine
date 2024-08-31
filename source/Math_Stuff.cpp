@@ -142,7 +142,10 @@ bool Math::vecs_are_equal(const glm::vec3& _first, const glm::vec3& _second)
 
 unsigned int Math::random_number(unsigned int _lower_limimt, unsigned int _upper_limit)
 {
-    L_ASSERT(_upper_limit > _lower_limimt);
+    L_ASSERT(_upper_limit >= _lower_limimt);
+
+    if(_upper_limit == _lower_limimt)
+        return _lower_limimt;
 
     unsigned int limit = _upper_limit - _lower_limimt;
     return rand() % limit + _lower_limimt;
@@ -150,7 +153,10 @@ unsigned int Math::random_number(unsigned int _lower_limimt, unsigned int _upper
 
 float Math::random_number_float(float _lower_limimt, float _upper_limit)
 {
-    L_ASSERT(_upper_limit > _lower_limimt);
+    L_ASSERT(_upper_limit >= _lower_limimt);
+
+    if(_upper_limit == _lower_limimt)
+        return _lower_limimt;
 
     float difference = _upper_limit - _lower_limimt;
     float ratio = (float)random_number(0, 10000) / 10000.0f;
