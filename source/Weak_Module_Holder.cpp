@@ -18,6 +18,12 @@ Weak_Module_Holder::~Weak_Module_Holder()
 
 void Weak_Module_Holder::set_module(Module* _ptr)
 {
+    if(m_module)
+    {
+        m_module->set_transformation_data(nullptr);
+        m_module->set_transformation_data_prev_state(nullptr);
+    }
+
     if(m_should_delete_module)
         delete m_module;
 
