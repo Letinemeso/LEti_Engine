@@ -92,23 +92,21 @@ Object_Stub::~Object_Stub()
 
 
 
-LV::Variable_Base* Object_Stub::M_construct_product() const
-{
-    return new Object;
-}
+BUILDER_STUB_DEFAULT_CONSTRUCTION_FUNC(Object_Stub)
 
-void Object_Stub::M_init_constructed_product(LV::Variable_Base* _product) const
+BUILDER_STUB_INITIALIZATION_FUNC(Object_Stub)
 {
-    Object* result = (Object*)_product;
+    BUILDER_STUB_PARENT_INITIALIZATION;
+    BUILDER_STUB_CAST_PRODUCT;
 
-    result->current_state().set_position(position);
-    result->current_state().set_scale(scale);
-    result->current_state().set_rotation(rotation_angles);
+    product->current_state().set_position(position);
+    product->current_state().set_scale(scale);
+    product->current_state().set_rotation(rotation_angles);
 
     for(LV::Variable_Base::Childs_List::Const_Iterator it = module_stubs.begin(); !it.end_reached(); ++it)
     {
         Module_Stub* stub = LV::cast_variable<Module_Stub>(it->child_ptr);
         L_ASSERT(stub);
-        result->add_module((Module*)stub->construct());
+        product->add_module((Module*)stub->construct());
     }
 }

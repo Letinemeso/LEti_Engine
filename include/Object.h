@@ -138,8 +138,7 @@ namespace LEti
         LV::Variable_Base::Childs_List module_stubs;
 
     protected:
-        LV::Variable_Base* M_construct_product() const override;
-        void M_init_constructed_product(LV::Variable_Base* _product) const override;
+        INIT_BUILDER_STUB(Object);
 
     public:
         ~Object_Stub();
