@@ -22,6 +22,8 @@ namespace Math {
 
     float vector_length(const glm::vec3& _vec);
 
+    float vector_length_squared(const glm::vec3& _vec);
+
     void shrink_vector_to_1(glm::vec3& _vec);
 
     void extend_vector_to_length(glm::vec3& _vec, float _length);

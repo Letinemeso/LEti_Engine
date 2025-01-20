@@ -1,16 +1,22 @@
-#include "../include/Math_Stuff.h"
+#include <Math_Stuff.h>
 
 using namespace LEti;
 
 
-//	LEti::Math (just some universal math functions suitable for bot 2d and 3d calculations)
+//	LEti::Math (just some universal math functions suitable for both 2d and 3d calculations)
 
 float Math::vector_length(const glm::vec3& _vec)
 {
-	float sum = 0.0f;
-	for (unsigned int i = 0; i < 3; ++i)
-		sum += _vec[i] * _vec[i];
+    float sum = vector_length_squared(_vec);
 	return sqrt(sum);
+}
+
+float Math::vector_length_squared(const glm::vec3& _vec)
+{
+    float sum = 0.0f;
+    for (unsigned int i = 0; i < 3; ++i)
+        sum += _vec[i] * _vec[i];
+    return sum;
 }
 
 void Math::shrink_vector_to_1(glm::vec3& _vec)
