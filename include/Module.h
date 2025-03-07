@@ -37,7 +37,7 @@ namespace LEti
         inline Object* parent_object() const { return m_parent_object; }
 
     protected:
-        virtual void M_on_parent_object_set() { };
+        virtual void M_on_parent_object_set() { }
 
     public:
         virtual void update_prev_state() { }
