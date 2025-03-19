@@ -15,7 +15,7 @@ Object::~Object()
 
 
 
-void Object::add_module(Module *_module)
+void Object::add_module(Module *_module, bool _push_back)
 {
     L_ASSERT(_module);
     for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
@@ -31,7 +31,10 @@ void Object::add_module(Module *_module)
     _module->set_transformation_data_prev_state(&m_previous_state);
     _module->set_parent_object(this);
 
-    m_modules.push_back(_module);
+    if(_push_back)
+        m_modules.push_back(_module);
+    else
+        m_modules.push_front(_module);
 }
 
 void Object::remove_module(Module *_module)

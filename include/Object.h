@@ -46,7 +46,7 @@ namespace LEti
         inline void set_on_update_func(const On_Update_Func& _func) { m_on_update_func = _func; }
 
     public:
-        void add_module(Module* _module);
+        void add_module(Module* _module, bool _push_back = true);
         void remove_module(Module* _module);    //  this does not delete a module (if you have pointer, you should delete it yourself)
         void remove_all_modules();  //  this deletes all modules
 
