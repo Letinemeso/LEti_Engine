@@ -257,3 +257,16 @@ glm::mat4x4 Transformation_Data::get_scale_matrix_inversed_for_ratio(const Trans
 
     return result;
 }
+
+
+Transformation_Data Transformation_Data::get_transformation_data_for_ratio(const Transformation_Data& _previous_state, const Transformation_Data& _current_state, float _ratio)
+{
+    Transformation_Data result;
+
+    result.set_position(Transformation_Data::get_position_for_ratio(_previous_state, _current_state, _ratio));
+    result.set_rotation(Transformation_Data::get_rotation_for_ratio(_previous_state, _current_state, _ratio));
+    result.set_scale(Transformation_Data::get_scale_for_ratio(_previous_state, _current_state, _ratio));
+    result.update_matrix();
+
+    return result;
+}

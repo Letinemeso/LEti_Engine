@@ -55,6 +55,8 @@ namespace LEti
         static glm::mat4x4 get_scale_matrix_for_ratio(const Transformation_Data& _previous_state, const Transformation_Data& _current_state, float _ratio);
         static glm::mat4x4 get_scale_matrix_inversed_for_ratio(const Transformation_Data& _previous_state, const Transformation_Data& _current_state, float _ratio);
 
+        static Transformation_Data get_transformation_data_for_ratio(const Transformation_Data& _previous_state, const Transformation_Data& _current_state, float _ratio);
+
     };
 
 
