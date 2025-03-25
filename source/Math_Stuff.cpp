@@ -8,7 +8,7 @@ using namespace LEti;
 float Math::vector_length(const glm::vec3& _vec)
 {
     float sum = vector_length_squared(_vec);
-	return sqrt(sum);
+    return sqrtf(sum);
 }
 
 float Math::vector_length_squared(const glm::vec3& _vec)
@@ -71,6 +71,19 @@ glm::vec3 Math::rotate_vector(const glm::vec3& _vector, const glm::vec3& _axis, 
 	glm::mat4x4 rotation_matrix = glm::rotate(_angle, _axis);
 
 	return rotation_matrix * glm::vec4(_vector, 1.0f);
+}
+
+glm::vec3 Math::calculate_projection(const glm::vec3& _project_what, const glm::vec3& _project_on)
+{
+    float dot = dot_product(_project_what, _project_on);
+    float project_on_length_squared = vector_length_squared(_project_on);
+
+    if(project_on_length_squared < 0.0001f)
+        return {0.0f, 0.0f, 0.0f};
+
+    float projection_length = dot / project_on_length_squared;
+
+    return _project_on * projection_length;
 }
 
 float Math::mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third)

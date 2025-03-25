@@ -38,6 +38,8 @@ namespace Math {
 
     glm::vec3 rotate_vector(const glm::vec3& _vector, const glm::vec3& _axis, float _angle);
 
+    glm::vec3 calculate_projection(const glm::vec3& _project_what, const glm::vec3& _project_on);
+
     float mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third);
 
     bool is_digit(char _c);
