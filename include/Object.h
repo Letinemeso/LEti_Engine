@@ -132,7 +132,9 @@ namespace LEti
         CHILDS_LISTS_END
 
     public:
-        glm::vec3 position, scale, rotation_angles;
+        glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+        glm::vec3 rotation_angles = { 0.0f, 0.0f, 0.0f };
+        glm::vec3 scale = { 1.0f, 1.0f, 1.0f };
 
     public:
         LV::Variable_Base::Childs_List module_stubs;
