@@ -154,6 +154,11 @@ int Math::float_to_int(float _value)
     return result;
 }
 
+bool Math::vecs_are_equal(const glm::vec2& _first, const glm::vec2& _second)
+{
+    return floats_are_equal(_first.x, _second.x) && floats_are_equal(_first.y, _second.y);
+}
+
 bool Math::vecs_are_equal(const glm::vec3& _first, const glm::vec3& _second)
 {
 	return floats_are_equal(_first.x, _second.x) && floats_are_equal(_first.y, _second.y) && floats_are_equal(_first.z, _second.z);
