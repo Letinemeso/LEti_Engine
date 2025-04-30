@@ -1,13 +1,8 @@
 #pragma once
 
-#include "L_Debug/L_Debug.h"
-
-#include "vec3.hpp"
-#include "mat4x4.hpp"
+#include <vec3.hpp>
+#include <mat4x4.hpp>
 #include <gtx/transform.hpp>
-
-#include <cmath>
-#include <utility>
 
 
 namespace LEti {
@@ -20,9 +15,15 @@ namespace Math {
     constexpr float EIGHTH_PI = QUARTER_PI / 2.0f;
     constexpr float DOUBLE_PI = PI * 2.0f;
 
+    float vector_length(const glm::vec2& _vec);
+
     float vector_length(const glm::vec3& _vec);
 
+    float vector_length_squared(const glm::vec2& _vec);
+
     float vector_length_squared(const glm::vec3& _vec);
+
+    void shrink_vector_to_1(glm::vec2& _vec);
 
     void shrink_vector_to_1(glm::vec3& _vec);
 

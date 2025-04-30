@@ -1,14 +1,32 @@
 #include <Math_Stuff.h>
 
+#include <cmath>
+
+#include "L_Debug/L_Debug.h"
+
 using namespace LEti;
 
 
 //	LEti::Math (just some universal math functions suitable for both 2d and 3d calculations)
 
+float Math::vector_length(const glm::vec2& _vec)
+{
+    float sum = vector_length_squared(_vec);
+    return sqrtf(sum);
+}
+
 float Math::vector_length(const glm::vec3& _vec)
 {
     float sum = vector_length_squared(_vec);
     return sqrtf(sum);
+}
+
+float Math::vector_length_squared(const glm::vec2& _vec)
+{
+    float sum = 0.0f;
+    for (unsigned int i = 0; i < 2; ++i)
+        sum += _vec[i] * _vec[i];
+    return sum;
 }
 
 float Math::vector_length_squared(const glm::vec3& _vec)
@@ -19,11 +37,20 @@ float Math::vector_length_squared(const glm::vec3& _vec)
     return sum;
 }
 
+void Math::shrink_vector_to_1(glm::vec2& _vec)
+{
+    float vec_length = vector_length(_vec);
+    if (vec_length < 0.000001f)
+        return;
+    _vec /= vec_length;
+}
+
 void Math::shrink_vector_to_1(glm::vec3& _vec)
 {
-	float vec_length = vector_length(_vec);
-	if (vec_length < 0.000001f) return;
-	_vec /= vec_length;
+    float vec_length = vector_length(_vec);
+    if (vec_length < 0.000001f)
+        return;
+    _vec /= vec_length;
 }
 
 void Math::extend_vector_to_length(glm::vec3& _vec, float _length)
