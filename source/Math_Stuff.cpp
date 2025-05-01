@@ -217,5 +217,5 @@ float Math::random_number_float(float _lower_limimt, float _upper_limit)
 
 bool Math::random_bool()
 {
-    return random_number(0, 1);
+    return rand() % 2 == 0;
 }
