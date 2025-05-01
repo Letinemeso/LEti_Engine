@@ -214,3 +214,8 @@ float Math::random_number_float(float _lower_limimt, float _upper_limit)
 
     return _lower_limimt + (difference * ratio);
 }
+
+bool Math::random_bool()
+{
+    return random_number(0, 1);
+}

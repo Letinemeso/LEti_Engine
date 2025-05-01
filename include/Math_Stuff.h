@@ -65,6 +65,8 @@ namespace Math {
 
     float random_number_float(float _lower_limimt, float _upper_limit);
 
+    bool random_bool();
+
 }	/*Math*/
 
 }	/*LEti*/
