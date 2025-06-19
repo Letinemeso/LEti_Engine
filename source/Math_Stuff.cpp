@@ -84,6 +84,16 @@ float Math::dot_product(const glm::vec3& _first, const glm::vec3& _second)
     return result;
 }
 
+float Math::dot_product(const glm::vec2& _first, const glm::vec2& _second)
+{
+    float result = 0.0f;
+
+    for(unsigned int i=0; i<2; ++i)
+        result += _first[i] * _second[i];
+
+    return result;
+}
+
 glm::vec3 Math::cross_product(const glm::vec3& _first, const glm::vec3& _second)
 {
     return {

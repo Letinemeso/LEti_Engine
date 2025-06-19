@@ -35,6 +35,8 @@ namespace Math {
 
     float dot_product(const glm::vec3& _first, const glm::vec3& _second);
 
+    float dot_product(const glm::vec2& _first, const glm::vec2& _second);
+
     glm::vec3 cross_product(const glm::vec3& _first, const glm::vec3& _second);
 
     glm::vec3 rotate_vector(const glm::vec3& _vector, const glm::vec3& _axis, float _angle);
