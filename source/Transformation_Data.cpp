@@ -3,61 +3,86 @@
 using namespace LEti;
 
 
+Transformation_Data::Transformation_Data()
+{
+    m_translation_matrix = M_calculate_translation_matrix();
+    m_rotation_matrix = M_calculate_rotation_matrix();
+    m_scale_matrix = M_calculate_scale_matrix();
+    M_update_matrix();
+}
+
+
+
 void Transformation_Data::set_position(const glm::vec3& _position)
 {
-    m_changes_made = true;  //  some code duplicacy here, but who cares
+    m_modified = true;  //  some code duplicacy here, but who cares
 
     m_position = _position;
+
+    m_translation_matrix = M_calculate_translation_matrix();
+    M_update_matrix();
 }
 void Transformation_Data::move(const glm::vec3& _vec)
 {
-    m_changes_made = true;
+    m_modified = true;
 
     m_position += _vec;
+
+    m_translation_matrix = M_calculate_translation_matrix();
+    M_update_matrix();
 }
 void Transformation_Data::set_rotation(const glm::vec3& _rotation)
 {
-    m_changes_made = true;
+    m_modified = true;
 
     m_rotation = _rotation;
+
+    m_rotation_matrix = M_calculate_rotation_matrix();
+    M_update_matrix();
 }
 void Transformation_Data::rotate(const glm::vec3& _vec)
 {
-    m_changes_made = true;
+    m_modified = true;
 
     m_rotation += _vec;
+
+    m_rotation_matrix = M_calculate_rotation_matrix();
+    M_update_matrix();
 }
 void Transformation_Data::set_scale(const glm::vec3& _scale)
 {
-    m_changes_made = true;
+    m_modified = true;
 
     m_scale = _scale;
+
+    m_scale_matrix = M_calculate_scale_matrix();
+    M_update_matrix();
 }
 
 
 
-glm::mat4x4 Transformation_Data::translation_matrix() const
+glm::mat4x4 Transformation_Data::M_calculate_translation_matrix() const
 {
     glm::mat4x4 translation_matrix
-    {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        position().x, position().y, position().z, 1.0f
-    };
+        {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            position().x, position().y, position().z, 1.0f
+        };
 
     return translation_matrix;
 }
 
-glm::mat4x4 Transformation_Data::rotation_matrix() const
+glm::mat4x4 Transformation_Data::M_calculate_rotation_matrix() const
 {
     glm::mat4x4 rotation_matrix
-    {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
+        {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
 
     for(unsigned int i=0; i<3; ++i)
     {
@@ -72,29 +97,22 @@ glm::mat4x4 Transformation_Data::rotation_matrix() const
     return rotation_matrix;
 }
 
-glm::mat4x4 Transformation_Data::scale_matrix() const
+glm::mat4x4 Transformation_Data::M_calculate_scale_matrix() const
 {
     glm::mat4x4 scale_matrix
-    {
-        scale().x, 0.0f, 0.0f, 0.0f,
-        0.0f, scale().y, 0.0f, 0.0f,
-        0.0f, 0.0f, scale().z, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
+        {
+            scale().x, 0.0f, 0.0f, 0.0f,
+            0.0f, scale().y, 0.0f, 0.0f,
+            0.0f, 0.0f, scale().z, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
 
     return scale_matrix;
 }
 
-
-
-void Transformation_Data::update_matrix()
+void Transformation_Data::M_update_matrix()
 {
-    if(!m_changes_made)
-        return;
-
     m_matrix = translation_matrix() * rotation_matrix() * scale_matrix();
-
-    m_changes_made = false;
 }
 
 
@@ -266,7 +284,6 @@ Transformation_Data Transformation_Data::get_transformation_data_for_ratio(const
     result.set_position(Transformation_Data::get_position_for_ratio(_previous_state, _current_state, _ratio));
     result.set_rotation(Transformation_Data::get_rotation_for_ratio(_previous_state, _current_state, _ratio));
     result.set_scale(Transformation_Data::get_scale_for_ratio(_previous_state, _current_state, _ratio));
-    result.update_matrix();
 
     return result;
 }

@@ -68,6 +68,7 @@ void Object::remove_all_modules()
 
 void Object::update_previous_state()
 {
+    m_current_state.mark_unmodified();
     m_previous_state = m_current_state;
 
     for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)

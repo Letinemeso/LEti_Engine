@@ -13,25 +13,35 @@ namespace LEti
     class Transformation_Data final
     {
     private:
-        bool m_changes_made = true;
+        bool m_modified = true;
 
     private:
         glm::vec3 m_position{0.0f, 0.0f, 0.0f};
         glm::vec3 m_rotation{0.0f, 0.0f, 0.0f};
         glm::vec3 m_scale{1.0f, 1.0f, 1.0f};
 
+        glm::mat4x4 m_translation_matrix;
+        glm::mat4x4 m_rotation_matrix;
+        glm::mat4x4 m_scale_matrix;
+
         glm::mat4x4 m_matrix;
+
+    public:
+        Transformation_Data();
 
     public:
         inline const glm::vec3& position() const { return m_position; }
         inline const glm::vec3& rotation() const { return m_rotation; }
         inline const glm::vec3& scale() const { return m_scale; }
 
-        glm::mat4x4 translation_matrix() const;
-        glm::mat4x4 rotation_matrix() const;
-        glm::mat4x4 scale_matrix() const;
+        inline const glm::mat4x4& translation_matrix() const { return m_translation_matrix; }
+        inline const glm::mat4x4& rotation_matrix() const { return m_rotation_matrix; }
+        inline const glm::mat4x4& scale_matrix() const { return m_scale_matrix; }
 
         inline const glm::mat4x4& matrix() const { return m_matrix; }
+
+        inline bool modified() const { return m_modified; }
+        inline void mark_unmodified() { m_modified = false; }
 
     public:
         void set_position(const glm::vec3& _position);
@@ -40,8 +50,11 @@ namespace LEti
         void rotate(const glm::vec3& _vec);
         void set_scale(const glm::vec3& _scale);
 
-    public:
-        void update_matrix();
+    private:
+        glm::mat4x4 M_calculate_translation_matrix() const;
+        glm::mat4x4 M_calculate_rotation_matrix() const;
+        glm::mat4x4 M_calculate_scale_matrix() const;
+        void M_update_matrix();
 
     public:
         static glm::vec3 get_position_for_ratio(const Transformation_Data& _previous_state, const Transformation_Data& _current_state, float _ratio);
