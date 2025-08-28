@@ -27,6 +27,8 @@ namespace Math {
 
     void shrink_vector_to_1(glm::vec3& _vec);
 
+    void extend_vector_to_length(glm::vec2& _vec, float _length);
+
     void extend_vector_to_length(glm::vec3& _vec, float _length);
 
     glm::vec3 extend_vector_to_length(const glm::vec3& _vec, float _length);
