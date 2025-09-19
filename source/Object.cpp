@@ -18,14 +18,17 @@ Object::~Object()
 void Object::add_module(Module *_module, bool _push_back)
 {
     L_ASSERT(_module);
-    for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
+    L_DEBUG_FUNC_NOARG([&]()
     {
-        if(*it == _module)
+        for(LDS::List<Module*>::Iterator it = m_modules.begin(); !it.end_reached(); ++it)
         {
-            L_ASSERT(false);
-            return;
+            if(*it == _module)
+            {
+                L_ASSERT(false);
+                return;
+            }
         }
-    }
+    });
 
     _module->set_transformation_data(&m_current_state);
     _module->set_transformation_data_prev_state(&m_previous_state);
