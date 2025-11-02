@@ -103,10 +103,10 @@ float Math::dot_product(const glm::vec2& _first, const glm::vec2& _second)
 glm::vec3 Math::cross_product(const glm::vec3& _first, const glm::vec3& _second)
 {
     return {
-             _first.y * _second.z - _second.y * _first.z,
-             -(_first.x * _second.z - _second.x * _first.z),
-             _first.x * _second.y - _second.x * _first.y
-           };
+        _first.y * _second.z - _first.z * _second.y,
+        _first.z * _second.x - _first.x * _second.z,
+        _first.x * _second.y - _first.y * _second.x
+    };
 }
 
 glm::vec3 Math::rotate_vector(const glm::vec3& _vector, const glm::vec3& _axis, float _angle)
@@ -118,13 +118,13 @@ glm::vec3 Math::rotate_vector(const glm::vec3& _vector, const glm::vec3& _axis, 
 
 glm::vec3 Math::calculate_projection(const glm::vec3& _project_what, const glm::vec3& _project_on)
 {
-    float dot = dot_product(_project_what, _project_on);
     float project_on_length_squared = vector_length_squared(_project_on);
-
     if(project_on_length_squared < 0.0001f)
         return {0.0f, 0.0f, 0.0f};
 
-    float projection_length = dot / project_on_length_squared;
+    float project_on_length = sqrtf(project_on_length_squared);
+    float dot = dot_product(_project_what, _project_on);
+    float projection_length = dot / project_on_length;
 
     return _project_on * projection_length;
 }
