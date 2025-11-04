@@ -9,6 +9,7 @@
 #include <Object.h>
 #include <Resources_Manager.h>
 #include <Weak_Module_Holder.h>
+#include <Data_Provider.h>
 
 using namespace LEti;
 
