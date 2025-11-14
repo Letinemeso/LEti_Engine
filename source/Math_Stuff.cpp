@@ -150,7 +150,7 @@ float Math::angle_cos_between_vectors(const glm::vec3& _first, const glm::vec3& 
     if(length_1 == 0 || length_2 == 0)
 		return 0.0f;
 
-	float divident = _first.x * _second.x + _first.y * _second.y + _first.z * _second.z;
+    float divident = dot_product(_first, _second);
     float divider = length_1 * length_2;
 
 	float result = divident / divider;
