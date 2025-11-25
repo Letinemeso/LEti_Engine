@@ -47,6 +47,8 @@ namespace Math {
 
     glm::vec3 calculate_angles(const glm::vec3& _direction, const glm::vec3& _top);
 
+    glm::mat4x4 calculate_rotation_matrix(const glm::vec3& _euler_angles);
+
     float mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third);
 
     bool is_digit(char _c);

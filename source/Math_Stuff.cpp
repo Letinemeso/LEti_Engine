@@ -144,6 +144,17 @@ glm::vec3 Math::calculate_angles(const glm::vec3& _direction, const glm::vec3& _
     return glm::eulerAngles(glm::quat_cast(rotationMatrix));
 }
 
+glm::mat4x4 Math::calculate_rotation_matrix(const glm::vec3& _euler_angles)
+{
+    glm::quat qx = glm::angleAxis(_euler_angles.x, glm::vec3(1, 0, 0));
+    glm::quat qy = glm::angleAxis(_euler_angles.y, glm::vec3(0, 1, 0));
+    glm::quat qz = glm::angleAxis(_euler_angles.z, glm::vec3(0, 0, 1));
+
+    glm::quat rotation_quat = glm::normalize(qz * qy * qx);
+
+    return glm::mat4_cast(rotation_quat);
+}
+
 float Math::mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third)
 {
 	return (_first.x * _second.y * _third.z) + (_first.y * _second.z * _third.x) + (_first.z * _second.x * _third.y)
