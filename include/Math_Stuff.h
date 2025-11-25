@@ -45,6 +45,8 @@ namespace Math {
 
     glm::vec3 calculate_projection(const glm::vec3& _project_what, const glm::vec3& _project_on);
 
+    glm::vec3 calculate_angles(const glm::vec3& _direction, const glm::vec3& _top);
+
     float mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third);
 
     bool is_digit(char _c);
@@ -60,6 +62,8 @@ namespace Math {
 	bool floats_are_equal(float _first, float _second, float _precision = 0.0001f);
 
     int float_to_int(float _value);
+
+    float mod_float(float _value, float _divider);
 
     bool vecs_are_equal(const glm::vec2& _first, const glm::vec2& _second);
 

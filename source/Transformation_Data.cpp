@@ -85,8 +85,6 @@ glm::mat4x4 Transformation_Data::M_calculate_rotation_matrix() const
     glm::quat rotation_quat = glm::normalize(qz * qy * qx);
 
     return glm::mat4_cast(rotation_quat);
-
-    // return glm::yawPitchRoll(m_rotation.y, m_rotation.x, m_rotation.z);
 }
 
 glm::mat4x4 Transformation_Data::M_calculate_scale_matrix() const

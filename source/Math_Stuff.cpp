@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include <gtc/quaternion.hpp>
+
 #include "L_Debug/L_Debug.h"
 
 using namespace LEti;
@@ -129,6 +131,19 @@ glm::vec3 Math::calculate_projection(const glm::vec3& _project_what, const glm::
     return _project_on * projection_length;
 }
 
+glm::vec3 Math::calculate_angles(const glm::vec3& _direction, const glm::vec3& _top)
+{
+    glm::vec3 right = glm::normalize(cross_product(_direction, _top));
+    glm::vec3 up = glm::normalize(glm::cross(right, _direction));
+
+    glm::mat3 rotationMatrix;
+    rotationMatrix[0] = right;
+    rotationMatrix[1] = up;
+    rotationMatrix[2] = -_direction;
+
+    return glm::eulerAngles(glm::quat_cast(rotationMatrix));
+}
+
 float Math::mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third)
 {
 	return (_first.x * _second.y * _third.z) + (_first.y * _second.z * _third.x) + (_first.z * _second.x * _third.y)
@@ -195,6 +210,12 @@ int Math::float_to_int(float _value)
         result += _value > 0 ? 1 : -1;
 
     return result;
+}
+
+float Math::mod_float(float _value, float _divider)
+{
+    int whole_part = _value / _divider;
+    return _value - (_divider * (float)whole_part);
 }
 
 bool Math::vecs_are_equal(const glm::vec2& _first, const glm::vec2& _second)
