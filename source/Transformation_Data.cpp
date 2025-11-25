@@ -1,5 +1,7 @@
 #include <Transformation_Data.h>
 
+#include <gtx/euler_angles.hpp>
+
 using namespace LEti;
 
 
@@ -76,25 +78,15 @@ glm::mat4x4 Transformation_Data::M_calculate_translation_matrix() const
 
 glm::mat4x4 Transformation_Data::M_calculate_rotation_matrix() const
 {
-    glm::mat4x4 rotation_matrix
-        {
-            1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f
-        };
+    glm::quat qx = glm::angleAxis(m_rotation.x, glm::vec3(1, 0, 0));
+    glm::quat qy = glm::angleAxis(m_rotation.y, glm::vec3(0, 1, 0));
+    glm::quat qz = glm::angleAxis(m_rotation.z, glm::vec3(0, 0, 1));
 
-    for(unsigned int i=0; i<3; ++i)
-    {
-        glm::vec3 axis(0.0f, 0.0f, 0.0f);
-        axis[i] = 1.0f;
+    glm::quat rotation_quat = glm::normalize(qz * qy * qx);
 
-        glm::mat4x4 rotation_around_axis = glm::rotate(rotation()[i], axis);
+    return glm::mat4_cast(rotation_quat);
 
-        rotation_matrix *= rotation_around_axis;
-    }
-
-    return rotation_matrix;
+    // return glm::yawPitchRoll(m_rotation.y, m_rotation.x, m_rotation.z);
 }
 
 glm::mat4x4 Transformation_Data::M_calculate_scale_matrix() const

@@ -72,6 +72,75 @@ void LEti::register_types(LV::Object_Constructor& _object_constructor)
     LV::Type_Manager::register_type_alias("vec3", "glm::vec3");
 
 
+    //  LDS::Vector<glm::vec3>
+    type_utility.validation_func =
+        [](const std::string& _val)
+    {
+        if(_val == ".")
+            return false;
+
+        unsigned int dots_count = 0;
+        unsigned int i=0;
+        if(_val[0] == '+' || _val[0] == '-')
+            ++i;
+        for(; i<_val.size(); ++i)
+        {
+            if(_val[i] == '.')
+            {
+                ++dots_count;
+                continue;
+            }
+            if(_val[i] < '0' || _val[i] > '9')
+                return false;
+        }
+
+        if(dots_count > 1)
+            return false;
+
+        return true;
+    };
+    type_utility.parse_func =
+        [](void* _variable_vptr, const LDS::Vector<std::string>& _values_as_string)
+    {
+        LDS::Vector<glm::vec3>& vec = *((LDS::Vector<glm::vec3>*)_variable_vptr);
+        vec.clear();
+
+        L_ASSERT(_values_as_string.size() % 3 == 0);
+
+        vec.resize(_values_as_string.size() / 3);
+
+        for(unsigned int i=0; i<_values_as_string.size(); i += 3)
+        {
+            glm::vec3 vector;
+            vector[0] = std::stof(_values_as_string[i]);
+            vector[1] = std::stof(_values_as_string[i + 1]);
+            vector[2] = std::stof(_values_as_string[i + 2]);
+
+            vec.push(vector);
+        }
+    };
+    type_utility.serialize_func =
+        [](void* _variable_vptr)
+    {
+        const LDS::Vector<glm::vec3>& variable = *((LDS::Vector<glm::vec3>*)_variable_vptr);
+        LDS::Vector<std::string> result;
+        result.resize(variable.size() * 3);
+        for(unsigned int i = 0; i < variable.size(); ++i)
+        {
+            const glm::vec3& vec = variable[i];
+            result.push(std::to_string(vec[0]));
+            result.push(std::to_string(vec[1]));
+            result.push(std::to_string(vec[2]));
+        }
+        return result;
+    };
+    type_utility.allocate_func = LV::__construct_default_allocate_function<LDS::Vector<glm::vec3>>();
+    type_utility.clear_func = LV::__construct_default_clear_function<LDS::Vector<glm::vec3>>();
+    type_utility.copy_func = LV::__construct_default_copy_function<LDS::Vector<glm::vec3>>();
+    LV::Type_Manager::register_type("Vec3_Vector", type_utility);
+    LV::Type_Manager::register_type_alias("Vec3_Vector", "LDS::Vector<glm::vec3>");
+
+
     //  LDS::List<glm::vec3>
     type_utility.validation_func =
         [](const std::string& _val)
