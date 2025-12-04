@@ -19,6 +19,12 @@ void Transformation_Data::set_position(const glm::vec3& _position)
 {
     m_modified = true;  //  some code duplicacy here, but who cares
 
+    L_DEBUG_FUNC_NOARG([&]()
+    {
+        for(unsigned int i = 0; i < 3; ++i)
+            L_ASSERT(!std::isnan(_position[i]));
+    });
+
     m_position = _position;
 
     m_translation_matrix = M_calculate_translation_matrix();
@@ -27,6 +33,12 @@ void Transformation_Data::set_position(const glm::vec3& _position)
 void Transformation_Data::move(const glm::vec3& _vec)
 {
     m_modified = true;
+
+    L_DEBUG_FUNC_NOARG([&]()
+    {
+        for(unsigned int i = 0; i < 3; ++i)
+            L_ASSERT(!std::isnan(_vec[i]));
+    });
 
     m_position += _vec;
 
