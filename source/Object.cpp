@@ -69,6 +69,11 @@ void Object::remove_all_modules()
 
 
 
+void Object::update_previous_transformation_data()
+{
+    m_previous_state = m_current_state;
+}
+
 void Object::update_previous_state()
 {
     m_current_state.mark_unmodified();

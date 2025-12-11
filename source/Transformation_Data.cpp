@@ -49,6 +49,12 @@ void Transformation_Data::set_rotation(const glm::vec3& _rotation)
 {
     m_modified = true;
 
+    L_DEBUG_FUNC_NOARG([&]()
+    {
+        for(unsigned int i = 0; i < 3; ++i)
+            L_ASSERT(!std::isnan(_rotation[i]));
+    });
+
     m_rotation = _rotation;
 
     m_rotation_matrix = M_calculate_rotation_matrix();
@@ -57,6 +63,12 @@ void Transformation_Data::set_rotation(const glm::vec3& _rotation)
 void Transformation_Data::rotate(const glm::vec3& _vec)
 {
     m_modified = true;
+
+    L_DEBUG_FUNC_NOARG([&]()
+    {
+        for(unsigned int i = 0; i < 3; ++i)
+            L_ASSERT(!std::isnan(_vec[i]));
+    });
 
     m_rotation += _vec;
 

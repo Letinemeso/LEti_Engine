@@ -62,6 +62,7 @@ namespace LEti
         Module_Type* get_module_of_type(unsigned int _skip_amount = 0) const;
 
     public:
+        void update_previous_transformation_data();
         void update_previous_state();
         virtual void update(float _dt);
 
