@@ -1,6 +1,6 @@
 #include <Transformation_Data.h>
 
-#include <gtx/euler_angles.hpp>
+#include <Math_Stuff.h>
 
 using namespace LEti;
 
@@ -102,13 +102,7 @@ glm::mat4x4 Transformation_Data::M_calculate_translation_matrix() const
 
 glm::mat4x4 Transformation_Data::M_calculate_rotation_matrix() const
 {
-    glm::quat qx = glm::angleAxis(m_rotation.x, glm::vec3(1, 0, 0));
-    glm::quat qy = glm::angleAxis(m_rotation.y, glm::vec3(0, 1, 0));
-    glm::quat qz = glm::angleAxis(m_rotation.z, glm::vec3(0, 0, 1));
-
-    glm::quat rotation_quat = glm::normalize(qz * qy * qx);
-
-    return glm::mat4_cast(rotation_quat);
+    return LEti::Math::calculate_rotation_matrix(m_rotation);
 }
 
 glm::mat4x4 Transformation_Data::M_calculate_scale_matrix() const

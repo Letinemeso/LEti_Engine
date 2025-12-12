@@ -147,6 +147,11 @@ glm::vec3 Math::calculate_angles(const glm::vec3& _direction, const glm::vec3& _
     return result;
 }
 
+glm::vec3 Math::calculate_angles(const glm::mat4x4& _rotation_matrix)
+{
+    return glm::eulerAngles( glm::quat_cast(_rotation_matrix) );
+}
+
 glm::mat4x4 Math::calculate_rotation_matrix(const glm::vec3& _euler_angles)
 {
     glm::quat qx = glm::angleAxis(_euler_angles.x, glm::vec3(1, 0, 0));
