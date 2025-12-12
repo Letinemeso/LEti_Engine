@@ -141,7 +141,10 @@ glm::vec3 Math::calculate_angles(const glm::vec3& _direction, const glm::vec3& _
     rotationMatrix[1] = up;
     rotationMatrix[2] = -_direction;
 
-    return glm::eulerAngles(glm::quat_cast(rotationMatrix));
+    glm::vec3 result = glm::eulerAngles(glm::quat_cast(rotationMatrix));
+    result.y = LEti::Math::DOUBLE_PI - result.y;
+
+    return result;
 }
 
 glm::mat4x4 Math::calculate_rotation_matrix(const glm::vec3& _euler_angles)
