@@ -15,6 +15,9 @@ namespace Math {
     constexpr float EIGHTH_PI = QUARTER_PI / 2.0f;
     constexpr float DOUBLE_PI = PI * 2.0f;
 
+    constexpr float SQRT_2 = 1.41421356237f;
+    constexpr float SQRT_3 = 1.73205080756f;
+
     float vector_length(const glm::vec2& _vec);
 
     float vector_length(const glm::vec3& _vec);
