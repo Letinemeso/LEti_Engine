@@ -38,18 +38,18 @@ namespace LEti
 
     public:
         template<typename Resource_Type>
-        const Resource_Type* get_resource(const std::string& _name) const;
+        Resource_Type* get_resource(const std::string& _name) const;
 
     };
 
     template<typename Resource_Type>
-    const Resource_Type* Resources_Manager::get_resource(const std::string& _name) const
+    Resource_Type* Resources_Manager::get_resource(const std::string& _name) const
     {
         Resources_Map::Const_Iterator maybe_resource_it = m_resources.find(_name);
         L_ASSERT(maybe_resource_it.is_ok());
 
-        Resource_Type* result = LV::cast_variable<Resource_Type>(*maybe_resource_it);
-        L_ASSERT(result);
+        L_ASSERT(LV::cast_variable<Resource_Type>(*maybe_resource_it));
+        Resource_Type* result = (Resource_Type*)*maybe_resource_it;
 
         return result;
     }
