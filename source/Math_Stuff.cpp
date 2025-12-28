@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#include <gtc/quaternion.hpp>
-
 #include "L_Debug/L_Debug.h"
 
 using namespace LEti;
@@ -152,7 +150,27 @@ glm::vec3 Math::calculate_angles(const glm::mat4x4& _rotation_matrix)
     return glm::eulerAngles( glm::quat_cast(_rotation_matrix) );
 }
 
+glm::vec3 Math::calculate_angles(const glm::quat& _rotation_quat)
+{
+    return glm::eulerAngles( _rotation_quat );
+}
+
+glm::quat Math::calculate_rotation_quaternion(const glm::vec3& _euler_angles)
+{
+    glm::quat qx = glm::angleAxis(_euler_angles.x, glm::vec3(1, 0, 0));
+    glm::quat qy = glm::angleAxis(_euler_angles.y, glm::vec3(0, 1, 0));
+    glm::quat qz = glm::angleAxis(_euler_angles.z, glm::vec3(0, 0, 1));
+
+    return glm::normalize(qz * qy * qx);
+}
+
 glm::mat4x4 Math::calculate_rotation_matrix(const glm::vec3& _euler_angles)
+{
+    glm::quat rotation_quat = calculate_rotation_quaternion(_euler_angles);
+    return glm::mat4_cast(rotation_quat);
+}
+
+Math::Rotation_Around_Axis Math::calculate_rotation_around_axis(const glm::vec3& _euler_angles)
 {
     glm::quat qx = glm::angleAxis(_euler_angles.x, glm::vec3(1, 0, 0));
     glm::quat qy = glm::angleAxis(_euler_angles.y, glm::vec3(0, 1, 0));
@@ -160,7 +178,20 @@ glm::mat4x4 Math::calculate_rotation_matrix(const glm::vec3& _euler_angles)
 
     glm::quat rotation_quat = glm::normalize(qz * qy * qx);
 
-    return glm::mat4_cast(rotation_quat);
+    float angle = 2.0f * acosf(rotation_quat.w);
+
+    if (fabsf(angle) < 1e-6f)
+        return { {1.0f, 0.0f, 0.0f}, 0.0f };
+
+    float sin_half_angle = std::sin(angle * 0.5f);
+
+    Rotation_Around_Axis result;
+    result.axis = {rotation_quat.x, rotation_quat.y, rotation_quat.z};
+    result.axis /= sin_half_angle;
+    shrink_vector_to_1(result.axis);
+    result.angle = angle;
+
+    return result;
 }
 
 float Math::mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third)

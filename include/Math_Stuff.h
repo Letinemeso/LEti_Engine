@@ -3,11 +3,14 @@
 #include <vec3.hpp>
 #include <mat4x4.hpp>
 #include <gtx/transform.hpp>
+#include <gtc/quaternion.hpp>
 
 
-namespace LEti {
+namespace LEti
+{
 
-namespace Math {
+namespace Math
+{
 
     constexpr float PI = 3.141593f;
     constexpr float HALF_PI = PI / 2.0f;
@@ -17,6 +20,13 @@ namespace Math {
 
     constexpr float SQRT_2 = 1.41421356237f;
     constexpr float SQRT_3 = 1.73205080756f;
+
+    struct Rotation_Around_Axis
+    {
+        glm::vec3 axis;
+        float angle;
+    };
+
 
     float vector_length(const glm::vec2& _vec);
 
@@ -52,7 +62,13 @@ namespace Math {
 
     glm::vec3 calculate_angles(const glm::mat4x4& _rotation_matrix);
 
+    glm::vec3 calculate_angles(const glm::quat& _rotation_quat);
+
+    glm::quat calculate_rotation_quaternion(const glm::vec3& _euler_angles);
+
     glm::mat4x4 calculate_rotation_matrix(const glm::vec3& _euler_angles);
+
+    Rotation_Around_Axis calculate_rotation_around_axis(const glm::vec3& _euler_angles);
 
     float mixed_vector_multiplication(const glm::vec3& _first, const glm::vec3& _second, const glm::vec3& _third);
 
