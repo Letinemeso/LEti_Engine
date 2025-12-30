@@ -141,12 +141,12 @@ glm::vec3 Transformation_Data::get_rotation_for_ratio(const Transformation_Data&
 {
     L_ASSERT(_ratio > -0.0001f && _ratio < 1.0001f);
 
-    glm::vec3 curr_rotation = _current_state.rotation();
-    glm::vec3 prev_rotation = _previous_state.rotation();
-    glm::vec3 diff = curr_rotation - prev_rotation;
-    diff *= _ratio;
+    glm::quat current_rotation_quat = LEti::Math::calculate_rotation_quaternion(_current_state.rotation());
+    glm::quat previous_rotation_quat = LEti::Math::calculate_rotation_quaternion(_previous_state.rotation());
 
-    return diff + prev_rotation;
+    glm::quat ratio_rotation_quat = glm::slerp(previous_rotation_quat, current_rotation_quat, _ratio);
+
+    return LEti::Math::calculate_angles(ratio_rotation_quat);
 }
 
 glm::vec3 Transformation_Data::get_scale_for_ratio(const Transformation_Data& _previous_state, const Transformation_Data& _current_state, float _ratio)
