@@ -100,6 +100,10 @@ namespace Math
 
     bool random_bool();
 
+    glm::vec2 random_vec2(const glm::vec2& _lower_limit, const glm::vec2& _upper_limit);
+
+    glm::vec3 random_vec3(const glm::vec3& _lower_limit, const glm::vec3& _upper_limit);
+
 }	/*Math*/
 
 }	/*LEti*/

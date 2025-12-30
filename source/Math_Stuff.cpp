@@ -314,3 +314,23 @@ bool Math::random_bool()
 {
     return rand() % 2 == 0;
 }
+
+glm::vec2 Math::random_vec2(const glm::vec2& _lower_limit, const glm::vec2& _upper_limit)
+{
+    glm::vec2 result;
+
+    for(unsigned int i = 0; i < 2; ++i)
+        result[i] = random_number_float(_lower_limit[i], _upper_limit[i]);
+
+    return result;
+}
+
+glm::vec3 Math::random_vec3(const glm::vec3& _lower_limit, const glm::vec3& _upper_limit)
+{
+    glm::vec3 result;
+
+    for(unsigned int i = 0; i < 3; ++i)
+        result[i] = random_number_float(_lower_limit[i], _upper_limit[i]);
+
+    return result;
+}
