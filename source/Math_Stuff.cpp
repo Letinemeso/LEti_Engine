@@ -164,6 +164,14 @@ glm::quat Math::calculate_rotation_quaternion(const glm::vec3& _euler_angles)
     return glm::normalize(qz * qy * qx);
 }
 
+glm::quat Math::calculate_rotation_quaternion(const glm::vec3& _direction, const glm::vec3& _top)
+{
+    constexpr glm::vec3 Zero_Position_Vec = {0.0f, 0.0f, 0.0f};
+    glm::mat3x3 look_at_matrix = glm::lookAt(Zero_Position_Vec, _direction, _top);
+
+    return glm::quat_cast( glm::inverse(look_at_matrix) );
+}
+
 glm::mat4x4 Math::calculate_rotation_matrix(const glm::vec3& _euler_angles)
 {
     glm::quat rotation_quat = calculate_rotation_quaternion(_euler_angles);

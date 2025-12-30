@@ -66,6 +66,8 @@ namespace Math
 
     glm::quat calculate_rotation_quaternion(const glm::vec3& _euler_angles);
 
+    glm::quat calculate_rotation_quaternion(const glm::vec3& _direction, const glm::vec3& _top);
+
     glm::mat4x4 calculate_rotation_matrix(const glm::vec3& _euler_angles);
 
     Rotation_Around_Axis calculate_rotation_around_axis(const glm::vec3& _euler_angles);

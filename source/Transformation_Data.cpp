@@ -30,6 +30,7 @@ void Transformation_Data::set_position(const glm::vec3& _position)
     m_translation_matrix = M_calculate_translation_matrix();
     M_update_matrix();
 }
+
 void Transformation_Data::move(const glm::vec3& _vec)
 {
     m_modified = true;
@@ -45,13 +46,14 @@ void Transformation_Data::move(const glm::vec3& _vec)
     m_translation_matrix = M_calculate_translation_matrix();
     M_update_matrix();
 }
-void Transformation_Data::set_rotation(const glm::vec3& _rotation)
+
+void Transformation_Data::set_rotation(const glm::quat& _rotation)
 {
     m_modified = true;
 
     L_DEBUG_FUNC_NOARG([&]()
     {
-        for(unsigned int i = 0; i < 3; ++i)
+        for(unsigned int i = 0; i < 4; ++i)
             L_ASSERT(!std::isnan(_rotation[i]));
     });
 
@@ -60,21 +62,38 @@ void Transformation_Data::set_rotation(const glm::vec3& _rotation)
     m_rotation_matrix = M_calculate_rotation_matrix();
     M_update_matrix();
 }
-void Transformation_Data::rotate(const glm::vec3& _vec)
+
+void Transformation_Data::set_rotation(const glm::vec3& _euler_angles)
+{
+    set_rotation( LEti::Math::calculate_rotation_quaternion(_euler_angles) );
+}
+
+void Transformation_Data::set_rotation(const glm::vec3& _direction, const glm::vec3& _top)
+{
+    set_rotation( LEti::Math::calculate_rotation_quaternion(_direction, _top) );
+}
+
+void Transformation_Data::rotate(const glm::quat& _rotation)
 {
     m_modified = true;
 
     L_DEBUG_FUNC_NOARG([&]()
     {
-        for(unsigned int i = 0; i < 3; ++i)
-            L_ASSERT(!std::isnan(_vec[i]));
+        for(unsigned int i = 0; i < 4; ++i)
+            L_ASSERT(!std::isnan(_rotation[i]));
     });
 
-    m_rotation += _vec;
+    m_rotation = glm::normalize(_rotation * m_rotation);
 
     m_rotation_matrix = M_calculate_rotation_matrix();
     M_update_matrix();
 }
+
+void Transformation_Data::rotate(const glm::vec3& _rotation)
+{
+    rotate( LEti::Math::calculate_rotation_quaternion(_rotation) );
+}
+
 void Transformation_Data::set_scale(const glm::vec3& _scale)
 {
     m_modified = true;
@@ -102,7 +121,7 @@ glm::mat4x4 Transformation_Data::M_calculate_translation_matrix() const
 
 glm::mat4x4 Transformation_Data::M_calculate_rotation_matrix() const
 {
-    return LEti::Math::calculate_rotation_matrix(m_rotation);
+    return glm::mat4_cast(m_rotation);
 }
 
 glm::mat4x4 Transformation_Data::M_calculate_scale_matrix() const
@@ -141,10 +160,7 @@ glm::vec3 Transformation_Data::get_rotation_for_ratio(const Transformation_Data&
 {
     L_ASSERT(_ratio > -0.0001f && _ratio < 1.0001f);
 
-    glm::quat current_rotation_quat = LEti::Math::calculate_rotation_quaternion(_current_state.rotation());
-    glm::quat previous_rotation_quat = LEti::Math::calculate_rotation_quaternion(_previous_state.rotation());
-
-    glm::quat ratio_rotation_quat = glm::slerp(previous_rotation_quat, current_rotation_quat, _ratio);
+    glm::quat ratio_rotation_quat = glm::slerp(_previous_state.rotation(), _current_state.rotation(), _ratio);
 
     return LEti::Math::calculate_angles(ratio_rotation_quat);
 }

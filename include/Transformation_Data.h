@@ -3,6 +3,7 @@
 #include <vec3.hpp>
 #include <mat4x4.hpp>
 #include <gtx/transform.hpp>
+#include <gtc/quaternion.hpp>
 
 #include <L_Debug/L_Debug.h>
 
@@ -16,9 +17,9 @@ namespace LEti
         bool m_modified = true;
 
     private:
-        glm::vec3 m_position{0.0f, 0.0f, 0.0f};
-        glm::vec3 m_rotation{0.0f, 0.0f, 0.0f};
-        glm::vec3 m_scale{1.0f, 1.0f, 1.0f};
+        glm::vec3 m_position = {0.0f, 0.0f, 0.0f};
+        glm::quat m_rotation = {0.0f, 0.0f, 0.0f, 0.0f};
+        glm::vec3 m_scale = {1.0f, 1.0f, 1.0f};
 
         glm::mat4x4 m_translation_matrix;
         glm::mat4x4 m_rotation_matrix;
@@ -31,7 +32,7 @@ namespace LEti
 
     public:
         inline const glm::vec3& position() const { return m_position; }
-        inline const glm::vec3& rotation() const { return m_rotation; }
+        inline const glm::quat& rotation() const { return m_rotation; }
         inline const glm::vec3& scale() const { return m_scale; }
 
         inline const glm::mat4x4& translation_matrix() const { return m_translation_matrix; }
@@ -46,8 +47,11 @@ namespace LEti
     public:
         void set_position(const glm::vec3& _position);
         void move(const glm::vec3& _vec);
-        void set_rotation(const glm::vec3& _rotation);
-        void rotate(const glm::vec3& _vec);
+        void set_rotation(const glm::quat& _rotation);
+        void set_rotation(const glm::vec3& _euler_angles);
+        void set_rotation(const glm::vec3& _direction, const glm::vec3& _top);
+        void rotate(const glm::quat& _rotation);
+        void rotate(const glm::vec3& _rotation);
         void set_scale(const glm::vec3& _scale);
 
     private:
