@@ -15,9 +15,9 @@ add_library(LEti_Engine STATIC ${LEti_Engine_source})
 
 target_include_directories(LEti_Engine PUBLIC
                             "${PROJECT_SOURCE_DIR}"
-                            "${PROJECT_SOURCE_DIR}/OpenGL/GLM"
                             "${PROJECT_SOURCE_DIR}/include"
                             "${PROJECT_SOURCE_DIR}/../L_Utility/include/"
+                            "${PROJECT_SOURCE_DIR}/../L_Utility/glm"
                             "${PROJECT_SOURCE_DIR}/../L_Variable/include/"
 )
 

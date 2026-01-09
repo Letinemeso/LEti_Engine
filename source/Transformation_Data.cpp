@@ -1,6 +1,6 @@
 #include <Transformation_Data.h>
 
-#include <Math_Stuff.h>
+#include <Stuff/Math_Stuff.h>
 
 using namespace LEti;
 
@@ -65,12 +65,12 @@ void Transformation_Data::set_rotation(const glm::quat& _rotation)
 
 void Transformation_Data::set_rotation(const glm::vec3& _euler_angles)
 {
-    set_rotation( LEti::Math::calculate_rotation_quaternion(_euler_angles) );
+    set_rotation( LST::Math::calculate_rotation_quaternion(_euler_angles) );
 }
 
 void Transformation_Data::set_rotation(const glm::vec3& _direction, const glm::vec3& _top)
 {
-    set_rotation( LEti::Math::calculate_rotation_quaternion(_direction, _top) );
+    set_rotation( LST::Math::calculate_rotation_quaternion(_direction, _top) );
 }
 
 void Transformation_Data::rotate(const glm::quat& _rotation)
@@ -91,7 +91,7 @@ void Transformation_Data::rotate(const glm::quat& _rotation)
 
 void Transformation_Data::rotate(const glm::vec3& _rotation)
 {
-    rotate( LEti::Math::calculate_rotation_quaternion(_rotation) );
+    rotate( LST::Math::calculate_rotation_quaternion(_rotation) );
 }
 
 void Transformation_Data::set_scale(const glm::vec3& _scale)
@@ -162,7 +162,7 @@ glm::vec3 Transformation_Data::get_rotation_for_ratio(const Transformation_Data&
 
     glm::quat ratio_rotation_quat = glm::slerp(_previous_state.rotation(), _current_state.rotation(), _ratio);
 
-    return LEti::Math::calculate_angles(ratio_rotation_quat);
+    return LST::Math::calculate_angles(ratio_rotation_quat);
 }
 
 glm::vec3 Transformation_Data::get_scale_for_ratio(const Transformation_Data& _previous_state, const Transformation_Data& _current_state, float _ratio)
