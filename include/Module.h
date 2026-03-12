@@ -36,6 +36,8 @@ namespace LEti
         inline const Transformation_Data* transformation_data_prev_state() const { return m_transformation_data_prev_state; }
         inline Object* parent_object() const { return m_parent_object; }
 
+        void assign_same_parent(Module& _to) const;
+
     protected:
         virtual void M_on_parent_object_set() { }
 
