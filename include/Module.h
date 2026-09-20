@@ -54,6 +54,9 @@ namespace LEti
         INIT_VARIABLE(LEti::Module_Stub, LV::Builder_Stub)
 
     public:
+        const Object* future_parent = nullptr;
+
+    public:
         INIT_BUILDER_STUB(Module)
 
     };

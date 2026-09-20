@@ -98,8 +98,7 @@ void Object::update(float _dt)
 
 Object_Stub::~Object_Stub()
 {
-    for(LV::Variable_Base::Childs_List::Iterator it = module_stubs.begin(); !it.end_reached(); ++it)
-        delete it->child_ptr;
+    clear_childs_list(module_stubs);
 }
 
 
@@ -119,6 +118,8 @@ BUILDER_STUB_INITIALIZATION_FUNC(Object_Stub)
     {
         Module_Stub* stub = LV::cast_variable<Module_Stub>(it->child_ptr);
         L_ASSERT(stub);
-        product->add_module((Module*)stub->construct());
+
+        stub->future_parent = product;
+        product->add_module( Module_Stub::construct_from(stub) );
     }
 }
