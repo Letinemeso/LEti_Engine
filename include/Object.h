@@ -54,12 +54,12 @@ namespace LEti
         inline const Modules_List& modules() const { return m_modules; }
 
     public:
-        template<typename Module_Type>
-        void process_logic_for_modules_of_type(const LST::Function<void(Module_Type*)>& _logic);
-        template<typename Module_Type>
-        void process_logic_for_modules_of_type(const LST::Function<void(const Module_Type*)>& _logic) const;
-        template<typename Module_Type>
-        Module_Type* get_module_of_type(unsigned int _skip_amount = 0) const;
+        template<typename _Module_Type>
+        void process_logic_for_modules_of_type(const LST::Function<void(_Module_Type*)>& _logic);
+        template<typename _Module_Type>
+        void process_logic_for_modules_of_type(const LST::Function<void(const _Module_Type*)>& _logic) const;
+        template<typename _Module_Type>
+        _Module_Type* get_module_of_type(unsigned int _skip_amount = 0) const;
 
     public:
         void update_previous_transformation_data();
@@ -68,14 +68,14 @@ namespace LEti
 
     };
 
-    template<typename Module_Type>
-    void Object::process_logic_for_modules_of_type(const LST::Function<void(Module_Type*)>& _logic)
+    template<typename _Module_Type>
+    void Object::process_logic_for_modules_of_type(const LST::Function<void(_Module_Type*)>& _logic)
     {
         L_ASSERT(_logic);
 
         for(Modules_List::Iterator module_it = m_modules.begin(); !module_it.end_reached(); ++module_it)
         {
-            Module_Type* requested_type_module = LV::cast_variable<Module_Type>(*module_it);
+            _Module_Type* requested_type_module = LV::cast_variable<_Module_Type>(*module_it);
             if(!requested_type_module)
                 continue;
 
@@ -83,14 +83,14 @@ namespace LEti
         }
     }
 
-    template<typename Module_Type>
-    void Object::process_logic_for_modules_of_type(const LST::Function<void(const Module_Type*)>& _logic) const
+    template<typename _Module_Type>
+    void Object::process_logic_for_modules_of_type(const LST::Function<void(const _Module_Type*)>& _logic) const
     {
         L_ASSERT(_logic);
 
         for(Modules_List::Const_Iterator module_it = m_modules.begin(); !module_it.end_reached(); ++module_it)
         {
-            const Module_Type* requested_type_module = LV::cast_variable<Module_Type>(*module_it);
+            const _Module_Type* requested_type_module = LV::cast_variable<_Module_Type>(*module_it);
             if(!requested_type_module)
                 continue;
 
@@ -98,12 +98,12 @@ namespace LEti
         }
     }
 
-    template<typename Module_Type>
-    Module_Type* Object::get_module_of_type(unsigned int _skip_amount) const
+    template<typename _Module_Type>
+    _Module_Type* Object::get_module_of_type(unsigned int _skip_amount) const
     {
         for(Modules_List::Const_Iterator module_it = m_modules.begin(); !module_it.end_reached(); ++module_it)
         {
-            Module_Type* requested_type_module = LV::cast_variable<Module_Type>(*module_it);
+            _Module_Type* requested_type_module = LV::cast_variable<_Module_Type>(*module_it);
             if(!requested_type_module)
                 continue;
 
@@ -115,6 +115,9 @@ namespace LEti
 
         return nullptr;
     }
+
+
+
 
 
     class Object_Stub : public LV::Builder_Stub
@@ -146,6 +149,28 @@ namespace LEti
     public:
         ~Object_Stub();
 
+    public:
+        template<typename _Module_Stub_Type>
+        _Module_Stub_Type* get_module_stub_of_type(unsigned int _skip_amount = 0) const;
+
     };
+
+    template<typename _Module_Stub_Type>
+    _Module_Stub_Type* Object_Stub::get_module_stub_of_type(unsigned int _skip_amount) const
+    {
+        for(LV::Variable_Base::Childs_List::Const_Iterator stub_it = module_stubs.begin(); !stub_it.end_reached(); ++stub_it)
+        {
+            _Module_Stub_Type* requested_type_stub = LV::cast_variable<_Module_Stub_Type>(stub_it->child_ptr);
+            if(!requested_type_stub)
+                continue;
+
+            if(_skip_amount == 0)
+                return requested_type_stub;
+
+            --_skip_amount;
+        }
+
+        return nullptr;
+    }
 
 }
