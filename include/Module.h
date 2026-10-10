@@ -43,7 +43,7 @@ namespace LEti
 
     public:
         virtual void update_prev_state() { }
-        virtual void update(float _dt) = 0;
+        virtual void update(float _dt) { }
 
     };
 
@@ -57,7 +57,7 @@ namespace LEti
         const Object* future_parent = nullptr;
 
     public:
-        INIT_BUILDER_STUB(Module)
+        INIT_NULL_BUILDER_STUB(Module)
 
     };
 
