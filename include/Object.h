@@ -23,13 +23,13 @@ namespace LEti
         Transformation_Data m_previous_state;
 
     public:
-        using Modules_List = LDS::List<Module*>;
+        using Modules_Vec = LDS::Vector<Module*>;
 
     public:
         using On_Update_Func = LST::Function<void(Object*)>;
 
     protected:
-        Modules_List m_modules;
+        Modules_Vec m_modules = {10};
         On_Update_Func m_on_update_func;
 
     public:
@@ -51,7 +51,7 @@ namespace LEti
         virtual void remove_all_modules();  //  this deletes all modules
 
     public:
-        inline const Modules_List& modules() const { return m_modules; }
+        inline const Modules_Vec& modules() const { return m_modules; }
 
     public:
         template<typename _Module_Type>
@@ -73,9 +73,9 @@ namespace LEti
     {
         L_ASSERT(_logic);
 
-        for(Modules_List::Iterator module_it = m_modules.begin(); !module_it.end_reached(); ++module_it)
+        for(unsigned int i = 0; i < m_modules.size(); ++i)
         {
-            _Module_Type* requested_type_module = LV::cast_variable<_Module_Type>(*module_it);
+            _Module_Type* requested_type_module = LV::cast_variable<_Module_Type>(m_modules[i]);
             if(!requested_type_module)
                 continue;
 
@@ -88,9 +88,9 @@ namespace LEti
     {
         L_ASSERT(_logic);
 
-        for(Modules_List::Const_Iterator module_it = m_modules.begin(); !module_it.end_reached(); ++module_it)
+        for(unsigned int i = 0; i < m_modules.size(); ++i)
         {
-            const _Module_Type* requested_type_module = LV::cast_variable<_Module_Type>(*module_it);
+            const _Module_Type* requested_type_module = LV::cast_variable<_Module_Type>(m_modules[i]);
             if(!requested_type_module)
                 continue;
 
@@ -101,9 +101,9 @@ namespace LEti
     template<typename _Module_Type>
     _Module_Type* Object::get_module_of_type(unsigned int _skip_amount) const
     {
-        for(Modules_List::Const_Iterator module_it = m_modules.begin(); !module_it.end_reached(); ++module_it)
+        for(unsigned int i = 0; i < m_modules.size(); ++i)
         {
-            _Module_Type* requested_type_module = LV::cast_variable<_Module_Type>(*module_it);
+            _Module_Type* requested_type_module = LV::cast_variable<_Module_Type>(m_modules[i]);
             if(!requested_type_module)
                 continue;
 
