@@ -17,6 +17,7 @@
     \
         void notify(const std::string& _notification_id, LEti::Module* _notifier) override \
         { \
+            Parent_Type::notify(_notification_id, _notifier); \
             Subscriptions_Map::Iterator maybe_subscription_it = s_subscriptions.find(_notification_id); \
             if(maybe_subscription_it.is_ok()) \
                 (*maybe_subscription_it)(this, _notifier); \
